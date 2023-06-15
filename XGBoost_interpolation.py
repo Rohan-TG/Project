@@ -80,7 +80,7 @@ testnuclides = [] # list of nuclides used for validation
 validation_set_size = 25 # number of nuclides hidden from training
 
 
-for i in range(validation_set_size):
+while len(testnuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
 	if choice not in testnuclides:
 		testnuclides.append(choice)
