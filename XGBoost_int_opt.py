@@ -93,10 +93,11 @@ for i, j, in zip(df['A'], df['Z']):
     else:
         al.append([j, i])
 
-testnuclides = []
+testnuclides = [] # list of nuclides used for validation
+validation_set_size = 25 # number of nuclides hidden from training
 
-for i in range(25):
-	choice = random.choice(al)
+while len(testnuclides) < validation_set_size:
+	choice = random.choice(al) # randomly select nuclide from list of all nuclides
 	if choice not in testnuclides:
 		testnuclides.append(choice)
 
@@ -696,7 +697,7 @@ if __name__ == "__main__":
 		# 										   'Par_d',
 		# 										   'S2n_c',
 		# 										   'S2p_c',
-		# 										   'ME'
+		# 										   'ME',
 		# 										   'Z_even',
 		# 										   'A_even',
 		# 										   'N_even',
