@@ -12,7 +12,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 
 
-# TO DO: separate validation and test data
 
 df = pd.read_csv('interpolated_n2_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
 df_test = pd.read_csv('1_xs_fund_feateng.csv') # original dataset, used for validation
@@ -21,6 +20,33 @@ df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
 
 
+def anomaly_remover(dfa):
+	anomalies = [[14, 28], [14, 29], [14, 30], [15, 31], [20, 40], [20, 42], [20, 43], [20, 44], [20, 46],
+				 [20, 48], [24, 50], [24, 52], [24, 53], [24, 54], [28, 58], [28, 60], [28, 61], [28, 62], [28, 64],
+				 [29, 63], [29, 65], [41, 93], [80, 196], [80, 198], [80, 199], [80, 200], [80, 201], [80, 202],
+				 [80, 204], [82, 206], [82, 207]]
+	"""list of nuclides with cutoff value @ 20 MeV - format is [Z,A]"""
+
+	anomaly_indices = []
+	for set in anomalies:
+		z = set[0]
+		a = set[1]
+
+		remover = dfa[dfa.A == a]
+		remove = remover[remover.Z == z]
+
+		last_row_index = remove.index[-1]
+		anomaly_indices.append(last_row_index)
+
+
+	for i in anomaly_indices:
+		dfa = dfa.drop(index=i)
+
+	dfa.index = range(len(dfa))
+
+	return dfa
+
+df_test = anomaly_remover(dfa = df_test)
 # use once then save dataframe
 def interpolate_pandas(df, inter_col):
 	"""Performs linear interpolation on XS data, using pandas.
@@ -76,14 +102,81 @@ for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
 	else:
 		al.append([j, i]) # format is [Z, A]
 
-testnuclides = [] # list of nuclides used for validation
+
+cat_magic = []
+
+magic_numbers = [2, 8, 20, 28, 50, 82, 126]
+
+
+cat_magic_double_original = []
+cat_magic_neutron_original = []
+cat_magic_proton_original = []
+
+for z, n in zip(df_test['Z'], df_test['A']):
+	if z in magic_numbers and n in magic_numbers:
+		cat_magic_proton_original.append(1)
+		cat_magic_double_original.append(1)
+		cat_magic_neutron_original.append(1)
+	elif z in magic_numbers and n not in magic_numbers:
+		cat_magic_proton_original.append(1)
+		cat_magic_neutron_original.append(0)
+		cat_magic_double_original.append(0)
+	elif z not in magic_numbers and n in magic_numbers:
+		cat_magic_neutron_original.append(1)
+		cat_magic_double_original.append(0)
+		cat_magic_proton_original.append(0)
+	else:
+		cat_magic_proton_original.append(0)
+		cat_magic_double_original.append(0)
+		cat_magic_neutron_original.append(0)
+
+df_test.insert(78, 'cat_magic_proton', cat_magic_proton_original)
+df_test.insert(79, 'cat_magic_neutron', cat_magic_neutron_original)
+df_test.insert(80, 'cat_magic_double', cat_magic_double_original)
+
+df_test['cat_magic_proton'].astype('category')
+df_test['cat_magic_neutron'].astype('category')
+df_test['cat_magic_double'].astype("category")
+
+
+cat_magic_proton = []
+cat_magic_neutron = []
+cat_magic_double = []
+
+for z, n in zip(df['Z'], df['N']):
+	if z in magic_numbers and n in magic_numbers:
+		cat_magic_double.append(1)
+		cat_magic_neutron.append(1)
+		cat_magic_proton.append(1)
+	elif z in magic_numbers and n not in magic_numbers:
+		cat_magic_proton.append(1)
+		cat_magic_neutron.append(0)
+		cat_magic_double.append(0)
+	elif z not in magic_numbers and n in magic_numbers:
+		cat_magic_neutron.append(1)
+		cat_magic_proton.append(0)
+		cat_magic_double.append(0)
+	else:
+		cat_magic_proton.append(0)
+		cat_magic_double.append(0)
+		cat_magic_neutron.append(0)
+
+
+df.insert(78, 'cat_magic_proton', cat_magic_proton)
+df.insert(79, 'cat_magic_neutron', cat_magic_neutron)
+df.insert(80, 'cat_magic_double', cat_magic_double)
+
+df['cat_magic_proton'].astype('category')
+df['cat_magic_neutron'].astype('category')
+df['cat_magic_double'].astype("category")
+
+validation_nuclides = [] # list of nuclides used for validation
 validation_set_size = 25 # number of nuclides hidden from training
 
-
-while len(testnuclides) < validation_set_size:
+while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
-	if choice not in testnuclides:
-		testnuclides.append(choice)
+	if choice not in validation_nuclides:
+		validation_nuclides.append(choice)
 
 
 def make_train(la, ua, df):
@@ -108,11 +201,11 @@ def make_train(la, ua, df):
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	octupole_deformation = df['octopole_deformation']
-	Z_even = df['Z_even']
+	# Z_even = df['Z_even']
 	# A_even = df['A_even']
 	N_even = df['N_even']
 	N = df['N']
-	xs_max = df['xs_max']
+	# xs_max = df['xs_max']
 	Radius = df['Radius']
 	Shell = df['Shell']
 	Parity = df['Parity']
@@ -126,6 +219,9 @@ def make_train(la, ua, df):
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
 	rms_radius = df['rms_radius']
+	magic_p = df['cat_magic_proton']
+	magic_n = df['cat_magic_neutron']
+	magic_d = df['cat_magic_double']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -176,13 +272,16 @@ def make_train(la, ua, df):
 	Radius_train = []
 	n_gap_erg_train = []
 	n_chem_erg_train = []
-	xs_max_train = []
+	# xs_max_train = []
 	n_rms_radius_train = []
 	octupole_deformation_train = []
+	cat_proton_train = []
+	cat_neutron_train = []
+	cat_double_train = []
 
 
 	ME_train = []
-	Z_even_train = []
+	# Z_even_train = []
 	# A_even_train = []
 	N_even_train = []
 
@@ -230,7 +329,7 @@ def make_train(la, ua, df):
 	Parity_compound_train = []
 
 	for idx, r_type in enumerate(MT):  # MT = 16 is (n,2n) (already extracted)
-		if [Z[idx], A[idx]] in testnuclides:
+		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope to training data
 		if Energy[idx] >= 30: # training on data less than 30 MeV
 			continue
@@ -257,7 +356,7 @@ def make_train(la, ua, df):
 			n_chem_erg_train.append(n_chem_erg[idx])
 			Pairing_daughter_train.append(Pairing_daughter[idx])
 			Parity_daughter_train.append(Parity_daughter[idx])
-			xs_max_train.append(xs_max[idx])
+			# xs_max_train.append(xs_max[idx])
 			n_rms_radius_train.append(n_rms_radius[idx])
 			octupole_deformation_train.append(octupole_deformation[idx])
 			Decay_compound_train.append(Decay_compound[idx])
@@ -266,7 +365,7 @@ def make_train(la, ua, df):
 			S2n_compound_train.append(S2n_compound[idx])
 			S2p_compound_train.append(S2p_compound[idx])
 			ME_train.append(ME[idx])
-			Z_even_train.append(Z_even[idx])
+			# Z_even_train.append(Z_even[idx])
 			# A_even_train.append(A_even[idx])
 			N_even_train.append(N_even[idx])
 			Shell_train.append(Shell[idx])
@@ -296,6 +395,9 @@ def make_train(la, ua, df):
 			BEA_A_daughter_train.append(BEA_A_daughter[idx])
 			Spin_daughter_train.append(Spin_daughter[idx])
 			Deform_daughter_train.append(Deform_daughter[idx])
+			cat_proton_train.append(magic_p[idx])
+			cat_neutron_train.append(magic_n[idx])
+			cat_double_train.append(magic_d[idx])
 
 
 	X = np.array([Z_train, A_train, S2n_train, S2p_train, Energy_train,
@@ -305,7 +407,10 @@ def make_train(la, ua, df):
 				  S2n_d_train,
 				  Radius_train,
 				  n_gap_erg_train, n_chem_erg_train, #
-				  xs_max_train, n_rms_radius_train, octupole_deformation_train, Decay_compound_train,
+				  # xs_max_train,
+				  n_rms_radius_train,
+				  octupole_deformation_train,
+				  Decay_compound_train,
 				  BEA_daughter_train,
 				  BEA_compound_train,
 				  Pairing_daughter_train,
@@ -313,7 +418,7 @@ def make_train(la, ua, df):
 				  S2n_compound_train,
 				  S2p_compound_train,
 				  ME_train,
-				  Z_even_train,
+				  # Z_even_train,
 				  # A_even_train,
 				  N_even_train,
 				  Shell_train,
@@ -343,6 +448,9 @@ def make_train(la, ua, df):
 				  BEA_A_daughter_train,
 				  Spin_daughter_train,
 				  Deform_daughter_train,
+				  cat_proton_train,
+				  cat_neutron_train,
+				  cat_double_train,
 				  ])
 	y = np.array(XS_train) # cross sections
 
@@ -379,7 +487,7 @@ def make_test(nuclides, df):
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	octupole_deformation = df['octopole_deformation']
-	Z_even = df['Z_even']
+	# Z_even = df['Z_even']
 	# A_even = df['A_even']
 	N_even = df['N_even']
 	N = df['N']
@@ -397,6 +505,9 @@ def make_test(nuclides, df):
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
 	rms_radius = df['rms_radius']
+	magic_p = df['cat_magic_proton']
+	magic_n = df['cat_magic_neutron']
+	magic_d = df['cat_magic_double']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -446,12 +557,12 @@ def make_test(nuclides, df):
 	gd_test = [] # gamma deformation
 	N_test = []
 	bd_test = []
-
 	Radius_test = []
 	n_gap_erg_test = []
 	n_chem_erg_test = []
-	xs_max_test = []
+	# xs_max_test = []
 	octupole_deformation_test = []
+
 
 	# Daughter features
 	Sn_d_test = []
@@ -472,7 +583,7 @@ def make_test(nuclides, df):
 	S2n_compound_test = []
 	S2p_compound_test = []
 	ME_test = []
-	Z_even_test = []
+	# Z_even_test = []
 	# A_even_test = []
 	N_even_test = []
 
@@ -503,6 +614,10 @@ def make_test(nuclides, df):
 	Decay_daughter_test = []
 	ME_daughter_test = []
 
+	cat_proton_test = []
+	cat_neutron_test = []
+	cat_double_test = []
+
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
 			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 30:
@@ -527,7 +642,7 @@ def make_test(nuclides, df):
 				n_gap_erg_test.append(n_gap_erg[j])
 				n_chem_erg_test.append(n_chem_erg[j])
 				Pairing_daughter_test.append(Pairing_daughter[j])
-				xs_max_test.append(np.nan) # cheat feature - nan
+				# xs_max_test.append(np.nan) # cheat feature - nan
 				octupole_deformation_test.append(octupole_deformation[j])
 
 				Parity_daughter_test.append(Parity_daughter[j])
@@ -541,7 +656,7 @@ def make_test(nuclides, df):
 				S2p_compound_test.append(S2p_compound[j])
 
 				ME_test.append(ME[j])
-				Z_even_test.append(Z_even[j])
+				# Z_even_test.append(Z_even[j])
 				# A_even_test.append(A_even[j])
 				N_even_test.append(N_even[j])
 				Shell_test.append(Shell[j])
@@ -571,6 +686,10 @@ def make_test(nuclides, df):
 				BEA_A_daughter_test.append(BEA_A_daughter[j])
 				Spin_daughter_test.append(Spin_daughter[j])
 				Deform_daughter_test.append(Deform_daughter[j])
+				cat_proton_test.append(magic_p[j])
+				cat_neutron_test.append(magic_n[j])
+				cat_double_test.append(magic_d[j])
+
 
 
 
@@ -583,7 +702,7 @@ def make_test(nuclides, df):
 					  Radius_test,
 					  n_gap_erg_test,
 					  n_chem_erg_test,
-					  xs_max_test,
+					  # xs_max_test,
 					  n_rms_radius_test,
 					  octupole_deformation_test,
 					  Decay_compound_test,
@@ -594,7 +713,7 @@ def make_test(nuclides, df):
 					  S2n_compound_test,
 					  S2p_compound_test,
 					  ME_test,
-					  Z_even_test,
+					  # Z_even_test,
 					  # A_even_test,
 					  N_even_test,
 					  Shell_test,
@@ -624,6 +743,9 @@ def make_test(nuclides, df):
 					  BEA_A_daughter_test,
 					  Spin_daughter_test,
 					  Deform_daughter_test,
+					  cat_proton_test,
+					  cat_neutron_test,
+					  cat_double_test,
 					  ])
 	xtest = np.transpose(xtest)
 
@@ -639,7 +761,7 @@ if __name__ == "__main__":
 
 	X_train, y_train = make_train(lower_a, upper_a, df=df) # make training matrix
 
-	X_test, y_test = make_test(testnuclides, df=df_test)
+	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
 	# X_train must be in the shape (n_samples, n_features)
 	# and y_train must be in the shape (n_samples) of the target
@@ -665,7 +787,7 @@ if __name__ == "__main__":
 											   'Radius',
 											   'n_g_erg',
 											   'n_c_erg',
-											   'xsmax',
+											   # 'xsmax',
 											   'n_rms_r',
 											   'oct_def',
 											   'D_c',
@@ -676,7 +798,7 @@ if __name__ == "__main__":
 											   'S2n_c',
 											   'S2p_c',
 											   'ME',
-											   'Z_even',
+											   # 'Z_even',
 											   # 'A_even',
 											   'N_even',
 											   'Shell',
@@ -689,7 +811,7 @@ if __name__ == "__main__":
 											   'p_rms_r',
 											   'rms_r',
 											   'Sp_c',
-											   'S_n',
+											   'S_n_c',
 											   'Shell_c',
 											   'S2p-d',
 											   'Shell-d',
@@ -706,6 +828,9 @@ if __name__ == "__main__":
 											   'BEA-A-d',
 											   'Spin-d',
 											   'Def-d',
+											   'mag_p',
+											   'mag_n',
+											   'mag_d',
 											   ]) # SHAP feature importance analysis
 	shap_values = explainer(X_test)
 
@@ -720,7 +845,7 @@ if __name__ == "__main__":
 										 'Radius',
 										 'n_g_erg',
 										 'n_c_erg',
-										 'xsmax',
+										 # 'xsmax',
 										 'n_rms_r',
 										 'oct_def',
 										 'D_c',
@@ -731,7 +856,7 @@ if __name__ == "__main__":
 										 'S2n_c',
 										 'S2p_c',
 										 'ME',
-										 'Z_even',
+										 # 'Z_even',
 										 # 'A_even',
 										 'N_even',
 										 'Shell',
@@ -761,6 +886,9 @@ if __name__ == "__main__":
 										 'BEA-A-d',
 										 'Spin-d',
 										 'Def-d',
+										 'mag_p',
+										 'mag-n',
+										 'mag-d',
 										 ]
 
 	plt.figure(figsize=(10,12))
@@ -774,7 +902,7 @@ if __name__ == "__main__":
 	XS_plotmatrix = []
 	E_plotmatrix = []
 	P_plotmatrix = []
-	for nuclide in testnuclides:
+	for nuclide in validation_nuclides:
 		dummy_test_XS = []
 		dummy_test_E = []
 		dummy_predictions = []
@@ -790,7 +918,7 @@ if __name__ == "__main__":
 
 	# plot predictions against data
 	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
-		nuc = testnuclides[i] # validation nuclide
+		nuc = validation_nuclides[i] # validation nuclide
 		plt.plot(erg, pred_xs, label='predictions')
 		plt.plot(erg, true_xs, label='data')
 		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]}")
