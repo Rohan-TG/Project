@@ -645,10 +645,11 @@ if __name__ == "__main__":
 	upper_a = int(input("Enter upper boundary A: "))
 
 
-	space = {'n_estimators': hp.choice('n_estimators', [200, 300, 400, 450, 500, 550, 600, 700, 750, 800, 850, 900, 1000, 1200, 1400, 1500]),
+	space = {'n_estimators': hp.choice('n_estimators', [200, 300, 400, 450, 500, 550, 600, 700, 750, 800, 850, 900, 1000, 1100,
+														1200, 1400, 1500]),
 			 'max_leaves': 0,
-			 'max_depth': scope.int(hp.quniform("max_depth", 5, 15, 1)),
-			 'learning_rate': hp.loguniform('learning_rate', np.log(0.0001), np.log(0.3))}
+			 'max_depth': scope.int(hp.quniform("max_depth", 5, 12, 1)),
+			 'learning_rate': hp.loguniform('learning_rate', np.log(0.0001), np.log(0.2))}
 
 	def optimiser(space):
 
@@ -836,8 +837,9 @@ if __name__ == "__main__":
 
 		print(f"MSE: {mse}")
 		print(f"R2: {r2_score(y_test, predictions)}")
+		r2_return = 1 - r2_score(y_test, predictions)
 
-		return {'loss': mse, 'status': STATUS_OK, 'model': model}
+		return {'loss': r2_return, 'status': STATUS_OK, 'model': model}
 
 	trials = Trials()
 	best = fmin(fn=optimiser,
