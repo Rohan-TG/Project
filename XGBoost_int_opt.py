@@ -82,27 +82,22 @@ def anomaly_remover(dfa):
 	return dfa
 
 
-
 df_test = anomaly_remover(dfa=df_test)
 
 
-al = []
+al = [] # contains elements [z,a] of each nuclide in the dataframe
 for i, j, in zip(df['A'], df['Z']):
     if [j, i] in al:
         continue
     else:
         al.append([j, i])
 
-testnuclides = [] # list of nuclides used for validation
-validation_set_size = 25 # number of nuclides hidden from training
-
-while len(testnuclides) < validation_set_size:
-	choice = random.choice(al) # randomly select nuclide from list of all nuclides
-	if choice not in testnuclides:
-		testnuclides.append(choice)
 
 
-def make_train(la, ua, df):
+
+
+
+def make_train(la, ua, df, val_nuc, test_nuc):
 	"""Zval is the atomic number of the element up to which we want training data.
 	Extracts MT = 16
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
@@ -122,8 +117,8 @@ def make_train(la, ua, df):
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	octupole_deformation = df['octopole_deformation']
-	Z_even = df['Z_even']
-	A_even = df['A_even']
+	# Z_even = df['Z_even']
+	# A_even = df['A_even']
 	N_even = df['N_even']
 	N = df['N']
 	xs_max = df['xs_max']
@@ -196,8 +191,8 @@ def make_train(la, ua, df):
 
 
 	ME_train = []
-	Z_even_train = []
-	A_even_train = []
+	# Z_even_train = []
+	# A_even_train = []
 	N_even_train = []
 
 	Shell_train = []
@@ -244,8 +239,10 @@ def make_train(la, ua, df):
 	Parity_compound_train = []
 
 	for idx, r_type in enumerate(MT):  # MT = 16 is (n, 2n)
-		if [Z[idx], A[idx]] in testnuclides:
+		if [Z[idx], A[idx]] in val_nuc:
 			continue # prevents loop from adding test isotope to training data
+		if [Z[idx], A[idx]] in test_nuc:
+			continue
 		if Energy[idx] >= 30:
 			continue
 		if A[idx] <= ua and A[idx] >= la:
@@ -280,8 +277,8 @@ def make_train(la, ua, df):
 			S2n_compound_train.append(S2n_compound[idx])
 			S2p_compound_train.append(S2p_compound[idx])
 			ME_train.append(ME[idx])
-			Z_even_train.append(Z_even[idx])
-			A_even_train.append(A_even[idx])
+			# Z_even_train.append(Z_even[idx])
+			# A_even_train.append(A_even[idx])
 			N_even_train.append(N_even[idx])
 			Shell_train.append(Shell[idx])
 			Parity_train.append(Parity[idx])
@@ -327,8 +324,8 @@ def make_train(la, ua, df):
 				  S2n_compound_train,
 				  S2p_compound_train,
 				  ME_train,
-				  Z_even_train,
-				  A_even_train,
+				  # Z_even_train,
+				  # A_even_train,
 				  N_even_train,
 				  Shell_train,
 				  Parity_train,
@@ -368,7 +365,7 @@ def make_train(la, ua, df):
 def make_test(nuclides, df):
 	"""
 	nuclides: array of (1x2) arrays containing Z of nuclide at index 0, and A at position 1.
-	Fetches the cross sections for the nuclide
+	Fetches the cross-sections for the nuclide
 	"""
 
 	ztest = [nuclide[0] for nuclide in nuclides] # first element is the Z-value of the given test nuclide
@@ -390,8 +387,8 @@ def make_test(nuclides, df):
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	octupole_deformation = df['octopole_deformation']
-	Z_even = df['Z_even']
-	A_even = df['A_even']
+	# Z_even = df['Z_even']
+	# A_even = df['A_even']
 	N_even = df['N_even']
 	N = df['N']
 	# xs_max = df['xs_max']
@@ -483,8 +480,8 @@ def make_test(nuclides, df):
 	S2n_compound_test = []
 	S2p_compound_test = []
 	ME_test = []
-	Z_even_test = []
-	A_even_test = []
+	# Z_even_test = []
+	# A_even_test = []
 	N_even_test = []
 
 	Shell_test = []
@@ -514,9 +511,9 @@ def make_test(nuclides, df):
 	Decay_daughter_test = []
 	ME_daughter_test = []
 
-	for nuc_test_z, nuc_test_a in zip(ztest, atest):
+	for nuc_val_z, nuc_val_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
-			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 30:
+			if zval == nuc_val_z and aval == nuc_val_a and Energy[j] <= 30:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
 				Sep2n_test.append(Sep_2n[j])
@@ -552,8 +549,8 @@ def make_test(nuclides, df):
 				S2p_compound_test.append(S2p_compound[j])
 
 				ME_test.append(ME[j])
-				Z_even_test.append(Z_even[j])
-				A_even_test.append(A_even[j])
+				# Z_even_test.append(Z_even[j])
+				# A_even_test.append(A_even[j])
 				N_even_test.append(N_even[j])
 				Shell_test.append(Shell[j])
 				Parity_test.append(Parity[j])
@@ -605,8 +602,8 @@ def make_test(nuclides, df):
 					  S2n_compound_test,
 					  S2p_compound_test,
 					  ME_test,
-					  Z_even_test,
-					  A_even_test,
+					  # Z_even_test,
+					  # A_even_test,
 					  N_even_test,
 					  Shell_test,
 					  Parity_test,
@@ -648,24 +645,33 @@ if __name__ == "__main__":
 	upper_a = int(input("Enter upper boundary A: "))
 
 
-
-
-
-
-
-
-	space = {'n_estimators': hp.choice('n_estimators', [100, 200, 300, 400, 450, 500, 550, 600, 700, 750, 800, 850, 900, 1000, 1200, 1400, 1500]),
+	space = {'n_estimators': hp.choice('n_estimators', [200, 300, 400, 450, 500, 550, 600, 700, 750, 800, 850, 900, 1000, 1200, 1400, 1500]),
 			 'max_leaves': 0,
-			 'max_depth': scope.int(hp.quniform("max_depth", 4, 15, 1)),
+			 'max_depth': scope.int(hp.quniform("max_depth", 5, 15, 1)),
 			 'learning_rate': hp.loguniform('learning_rate', np.log(0.0001), np.log(0.3))}
 
 	def optimiser(space):
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
-		X_train, y_train = make_train(lower_a, upper_a, df=df)
 
-		X_test, y_test = make_test(testnuclides, df=df_test)
+		validation_nuclides = []  # list of nuclides used for validation
+		validation_set_size = 25  # number of nuclides used for validation
+
+		test_nuclides = [[26,56]]  # nuclides completely screened from training and optimisation. These will only be used in the main
+		# train and test script, and are left completely unseen in this script.
+
+		while len(validation_nuclides) < validation_set_size:
+			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
+			if choice not in validation_nuclides and choice not in test_nuclides:  # must not already be in validation set
+				validation_nuclides.append(choice)
+
+		print("Nuclide selection complete")
+
+
+		X_train, y_train = make_train(lower_a, upper_a, df=df, val_nuc=validation_nuclides, test_nuc= test_nuclides)
+
+		X_test, y_test = make_test(nuclides=validation_nuclides, df=df_test)
 		print("Data prep done")
 
 		model = xg.XGBRegressor(**space)
@@ -752,8 +758,8 @@ if __name__ == "__main__":
 											 'S2n_c',
 											 'S2p_c',
 											 'ME',
-											 'Z_even',
-											 'A_even',
+											 # 'Z_even',
+											 # 'A_even',
 											 'N_even',
 											 'Shell',
 											 'Par',
@@ -794,7 +800,7 @@ if __name__ == "__main__":
 		XS_plotmatrix = []
 		E_plotmatrix = []
 		P_plotmatrix = []
-		for nuclide in testnuclides:
+		for nuclide in validation_nuclides:
 			dummy_test_XS = []
 			dummy_test_E = []
 			dummy_predictions = []
@@ -811,7 +817,7 @@ if __name__ == "__main__":
 
 
 		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
-			nuc = testnuclides[i]
+			nuc = validation_nuclides[i]
 			# plt.plot(erg, pred_xs, label='predictions')
 			# plt.plot(erg, true_xs, label='data')
 			# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]}")
@@ -838,7 +844,7 @@ if __name__ == "__main__":
 				space=space,
 				algo= tpe.suggest,
 				trials=trials,
-				max_evals=50)
+				max_evals=60)
 
 	print(best)
 
