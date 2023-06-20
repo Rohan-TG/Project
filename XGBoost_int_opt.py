@@ -97,7 +97,7 @@ for i, j, in zip(df['A'], df['Z']):
 
 
 
-def make_train(la, ua, df, val_nuc, test_nuc):
+def make_train(df, val_nuc, test_nuc, la=25, ua=210):
 	"""Zval is the atomic number of the element up to which we want training data.
 	Extracts MT = 16
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
@@ -164,7 +164,7 @@ def make_train(la, ua, df, val_nuc, test_nuc):
 	Radius_daughter = df['Radius_daughter']
 	ME_daughter = df['ME_daughter']
 	BEA_A_daughter = df['BEA_A_daughter']
-	Spin_daughter = df['Spin_daughter']
+	# Spin_daughter = df['Spin_daughter']
 	Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
 
@@ -219,7 +219,7 @@ def make_train(la, ua, df, val_nuc, test_nuc):
 	ME_daughter_train = []
 	Radius_daughter_train = []
 	BEA_A_daughter_train = []
-	Spin_daughter_train = []
+	# Spin_daughter_train = []
 	Deform_daughter_train = []
 
 	# Compound nucleus properties
@@ -303,9 +303,9 @@ def make_train(la, ua, df, val_nuc, test_nuc):
 			ME_daughter_train.append(ME_daughter[idx])
 			Radius_daughter_train.append(Radius_daughter[idx])
 			Pairing_compound_train.append(Pairing_compound[idx])
-			Parity_compound_train.append(Pairing_compound[idx])
+			Parity_compound_train.append(Parity_compound[idx])
 			BEA_A_daughter_train.append(BEA_A_daughter[idx])
-			Spin_daughter_train.append(Spin_daughter[idx])
+			# Spin_daughter_train.append(Spin_daughter[idx])
 			Deform_daughter_train.append(Deform_daughter[idx])
 
 
@@ -352,7 +352,7 @@ def make_train(la, ua, df, val_nuc, test_nuc):
 				  Pairing_compound_train,
 				  Parity_compound_train,
 				  BEA_A_daughter_train,
-				  Spin_daughter_train,
+				  # Spin_daughter_train,
 				  Deform_daughter_train,
 				  ])
 	y = np.array(XS_train)
@@ -434,7 +434,7 @@ def make_test(nuclides, df):
 	Radius_daughter = df['Radius_daughter']
 	ME_daughter = df['ME_daughter']
 	BEA_A_daughter = df['BEA_A_daughter']
-	Spin_daughter = df['Spin_daughter']
+	# Spin_daughter = df['Spin_daughter']
 	Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
 
@@ -472,7 +472,7 @@ def make_test(nuclides, df):
 	BEA_daughter_test = []
 	Radius_daughter_test = []
 	BEA_A_daughter_test = []
-	Spin_daughter_test = []
+	# Spin_daughter_test = []
 	Deform_daughter_test = []
 
 	BEA_compound_test = []
@@ -577,7 +577,7 @@ def make_test(nuclides, df):
 				Pairing_compound_test.append(Pairing_compound[j])
 				Parity_compound_test.append(Parity_compound[j])
 				BEA_A_daughter_test.append(BEA_A_daughter[j])
-				Spin_daughter_test.append(Spin_daughter[j])
+				# Spin_daughter_test.append(Spin_daughter[j])
 				Deform_daughter_test.append(Deform_daughter[j])
 
 
@@ -630,7 +630,7 @@ def make_test(nuclides, df):
 					  Pairing_compound_test,
 					  Parity_compound_test,
 					  BEA_A_daughter_test,
-					  Spin_daughter_test,
+					  # Spin_daughter_test,
 					  Deform_daughter_test,
 					  ])
 	xtest = np.transpose(xtest)
@@ -641,15 +641,13 @@ def make_test(nuclides, df):
 
 
 if __name__ == "__main__":
-	lower_a = int(input("Enter lower boundary A: "))
-	upper_a = int(input("Enter upper boundary A: "))
 
 
-	space = {'n_estimators': hp.choice('n_estimators', [200, 300, 400, 450, 500, 550, 600, 700, 750, 800, 850, 900, 1000, 1100,
+	space = {'n_estimators': hp.choice('n_estimators', [400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000, 1100,
 														1200, 1400, 1500]),
 			 'max_leaves': 0,
 			 'max_depth': scope.int(hp.quniform("max_depth", 5, 12, 1)),
-			 'learning_rate': hp.loguniform('learning_rate', np.log(0.0001), np.log(0.2))}
+			 'learning_rate': hp.loguniform('learning_rate', np.log(0.0001), np.log(0.1))}
 
 	def optimiser(space):
 
@@ -670,7 +668,7 @@ if __name__ == "__main__":
 		print("Nuclide selection complete")
 
 
-		X_train, y_train = make_train(lower_a, upper_a, df=df, val_nuc=validation_nuclides, test_nuc= test_nuclides)
+		X_train, y_train = make_train(df=df, val_nuc=validation_nuclides, test_nuc= test_nuclides)
 
 		X_test, y_test = make_test(nuclides=validation_nuclides, df=df_test)
 		print("Data prep done")
@@ -787,7 +785,7 @@ if __name__ == "__main__":
 											 'Pair-c',
 											 'Par-c',
 											 'BEA-A-d',
-											 'Spin-d',
+											 # 'Spin-d',
 											 'Def-d',
 											 ]
 
