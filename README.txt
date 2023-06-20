@@ -7,3 +7,5 @@ XGBoost_int_opt.py is used for hyperparameter optimisation, using the linearly i
 Requirements for running the script:
 Numpy 1.24.3
 pandas 2.0.1
+matplotlib 3.7.1
+periodictable 1.5.2
