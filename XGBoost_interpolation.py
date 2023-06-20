@@ -179,7 +179,7 @@ while len(validation_nuclides) < validation_set_size:
 		validation_nuclides.append(choice)
 
 
-def make_train(la, ua, df):
+def make_train(df, la=25, ua=210):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -200,7 +200,7 @@ def make_train(la, ua, df):
 	Pairing = df['Pairing']
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
-	octupole_deformation = df['octopole_deformation']
+	# octupole_deformation = df['octopole_deformation']
 	# Z_even = df['Z_even']
 	# A_even = df['A_even']
 	N_even = df['N_even']
@@ -244,7 +244,7 @@ def make_train(la, ua, df):
 	S2n_daughter = df['S2n_daughter']
 	Sp_daughter = df['Sp_daughter']
 	Pairing_daughter = df['Pairing_daughter']
-	Parity_daughter = df['Parity_daughter']
+	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
 	Shell_daughter = df['Shell_daughter']
 	S2p_daughter = df['S2p_daughter']
@@ -274,7 +274,7 @@ def make_train(la, ua, df):
 	n_chem_erg_train = []
 	# xs_max_train = []
 	n_rms_radius_train = []
-	octupole_deformation_train = []
+	# octupole_deformation_train = []
 	cat_proton_train = []
 	cat_neutron_train = []
 	cat_double_train = []
@@ -301,7 +301,7 @@ def make_train(la, ua, df):
 	Sp_d_train = []
 	S2n_d_train = []
 	Pairing_daughter_train = []
-	Parity_daughter_train = []
+	# Parity_daughter_train = []
 	BEA_daughter_train = []
 	S2p_daughter_train = []
 	Shell_daughter_train = []
@@ -355,10 +355,10 @@ def make_train(la, ua, df):
 			n_gap_erg_train.append(n_gap_erg[idx])
 			n_chem_erg_train.append(n_chem_erg[idx])
 			Pairing_daughter_train.append(Pairing_daughter[idx])
-			Parity_daughter_train.append(Parity_daughter[idx])
+			# Parity_daughter_train.append(Parity_daughter[idx])
 			# xs_max_train.append(xs_max[idx])
 			n_rms_radius_train.append(n_rms_radius[idx])
-			octupole_deformation_train.append(octupole_deformation[idx])
+			# octupole_deformation_train.append(octupole_deformation[idx])
 			Decay_compound_train.append(Decay_compound[idx])
 			BEA_daughter_train.append(BEA_daughter[idx])
 			BEA_compound_train.append(BEA_compound[idx])
@@ -391,7 +391,7 @@ def make_train(la, ua, df):
 			ME_daughter_train.append(ME_daughter[idx])
 			Radius_daughter_train.append(Radius_daughter[idx])
 			Pairing_compound_train.append(Pairing_compound[idx])
-			Parity_compound_train.append(Pairing_compound[idx])
+			Parity_compound_train.append(Parity_compound[idx])
 			BEA_A_daughter_train.append(BEA_A_daughter[idx])
 			Spin_daughter_train.append(Spin_daughter[idx])
 			Deform_daughter_train.append(Deform_daughter[idx])
@@ -409,12 +409,12 @@ def make_train(la, ua, df):
 				  n_gap_erg_train, n_chem_erg_train, #
 				  # xs_max_train,
 				  n_rms_radius_train,
-				  octupole_deformation_train,
+				  # octupole_deformation_train,
 				  Decay_compound_train,
 				  BEA_daughter_train,
 				  BEA_compound_train,
 				  Pairing_daughter_train,
-				  Parity_daughter_train,
+				  # Parity_daughter_train,
 				  S2n_compound_train,
 				  S2p_compound_train,
 				  ME_train,
@@ -486,7 +486,7 @@ def make_test(nuclides, df):
 	Pairing = df['Pairing']
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
-	octupole_deformation = df['octopole_deformation']
+	# octupole_deformation = df['octopole_deformation']
 	# Z_even = df['Z_even']
 	# A_even = df['A_even']
 	N_even = df['N_even']
@@ -530,7 +530,7 @@ def make_test(nuclides, df):
 	S2n_daughter = df['S2n_daughter']
 	Sp_daughter = df['Sp_daughter']
 	Pairing_daughter = df['Pairing_daughter']
-	Parity_daughter = df['Parity_daughter']
+	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
 	Shell_daughter = df['Shell_daughter']
 	S2p_daughter = df['S2p_daughter']
@@ -561,22 +561,16 @@ def make_test(nuclides, df):
 	n_gap_erg_test = []
 	n_chem_erg_test = []
 	# xs_max_test = []
-	octupole_deformation_test = []
+	# octupole_deformation_test = []
 
 
 	# Daughter features
 	Sn_d_test = []
 	Sp_d_test = []
 	S2n_d_test = []
-	Pairing_daughter_test = []
-	Parity_daughter_test = []
 	n_rms_radius_test = []
 	Decay_compound_test = []
-	BEA_daughter_test = []
-	Radius_daughter_test = []
-	BEA_A_daughter_test = []
-	Spin_daughter_test = []
-	Deform_daughter_test = []
+
 
 	BEA_compound_test = []
 
@@ -613,6 +607,13 @@ def make_test(nuclides, df):
 	Shell_daughter_test = []
 	Decay_daughter_test = []
 	ME_daughter_test = []
+	BEA_daughter_test = []
+	Radius_daughter_test = []
+	BEA_A_daughter_test = []
+	Spin_daughter_test = []
+	Deform_daughter_test = []
+	Pairing_daughter_test = []
+	# Parity_daughter_test = []
 
 	cat_proton_test = []
 	cat_neutron_test = []
@@ -643,9 +644,9 @@ def make_test(nuclides, df):
 				n_chem_erg_test.append(n_chem_erg[j])
 				Pairing_daughter_test.append(Pairing_daughter[j])
 				# xs_max_test.append(np.nan) # cheat feature - nan
-				octupole_deformation_test.append(octupole_deformation[j])
+				# octupole_deformation_test.append(octupole_deformation[j])
 
-				Parity_daughter_test.append(Parity_daughter[j])
+				# Parity_daughter_test.append(Parity_daughter[j])
 				n_rms_radius_test.append(n_rms_radius[j])
 				Decay_compound_test.append(Decay_compound[j]) # D_c
 				BEA_daughter_test.append(BEA_daughter[j])
@@ -704,12 +705,12 @@ def make_test(nuclides, df):
 					  n_chem_erg_test,
 					  # xs_max_test,
 					  n_rms_radius_test,
-					  octupole_deformation_test,
+					  # octupole_deformation_test,
 					  Decay_compound_test,
 					  BEA_daughter_test,
 					  BEA_compound_test,
 					  Pairing_daughter_test,
-					  Parity_daughter_test,
+					  # Parity_daughter_test,
 					  S2n_compound_test,
 					  S2p_compound_test,
 					  ME_test,
@@ -755,11 +756,11 @@ def make_test(nuclides, df):
 
 
 if __name__ == "__main__":
-	lower_a = int(input("Enter lower boundary A: "))
-	upper_a = int(input("Enter upper boundary A: "))
+	# lower_a = int(input("Enter lower boundary A: "))
+	# upper_a = int(input("Enter upper boundary A: "))
 
 
-	X_train, y_train = make_train(lower_a, upper_a, df=df) # make training matrix
+	X_train, y_train = make_train(df=df) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -777,6 +778,51 @@ if __name__ == "__main__":
 	time1 = time.time()
 	model.fit(X_train, y_train)
 
+	print("Training complete")
+
+	predictions = model.predict(X_test) # XS predictions
+
+	XS_plotmatrix = []
+	E_plotmatrix = []
+	P_plotmatrix = []
+	for nuclide in validation_nuclides:
+		dummy_test_XS = []
+		dummy_test_E = []
+		dummy_predictions = []
+		for i, row in enumerate(X_test):
+			if [row[0], row[1]] == nuclide:
+				dummy_test_XS.append(y_test[i])
+				dummy_test_E.append(row[4]) # Energy values are in 5th row
+				dummy_predictions.append(predictions[i])
+
+		XS_plotmatrix.append(dummy_test_XS)
+		E_plotmatrix.append(dummy_test_E)
+		P_plotmatrix.append(dummy_predictions)
+
+	# plot predictions against data
+	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+		nuc = validation_nuclides[i] # validation nuclide
+		plt.plot(erg, pred_xs, label='predictions')
+		plt.plot(erg, true_xs, label='data')
+		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]}")
+		plt.legend()
+		plt.grid()
+		plt.ylabel('XS / b')
+		plt.xlabel('Energy / MeV')
+		plt.show()
+
+		r2 = r2_score(pred_xs, true_xs) # R^2 score for this specific nuclide
+		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+
+	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
+	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
+
+
+	print(f'completed in {time.time() - time1} s')
+
+
+
+
 	explainer = shap.Explainer(model.predict, X_train,
 							   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
 											   'BEA', 'P', 'Snc', 'g-def', 'N',
@@ -789,12 +835,12 @@ if __name__ == "__main__":
 											   'n_c_erg',
 											   # 'xsmax',
 											   'n_rms_r',
-											   'oct_def',
+											   # 'oct_def',
 											   'D_c',
 											   'BEA_d',
 											   'BEA_c',
 											   'Pair_d',
-											   'Par_d',
+											   # 'Par_d',
 											   'S2n_c',
 											   'S2p_c',
 											   'ME',
@@ -847,12 +893,12 @@ if __name__ == "__main__":
 										 'n_c_erg',
 										 # 'xsmax',
 										 'n_rms_r',
-										 'oct_def',
+										 # 'oct_def',
 										 'D_c',
 										 'BEA_d',
 										 'BEA_c',
 										 'Pair_d',
-										 'Par_d',
+										 # 'Par_d',
 										 'S2n_c',
 										 'S2p_c',
 										 'ME',
@@ -895,47 +941,13 @@ if __name__ == "__main__":
 	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60) # metric is total gain
 	plt.show()
 
-	predictions = model.predict(X_test) # XS predictions
+
 
 
 	# Form arrays for plots below
-	XS_plotmatrix = []
-	E_plotmatrix = []
-	P_plotmatrix = []
-	for nuclide in validation_nuclides:
-		dummy_test_XS = []
-		dummy_test_E = []
-		dummy_predictions = []
-		for i, row in enumerate(X_test):
-			if [row[0], row[1]] == nuclide:
-				dummy_test_XS.append(y_test[i])
-				dummy_test_E.append(row[4]) # Energy values are in 5th row
-				dummy_predictions.append(predictions[i])
-
-		XS_plotmatrix.append(dummy_test_XS)
-		E_plotmatrix.append(dummy_test_E)
-		P_plotmatrix.append(dummy_predictions)
-
-	# plot predictions against data
-	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
-		nuc = validation_nuclides[i] # validation nuclide
-		plt.plot(erg, pred_xs, label='predictions')
-		plt.plot(erg, true_xs, label='data')
-		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		plt.legend()
-		plt.grid()
-		plt.ylabel('XS / b')
-		plt.xlabel('Energy / MeV')
-		plt.show()
-
-		r2 = r2_score(pred_xs, true_xs) # R^2 score for this specific nuclide
-		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
 
 	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
-
-	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
-	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
+	shap.plots.waterfall(shap_values[0], max_display=70)
 
 
-	print(f'completed in {time.time() - time1} s')
