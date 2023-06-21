@@ -7,12 +7,7 @@ import numpy as np
 import random
 
 
-
 df = pd.read_csv('interpolated_n2_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-# df_test = pd.read_csv('1_xs_fund_feateng.csv') # original dataset, used for validation
-
-# df_test = df_test[df_test.MT == 16] # extract (n,2n) only
-# df_test.index = range(len(df_test)) # re-label indices
 
 
 
@@ -364,14 +359,5 @@ X_test, y_test = make_test([[26,56]], df=df_zero)
 plt.figure()
 plt.plot(X_test[:,4], y_test)
 plt.show()
-
-
-
-# d = {'col1': [1, 2], 'col2': [3, 4]}
-# dfuck = pd.DataFrame(data=d)
-#
-# newfuck = pd.concat([dfuck, pd.Series([100,100])])
-#
-# print(newfuck)
 
 
