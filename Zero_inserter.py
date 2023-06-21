@@ -4,10 +4,14 @@ warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 
 
-df = pd.read_csv('interpolated_n2_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
+
+# df = pd.read_csv('interpolated_n2_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
+df_test = pd.read_csv('1_xs_fund_feateng.csv') # original dataset, used for validation
+
+df_test = df_test[df_test.MT == 16] # extract (n,2n) only
+df_test.index = range(len(df_test)) # re-label indices
 
 
 
@@ -297,67 +301,55 @@ def make_test(nuclides, df):
 
 
 
-
-
 def zero_maker(df):
+	"""input df: Dataframe to be zeroed
 
+	Function inserts 0 XS values for energies below reaction threshold.
 
-	al = []
-	for i, j, in zip(df['A'], df['Z']):  # i is A, j is Z
-		if [j, i] in al:
-			continue
-		else:
-			al.append([j, i])  # format is [Z, A]
+	Returns: New dataframe with the additional values. Currently 20 values from 0 MeV to threshold, with capability
+	to increase this resolution if necessary"""
 
-
-
-	all_columns = df.columns.to_list()
-
-
-	df_zeroed = pd.DataFrame(columns=df.columns)  # empty dataframe with column names only
-
-
-	current_nuclide = []
+	df_zeroed = pd.DataFrame(columns=df.columns)  # empty dataframe with column names only, to be appended to
+	current_nuclide = [] # iteration nuclide
 
 	for i, row in df.iterrows():
-		if [row['Z'], row['A']] != current_nuclide:
+		if [row['Z'], row['A']] != current_nuclide: # for new nuclide in iteration, insert n number of 0 values
 
-			min_energy = row['ERG']
-			energy_app_list = np.linspace(0, min_energy-0.1, 10)
+			min_energy = row['ERG'] # Threshold energy
+			energy_app_list = np.linspace(0, min_energy-0.1, 20) # 20 values, 0 to threshold MeV - 0.1
 
-			dummy_row = row
-			dummy_row['XS'] = 0.0
-
+			dummy_row = row # to be copied
+			dummy_row['XS'] = 0.0 # set XS value to 0 for all energies below threshold
 
 			for erg in energy_app_list:
-				dummy_row['ERG'] = erg
-				df_zeroed = df_zeroed._append(dummy_row, ignore_index=True)
+				dummy_row['ERG'] = erg # set energy value
+				df_zeroed = df_zeroed._append(dummy_row, ignore_index=True) # append new row
 
-			current_nuclide = [row['Z'],row['A']]
-
-
+			current_nuclide = [row['Z'],row['A']] # once iteration complete, update the iteration nuclide
 		else:
-			df_zeroed = df_zeroed._append(row, ignore_index=True)
+			df_zeroed = df_zeroed._append(row, ignore_index=True) # if below-threshold values have already been added, append normal row
 
-		print(current_nuclide)
+		print(current_nuclide) # tracker
 
-	print(df_zeroed)
+	df_zeroed.index = range(len(df_zeroed)) # reindex dataframe
+
 	return df_zeroed
 
 
 
-df_zero = zero_maker(df=df)
+df_zero = zero_maker(df=df_test)
+
+df_zero.to_csv('zeroed_1_xs_fund_feateng.csv')
 
 
 
-
-
-X_test, y_test = make_test([[26,56]], df=df_zero)
+X_test, y_test = make_test([[78,195]], df=df_zero)
 
 
 
 plt.figure()
 plt.plot(X_test[:,4], y_test)
 plt.show()
+
 
 
