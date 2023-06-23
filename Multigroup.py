@@ -51,9 +51,9 @@ def make_train(df: pd.DataFrame) -> tuple[list, list]:
 	S2n_train = []
 	S2p_train = []
 	# XS_train = []
-	# Sp_train = []
-	# Sn_train = []
-	# BEA_train = []
+	Sp_train = []
+	Sn_train = []
+	BEA_train = []
 	# Pairing_train = []
 	# Sn_c_train = []  # Sn compound
 	# gd_train = []
@@ -141,10 +141,9 @@ def make_train(df: pd.DataFrame) -> tuple[list, list]:
 		A_train.append(df_temporary['A'][0])
 		S2n_train.append(df_temporary['S2n'][0])
 		S2p_train.append(df_temporary['S2p'][0])
-		# Energy_train.append(df_temporary['ERG'][0])
-		# Sp_train.append(df_temporary['Sp'][0])
-		# Sn_train.append(df_temporary['Sn'][0])
-		# BEA_train.append(df_temporary['BEA'][0])
+		Sp_train.append(df_temporary['Sp'][0])
+		Sn_train.append(df_temporary['Sn'][0])
+		BEA_train.append(df_temporary['BEA'][0])
 		# Pairing_train.append(df_temporary['Pairing'][0])
 		# Sn_c_train.append(Sn_compound[idx])
 		# gd_train.append(gamma_deformation[idx])
@@ -203,7 +202,8 @@ def make_train(df: pd.DataFrame) -> tuple[list, list]:
 		# cat_neutron_train.append(magic_n[idx])
 		# cat_double_train.append(magic_d[idx])
 	X = np.array([Z_train, A_train, S2n_train, S2p_train,
-				  # Sp_train, Sn_train, BEA_train, Pairing_train, Sn_c_train,
+				  Sp_train, Sn_train, BEA_train,
+				  # Pairing_train, Sn_c_train,
 				  # gd_train, N_train, bd_train, Sn_d_train,
 				  # Sp_d_train,
 				  # S2n_d_train,
@@ -279,72 +279,71 @@ def make_test(nuclides: list, df: pd.DataFrame):
 	A_test = []
 	S2n_test = []
 	S2p_test = []
-	# XS_train = []
-	# Sp_train = []
-	# Sn_train = []
-	# BEA_train = []
-	# Pairing_train = []
-	# Sn_c_train = []  # Sn compound
-	# gd_train = []
-	# N_train = [] # neutron number
-	# bd_train = []
-	# Radius_train = []
-	# n_gap_erg_train = []
-	# n_chem_erg_train = []
-	# xs_max_train = []
-	# n_rms_radius_train = []
-	# octupole_deformation_train = []
-	# cat_proton_train = []
-	# cat_neutron_train = []
-	# cat_double_train = []
+	Sp_test = []
+	Sn_test = []
+	BEA_test = []
+	# Pairing_test = []
+	# Sn_c_test = []  # Sn compound
+	# gd_test = []
+	# N_test = [] # neutron number
+	# bd_test = []
+	# Radius_test = []
+	# n_gap_erg_test = []
+	# n_chem_erg_test = []
+	# xs_max_test = []
+	# n_rms_radius_test = []
+	# octupole_deformation_test = []
+	# cat_proton_test = []
+	# cat_neutron_test = []
+	# cat_double_test = []
 
-	# ME_train = []
-	# Z_even_train = []
-	# A_even_train = []
-	# N_even_train = []
+	# ME_test = []
+	# Z_even_test = []
+	# A_even_test = []
+	# N_even_test = []
 
-	# Shell_train = []
-	# Parity_train = []
-	# Spin_train = []
-	# Decay_Const_train = []
-	# Deform_train = []
-	# p_gap_erg_train = []
-	# p_chem_erg_train = []
+	# Shell_test = []
+	# Parity_test = []
+	# Spin_test = []
+	# Decay_Const_test = []
+	# Deform_test = []
+	# p_gap_erg_test = []
+	# p_chem_erg_test = []
 	#
-	# p_rms_radius_train = []
-	# rms_radius_train = []
+	# p_rms_radius_test = []
+	# rms_radius_test = []
 
 	# Daughter nucleus properties
-	# Sn_d_train = []
-	# Sp_d_train = []
-	# S2n_d_train = []
-	# Pairing_daughter_train = []
-	# Parity_daughter_train = []
-	# BEA_daughter_train = []
-	# S2p_daughter_train = []
-	# Shell_daughter_train = []
-	# Decay_daughter_train = []
-	# ME_daughter_train = []
-	# Radius_daughter_train = []
-	# BEA_A_daughter_train = []
-	# Spin_daughter_train = []
-	# Deform_daughter_train = []
+	# Sn_d_test = []
+	# Sp_d_test = []
+	# S2n_d_test = []
+	# Pairing_daughter_test = []
+	# Parity_daughter_test = []
+	# BEA_daughter_test = []
+	# S2p_daughter_test = []
+	# Shell_daughter_test = []
+	# Decay_daughter_test = []
+	# ME_daughter_test = []
+	# Radius_daughter_test = []
+	# BEA_A_daughter_test = []
+	# Spin_daughter_test = []
+	# Deform_daughter_test = []
 
 	# Compound nucleus properties
-	# Sp_compound_train = []
-	# BEA_compound_train = []
-	# S2n_compound_train = []
-	# S2p_compound_train = []
-	# Decay_compound_train = []
-	# Sn_compound_train = []
-	# Shell_compound_train = []
-	# Spin_compound_train = []
-	# Radius_compound_train = []
-	# Deform_compound_train = []
-	# ME_compound_train = []
-	# BEA_A_compound_train = []
-	# Pairing_compound_train = []
-	# Parity_compound_train = []
+	# Sp_compound_test = []
+	# BEA_compound_test = []
+	# S2n_compound_test = []
+	# S2p_compound_test = []
+	# Decay_compound_test = []
+	# Sn_compound_test = []
+	# Shell_compound_test = []
+	# Spin_compound_test = []
+	# Radius_compound_test = []
+	# Deform_compound_test = []
+	# ME_compound_test = []
+	# BEA_A_compound_test = []
+	# Pairing_compound_test = []
+	# Parity_compound_test = []
 
 	##########
 	# Target value:
@@ -371,76 +370,72 @@ def make_test(nuclides: list, df: pd.DataFrame):
 		numpy_energy = np.array(df_temporary['ERG'])
 
 		Energy_ranges.append([numpy_energy[0], numpy_energy[-1]])
-	# XS_test.append(XS[j])
-	# Sp_test.append(Sep_p[j])
-	# Sn_test.append(Sep_n[j])
-	# BEA_test.append(BEA[j])
-	# Pairing_test.append(Pairing[j])
-	# Sn_c_test.append(Sn_compound[j])
-	# gd_test.append(gamma_deformation[j])
-	# N_test.append(N[j])
-	# bd_test.append(beta_deformation[j])
-	# Sn_d_test.append(Sn_daughter[j])
-	# Sp_d_test.append(Sp_daughter[j])
-	# S2n_d_test.append(S2n_daughter[j])
-	# Radius_test.append(Radius[j])
-	# n_gap_erg_test.append(n_gap_erg[j])
-	# n_chem_erg_test.append(n_chem_erg[j])
-	# Pairing_daughter_test.append(Pairing_daughter[j])
-	# # xs_max_test.append(np.nan) # cheat feature - nan
-	# # octupole_deformation_test.append(octupole_deformation[j])
-	#
-	# # Parity_daughter_test.append(Parity_daughter[j])
-	# n_rms_radius_test.append(n_rms_radius[j])
-	# Decay_compound_test.append(Decay_compound[j]) # D_c
-	# BEA_daughter_test.append(BEA_daughter[j])
-	#
-	# BEA_compound_test.append(BEA_compound[j])
-	#
-	# S2n_compound_test.append(S2n_compound[j])
-	# S2p_compound_test.append(S2p_compound[j])
-	#
-	# ME_test.append(ME[j])
-	# # Z_even_test.append(Z_even[j])
-	# # A_even_test.append(A_even[j])
-	# # N_even_test.append(N_even[j])
-	# Shell_test.append(Shell[j])
-	# Parity_test.append(Parity[j])
-	# Spin_test.append(Spin[j])
-	# Decay_Const_test.append(Decay_Const[j])
-	# Deform_test.append(Deform[j])
-	# p_gap_erg_test.append(p_gap_erg[j])
-	# p_chem_erg_test.append(p_chem_erg[j])
-	# p_rms_radius_test.append(p_rms_radius[j])
-	# rms_radius_test.append(rms_radius[j])
-	# Sp_compound_test.append(Sp_compound[j])
-	# Sn_compound_test.append(Sn_compound[j])
-	# Shell_compound_test.append(Shell_compound[j])
-	# # S2p_daughter_test.append(S2p_daughter[j])
-	# Shell_daughter_test.append(Shell_daughter[j])
-	# Spin_compound_test.append(Spin_compound[j])
-	# Radius_compound_test.append(Radius_compound[j])
-	# Deform_compound_test.append(Deform_compound[j])
-	# ME_compound_test.append(ME_compound[j])
-	# BEA_A_compound_test.append(BEA_A_compound[j])
-	# Decay_daughter_test.append(Decay_daughter[j])
-	# ME_daughter_test.append(ME_daughter[j])
-	# Radius_daughter_test.append(Radius_daughter[j])
-	# Pairing_compound_test.append(Pairing_compound[j])
-	# Parity_compound_test.append(Parity_compound[j])
-	# BEA_A_daughter_test.append(BEA_A_daughter[j])
-	# # Spin_daughter_test.append(Spin_daughter[j])
-	# Deform_daughter_test.append(Deform_daughter[j])
-	# cat_proton_test.append(magic_p[j])
-	# cat_neutron_test.append(magic_n[j])
-	# cat_double_test.append(magic_d[j])
-
-
-
+		Sp_test.append(df_temporary['Sp'][0])
+		Sn_test.append(df_temporary['Sn'][0])
+		BEA_test.append(df_temporary['BEA'][0])
+		# Pairing_test.append(Pairing[j])
+		# Sn_c_test.append(Sn_compound[j])
+		# gd_test.append(gamma_deformation[j])
+		# N_test.append(N[j])
+		# bd_test.append(beta_deformation[j])
+		# Sn_d_test.append(Sn_daughter[j])
+		# Sp_d_test.append(Sp_daughter[j])
+		# S2n_d_test.append(S2n_daughter[j])
+		# Radius_test.append(Radius[j])
+		# n_gap_erg_test.append(n_gap_erg[j])
+		# n_chem_erg_test.append(n_chem_erg[j])
+		# Pairing_daughter_test.append(Pairing_daughter[j])
+		# # xs_max_test.append(np.nan) # cheat feature - nan
+		# # octupole_deformation_test.append(octupole_deformation[j])
+		#
+		# # Parity_daughter_test.append(Parity_daughter[j])
+		# n_rms_radius_test.append(n_rms_radius[j])
+		# Decay_compound_test.append(Decay_compound[j]) # D_c
+		# BEA_daughter_test.append(BEA_daughter[j])
+		#
+		# BEA_compound_test.append(BEA_compound[j])
+		#
+		# S2n_compound_test.append(S2n_compound[j])
+		# S2p_compound_test.append(S2p_compound[j])
+		#
+		# ME_test.append(ME[j])
+		# # Z_even_test.append(Z_even[j])
+		# # A_even_test.append(A_even[j])
+		# # N_even_test.append(N_even[j])
+		# Shell_test.append(Shell[j])
+		# Parity_test.append(Parity[j])
+		# Spin_test.append(Spin[j])
+		# Decay_Const_test.append(Decay_Const[j])
+		# Deform_test.append(Deform[j])
+		# p_gap_erg_test.append(p_gap_erg[j])
+		# p_chem_erg_test.append(p_chem_erg[j])
+		# p_rms_radius_test.append(p_rms_radius[j])
+		# rms_radius_test.append(rms_radius[j])
+		# Sp_compound_test.append(Sp_compound[j])
+		# Sn_compound_test.append(Sn_compound[j])
+		# Shell_compound_test.append(Shell_compound[j])
+		# # S2p_daughter_test.append(S2p_daughter[j])
+		# Shell_daughter_test.append(Shell_daughter[j])
+		# Spin_compound_test.append(Spin_compound[j])
+		# Radius_compound_test.append(Radius_compound[j])
+		# Deform_compound_test.append(Deform_compound[j])
+		# ME_compound_test.append(ME_compound[j])
+		# BEA_A_compound_test.append(BEA_A_compound[j])
+		# Decay_daughter_test.append(Decay_daughter[j])
+		# ME_daughter_test.append(ME_daughter[j])
+		# Radius_daughter_test.append(Radius_daughter[j])
+		# Pairing_compound_test.append(Pairing_compound[j])
+		# Parity_compound_test.append(Parity_compound[j])
+		# BEA_A_daughter_test.append(BEA_A_daughter[j])
+		# # Spin_daughter_test.append(Spin_daughter[j])
+		# Deform_daughter_test.append(Deform_daughter[j])
+		# cat_proton_test.append(magic_p[j])
+		# cat_neutron_test.append(magic_n[j])
+		# cat_double_test.append(magic_d[j])
 
 	xtest = np.array([Z_test, A_test, S2n_test, S2p_test,
-					  # Energy_test,
-					  # Sp_test, Sn_test, BEA_test, Pairing_test, Sn_c_test,
+					  Sp_test, Sn_test, BEA_test,
+					  # Pairing_test, Sn_c_test,
 					  # gd_test, N_test, bd_test,
 					  # Sn_d_test,
 					  # Sp_d_test,
