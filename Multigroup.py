@@ -126,6 +126,7 @@ def make_train(df: pd.DataFrame) -> tuple[list, list]:
 
 	XS_avg_train = []
 
+
 	for nuc in all_nuclides:  # MT = 16 is (n,2n) (already extracted)
 		if nuc in validation_nuclides:
 			continue # prevents loop from adding test isotope to training data
@@ -349,6 +350,7 @@ def make_test(nuclides: list, df: pd.DataFrame):
 	# Target value:
 
 	XS_avg_test = []
+	Energy_ranges = []
 
 	for nuc in validation_nuclides:
 
@@ -365,6 +367,10 @@ def make_test(nuclides: list, df: pd.DataFrame):
 		S2p_test.append(df_temporary['S2p'][0])
 
 		XS_avg_test.append(mean_XS)
+
+		numpy_energy = np.array(df_temporary['ERG'])
+
+		Energy_ranges.append([numpy_energy[0], numpy_energy[-1]])
 	# XS_test.append(XS[j])
 	# Sp_test.append(Sep_p[j])
 	# Sn_test.append(Sep_n[j])
@@ -491,14 +497,14 @@ def make_test(nuclides: list, df: pd.DataFrame):
 
 	y_test = XS_avg_test
 
-	return xtest, y_test
+	return xtest, y_test, Energy_ranges
 
 
 if __name__ == "__main__":
 
 	X_train, y_train = make_train(df=df) # make training matrix
 
-	X_test, y_test = make_test(validation_nuclides, df=df_test)
+	X_test, y_test, erg_ranges = make_test(validation_nuclides, df=df_test)
 
 	# X_train must be in the shape (n_samples, n_features)
 	# and y_train must be in the shape (n_samples) of the target
@@ -517,7 +523,8 @@ if __name__ == "__main__":
 
 	predictions = model.predict(X_test) # XS predictions
 
-	for true, pred, nuc in zip(y_test, predictions, validation_nuclides):
+	for true, pred, nuc, rg in zip(y_test, predictions, validation_nuclides, erg_ranges):
+		print(f"Range: {rg[0]:0.1f} MeV - {rg[1]} MeV")
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} True: {true:0.4f} b Prediction: {pred:0.4f} b %Error: {((pred - true)/true) *100:0.1f}% \n")
 	print()
 
