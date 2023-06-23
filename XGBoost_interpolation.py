@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import warnings
 from numba.core.errors import NumbaDeprecationWarning
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
@@ -20,7 +22,7 @@ df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
 
 
-def anomaly_remover(dfa):
+def anomaly_remover(dfa: pd.DataFrame):
 	anomalies = [[14, 28], [14, 29], [14, 30], [15, 31], [20, 40], [20, 42], [20, 43], [20, 44], [20, 46],
 				 [20, 48], [24, 50], [24, 52], [24, 53], [24, 54], [28, 58], [28, 60], [28, 61], [28, 62], [28, 64],
 				 [29, 63], [29, 65], [41, 93], [80, 196], [80, 198], [80, 199], [80, 200], [80, 201], [80, 202],
@@ -47,8 +49,8 @@ def anomaly_remover(dfa):
 	return dfa
 
 df_test = anomaly_remover(dfa = df_test)
-# use once then save dataframe
-def interpolate_pandas(df, inter_col):
+# use once then save dataframe;.
+def interpolate_pandas(df: pd.DataFrame, inter_col: list) -> pd.DataFrame:
 	"""Performs linear interpolation on XS data, using pandas.
 	df: dataframe to be interpolated
 	inter_col: columns of data to be interpolated. In this case, only XS and ERG
@@ -58,7 +60,7 @@ def interpolate_pandas(df, inter_col):
 	all_cols = df.columns.to_list() # list of header names (strings)
 	remain_cols = [c for c in all_cols if c not in inter_col] # list of columns which will NOT be interpolated
 
-	df_inter = pd.DataFrame(columns=df.columns)
+	df_inter = pd.DataFrame(columns=df.columns) # empty dataframe with column names only
 
 	for i, row in df.iterrows():
 		df_inter = df_inter._append(row, ignore_index=True)
@@ -178,13 +180,13 @@ while len(validation_nuclides) < validation_set_size:
 	if choice not in validation_nuclides:
 		validation_nuclides.append(choice)
 
-
-def make_train(df, la=25, ua=210):
+def make_train(df: pd.DataFrame, la: int = 25, ua: int = 210) -> tuple[list, list]:
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
 	df: dataframe to use
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
+
 
 	MT = df['MT']
 	ME = df['ME']
@@ -203,7 +205,7 @@ def make_train(df, la=25, ua=210):
 	# octupole_deformation = df['octopole_deformation']
 	# Z_even = df['Z_even']
 	# A_even = df['A_even']
-	N_even = df['N_even']
+	# N_even = df['N_even']
 	N = df['N']
 	# xs_max = df['xs_max']
 	Radius = df['Radius']
@@ -247,11 +249,11 @@ def make_train(df, la=25, ua=210):
 	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
 	Shell_daughter = df['Shell_daughter']
-	S2p_daughter = df['S2p_daughter']
+	# S2p_daughter = df['S2p_daughter']
 	Radius_daughter = df['Radius_daughter']
 	ME_daughter = df['ME_daughter']
 	BEA_A_daughter = df['BEA_A_daughter']
-	Spin_daughter = df['Spin_daughter']
+	# Spin_daughter = df['Spin_daughter']
 	Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
 
@@ -283,7 +285,7 @@ def make_train(df, la=25, ua=210):
 	ME_train = []
 	# Z_even_train = []
 	# A_even_train = []
-	N_even_train = []
+	# N_even_train = []
 
 	Shell_train = []
 	Parity_train = []
@@ -303,13 +305,13 @@ def make_train(df, la=25, ua=210):
 	Pairing_daughter_train = []
 	# Parity_daughter_train = []
 	BEA_daughter_train = []
-	S2p_daughter_train = []
+	# S2p_daughter_train = []
 	Shell_daughter_train = []
 	Decay_daughter_train = []
 	ME_daughter_train = []
 	Radius_daughter_train = []
 	BEA_A_daughter_train = []
-	Spin_daughter_train = []
+	# Spin_daughter_train = []
 	Deform_daughter_train = []
 
 	# Compound nucleus properties
@@ -367,7 +369,7 @@ def make_train(df, la=25, ua=210):
 			ME_train.append(ME[idx])
 			# Z_even_train.append(Z_even[idx])
 			# A_even_train.append(A_even[idx])
-			N_even_train.append(N_even[idx])
+			# N_even_train.append(N_even[idx])
 			Shell_train.append(Shell[idx])
 			Parity_train.append(Parity[idx])
 			Spin_train.append(Spin[idx])
@@ -380,7 +382,7 @@ def make_train(df, la=25, ua=210):
 			Sp_compound_train.append(Sp_compound[idx])
 			Sn_compound_train.append(Sn_compound[idx])
 			Shell_compound_train.append(Shell_compound[idx])
-			S2p_daughter_train.append(S2p_daughter[idx])
+			# S2p_daughter_train.append(S2p_daughter[idx])
 			Shell_daughter_train.append(Shell_daughter[idx])
 			Spin_compound_train.append(Spin_compound[idx])
 			Radius_compound_train.append(Radius_compound[idx])
@@ -393,7 +395,7 @@ def make_train(df, la=25, ua=210):
 			Pairing_compound_train.append(Pairing_compound[idx])
 			Parity_compound_train.append(Parity_compound[idx])
 			BEA_A_daughter_train.append(BEA_A_daughter[idx])
-			Spin_daughter_train.append(Spin_daughter[idx])
+			# Spin_daughter_train.append(Spin_daughter[idx])
 			Deform_daughter_train.append(Deform_daughter[idx])
 			cat_proton_train.append(magic_p[idx])
 			cat_neutron_train.append(magic_n[idx])
@@ -420,7 +422,7 @@ def make_train(df, la=25, ua=210):
 				  ME_train,
 				  # Z_even_train,
 				  # A_even_train,
-				  N_even_train,
+				  # N_even_train,
 				  Shell_train,
 				  Parity_train,
 				  Spin_train,
@@ -433,7 +435,7 @@ def make_train(df, la=25, ua=210):
 				  Sp_compound_train,
 				  Sn_compound_train,
 				  Shell_compound_train,
-				  S2p_daughter_train,
+				  # S2p_daughter_train,
 				  Shell_daughter_train,
 				  Spin_compound_train,
 				  Radius_compound_train,
@@ -446,20 +448,19 @@ def make_train(df, la=25, ua=210):
 				  Pairing_compound_train,
 				  Parity_compound_train,
 				  BEA_A_daughter_train,
-				  Spin_daughter_train,
+				  # Spin_daughter_train,
 				  Deform_daughter_train,
 				  cat_proton_train,
 				  cat_neutron_train,
 				  cat_double_train,
 				  ])
-	y = np.array(XS_train) # cross sections
+	y = np.array(XS_train)
 
 	X = np.transpose(X) # forms matrix into correct shape (values, features)
 	return X, y
 
 
-
-def make_test(nuclides, df):
+def make_test(nuclides: list, df: pd.DataFrame):
 	"""
 	nuclides: array of (1x2) arrays containing Z of nuclide at index 0, and A at index 1.
 	df: dataframe used for validation data
@@ -489,7 +490,7 @@ def make_test(nuclides, df):
 	# octupole_deformation = df['octopole_deformation']
 	# Z_even = df['Z_even']
 	# A_even = df['A_even']
-	N_even = df['N_even']
+	# N_even = df['N_even']
 	N = df['N']
 	# xs_max = df['xs_max']
 	Radius = df['Radius']
@@ -533,11 +534,11 @@ def make_test(nuclides, df):
 	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
 	Shell_daughter = df['Shell_daughter']
-	S2p_daughter = df['S2p_daughter']
+	# S2p_daughter = df['S2p_daughter']
 	Radius_daughter = df['Radius_daughter']
 	ME_daughter = df['ME_daughter']
 	BEA_A_daughter = df['BEA_A_daughter']
-	Spin_daughter = df['Spin_daughter']
+	# Spin_daughter = df['Spin_daughter']
 	Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
 
@@ -570,6 +571,17 @@ def make_test(nuclides, df):
 	S2n_d_test = []
 	n_rms_radius_test = []
 	Decay_compound_test = []
+	# S2p_daughter_test = []
+	Shell_daughter_test = []
+	Decay_daughter_test = []
+	ME_daughter_test = []
+	BEA_daughter_test = []
+	Radius_daughter_test = []
+	BEA_A_daughter_test = []
+	# Spin_daughter_test = []
+	Deform_daughter_test = []
+	Pairing_daughter_test = []
+	# Parity_daughter_test = []
 
 
 	BEA_compound_test = []
@@ -579,7 +591,7 @@ def make_test(nuclides, df):
 	ME_test = []
 	# Z_even_test = []
 	# A_even_test = []
-	N_even_test = []
+	# N_even_test = []
 
 	Shell_test = []
 	Parity_test = []
@@ -603,17 +615,7 @@ def make_test(nuclides, df):
 	Pairing_compound_test = []
 	Parity_compound_test = []
 
-	S2p_daughter_test = []
-	Shell_daughter_test = []
-	Decay_daughter_test = []
-	ME_daughter_test = []
-	BEA_daughter_test = []
-	Radius_daughter_test = []
-	BEA_A_daughter_test = []
-	Spin_daughter_test = []
-	Deform_daughter_test = []
-	Pairing_daughter_test = []
-	# Parity_daughter_test = []
+
 
 	cat_proton_test = []
 	cat_neutron_test = []
@@ -659,7 +661,7 @@ def make_test(nuclides, df):
 				ME_test.append(ME[j])
 				# Z_even_test.append(Z_even[j])
 				# A_even_test.append(A_even[j])
-				N_even_test.append(N_even[j])
+				# N_even_test.append(N_even[j])
 				Shell_test.append(Shell[j])
 				Parity_test.append(Parity[j])
 				Spin_test.append(Spin[j])
@@ -672,7 +674,7 @@ def make_test(nuclides, df):
 				Sp_compound_test.append(Sp_compound[j])
 				Sn_compound_test.append(Sn_compound[j])
 				Shell_compound_test.append(Shell_compound[j])
-				S2p_daughter_test.append(S2p_daughter[j])
+				# S2p_daughter_test.append(S2p_daughter[j])
 				Shell_daughter_test.append(Shell_daughter[j])
 				Spin_compound_test.append(Spin_compound[j])
 				Radius_compound_test.append(Radius_compound[j])
@@ -685,7 +687,7 @@ def make_test(nuclides, df):
 				Pairing_compound_test.append(Pairing_compound[j])
 				Parity_compound_test.append(Parity_compound[j])
 				BEA_A_daughter_test.append(BEA_A_daughter[j])
-				Spin_daughter_test.append(Spin_daughter[j])
+				# Spin_daughter_test.append(Spin_daughter[j])
 				Deform_daughter_test.append(Deform_daughter[j])
 				cat_proton_test.append(magic_p[j])
 				cat_neutron_test.append(magic_n[j])
@@ -716,7 +718,7 @@ def make_test(nuclides, df):
 					  ME_test,
 					  # Z_even_test,
 					  # A_even_test,
-					  N_even_test,
+					  # N_even_test,
 					  Shell_test,
 					  Parity_test,
 					  Spin_test,
@@ -729,7 +731,7 @@ def make_test(nuclides, df):
 					  Sp_compound_test,
 					  Sn_compound_test,
 					  Shell_compound_test,
-					  S2p_daughter_test,
+					  # S2p_daughter_test,
 					  Shell_daughter_test,
 					  Spin_compound_test,
 					  Radius_compound_test,
@@ -742,7 +744,7 @@ def make_test(nuclides, df):
 					  Pairing_compound_test,
 					  Parity_compound_test,
 					  BEA_A_daughter_test,
-					  Spin_daughter_test,
+					  # Spin_daughter_test,
 					  Deform_daughter_test,
 					  cat_proton_test,
 					  cat_neutron_test,
@@ -759,7 +761,6 @@ if __name__ == "__main__":
 	# lower_a = int(input("Enter lower boundary A: "))
 	# upper_a = int(input("Enter upper boundary A: "))
 
-
 	X_train, y_train = make_train(df=df) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
@@ -769,11 +770,15 @@ if __name__ == "__main__":
 
 	print("Data prep done")
 
+	# model = xg.XGBRegressor(n_estimators = 600, # number of trees
+	# 						max_leaves=0, # infinite possible nodes
+	# 						max_depth=7, # number of splits
+	# 						learning_rate=0.08)
 
-	model = xg.XGBRegressor(n_estimators = 600, # number of trees
-							max_leaves=0, # infinite possible nodes
-							max_depth=7, # number of splits
-							learning_rate=0.08)
+	model = xg.XGBRegressor(n_estimators = 850,
+							max_leaves = 0,
+							max_depth=9,
+							learning_rate=0.07)
 
 	time1 = time.time()
 	model.fit(X_train, y_train)
@@ -782,6 +787,7 @@ if __name__ == "__main__":
 
 	predictions = model.predict(X_test) # XS predictions
 
+	# Form arrays for plots below
 	XS_plotmatrix = []
 	E_plotmatrix = []
 	P_plotmatrix = []
@@ -811,74 +817,69 @@ if __name__ == "__main__":
 		plt.xlabel('Energy / MeV')
 		plt.show()
 
-		r2 = r2_score(pred_xs, true_xs) # R^2 score for this specific nuclide
+		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
-
-
 	print(f'completed in {time.time() - time1} s')
 
-
-
-
-	explainer = shap.Explainer(model.predict, X_train,
-							   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
-											   'BEA', 'P', 'Snc', 'g-def', 'N',
-											   'b-def',
-											   'Sn_da',
-											   'Sp_d',
-											   'S2n_d',
-											   'Radius',
-											   'n_g_erg',
-											   'n_c_erg',
-											   # 'xsmax',
-											   'n_rms_r',
-											   # 'oct_def',
-											   'D_c',
-											   'BEA_d',
-											   'BEA_c',
-											   'Pair_d',
-											   # 'Par_d',
-											   'S2n_c',
-											   'S2p_c',
-											   'ME',
-											   # 'Z_even',
-											   # 'A_even',
-											   'N_even',
-											   'Shell',
-											   'Par',
-											   'Spin',
-											   'Decay',
-											   'Deform',
-											   'p_g_e',
-											   'p_c_e',
-											   'p_rms_r',
-											   'rms_r',
-											   'Sp_c',
-											   'S_n_c',
-											   'Shell_c',
-											   'S2p-d',
-											   'Shell-d',
-											   'Spin-c',
-											   'Rad-c',
-											   'Def-c',
-											   'ME-c',
-											   'BEA-A-c',
-											   'Decay-d',
-											   'ME-d',
-											   'Rad-d',
-											   'Pair-c',
-											   'Par-c',
-											   'BEA-A-d',
-											   'Spin-d',
-											   'Def-d',
-											   'mag_p',
-											   'mag_n',
-											   'mag_d',
-											   ]) # SHAP feature importance analysis
-	shap_values = explainer(X_test)
+	# explainer = shap.Explainer(model.predict, X_train,
+	# 						   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
+	# 										   'BEA', 'P', 'Snc', 'g-def', 'N',
+	# 										   'b-def',
+	# 										   'Sn_da',
+	# 										   'Sp_d',
+	# 										   'S2n_d',
+	# 										   'Radius',
+	# 										   'n_g_erg',
+	# 										   'n_c_erg',
+	# 										   # 'xsmax',
+	# 										   'n_rms_r',
+	# 										   # 'oct_def',
+	# 										   'D_c',
+	# 										   'BEA_d',
+	# 										   'BEA_c',
+	# 										   'Pair_d',
+	# 										   # 'Par_d',
+	# 										   'S2n_c',
+	# 										   'S2p_c',
+	# 										   'ME',
+	# 										   # 'Z_even',
+	# 										   # 'A_even',
+	# 										   # 'N_even',
+	# 										   'Shell',
+	# 										   'Par',
+	# 										   'Spin',
+	# 										   'Decay',
+	# 										   'Deform',
+	# 										   'p_g_e',
+	# 										   'p_c_e',
+	# 										   'p_rms_r',
+	# 										   'rms_r',
+	# 										   'Sp_c',
+	# 										   'S_n_c',
+	# 										   'Shell_c',
+	# 										   # 'S2p-d',
+	# 										   'Shell-d',
+	# 										   'Spin-c',
+	# 										   'Rad-c',
+	# 										   'Def-c',
+	# 										   'ME-c',
+	# 										   'BEA-A-c',
+	# 										   'Decay-d',
+	# 										   'ME-d',
+	# 										   'Rad-d',
+	# 										   'Pair-c',
+	# 										   'Par-c',
+	# 										   'BEA-A-d',
+	# 										   # 'Spin-d',
+	# 										   'Def-d',
+	# 										   'mag_p',
+	# 										   'mag_n',
+	# 										   'mag_d',
+	# 										   ]) # SHAP feature importance analysis
+	# shap_values = explainer(X_test)
 
 	# name features for FIA
 	model.get_booster().feature_names = ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
@@ -904,7 +905,7 @@ if __name__ == "__main__":
 										 'ME',
 										 # 'Z_even',
 										 # 'A_even',
-										 'N_even',
+										 # 'N_even',
 										 'Shell',
 										 'Par',
 										 'Spin',
@@ -917,7 +918,7 @@ if __name__ == "__main__":
 										 'Sp_c',
 										 'Sn_c',
 										 'Shell_c',
-										 'S2p_d',
+										 # 'S2p-d',
 										 'Shell-d',
 										 'Spin-c',
 										 'Rad-c',
@@ -930,7 +931,7 @@ if __name__ == "__main__":
 										 'Pair-c',
 										 'Par-c',
 										 'BEA-A-d',
-										 'Spin-d',
+										 # 'Spin-d',
 										 'Def-d',
 										 'mag_p',
 										 'mag-n',
@@ -941,13 +942,5 @@ if __name__ == "__main__":
 	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60) # metric is total gain
 	plt.show()
 
-
-
-
-	# Form arrays for plots below
-
-
-	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
-	shap.plots.waterfall(shap_values[0], max_display=70)
-
-
+	# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+	# shap.plots.waterfall(shap_values[0], max_display=70)
