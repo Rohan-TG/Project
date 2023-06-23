@@ -9,6 +9,7 @@ import xgboost as xg
 import time
 import shap
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import KFold, StratifiedKFold, GroupKFold
 import periodictable
 
 
@@ -171,7 +172,7 @@ df['cat_magic_neutron'].astype('category')
 df['cat_magic_double'].astype("category")
 
 validation_nuclides = [] # list of nuclides used for validation
-validation_set_size = 25 # number of nuclides hidden from training
+validation_set_size = 0 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -780,7 +781,7 @@ if __name__ == "__main__":
 
 	print("Training complete")
 
-	cv_params = {"objective":"reg:squarederror",'colsample_bytree': 0.3,'learning_rate': 0.1,
+	cv_params = {"objective":"reg:squarederror",'learning_rate': 0.08, 'n_estimators': 600,
                 'max_depth': 7, 'alpha': 10}
 
 	dmatrix = xg.DMatrix(data = X_train, label = y_train)
@@ -940,14 +941,14 @@ if __name__ == "__main__":
 		plt.xlabel('Energy / MeV')
 		plt.show()
 
-		r2 = r2_score(pred_xs, true_xs) # R^2 score for this specific nuclide
+		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
 
 	# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
 
-	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
-	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
+	# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
+	# print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
 
 
-	print(f'completed in {time.time() - time1} s')
+	# print(f'completed in {time.time() - time1} s')
