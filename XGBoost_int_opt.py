@@ -1,4 +1,6 @@
 import warnings
+
+import hyperopt.early_stop
 from numba.core.errors import NumbaDeprecationWarning
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 import pandas as pd
@@ -658,11 +660,12 @@ def make_test(nuclides, df):
 if __name__ == "__main__":
 
 
-	space = {'n_estimators': hp.choice('n_estimators', [400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000, 1100,
-														1200, 1400, 1500]),
+	space = {'n_estimators': hp.choice('n_estimators', [ 800, 850, 900, 1000, 1100,
+														]),
+			 'subsample': hp.loguniform('subsample', np.log(0.1), np.log(1.0)),
 			 'max_leaves': 0,
-			 'max_depth': scope.int(hp.quniform("max_depth", 5, 12, 1)),
-			 'learning_rate': hp.loguniform('learning_rate', np.log(0.0001), np.log(0.1))}
+			 'max_depth': scope.int(hp.quniform("max_depth", 6, 12, 1)),
+			 'learning_rate': hp.loguniform('learning_rate', np.log(0.001), np.log(0.08))}
 
 	def optimiser(space):
 
@@ -672,7 +675,7 @@ if __name__ == "__main__":
 		validation_nuclides = []  # list of nuclides used for validation
 		validation_set_size = 25  # number of nuclides used for validation
 
-		test_nuclides = [[26,56]]  # nuclides completely screened from training and optimisation. These will only be used in the main
+		test_nuclides = [[26,56], [78,195], [24,52]]  # nuclides completely screened from training and optimisation. These will only be used in the main
 		# train and test script, and are left completely unseen in this script.
 
 		while len(validation_nuclides) < validation_set_size:
@@ -688,7 +691,7 @@ if __name__ == "__main__":
 		X_test, y_test = make_test(nuclides=validation_nuclides, df=df_test)
 		print("Data prep done")
 
-		model = xg.XGBRegressor(**space)
+		model = xg.XGBRegressor(**space, seed = 42)
 
 		evaluation = [(X_train, y_train), (X_test, y_test)]
 
@@ -859,7 +862,8 @@ if __name__ == "__main__":
 				space=space,
 				algo= tpe.suggest,
 				trials=trials,
-				max_evals=60)
+				max_evals=70,
+				early_stop_fn=hyperopt.early_stop.no_progress_loss(15))
 
 	print(best)
 
