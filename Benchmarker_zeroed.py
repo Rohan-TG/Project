@@ -157,7 +157,7 @@ def make_train(df, la=25, ua=210):
 	Radius = df['Radius']
 	Shell = df['Shell']
 	# Parity = df['Parity']
-	Spin = df['Spin']
+	# Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
 	n_gap_erg = df['n_gap_erg']
@@ -191,7 +191,7 @@ def make_train(df, la=25, ua=210):
 	Sn_daughter = df['Sn_daughter']
 	S2n_daughter = df['S2n_daughter']
 	Sp_daughter = df['Sp_daughter']
-	Pairing_daughter = df['Pairing_daughter']
+	# Pairing_daughter = df['Pairing_daughter']
 	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
 	Shell_daughter = df['Shell_daughter']
@@ -235,7 +235,7 @@ def make_train(df, la=25, ua=210):
 
 	Shell_train = []
 	# Parity_train = []
-	Spin_train = []
+	# Spin_train = []
 	Decay_Const_train = []
 	Deform_train = []
 	p_gap_erg_train = []
@@ -248,7 +248,7 @@ def make_train(df, la=25, ua=210):
 	Sn_d_train = []
 	Sp_d_train = []
 	S2n_d_train = []
-	Pairing_daughter_train = []
+	# Pairing_daughter_train = []
 	# Parity_daughter_train = []
 	BEA_daughter_train = []
 	# S2p_daughter_train = []
@@ -302,7 +302,7 @@ def make_train(df, la=25, ua=210):
 			Radius_train.append(Radius[idx])
 			n_gap_erg_train.append(n_gap_erg[idx])
 			n_chem_erg_train.append(n_chem_erg[idx])
-			Pairing_daughter_train.append(Pairing_daughter[idx])
+			# Pairing_daughter_train.append(Pairing_daughter[idx])
 			# Parity_daughter_train.append(Parity_daughter[idx])
 			# xs_max_train.append(xs_max[idx])
 			n_rms_radius_train.append(n_rms_radius[idx])
@@ -318,7 +318,7 @@ def make_train(df, la=25, ua=210):
 			# N_even_train.append(N_even[idx])
 			Shell_train.append(Shell[idx])
 			# Parity_train.append(Parity[idx])
-			Spin_train.append(Spin[idx])
+			# Spin_train.append(Spin[idx])
 			Decay_Const_train.append(Decay_Const[idx])
 			Deform_train.append(Deform[idx])
 			p_gap_erg_train.append(p_gap_erg[idx])
@@ -361,7 +361,7 @@ def make_train(df, la=25, ua=210):
 				  Decay_compound_train,
 				  BEA_daughter_train,
 				  BEA_compound_train,
-				  Pairing_daughter_train,
+				  # Pairing_daughter_train,
 				  # Parity_daughter_train,
 				  S2n_compound_train,
 				  S2p_compound_train,
@@ -371,7 +371,7 @@ def make_train(df, la=25, ua=210):
 				  # N_even_train,
 				  Shell_train,
 				  # Parity_train,
-				  Spin_train,
+				  # Spin_train,
 				  Decay_Const_train,
 				  Deform_train,
 				  p_gap_erg_train,
@@ -442,7 +442,7 @@ def make_test(nuclides, df):
 	Radius = df['Radius']
 	Shell = df['Shell']
 	# Parity = df['Parity']
-	Spin = df['Spin']
+	# Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
 	n_gap_erg = df['n_gap_erg']
@@ -476,7 +476,7 @@ def make_test(nuclides, df):
 	Sn_daughter = df['Sn_daughter']
 	S2n_daughter = df['S2n_daughter']
 	Sp_daughter = df['Sp_daughter']
-	Pairing_daughter = df['Pairing_daughter']
+	# Pairing_daughter = df['Pairing_daughter']
 	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
 	Shell_daughter = df['Shell_daughter']
@@ -526,7 +526,7 @@ def make_test(nuclides, df):
 	BEA_A_daughter_test = []
 	# Spin_daughter_test = []
 	Deform_daughter_test = []
-	Pairing_daughter_test = []
+	# Pairing_daughter_test = []
 	# Parity_daughter_test = []
 
 
@@ -541,7 +541,7 @@ def make_test(nuclides, df):
 
 	Shell_test = []
 	# Parity_test = []
-	Spin_test = []
+	# Spin_test = []
 	Decay_Const_test = []
 	Deform_test = []
 	p_gap_erg_test = []
@@ -590,7 +590,7 @@ def make_test(nuclides, df):
 				Radius_test.append(Radius[j])
 				n_gap_erg_test.append(n_gap_erg[j])
 				n_chem_erg_test.append(n_chem_erg[j])
-				Pairing_daughter_test.append(Pairing_daughter[j])
+				# Pairing_daughter_test.append(Pairing_daughter[j])
 				# xs_max_test.append(np.nan) # cheat feature - nan
 				# octupole_deformation_test.append(octupole_deformation[j])
 
@@ -610,7 +610,7 @@ def make_test(nuclides, df):
 				# N_even_test.append(N_even[j])
 				Shell_test.append(Shell[j])
 				# Parity_test.append(Parity[j])
-				Spin_test.append(Spin[j])
+				# Spin_test.append(Spin[j])
 				Decay_Const_test.append(Decay_Const[j])
 				Deform_test.append(Deform[j])
 				p_gap_erg_test.append(p_gap_erg[j])
@@ -657,7 +657,7 @@ def make_test(nuclides, df):
 					  Decay_compound_test,
 					  BEA_daughter_test,
 					  BEA_compound_test,
-					  Pairing_daughter_test,
+					  # Pairing_daughter_test,
 					  # Parity_daughter_test,
 					  S2n_compound_test,
 					  S2p_compound_test,
@@ -667,7 +667,7 @@ def make_test(nuclides, df):
 					  # N_even_test,
 					  Shell_test,
 					  # Parity_test,
-					  Spin_test,
+					  # Spin_test,
 					  Decay_Const_test,
 					  Deform_test,
 					  p_gap_erg_test,
@@ -702,7 +702,9 @@ def make_test(nuclides, df):
 
 	return xtest, y_test
 
-benchmark_number = 30
+benchmark_number = 16
+
+nuclides_used = []
 
 if __name__ == "__main__":
 	# lower_a = int(input("Enter lower boundary A: "))
@@ -718,8 +720,9 @@ if __name__ == "__main__":
 
 		while len(validation_nuclides) < validation_set_size:
 			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
-			if choice not in validation_nuclides:
+			if choice not in validation_nuclides and choice not in nuclides_used:
 				validation_nuclides.append(choice)
+				nuclides_used.append(choice)
 		print("Test nuclide selection complete")
 
 
@@ -778,8 +781,8 @@ if __name__ == "__main__":
 			# plt.xlabel('Energy / MeV')
 			# plt.show()
 			#
-			# r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
-			# print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+			r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
+			print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
 		overall_r2 = r2_score(y_test, predictions)
 
@@ -862,7 +865,7 @@ if __name__ == "__main__":
 											 'D_c',
 											 'BEA_d',
 											 'BEA_c',
-											 'Pair_d',
+											 # 'Pair_d',
 											 # 'Par_d',
 											 'S2n_c',
 											 'S2p_c',
@@ -872,7 +875,7 @@ if __name__ == "__main__":
 											 # 'N_even',
 											 'Shell',
 											 # 'Par',
-											 'Spin',
+											 # 'Spin',
 											 'Decay',
 											 'Deform',
 											 'p_g_e',
@@ -913,3 +916,5 @@ if __name__ == "__main__":
 print(overall_r2_list)
 print()
 print(f"Overall r2: {np.mean(overall_r2_list)}")
+
+print(nuclides_used)
