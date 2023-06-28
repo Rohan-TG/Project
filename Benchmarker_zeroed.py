@@ -145,7 +145,7 @@ def make_train(df, la=25, ua=210):
 	Sep_p = df['Sp']
 	Sep_n = df['Sn']
 	BEA = df['BEA']
-	Pairing = df['Pairing']
+	# Pairing = df['Pairing']
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	# octupole_deformation = df['octopole_deformation']
@@ -181,7 +181,7 @@ def make_train(df, la=25, ua=210):
 	BEA_A_compound = df['BEA_A_compound']
 	Radius_compound = df['Radius_compound']
 	ME_compound = df['ME_compound']
-	Pairing_compound = df['Pairing_compound']
+	# Pairing_compound = df['Pairing_compound']
 	Shell_compound = df['Shell_compound']
 	Spin_compound = df['Spin_compound']
 	# Parity_compound = df['Parity_compound']
@@ -194,9 +194,9 @@ def make_train(df, la=25, ua=210):
 	# Pairing_daughter = df['Pairing_daughter']
 	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
-	Shell_daughter = df['Shell_daughter']
+	# Shell_daughter = df['Shell_daughter']
 	# S2p_daughter = df['S2p_daughter']
-	Radius_daughter = df['Radius_daughter']
+	# Radius_daughter = df['Radius_daughter']
 	ME_daughter = df['ME_daughter']
 	BEA_A_daughter = df['BEA_A_daughter']
 	# Spin_daughter = df['Spin_daughter']
@@ -212,7 +212,7 @@ def make_train(df, la=25, ua=210):
 	Sp_train = []
 	Sn_train = []
 	BEA_train = []
-	Pairing_train = []
+	# Pairing_train = []
 	Sn_c_train = []  # Sn compound
 	gd_train = []
 	N_train = [] # neutron number
@@ -252,10 +252,10 @@ def make_train(df, la=25, ua=210):
 	# Parity_daughter_train = []
 	BEA_daughter_train = []
 	# S2p_daughter_train = []
-	Shell_daughter_train = []
+	# Shell_daughter_train = []
 	Decay_daughter_train = []
 	ME_daughter_train = []
-	Radius_daughter_train = []
+	# Radius_daughter_train = []
 	BEA_A_daughter_train = []
 	# Spin_daughter_train = []
 	Deform_daughter_train = []
@@ -266,14 +266,14 @@ def make_train(df, la=25, ua=210):
 	S2n_compound_train = []
 	S2p_compound_train = []
 	Decay_compound_train = []
-	Sn_compound_train = []
+	# Sn_compound_train = []
 	Shell_compound_train = []
 	Spin_compound_train = []
 	Radius_compound_train = []
 	Deform_compound_train = []
 	ME_compound_train = []
 	BEA_A_compound_train = []
-	Pairing_compound_train = []
+	# Pairing_compound_train = []
 	# Parity_compound_train = []
 
 	for idx, r_type in enumerate(MT):  # MT = 16 is (n,2n) (already extracted)
@@ -291,7 +291,7 @@ def make_train(df, la=25, ua=210):
 			Sp_train.append(Sep_p[idx])
 			Sn_train.append(Sep_n[idx])
 			BEA_train.append(BEA[idx])
-			Pairing_train.append(Pairing[idx])
+			# Pairing_train.append(Pairing[idx])
 			Sn_c_train.append(Sn_compound[idx])
 			gd_train.append(gamma_deformation[idx])
 			N_train.append(N[idx])
@@ -326,10 +326,10 @@ def make_train(df, la=25, ua=210):
 			p_rms_radius_train.append(p_rms_radius[idx])
 			rms_radius_train.append(rms_radius[idx])
 			Sp_compound_train.append(Sp_compound[idx])
-			Sn_compound_train.append(Sn_compound[idx])
+			# Sn_compound_train.append(Sn_compound[idx])
 			Shell_compound_train.append(Shell_compound[idx])
 			# S2p_daughter_train.append(S2p_daughter[idx])
-			Shell_daughter_train.append(Shell_daughter[idx])
+			# Shell_daughter_train.append(Shell_daughter[idx])
 			Spin_compound_train.append(Spin_compound[idx])
 			Radius_compound_train.append(Radius_compound[idx])
 			Deform_compound_train.append(Deform_compound[idx])
@@ -337,8 +337,8 @@ def make_train(df, la=25, ua=210):
 			BEA_A_compound_train.append(BEA_A_compound[idx])
 			Decay_daughter_train.append(Decay_daughter[idx])
 			ME_daughter_train.append(ME_daughter[idx])
-			Radius_daughter_train.append(Radius_daughter[idx])
-			Pairing_compound_train.append(Pairing_compound[idx])
+			# Radius_daughter_train.append(Radius_daughter[idx])
+			# Pairing_compound_train.append(Pairing_compound[idx])
 			# Parity_compound_train.append(Parity_compound[idx])
 			BEA_A_daughter_train.append(BEA_A_daughter[idx])
 			# Spin_daughter_train.append(Spin_daughter[idx])
@@ -349,7 +349,9 @@ def make_train(df, la=25, ua=210):
 
 
 	X = np.array([Z_train, A_train, S2n_train, S2p_train, Energy_train,
-				  Sp_train, Sn_train, BEA_train, Pairing_train, Sn_c_train,
+				  Sp_train, Sn_train, BEA_train,
+				  # Pairing_train,
+				  Sn_c_train,
 				  gd_train, N_train, bd_train, Sn_d_train,
 				  Sp_d_train,
 				  S2n_d_train,
@@ -379,10 +381,10 @@ def make_train(df, la=25, ua=210):
 				  p_rms_radius_train,
 				  rms_radius_train,
 				  Sp_compound_train,
-				  Sn_compound_train,
+				  # Sn_compound_train,
 				  Shell_compound_train,
 				  # S2p_daughter_train,
-				  Shell_daughter_train,
+				  # Shell_daughter_train,
 				  Spin_compound_train,
 				  Radius_compound_train,
 				  Deform_compound_train,
@@ -390,8 +392,8 @@ def make_train(df, la=25, ua=210):
 				  BEA_A_compound_train,
 				  Decay_daughter_train,
 				  ME_daughter_train,
-				  Radius_daughter_train,
-				  Pairing_compound_train,
+				  # Radius_daughter_train,
+				  # Pairing_compound_train,
 				  # Parity_compound_train,
 				  BEA_A_daughter_train,
 				  # Spin_daughter_train,
@@ -430,7 +432,7 @@ def make_test(nuclides, df):
 	Sep_p = df['Sp']
 	Sep_n = df['Sn']
 	BEA = df['BEA']
-	Pairing = df['Pairing']
+	# Pairing = df['Pairing']
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	# octupole_deformation = df['octopole_deformation']
@@ -466,7 +468,7 @@ def make_test(nuclides, df):
 	BEA_A_compound = df['BEA_A_compound']
 	Radius_compound = df['Radius_compound']
 	ME_compound = df['ME_compound']
-	Pairing_compound = df['Pairing_compound']
+	# Pairing_compound = df['Pairing_compound']
 	Shell_compound = df['Shell_compound']
 	Spin_compound = df['Spin_compound']
 	# Parity_compound = df['Parity_compound']
@@ -479,9 +481,9 @@ def make_test(nuclides, df):
 	# Pairing_daughter = df['Pairing_daughter']
 	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
-	Shell_daughter = df['Shell_daughter']
+	# Shell_daughter = df['Shell_daughter']
 	# S2p_daughter = df['S2p_daughter']
-	Radius_daughter = df['Radius_daughter']
+	# Radius_daughter = df['Radius_daughter']
 	ME_daughter = df['ME_daughter']
 	BEA_A_daughter = df['BEA_A_daughter']
 	# Spin_daughter = df['Spin_daughter']
@@ -499,7 +501,7 @@ def make_test(nuclides, df):
 	Sp_test = []
 	Sn_test = []
 	BEA_test = []
-	Pairing_test = []
+	# Pairing_test = []
 	Sn_c_test = []
 	gd_test = [] # gamma deformation
 	N_test = []
@@ -518,11 +520,11 @@ def make_test(nuclides, df):
 	n_rms_radius_test = []
 	Decay_compound_test = []
 	# S2p_daughter_test = []
-	Shell_daughter_test = []
+	# Shell_daughter_test = []
 	Decay_daughter_test = []
 	ME_daughter_test = []
 	BEA_daughter_test = []
-	Radius_daughter_test = []
+	# Radius_daughter_test = []
 	BEA_A_daughter_test = []
 	# Spin_daughter_test = []
 	Deform_daughter_test = []
@@ -551,14 +553,14 @@ def make_test(nuclides, df):
 
 
 	Sp_compound_test = []
-	Sn_compound_test = []
+	# Sn_compound_test = []
 	Shell_compound_test = []
 	Spin_compound_test = []
 	Radius_compound_test  = []
 	Deform_compound_test = []
 	ME_compound_test = []
 	BEA_A_compound_test = []
-	Pairing_compound_test = []
+	# Pairing_compound_test = []
 	# Parity_compound_test = []
 
 
@@ -579,7 +581,7 @@ def make_test(nuclides, df):
 				Sp_test.append(Sep_p[j])
 				Sn_test.append(Sep_n[j])
 				BEA_test.append(BEA[j])
-				Pairing_test.append(Pairing[j])
+				# Pairing_test.append(Pairing[j])
 				Sn_c_test.append(Sn_compound[j])
 				gd_test.append(gamma_deformation[j])
 				N_test.append(N[j])
@@ -618,10 +620,10 @@ def make_test(nuclides, df):
 				p_rms_radius_test.append(p_rms_radius[j])
 				rms_radius_test.append(rms_radius[j])
 				Sp_compound_test.append(Sp_compound[j])
-				Sn_compound_test.append(Sn_compound[j])
+				# Sn_compound_test.append(Sn_compound[j])
 				Shell_compound_test.append(Shell_compound[j])
 				# S2p_daughter_test.append(S2p_daughter[j])
-				Shell_daughter_test.append(Shell_daughter[j])
+				# Shell_daughter_test.append(Shell_daughter[j])
 				Spin_compound_test.append(Spin_compound[j])
 				Radius_compound_test.append(Radius_compound[j])
 				Deform_compound_test.append(Deform_compound[j])
@@ -629,8 +631,8 @@ def make_test(nuclides, df):
 				BEA_A_compound_test.append(BEA_A_compound[j])
 				Decay_daughter_test.append(Decay_daughter[j])
 				ME_daughter_test.append(ME_daughter[j])
-				Radius_daughter_test.append(Radius_daughter[j])
-				Pairing_compound_test.append(Pairing_compound[j])
+				# Radius_daughter_test.append(Radius_daughter[j])
+				# Pairing_compound_test.append(Pairing_compound[j])
 				# Parity_compound_test.append(Parity_compound[j])
 				BEA_A_daughter_test.append(BEA_A_daughter[j])
 				# Spin_daughter_test.append(Spin_daughter[j])
@@ -643,7 +645,9 @@ def make_test(nuclides, df):
 
 
 	xtest = np.array([Z_test, A_test, Sep2n_test, Sep2p_test, Energy_test,
-					  Sp_test, Sn_test, BEA_test, Pairing_test, Sn_c_test,
+					  Sp_test, Sn_test, BEA_test,
+					  # Pairing_test,
+					  Sn_c_test,
 					  gd_test, N_test, bd_test,
 					  Sn_d_test,
 					  Sp_d_test,
@@ -675,10 +679,10 @@ def make_test(nuclides, df):
 					  p_rms_radius_test,
 					  rms_radius_test,
 					  Sp_compound_test,
-					  Sn_compound_test,
+					  # Sn_compound_test,
 					  Shell_compound_test,
 					  # S2p_daughter_test,
-					  Shell_daughter_test,
+					  # Shell_daughter_test,
 					  Spin_compound_test,
 					  Radius_compound_test,
 					  Deform_compound_test,
@@ -686,8 +690,8 @@ def make_test(nuclides, df):
 					  BEA_A_compound_test,
 					  Decay_daughter_test,
 					  ME_daughter_test,
-					  Radius_daughter_test,
-					  Pairing_compound_test,
+					  # Radius_daughter_test,
+					  # Pairing_compound_test,
 					  # Parity_compound_test,
 					  BEA_A_daughter_test,
 					  # Spin_daughter_test,
@@ -702,7 +706,7 @@ def make_test(nuclides, df):
 
 	return xtest, y_test
 
-benchmark_number = 16
+benchmark_number = 21
 
 nuclides_used = []
 
@@ -712,11 +716,13 @@ if __name__ == "__main__":
 
 	overall_r2_list = []
 
+	# individual_r2_list = []
+
 	for i in range(benchmark_number):
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 25  # number of nuclides hidden from training
+		validation_set_size = 20  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
@@ -742,6 +748,13 @@ if __name__ == "__main__":
 								subsample=0.18236,
 								max_leaves=0,
 								seed=42,)
+
+		# model = xg.XGBRegressor(n_estimators=700,
+		# 						learning_rate=0.038,
+		# 						max_depth=7,
+		# 						subsample=0.28114,
+		# 						max_leaves=0,
+		# 						seed=42)
 
 
 		time1 = time.time()
@@ -783,6 +796,7 @@ if __name__ == "__main__":
 			#
 			r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 			print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+			# individual_r2_list.append(r2)
 
 		overall_r2 = r2_score(y_test, predictions)
 
@@ -850,7 +864,9 @@ if __name__ == "__main__":
 
 		# name features for FIA
 		model.get_booster().feature_names = ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
-											 'BEA', 'P', 'Snc', 'g-def',
+											 'BEA',
+											 # 'P',
+											 'Snc', 'g-def',
 											 'N',
 											 'b-def',
 											 'Sn da',
@@ -883,10 +899,10 @@ if __name__ == "__main__":
 											 'p_rms_r',
 											 'rms_r',
 											 'Sp_c',
-											 'Sn_c',
+											 # 'Sn_c',
 											 'Shell_c',
 											 # 'S2p-d',
-											 'Shell-d',
+											 # 'Shell-d',
 											 'Spin-c',
 											 'Rad-c',
 											 'Def-c',
@@ -894,8 +910,8 @@ if __name__ == "__main__":
 											 'BEA-A-c',
 											 'Decay-d',
 											 'ME-d',
-											 'Rad-d',
-											 'Pair-c',
+											 # 'Rad-d',
+											 # 'Pair-c',
 											 # 'Par-c',
 											 'BEA-A-d',
 											 # 'Spin-d',
@@ -916,5 +932,6 @@ if __name__ == "__main__":
 print(overall_r2_list)
 print()
 print(f"Overall r2: {np.mean(overall_r2_list)}")
+# print(f"individual r2: {individual_r2_list}")
 
-print(nuclides_used)
+# print(f"Average individual r2: {np.mean(individual_r2_list)}")
