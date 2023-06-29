@@ -94,26 +94,12 @@ def interpolate_pandas(df, inter_col):
 	return df_inter
 
 
-# def custom_loss(y_pred, y_true):
-# 	num = y_pred + 1
-# 	den = y_true + 1
-#
-# 	ln = np.log(y_pred + 1)
-#
-# 	grad = (num/den) - ln
-# 	hess = np.repeat(2, y_true.shape[0])
-#
-# 	return grad, hess
-
-
-
 al = []
 for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
 	if [j, i] in al:
 		continue
 	else:
 		al.append([j, i]) # format is [Z, A]
-
 
 cat_magic = []
 
@@ -191,7 +177,7 @@ while len(validation_nuclides) < validation_set_size:
 		validation_nuclides.append(choice)
 print("Test nuclide selection complete")
 
-def make_train(df, la=25, ua=210):
+def make_train(df, la=20, ua=210):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
