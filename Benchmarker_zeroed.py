@@ -124,9 +124,6 @@ df['cat_magic_neutron'].astype('category')
 df['cat_magic_double'].astype("category")
 
 
-
-
-
 def make_train(df, la=25, ua=210):
 	"""la: lower bound for A
 	ua: upper bound for A
@@ -219,6 +216,7 @@ def make_train(df, la=25, ua=210):
 	bd_train = []
 	Radius_train = []
 	n_gap_erg_train = []
+	p_gap_erg_train = []
 	n_chem_erg_train = []
 	# xs_max_train = []
 	n_rms_radius_train = []
@@ -238,9 +236,7 @@ def make_train(df, la=25, ua=210):
 	# Spin_train = []
 	Decay_Const_train = []
 	Deform_train = []
-	p_gap_erg_train = []
 	p_chem_erg_train = []
-
 	p_rms_radius_train = []
 	rms_radius_train = []
 
@@ -502,7 +498,6 @@ def make_test(nuclides, df):
 	Sn_test = []
 	BEA_test = []
 	# Pairing_test = []
-	Sn_c_test = []
 	gd_test = [] # gamma deformation
 	N_test = []
 	bd_test = []
@@ -532,10 +527,7 @@ def make_test(nuclides, df):
 	# Parity_daughter_test = []
 
 
-	BEA_compound_test = []
 
-	S2n_compound_test = []
-	S2p_compound_test = []
 	ME_test = []
 	# Z_even_test = []
 	# A_even_test = []
@@ -552,6 +544,10 @@ def make_test(nuclides, df):
 	rms_radius_test = []
 
 
+	BEA_compound_test = []
+	S2n_compound_test = []
+	S2p_compound_test = []
+	Sn_c_test = []
 	Sp_compound_test = []
 	# Sn_compound_test = []
 	Shell_compound_test = []
@@ -716,7 +712,8 @@ if __name__ == "__main__":
 
 	overall_r2_list = []
 
-	# individual_r2_list = []
+	every_prediction_list = []
+	every_true_value_list = []
 
 	for i in range(benchmark_number):
 
@@ -749,20 +746,13 @@ if __name__ == "__main__":
 								max_leaves=0,
 								seed=42,)
 
-		# model = xg.XGBRegressor(n_estimators=700,
-		# 						learning_rate=0.038,
-		# 						max_depth=7,
-		# 						subsample=0.28114,
-		# 						max_leaves=0,
-		# 						seed=42)
-
-
 		time1 = time.time()
 		model.fit(X_train, y_train)
 
 		print("Training complete")
 
 		predictions = model.predict(X_test) # XS predictions
+
 
 		# Form arrays for plots below
 		XS_plotmatrix = []
@@ -799,7 +789,11 @@ if __name__ == "__main__":
 			# individual_r2_list.append(r2)
 
 		overall_r2 = r2_score(y_test, predictions)
+		for pred in predictions:
+			every_prediction_list.append(pred)
 
+		for val in y_test:
+			every_true_value_list.append(val)
 		overall_r2_list.append(overall_r2)
 		# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 		print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
@@ -933,5 +927,7 @@ print(overall_r2_list)
 print()
 print(f"Overall r2: {np.mean(overall_r2_list)}")
 # print(f"individual r2: {individual_r2_list}")
+print()
+print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
 # print(f"Average individual r2: {np.mean(individual_r2_list)}")
