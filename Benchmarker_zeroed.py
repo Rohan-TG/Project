@@ -124,7 +124,7 @@ df['cat_magic_neutron'].astype('category')
 df['cat_magic_double'].astype("category")
 
 
-def make_train(df, la=25, ua=210):
+def make_train(df, la=20, ua=210):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
