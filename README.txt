@@ -6,8 +6,8 @@ Linearly interpolated 0+ data (42.6 MB): https://drive.google.com/file/d/1PqMRNO
 
 Original data with 0+ (20.4 MB): https://drive.google.com/file/d/1QFyBTPAOsGAoTnXtgt0tON9ExmwCASmx/view?usp=drive_link
 
-XGBoost_interpolation.py is the script used for training and testing, with training done on the interpolated data, and testing done on the original data.
-XGBoost_int_opt.py is used for hyperparameter optimisation, using the linearly interpolated data as training data, and the original uninterpolated data as validation data.
+XGBoost_zeroed.py is the main script in use for training and testing.
+Benchmarker_zeroed.py evaluates a given model's performance over all the data using manual k-fold cross validation.
 
 Requirements for running the script:
 Numpy 1.24.3
