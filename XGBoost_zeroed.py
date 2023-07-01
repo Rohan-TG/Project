@@ -13,8 +13,11 @@ import periodictable
 
 
 
-df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
+# df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
+# df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
+
+df = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")
+df_test = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 
 df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
@@ -94,81 +97,96 @@ def interpolate_pandas(df, inter_col):
 	return df_inter
 
 
+# def custom_loss(y_pred, y_true):
+# 	num = y_pred + 1
+# 	den = y_true + 1
+#
+# 	ln = np.log(y_pred + 1)
+#
+# 	grad = (num/den) - ln
+# 	hess = np.repeat(2, y_true.shape[0])
+#
+# 	return grad, hess
+
+
+
 al = []
 for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
 	if [j, i] in al:
 		continue
 	else:
 		al.append([j, i]) # format is [Z, A]
-
-cat_magic = []
-
-magic_numbers = [2, 8, 20, 28, 50, 82, 126]
+		# print([j,i])
 
 
-cat_magic_double_original = []
-cat_magic_neutron_original = []
-cat_magic_proton_original = []
+# cat_magic = []
+#
+# magic_numbers = [2, 8, 20, 28, 50, 82, 126]
+#
+#
+# cat_magic_double_original = []
+# cat_magic_neutron_original = []
+# cat_magic_proton_original = []
+#
+# for z, n in zip(df_test['Z'], df_test['A']):
+# 	if z in magic_numbers and n in magic_numbers:
+# 		cat_magic_proton_original.append(1)
+# 		cat_magic_double_original.append(1)
+# 		cat_magic_neutron_original.append(1)
+# 	elif z in magic_numbers and n not in magic_numbers:
+# 		cat_magic_proton_original.append(1)
+# 		cat_magic_neutron_original.append(0)
+# 		cat_magic_double_original.append(0)
+# 	elif z not in magic_numbers and n in magic_numbers:
+# 		cat_magic_neutron_original.append(1)
+# 		cat_magic_double_original.append(0)
+# 		cat_magic_proton_original.append(0)
+# 	else:
+# 		cat_magic_proton_original.append(0)
+# 		cat_magic_double_original.append(0)
+# 		cat_magic_neutron_original.append(0)
+#
+# df_test.insert(78, 'cat_magic_proton', cat_magic_proton_original)
+# df_test.insert(79, 'cat_magic_neutron', cat_magic_neutron_original)
+# df_test.insert(80, 'cat_magic_double', cat_magic_double_original)
+#
+# df_test['cat_magic_proton'].astype('category')
+# df_test['cat_magic_neutron'].astype('category')
+# df_test['cat_magic_double'].astype("category")
+#
+#
+# cat_magic_proton = []
+# cat_magic_neutron = []
+# cat_magic_double = []
+#
+# for z, n in zip(df['Z'], df['N']):
+# 	if z in magic_numbers and n in magic_numbers:
+# 		cat_magic_double.append(1)
+# 		cat_magic_neutron.append(1)
+# 		cat_magic_proton.append(1)
+# 	elif z in magic_numbers and n not in magic_numbers:
+# 		cat_magic_proton.append(1)
+# 		cat_magic_neutron.append(0)
+# 		cat_magic_double.append(0)
+# 	elif z not in magic_numbers and n in magic_numbers:
+# 		cat_magic_neutron.append(1)
+# 		cat_magic_proton.append(0)
+# 		cat_magic_double.append(0)
+# 	else:
+# 		cat_magic_proton.append(0)
+# 		cat_magic_double.append(0)
+# 		cat_magic_neutron.append(0)
+#
+#
+# df.insert(78, 'cat_magic_proton', cat_magic_proton)
+# df.insert(79, 'cat_magic_neutron', cat_magic_neutron)
+# df.insert(80, 'cat_magic_double', cat_magic_double)
+#
+# df['cat_magic_proton'].astype('category')
+# df['cat_magic_neutron'].astype('category')
+# df['cat_magic_double'].astype("category")
 
-for z, n in zip(df_test['Z'], df_test['A']):
-	if z in magic_numbers and n in magic_numbers:
-		cat_magic_proton_original.append(1)
-		cat_magic_double_original.append(1)
-		cat_magic_neutron_original.append(1)
-	elif z in magic_numbers and n not in magic_numbers:
-		cat_magic_proton_original.append(1)
-		cat_magic_neutron_original.append(0)
-		cat_magic_double_original.append(0)
-	elif z not in magic_numbers and n in magic_numbers:
-		cat_magic_neutron_original.append(1)
-		cat_magic_double_original.append(0)
-		cat_magic_proton_original.append(0)
-	else:
-		cat_magic_proton_original.append(0)
-		cat_magic_double_original.append(0)
-		cat_magic_neutron_original.append(0)
-
-df_test.insert(78, 'cat_magic_proton', cat_magic_proton_original)
-df_test.insert(79, 'cat_magic_neutron', cat_magic_neutron_original)
-df_test.insert(80, 'cat_magic_double', cat_magic_double_original)
-
-df_test['cat_magic_proton'].astype('category')
-df_test['cat_magic_neutron'].astype('category')
-df_test['cat_magic_double'].astype("category")
-
-
-cat_magic_proton = []
-cat_magic_neutron = []
-cat_magic_double = []
-
-for z, n in zip(df['Z'], df['N']):
-	if z in magic_numbers and n in magic_numbers:
-		cat_magic_double.append(1)
-		cat_magic_neutron.append(1)
-		cat_magic_proton.append(1)
-	elif z in magic_numbers and n not in magic_numbers:
-		cat_magic_proton.append(1)
-		cat_magic_neutron.append(0)
-		cat_magic_double.append(0)
-	elif z not in magic_numbers and n in magic_numbers:
-		cat_magic_neutron.append(1)
-		cat_magic_proton.append(0)
-		cat_magic_double.append(0)
-	else:
-		cat_magic_proton.append(0)
-		cat_magic_double.append(0)
-		cat_magic_neutron.append(0)
-
-
-df.insert(78, 'cat_magic_proton', cat_magic_proton)
-df.insert(79, 'cat_magic_neutron', cat_magic_neutron)
-df.insert(80, 'cat_magic_double', cat_magic_double)
-
-df['cat_magic_proton'].astype('category')
-df['cat_magic_neutron'].astype('category')
-df['cat_magic_double'].astype("category")
-
-validation_nuclides = [] # list of nuclides used for validation
+validation_nuclides = [[58,140]] # list of nuclides used for validation
 validation_set_size = 25 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -176,6 +194,7 @@ while len(validation_nuclides) < validation_set_size:
 	if choice not in validation_nuclides:
 		validation_nuclides.append(choice)
 print("Test nuclide selection complete")
+
 
 def make_train(df, la=20, ua=210):
 	"""la: lower bound for A
@@ -206,8 +225,8 @@ def make_train(df, la=20, ua=210):
 	# xs_max = df['xs_max']
 	Radius = df['Radius']
 	Shell = df['Shell']
-	# Parity = df['Parity']
-	# Spin = df['Spin']
+	Parity = df['Parity']
+	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
 	n_gap_erg = df['n_gap_erg']
@@ -217,9 +236,14 @@ def make_train(df, la=20, ua=210):
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
 	rms_radius = df['rms_radius']
-	magic_p = df['cat_magic_proton']
-	magic_n = df['cat_magic_neutron']
-	magic_d = df['cat_magic_double']
+	# magic_p = df['cat_magic_proton']
+	# magic_n = df['cat_magic_neutron']
+	# magic_d = df['cat_magic_double']
+	Nlow = df['Nlow']
+	Ulow = df['Ulow']
+	Ntop = df['Ntop']
+	Utop = df['Utop']
+	ainf = df['ainf']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -263,7 +287,6 @@ def make_train(df, la=20, ua=210):
 	Sn_train = []
 	BEA_train = []
 	# Pairing_train = []
-	Sn_c_train = []  # Sn compound
 	gd_train = []
 	N_train = [] # neutron number
 	bd_train = []
@@ -273,26 +296,29 @@ def make_train(df, la=20, ua=210):
 	# xs_max_train = []
 	n_rms_radius_train = []
 	# octupole_deformation_train = []
-	cat_proton_train = []
-	cat_neutron_train = []
-	cat_double_train = []
-
-
+	# cat_proton_train = []
+	# cat_neutron_train = []
+	# cat_double_train = []
 	ME_train = []
 	# Z_even_train = []
 	# A_even_train = []
 	# N_even_train = []
-
 	Shell_train = []
-	# Parity_train = []
-	# Spin_train = []
+	Parity_train = []
+	Spin_train = []
 	Decay_Const_train = []
 	Deform_train = []
 	p_gap_erg_train = []
 	p_chem_erg_train = []
-
 	p_rms_radius_train = []
 	rms_radius_train = []
+	Nlow_train = []
+	Ulow_train = []
+	Ntop_train = []
+	Utop_train = []
+	ainf_train = []
+
+
 
 	# Daughter nucleus properties
 	Sn_d_train = []
@@ -311,6 +337,7 @@ def make_train(df, la=20, ua=210):
 	Deform_daughter_train = []
 
 	# Compound nucleus properties
+	Sn_c_train = []  # Sn compound
 	Sp_compound_train = []
 	BEA_compound_train = []
 	S2n_compound_train = []
@@ -367,8 +394,8 @@ def make_train(df, la=20, ua=210):
 			# A_even_train.append(A_even[idx])
 			# N_even_train.append(N_even[idx])
 			Shell_train.append(Shell[idx])
-			# Parity_train.append(Parity[idx])
-			# Spin_train.append(Spin[idx])
+			Parity_train.append(Parity[idx])
+			Spin_train.append(Spin[idx])
 			Decay_Const_train.append(Decay_Const[idx])
 			Deform_train.append(Deform[idx])
 			p_gap_erg_train.append(p_gap_erg[idx])
@@ -393,9 +420,11 @@ def make_train(df, la=20, ua=210):
 			BEA_A_daughter_train.append(BEA_A_daughter[idx])
 			# Spin_daughter_train.append(Spin_daughter[idx])
 			Deform_daughter_train.append(Deform_daughter[idx])
-			cat_proton_train.append(magic_p[idx])
-			cat_neutron_train.append(magic_n[idx])
-			cat_double_train.append(magic_d[idx])
+			Nlow_train.append(Nlow[idx])
+			Ulow_train.append(Ulow[idx])
+			Ntop_train.append(Ntop[idx])
+			Utop_train.append(Utop[idx])
+			ainf_train.append(ainf[idx])
 
 
 	X = np.array([Z_train, A_train, S2n_train, S2p_train, Energy_train,
@@ -422,8 +451,8 @@ def make_train(df, la=20, ua=210):
 				  # A_even_train,
 				  # N_even_train,
 				  Shell_train,
-				  # Parity_train,
-				  # Spin_train,
+				  Parity_train,
+				  Spin_train,
 				  Decay_Const_train,
 				  Deform_train,
 				  p_gap_erg_train,
@@ -448,9 +477,14 @@ def make_train(df, la=20, ua=210):
 				  BEA_A_daughter_train,
 				  # Spin_daughter_train,
 				  Deform_daughter_train,
-				  cat_proton_train,
-				  cat_neutron_train,
-				  cat_double_train,
+				  # cat_proton_train,
+				  # cat_neutron_train,
+				  # cat_double_train,
+				  Nlow_train,
+				  Ulow_train,
+				  Ntop_train,
+				  Utop_train,
+				  ainf_train,
 				  ])
 	y = np.array(XS_train) # cross sections
 
@@ -492,8 +526,8 @@ def make_test(nuclides, df):
 	# xs_max = df['xs_max']
 	Radius = df['Radius']
 	Shell = df['Shell']
-	# Parity = df['Parity']
-	# Spin = df['Spin']
+	Parity = df['Parity']
+	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
 	n_gap_erg = df['n_gap_erg']
@@ -503,9 +537,14 @@ def make_test(nuclides, df):
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
 	rms_radius = df['rms_radius']
-	magic_p = df['cat_magic_proton']
-	magic_n = df['cat_magic_neutron']
-	magic_d = df['cat_magic_double']
+	# magic_p = df['cat_magic_proton']
+	# magic_n = df['cat_magic_neutron']
+	# magic_d = df['cat_magic_double']
+	Nlow = df['Nlow']
+	Ulow = df['Ulow']
+	Ntop = df['Ntop']
+	Utop = df['Utop']
+	ainf = df['ainf']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -540,7 +579,6 @@ def make_test(nuclides, df):
 	Decay_daughter = df['Decay_daughter']
 
 
-
 	Z_test = []
 	A_test = []
 	Sep2n_test = []
@@ -558,8 +596,26 @@ def make_test(nuclides, df):
 	Radius_test = []
 	n_gap_erg_test = []
 	n_chem_erg_test = []
+	ME_test = []
+	# Z_even_test = []
+	# A_even_test = []
+	# N_even_test = []
+	Shell_test = []
+	Parity_test = []
+	Spin_test = []
+	Decay_Const_test = []
+	Deform_test = []
+	p_gap_erg_test = []
+	p_chem_erg_test = []
+	p_rms_radius_test = []
+	rms_radius_test = []
 	# xs_max_test = []
 	# octupole_deformation_test = []
+	Nlow_test = []
+	Ulow_test = []
+	Ntop_test = []
+	Utop_test = []
+	ainf_test = []
 
 
 	# Daughter features
@@ -580,27 +636,6 @@ def make_test(nuclides, df):
 	# Pairing_daughter_test = []
 	# Parity_daughter_test = []
 
-
-	BEA_compound_test = []
-
-	S2n_compound_test = []
-	S2p_compound_test = []
-	ME_test = []
-	# Z_even_test = []
-	# A_even_test = []
-	# N_even_test = []
-
-	Shell_test = []
-	# Parity_test = []
-	# Spin_test = []
-	Decay_Const_test = []
-	Deform_test = []
-	p_gap_erg_test = []
-	p_chem_erg_test = []
-	p_rms_radius_test = []
-	rms_radius_test = []
-
-
 	Sp_compound_test = []
 	# Sn_compound_test = []
 	Shell_compound_test = []
@@ -611,12 +646,13 @@ def make_test(nuclides, df):
 	BEA_A_compound_test = []
 	# Pairing_compound_test = []
 	# Parity_compound_test = []
+	BEA_compound_test = []
+	S2n_compound_test = []
+	S2p_compound_test = []
 
-
-
-	cat_proton_test = []
-	cat_neutron_test = []
-	cat_double_test = []
+	# cat_proton_test = []
+	# cat_neutron_test = []
+	# cat_double_test = []
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
@@ -660,8 +696,8 @@ def make_test(nuclides, df):
 				# A_even_test.append(A_even[j])
 				# N_even_test.append(N_even[j])
 				Shell_test.append(Shell[j])
-				# Parity_test.append(Parity[j])
-				# Spin_test.append(Spin[j])
+				Parity_test.append(Parity[j])
+				Spin_test.append(Spin[j])
 				Decay_Const_test.append(Decay_Const[j])
 				Deform_test.append(Deform[j])
 				p_gap_erg_test.append(p_gap_erg[j])
@@ -686,10 +722,11 @@ def make_test(nuclides, df):
 				BEA_A_daughter_test.append(BEA_A_daughter[j])
 				# Spin_daughter_test.append(Spin_daughter[j])
 				Deform_daughter_test.append(Deform_daughter[j])
-				cat_proton_test.append(magic_p[j])
-				cat_neutron_test.append(magic_n[j])
-				cat_double_test.append(magic_d[j])
-
+				Nlow_test.append(Nlow[j])
+				Ulow_test.append(Ulow[j])
+				Ntop_test.append(Ntop[j])
+				Utop_test.append(Utop[j])
+				ainf_test.append(ainf[j])
 
 
 
@@ -719,8 +756,8 @@ def make_test(nuclides, df):
 					  # A_even_test,
 					  # N_even_test,
 					  Shell_test,
-					  # Parity_test,
-					  # Spin_test,
+					  Parity_test,
+					  Spin_test,
 					  Decay_Const_test,
 					  Deform_test,
 					  p_gap_erg_test,
@@ -745,9 +782,14 @@ def make_test(nuclides, df):
 					  BEA_A_daughter_test,
 					  # Spin_daughter_test,
 					  Deform_daughter_test,
-					  cat_proton_test,
-					  cat_neutron_test,
-					  cat_double_test,
+					  # cat_proton_test,
+					  # cat_neutron_test,
+					  # cat_double_test,
+					  Nlow_test,
+					  Ulow_test,
+					  Ntop_test,
+					  Utop_test,
+					  ainf_test,
 					  ])
 	xtest = np.transpose(xtest)
 
@@ -822,66 +864,6 @@ if __name__ == "__main__":
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
 
-	explainer = shap.Explainer(model.predict, X_train,
-							   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
-											   'BEA',
-											   # 'P',
-											   'Snc', 'g-def', 'N',
-											   'b-def',
-											   'Sn_da',
-											   'Sp_d',
-											   'S2n_d',
-											   'Radius',
-											   'n_g_erg',
-											   'n_c_erg',
-											   # 'xsmax',
-											   'n_rms_r',
-											   # 'oct_def',
-											   'D_c',
-											   'BEA_d',
-											   'BEA_c',
-											   # 'Pair_d',
-											   # 'Par_d',
-											   'S2n_c',
-											   'S2p_c',
-											   'ME',
-											   # 'Z_even',
-											   # 'A_even',
-											   # 'N_even',
-											   'Shell',
-											   # 'Par',
-											   # 'Spin',
-											   'Decay',
-											   'Deform',
-											   'p_g_e',
-											   'p_c_e',
-											   'p_rms_r',
-											   'rms_r',
-											   'Sp_c',
-											   # 'S_n_c',
-											   'Shell_c',
-											   # 'S2p-d',
-											   # 'Shell-d',
-											   'Spin-c',
-											   'Rad-c',
-											   'Def-c',
-											   'ME-c',
-											   'BEA-A-c',
-											   'Decay-d',
-											   'ME-d',
-											   # 'Rad-d',
-											   # 'Pair-c',
-											   # 'Par-c',
-											   'BEA-A-d',
-											   # 'Spin-d',
-											   'Def-d',
-											   'mag_p',
-											   'mag_n',
-											   'mag_d',
-											   ]) # SHAP feature importance analysis
-	shap_values = explainer(X_test)
-
-	# name features for FIA
 	model.get_booster().feature_names = ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
 										 'BEA',
 										 # 'P',
@@ -909,8 +891,8 @@ if __name__ == "__main__":
 										 # 'A_even',
 										 # 'N_even',
 										 'Shell',
-										 # 'Par',
-										 # 'Spin',
+										 'Parity',
+										 'Spin',
 										 'Decay',
 										 'Deform',
 										 'p_g_e',
@@ -935,14 +917,93 @@ if __name__ == "__main__":
 										 'BEA-A-d',
 										 # 'Spin-d',
 										 'Def-d',
-										 'mag_p',
-										 'mag-n',
-										 'mag-d',
+										 # 'mag_p',
+										 # 'mag-n',
+										 # 'mag-d',
+										 'Nlow',
+										 'Ulow',
+										 'Ntop',
+										 'Utop',
+										 'ainf',
 										 ]
 
-	plt.figure(figsize=(10,12))
-	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60) # metric is total gain
+	# Gain-based feature importance plot
+	plt.figure(figsize=(10, 12))
+	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
 	plt.show()
+
+	# Splits-based feature importance plot
+	plt.figure(figsize=(10, 12))
+	plt.title("Splits-based FI")
+	xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
+	plt.show()
+
+	explainer = shap.Explainer(model.predict, X_train,
+							   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
+											   'BEA',
+											   # 'P',
+											   'Snc', 'g-def', 'N',
+											   'b-def',
+											   'Sn_da',
+											   'Sp_d',
+											   'S2n_d',
+											   'Radius',
+											   'n_g_erg',
+											   'n_c_erg',
+											   # 'xsmax',
+											   'n_rms_r',
+											   # 'oct_def',
+											   'D_c',
+											   'BEA_d',
+											   'BEA_c',
+											   # 'Pair_d',
+											   # 'Par_d',
+											   'S2n_c',
+											   'S2p_c',
+											   'ME',
+											   # 'Z_even',
+											   # 'A_even',
+											   # 'N_even',
+											   'Shell',
+											   'Par',
+											   'Spin',
+											   'Decay',
+											   'Deform',
+											   'p_g_e',
+											   'p_c_e',
+											   'p_rms_r',
+											   'rms_r',
+											   'Sp_c',
+											   # 'S_n_c',
+											   'Shell_c',
+											   # 'S2p-d',
+											   # 'Shell-d',
+											   'Spin-c',
+											   'Rad-c',
+											   'Def-c',
+											   'ME-c',
+											   'BEA-A-c',
+											   'Decay-d',
+											   'ME-d',
+											   # 'Rad-d',
+											   # 'Pair-c',
+											   # 'Par-c',
+											   'BEA-A-d',
+											   # 'Spin-d',
+											   'Def-d',
+											   # 'mag_p',
+											   # 'mag_n',
+											   # 'mag_d',
+											   'Nlow',
+											   'Ulow',
+											   'Ntop',
+											   'Utop',
+											   'ainf',
+											   ]) # SHAP feature importance analysis
+	shap_values = explainer(X_test)
+
+	# name features for FIA
+
 
 	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
 	shap.plots.waterfall(shap_values[0], max_display=70)
