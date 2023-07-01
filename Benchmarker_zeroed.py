@@ -972,30 +972,40 @@ print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}
 
 
 
-A_plots = [i[1] for i in nuclide_mse]
-mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
-mse_plots = [i[-1] for i in nuclide_mse]
+A_plots = [i[1] for i in nuclide_r2]
+Z_plots = [i[0] for i in nuclide_r2]
+# mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
+# mse_plots = [i[-1] for i in nuclide_mse]
 
-log_plots = [np.log(abs(i[-1])) for i in nuclide_r2]
+log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
+log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 
-plt.figure()
-plt.plot(A_plots, mse_log_plots, 'x')
-plt.xlabel("A")
-plt.ylabel("log MSE")
-plt.title("log MSE")
-plt.show()
-
-plt.figure()
-plt.plot(A_plots, mse_plots, 'x')
-plt.xlabel("A")
-plt.ylabel("MSE")
-plt.title("Normal MSE")
-plt.show()
+# plt.figure()
+# plt.plot(A_plots, mse_log_plots, 'x')
+# plt.xlabel("A")
+# plt.ylabel("log MSE")
+# plt.title("log MSE")
+# plt.show()
+#
+# plt.figure()
+# plt.plot(A_plots, mse_plots, 'x')
+# plt.xlabel("A")
+# plt.ylabel("MSE")
+# plt.title("Normal MSE")
+# plt.show()
 
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
 plt.xlabel("A")
 plt.ylabel("log abs r2")
 plt.title("log abs r2")
+plt.grid()
 plt.show()
 
+plt.figure()
+plt.plot(Z_plots, log_plots_Z, 'x')
+plt.xlabel('Z')
+plt.ylabel("log abs r2")
+plt.title("log abs r2 - Z")
+plt.grid()
+plt.show()
