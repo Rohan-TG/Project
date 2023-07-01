@@ -39,7 +39,7 @@ import periodictable     #  https://periodictable.readthedocs.io/en/latest/api/c
                      #8.709600E+06,
 
 
-XS_data_path = r'C:\Users\TG300\Desktop\Research Project - AWE\xs.json'                #   CHANGE THIS PATH TO SUIT WHERE YOUR JSON FILE IS
+XS_data_path = "/Users/rntg/Project/TENDL19_xs.json"               #   CHANGE THIS PATH TO SUIT WHERE YOUR JSON FILE IS
 
 def Get_XS_Data(Z,A,M, MT):
     
@@ -51,7 +51,7 @@ def Get_XS_Data(Z,A,M, MT):
     
     Reaction_Data = all_data["Nuclear_Info"]["Nuclear_Data"]
     
-    Data_Found = 0
+    Data_Found = False
     xs_erg = []
     xs_xs = []
     
@@ -62,9 +62,9 @@ def Get_XS_Data(Z,A,M, MT):
         
         #print(">>>>> ", xs_z, "-",xs_a,"-",xs_m,"      ",Z, "-",A,"-",M)
         
-        if( (xs_z == Z) and (xs_a == A) and (xs_m == M)):
+        if((xs_z == Z) and (xs_a == A) and (xs_m == M)):
             print("ZAM match")
-            Data_Found = 1
+            Data_Found = True
             xs_reaction = Reaction_Data[j]["REACTION"]
 
             #print("Z = ", xs_z)
@@ -77,12 +77,12 @@ def Get_XS_Data(Z,A,M, MT):
                 
                 if(xs_mt == MT):
                     print("ZAM-MT match")
-                    Data_Found = 2
+                    Data_Found = True
                     xs_erg = xs_reaction[i]["Energy"]
                     xs_xs = xs_reaction[i]["XS"]
                     
                     break
-            if(Data_Found == 2):
+            if(Data_Found == True):
                 break
             
     return xs_erg,xs_xs,Data_Found
@@ -90,28 +90,18 @@ def Get_XS_Data(Z,A,M, MT):
 
 
 
-if __name__ == "__main__":
-    
-    Z = 26       # proton number
-    A = 56       # mass number
-    LISO = 0     # LISO is isomer state number
-    MT = 16      # MT is reaction identifier. 16 = (n,2n)
-    
-    xs_energy, xs_values, found = Get_XS_Data(26,56,0,16)
-    print(len(xs_energy), len(xs_values))
-    
-    if(found):                                  # retruns found = true if cross section has been found in json file
-        plt.plot(xs_energy,xs_values)
-        plt.grid()
-        if "periodictable" in sys.modules:
-            plt.title("Cross section of " + str(periodictable.elements[Z]) + "-" + str(A) + "-" + str(LISO) + " for MT = " + str(MT), fontsize=18)
-        else:
-            print("INFO:: \'periodictable\' library not loaded. Defaulting to proton number instead of element symbol")
-            plt.title("Cross section of " + str(Z) + "-" + str(A) + "-" + str(LISO) + " for MT = " + str(MT), fontsize=18)
-            
-        plt.xlabel("Energy (MeV)", fontsize=18)
-        plt.ylabel("XS (Barns)", fontsize=18)
-        plt.xlim([0, 30E6])
-        plt.show()
-    else:
-        print("ERROR :: Cross section of " + str(Z) + "-" + str(A) + "-" + str(LISO) + " for MT = " + str(MT))
+
+Z = 26       # proton number
+A = 56       # mass number
+LISO = 0     # LISO is isomer state number
+MT = 16      # MT is reaction identifier. 16 = (n,2n)
+
+xs_energy, xs_values, found = Get_XS_Data(26,56,0,16)
+print(len(xs_energy), len(xs_values))
+print(found)
+
+
+plt.figure()
+plt.plot(xs_energy, xs_values)
+plt.grid()
+plt.show()
