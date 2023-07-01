@@ -156,8 +156,8 @@ def make_train(df, la=20, ua=210):
 	# xs_max = df['xs_max']
 	Radius = df['Radius']
 	Shell = df['Shell']
-	# Parity = df['Parity']
-	# Spin = df['Spin']
+	Parity = df['Parity']
+	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
 	n_gap_erg = df['n_gap_erg']
@@ -235,8 +235,8 @@ def make_train(df, la=20, ua=210):
 	# A_even_train = []
 	# N_even_train = []
 	Shell_train = []
-	# Parity_train = []
-	# Spin_train = []
+	Parity_train = []
+	Spin_train = []
 	Decay_Const_train = []
 	Deform_train = []
 	p_gap_erg_train = []
@@ -325,8 +325,8 @@ def make_train(df, la=20, ua=210):
 			# A_even_train.append(A_even[idx])
 			# N_even_train.append(N_even[idx])
 			Shell_train.append(Shell[idx])
-			# Parity_train.append(Parity[idx])
-			# Spin_train.append(Spin[idx])
+			Parity_train.append(Parity[idx])
+			Spin_train.append(Spin[idx])
 			Decay_Const_train.append(Decay_Const[idx])
 			Deform_train.append(Deform[idx])
 			p_gap_erg_train.append(p_gap_erg[idx])
@@ -382,8 +382,8 @@ def make_train(df, la=20, ua=210):
 				  # A_even_train,
 				  # N_even_train,
 				  Shell_train,
-				  # Parity_train,
-				  # Spin_train,
+				  Parity_train,
+				  Spin_train,
 				  Decay_Const_train,
 				  Deform_train,
 				  p_gap_erg_train,
@@ -458,8 +458,8 @@ def make_test(nuclides, df):
 	# xs_max = df['xs_max']
 	Radius = df['Radius']
 	Shell = df['Shell']
-	# Parity = df['Parity']
-	# Spin = df['Spin']
+	Parity = df['Parity']
+	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
 	n_gap_erg = df['n_gap_erg']
@@ -533,8 +533,8 @@ def make_test(nuclides, df):
 	# A_even_test = []
 	# N_even_test = []
 	Shell_test = []
-	# Parity_test = []
-	# Spin_test = []
+	Parity_test = []
+	Spin_test = []
 	Decay_Const_test = []
 	Deform_test = []
 	p_gap_erg_test = []
@@ -628,8 +628,8 @@ def make_test(nuclides, df):
 				# A_even_test.append(A_even[j])
 				# N_even_test.append(N_even[j])
 				Shell_test.append(Shell[j])
-				# Parity_test.append(Parity[j])
-				# Spin_test.append(Spin[j])
+				Parity_test.append(Parity[j])
+				Spin_test.append(Spin[j])
 				Decay_Const_test.append(Decay_Const[j])
 				Deform_test.append(Deform[j])
 				p_gap_erg_test.append(p_gap_erg[j])
@@ -688,8 +688,8 @@ def make_test(nuclides, df):
 					  # A_even_test,
 					  # N_even_test,
 					  Shell_test,
-					  # Parity_test,
-					  # Spin_test,
+					  Parity_test,
+					  Spin_test,
 					  Decay_Const_test,
 					  Deform_test,
 					  p_gap_erg_test,
@@ -733,16 +733,21 @@ benchmark_number = 21
 
 nuclides_used = []
 
+nuclide_mse = []
+nuclide_r2 = []
+
 if __name__ == "__main__":
 	# lower_a = int(input("Enter lower boundary A: "))
 	# upper_a = int(input("Enter upper boundary A: "))
 
-	overall_r2_list = []
+	# overall_r2_list = []
 
 	every_prediction_list = []
 	every_true_value_list = []
 
 	for i in range(benchmark_number):
+
+		print(f"Epoch {i+1}/{benchmark_number}")
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
@@ -763,7 +768,7 @@ if __name__ == "__main__":
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
 
-		print("Data prep done")
+		print("Train/val matrices generated")
 
 
 		model = xg.XGBRegressor(n_estimators=900,
@@ -813,6 +818,11 @@ if __name__ == "__main__":
 			#
 			r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 			print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+
+			mse = mean_squared_error(true_xs, pred_xs)
+
+			nuclide_mse.append([nuc[0], nuc[1], mse])
+			nuclide_r2.append([nuc[0], nuc[1], r2])
 			# individual_r2_list.append(r2)
 
 		overall_r2 = r2_score(y_test, predictions)
@@ -821,7 +831,7 @@ if __name__ == "__main__":
 
 		for val in y_test:
 			every_true_value_list.append(val)
-		overall_r2_list.append(overall_r2)
+		# overall_r2_list.append(overall_r2)
 		# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 		print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
 		print(f'completed in {time.time() - time1} s \n')
@@ -884,82 +894,108 @@ if __name__ == "__main__":
 		# shap_values = explainer(X_test)
 
 		# name features for FIA
-		model.get_booster().feature_names = ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
-											 'BEA',
-											 # 'P',
-											 'Snc', 'g-def',
-											 'N',
-											 'b-def',
-											 'Sn da',
-											 'Sp d',
-											 'S2n d',
-											 'Radius',
-											 'n_g_erg',
-											 'n_c_erg',
-											 # 'xsmax',
-											 'n_rms_r',
-											 # 'oct_def',
-											 'D_c',
-											 'BEA_d',
-											 'BEA_c',
-											 # 'Pair_d',
-											 # 'Par_d',
-											 'S2n_c',
-											 'S2p_c',
-											 'ME',
-											 # 'Z_even',
-											 # 'A_even',
-											 # 'N_even',
-											 'Shell',
-											 # 'Par',
-											 # 'Spin',
-											 'Decay',
-											 'Deform',
-											 'p_g_e',
-											 'p_c_e',
-											 'p_rms_r',
-											 'rms_r',
-											 'Sp_c',
-											 # 'Sn_c',
-											 'Shell_c',
-											 # 'S2p-d',
-											 # 'Shell-d',
-											 'Spin-c',
-											 'Rad-c',
-											 'Def-c',
-											 'ME-c',
-											 'BEA-A-c',
-											 'Decay-d',
-											 'ME-d',
-											 # 'Rad-d',
-											 # 'Pair-c',
-											 # 'Par-c',
-											 'BEA-A-d',
-											 # 'Spin-d',
-											 'Def-d',
-											 # 'mag_p',
-											 # 'mag-n',
-											 # 'mag-d',
-											 'Nlow',
-											 'Ulow',
-											 'Ntop',
-											 'Utop',
-											 'ainf',
-											 ]
-
-		plt.figure(figsize=(10,12))
-		xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60) # metric is total gain
-		plt.show()
+		# model.get_booster().feature_names = ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
+		# 									 'BEA',
+		# 									 # 'P',
+		# 									 'Snc', 'g-def',
+		# 									 'N',
+		# 									 'b-def',
+		# 									 'Sn da',
+		# 									 'Sp d',
+		# 									 'S2n d',
+		# 									 'Radius',
+		# 									 'n_g_erg',
+		# 									 'n_c_erg',
+		# 									 # 'xsmax',
+		# 									 'n_rms_r',
+		# 									 # 'oct_def',
+		# 									 'D_c',
+		# 									 'BEA_d',
+		# 									 'BEA_c',
+		# 									 # 'Pair_d',
+		# 									 # 'Par_d',
+		# 									 'S2n_c',
+		# 									 'S2p_c',
+		# 									 'ME',
+		# 									 # 'Z_even',
+		# 									 # 'A_even',
+		# 									 # 'N_even',
+		# 									 'Shell',
+		# 									 'Parity',
+		# 									 'Spin',
+		# 									 'Decay',
+		# 									 'Deform',
+		# 									 'p_g_e',
+		# 									 'p_c_e',
+		# 									 'p_rms_r',
+		# 									 'rms_r',
+		# 									 'Sp_c',
+		# 									 # 'Sn_c',
+		# 									 'Shell_c',
+		# 									 # 'S2p-d',
+		# 									 # 'Shell-d',
+		# 									 'Spin-c',
+		# 									 'Rad-c',
+		# 									 'Def-c',
+		# 									 'ME-c',
+		# 									 'BEA-A-c',
+		# 									 'Decay-d',
+		# 									 'ME-d',
+		# 									 # 'Rad-d',
+		# 									 # 'Pair-c',
+		# 									 # 'Par-c',
+		# 									 'BEA-A-d',
+		# 									 # 'Spin-d',
+		# 									 'Def-d',
+		# 									 # 'mag_p',
+		# 									 # 'mag-n',
+		# 									 # 'mag-d',
+		# 									 'Nlow',
+		# 									 'Ulow',
+		# 									 'Ntop',
+		# 									 'Utop',
+		# 									 'ainf',
+		# 									 ]
+		#
+		# plt.figure(figsize=(10,12))
+		# xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60) # metric is total gain
+		# plt.show()
 
 		# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
 		# shap.plots.waterfall(shap_values[0], max_display=70)
 
 
-print(overall_r2_list)
+
 print()
-print(f"Overall r2: {np.mean(overall_r2_list)}")
-# print(f"individual r2: {individual_r2_list}")
-print()
+
 print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
-# print(f"Average individual r2: {np.mean(individual_r2_list)}")
+
+
+A_plots = [i[1] for i in nuclide_mse]
+mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
+mse_plots = [i[-1] for i in nuclide_mse]
+
+log_plots = [np.log(abs(i[-1])) for i in nuclide_r2]
+
+plt.figure()
+plt.plot(A_plots, mse_log_plots, 'x')
+plt.xlabel("A")
+plt.ylabel("log MSE")
+plt.title("log MSE")
+plt.show()
+
+plt.figure()
+plt.plot(A_plots, mse_plots, 'x')
+plt.xlabel("A")
+plt.ylabel("MSE")
+plt.title("Normal MSE")
+plt.show()
+
+plt.figure()
+plt.plot(A_plots, log_plots, 'x')
+plt.xlabel("A")
+plt.ylabel("log abs r2")
+plt.title("log abs r2")
+plt.show()
+
