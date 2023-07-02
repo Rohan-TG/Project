@@ -16,12 +16,19 @@ import periodictable
 # df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
 # df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
 
-df = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")
-df_test = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
+# df = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")
+# df_test = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 
-df_test = df_test[df_test.MT == 16] # extract (n,2n) only
+df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+
+df_test = df_test[df_test.Z != 11]
+df = df[df.Z != 11]
+
+
+# df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
-
+df.index = range(len(df))
 
 def anomaly_remover(dfa):
 	anomalies = [[14, 28], [14, 29], [14, 30], [15, 31], [20, 40], [20, 42], [20, 43], [20, 44], [20, 46],
@@ -186,7 +193,7 @@ for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
 # df['cat_magic_neutron'].astype('category')
 # df['cat_magic_double'].astype("category")
 
-validation_nuclides = [[58,140]] # list of nuclides used for validation
+validation_nuclides = [[92,238]] # list of nuclides used for validation
 validation_set_size = 25 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -196,14 +203,14 @@ while len(validation_nuclides) < validation_set_size:
 print("Test nuclide selection complete")
 
 
-def make_train(df, la=20, ua=210):
+def make_train(df, la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
 	df: dataframe to use
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
 
-	MT = df['MT']
+	# MT = df['MT']
 	ME = df['ME']
 	Z = df['Z']
 	A = df['A']
@@ -353,7 +360,7 @@ def make_train(df, la=20, ua=210):
 	# Pairing_compound_train = []
 	# Parity_compound_train = []
 
-	for idx, r_type in enumerate(MT):  # MT = 16 is (n,2n) (already extracted)
+	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope to training data
 		if Energy[idx] >= 30: # training on data less than 30 MeV
@@ -811,7 +818,7 @@ if __name__ == "__main__":
 
 
 	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.01555,
+							learning_rate=0.015,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
