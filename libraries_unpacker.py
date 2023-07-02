@@ -42,15 +42,7 @@ useable_features = features_without_XS_ERG.columns
 def UNPACKER(nuclides):
 
 	"""nuclides argument must be a list of nuclides with elements in the format [z,a]
-	returns two lists:
-
-	XS_list: list of concatenated XS data
-	ERG_list: as above"""
-
-	# XS_list = []
-	# ERG_list = []
-	# z_list = []
-	# a_list = []
+	returns two lists:"""
 
 	new_dataframe = pd.DataFrame(columns=useable_features)
 
@@ -93,31 +85,6 @@ def UNPACKER(nuclides):
 					# print(dummy_row)
 
 					new_dataframe = pd.concat([new_dataframe, dummy_row])
-
-
-		# XS_list = XS_list + unpacked_XS
-		# ERG_list = ERG_list + unpacked_ERG
-		# z_list = z_list + z_unpacked
-		# a_list = a_list + a_unpacked
-
-
-	# for i, row in df.iterrows():
-	# 	for z, a in zip(z_list, a_list):
-	# 		if [row['Z'], row['A']] == [z,a]:
-	# 			dummy_row = original_row
-	#
-	# 			# temp_df = pd.DataFrame(columns=useable_features)
-	# 			for feature in useable_features:
-	# 				dummy_row[feature] = row[feature]
-	#
-	# 			for j, (xs, energy) in enumerate(zip(XS_list, ERG_list)):
-	# 				if z_list[j] == z and a_list[j] == a:
-	#
-	# 					dummy_row['XS'] = xs
-	# 					dummy_row['ERG'] = energy
-	#
-	# 				new_dataframe._append(dummy_row, ignore_index=True)
-
 
 	return new_dataframe
 
@@ -168,25 +135,8 @@ new_nuclides = [[6,12],
 				[1,2],
 				[1,3],
 				[3,7],
-				[12,24],
-				[12,25],
-				[12,26],
-				[7,14],
-				[7,15],
-				[11,22],
-				[10,20],
-				[10,21],
-				[10,22],
-				[93,234],
-				[93,235],
-				[93,237],
-				[93,238],
-				[93,239],
-				[8,16],
-				[8,17],
-				[8,18],
-				[91,229],
-				[91,230],
+				[12,24],[12,25],[12,26],[7,14],[7,15],[11,22],[10,20],[10,21],[10,22],[93,234],
+				[93,235],[93,237],[93,238],[93,239],[8,16],[8,17],[8,18],[91,229],[91,230],
 				[91,231],
 				[91,232],
 				[84,208],
@@ -195,12 +145,36 @@ new_nuclides = [[6,12],
 				[94,236],
 				[94,237],
 				[94,238],
-				
+				[94,239],
+				[94,240],
+				[94,242],
+				[94,243],
+				[88,223],
+				[88,224],
+				[88,225],
+				[90,227],
+				[90,232],
+				[90,233],
+				[92,232],
+				[92,233],
+				[92,235],
+				[92,238],
+				[92,239]
 				]
 
-WIP_df = UNPACKER(new_nuclides)
+print(len(new_nuclides))
 
-print(WIP_df)
-
-plt.plot(WIP_df['ERG'], WIP_df['XS'])
-plt.show()
+# WIP_df = UNPACKER(new_nuclides)
+#
+# print(WIP_df.info())
+#
+#
+# jj = []
+# for i, j, in zip(WIP_df['A'], WIP_df['Z']): # i is A, j is Z
+# 	if [j, i] in jj:
+# 		continue
+# 	else:
+# 		jj.append([j, i]) # format is [Z, A]
+#
+# print(jj)
+# print(len(jj))
