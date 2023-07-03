@@ -185,6 +185,8 @@ if __name__ == "__main__":
 		P_plotmatrix.append(dummy_predictions)
 
 	# plot predictions against data
+	# note: python lists allow elements to be lists of varying lengths. This would not work using numpy arrays; the for
+	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
 	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i] # validation nuclide
 		plt.plot(erg, pred_xs, label='predictions')
