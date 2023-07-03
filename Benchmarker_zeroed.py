@@ -11,6 +11,7 @@ import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import anomaly_remover, make_train, make_test
+import tqdm
 
 
 # df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
@@ -26,7 +27,7 @@ df_test = anomaly_remover(dfa = df_test)
 
 al = []
 for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
-	if [j, i] in al:
+	if [j, i] in al or i > 210:
 		continue
 	else:
 		al.append([j, i]) # format is [Z, A]
@@ -102,10 +103,7 @@ for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
 
 
 
-
-print(len(al))
-
-benchmark_number = 25
+benchmark_number = 21
 
 nuclides_used = []
 
@@ -121,13 +119,13 @@ if __name__ == "__main__":
 	every_prediction_list = []
 	every_true_value_list = []
 
-	for i in range(benchmark_number):
+	for i in tqdm.tqdm(range(benchmark_number)):
 
 		print(f"Epoch {i+1}/{benchmark_number}")
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 20  # number of nuclides hidden from training
+		validation_set_size = 21  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
@@ -137,14 +135,14 @@ if __name__ == "__main__":
 		print("Test nuclide selection complete")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=260) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=210) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df_test)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
 
-		print("Train/val matrices generated")
+		print("\nTrain/val matrices generated")
 
 
 		model = xg.XGBRegressor(n_estimators=900,
@@ -210,7 +208,9 @@ if __name__ == "__main__":
 		# overall_r2_list.append(overall_r2)
 		# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 		print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
-		print(f'completed in {time.time() - time1} s \n')
+		time_taken = time.time() - time1
+		print(f'completed in {time_taken} s.\n')
+
 
 		# explainer = shap.Explainer(model.predict, X_train,
 		# 						   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
