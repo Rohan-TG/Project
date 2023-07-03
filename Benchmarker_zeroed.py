@@ -7,7 +7,7 @@ import numpy as np
 import random
 import xgboost as xg
 import time
-import shap
+# import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import anomaly_remover, make_train, make_test
@@ -16,11 +16,8 @@ from matrix_functions import anomaly_remover, make_train, make_test
 # df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
 # df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
 
-df = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")
-df_test = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-
-df_test = df_test[df_test.MT == 16] # extract (n,2n) only
-df_test.index = range(len(df_test)) # re-label indices
+df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 
 
 
