@@ -180,16 +180,8 @@ if __name__ == "__main__":
 
 		# plot predictions against data
 		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+
 			nuc = validation_nuclides[i] # validation nuclide
-			# plt.plot(erg, pred_xs, label='predictions')
-			# plt.plot(erg, true_xs, label='data')
-			# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-			# plt.legend()
-			# plt.grid()
-			# plt.ylabel('XS / b')
-			# plt.xlabel('Energy / MeV')
-			# plt.show()
-			#
 			r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 			print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
