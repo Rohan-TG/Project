@@ -9,79 +9,23 @@ import numpy as np
 import random
 import xgboost as xg
 import time
-import shap
+# import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from hyperopt import hp, fmin, tpe, STATUS_OK, Trials
 from hyperopt.pyll.base import scope
+from matrix_functions import anomaly_remover
 
-df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
-
-df_test = df_test[df_test.MT == 16] # extract (n,2n) only
-df_test.index = range(len(df_test))
+df = pd.read_csv('ENDFBVIII_zeroed_LDP_XS.csv') # new interpolated dataset, used for training only
+df_test = pd.read_csv('ENDFBVIII_zeroed_LDP_XS.csv') # original dataset, used for validation
 
 
-def interpolate_pandas(df, inter_col):
-
-	all_cols = df.columns.to_list()
-	remain_cols = [c for c in all_cols if c not in inter_col]
-
-	df_inter = pd.DataFrame(columns=df.columns)
-
-	for i, row in df.iterrows():
-		df_inter = df_inter._append(row, ignore_index=True)
-		df_inter = df_inter._append(pd.Series(np.nan, index=df.columns), ignore_index=True)
-
-	for c in inter_col:
-		df_inter[c] = df_inter[c].interpolate()
-
-	df_inter[remain_cols] = df_inter[remain_cols].ffill()
-
-	final_index = []
-	completed_removal = []
-	for z, a in zip(df_inter['Z'], df_inter['A']):
-		if [z,a] in completed_removal:
-			continue
-
-		remover = df_inter[df_inter.A == a]
-		remove = remover[remover.Z == z]
-
-		last_row_index = remove.index[-1]
-		final_index.append(last_row_index)
-		completed_removal.append([z,a])
-	for i in final_index:
-		df_inter = df_inter.drop(index=i)
-
-	df_inter.index = range(len(df_inter))
-	return df_inter
 
 
-def anomaly_remover(dfa):
-	anomalies = [[14, 28], [14, 29], [14, 30], [15, 31], [20, 40], [20, 42], [20, 43], [20, 44], [20, 46],
-				 [20, 48], [24, 50], [24, 52], [24, 53], [24, 54], [28, 58], [28, 60], [28, 61], [28, 62], [28, 64],
-				 [29, 63], [29, 65], [41, 93], [80, 196], [80, 198], [80, 199], [80, 200], [80, 201], [80, 202],
-				 [80, 204], [82, 206], [82, 207]]
-	"""list of nuclides with cutoff value @ 20 MeV - format is [Z,A]"""
-
-	anomaly_indices = []
-	for set in anomalies:
-		z = set[0]
-		a = set[1]
-
-		remover = dfa[dfa.A == a]
-		remove = remover[remover.Z == z]
-
-		last_row_index = remove.index[-1]
-		anomaly_indices.append(last_row_index)
 
 
-	for i in anomaly_indices:
-		dfa = dfa.drop(index=i)
 
-	dfa.index = range(len(dfa))
 
-	return dfa
 
 
 df_test = anomaly_remover(dfa=df_test)
@@ -95,7 +39,6 @@ for i, j, in zip(df['A'], df['Z']):
         al.append([j, i])
 
 
-test_nuclides = [[26,56]]
 
 validation_nuclides = [] # list of nuclides used for validation
 validation_set_size = 50 # number of nuclides hidden from training
@@ -106,14 +49,14 @@ while len(validation_nuclides) < validation_set_size:
 		validation_nuclides.append(choice)
 
 
-def make_train(df, val_nuc, test_nuc, la=25, ua=210):
+def make_train(df, val_nuc, test_nuc, la=0, ua=210):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
 	df: dataframe to use
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
 
-	MT = df['MT']
+	# MT = df['MT']
 	ME = df['ME']
 	Z = df['Z']
 	A = df['A']
@@ -250,7 +193,7 @@ def make_train(df, val_nuc, test_nuc, la=25, ua=210):
 	# Pairing_compound_train = []
 	# Parity_compound_train = []
 
-	for idx, r_type in enumerate(MT):  # MT = 16 is (n,2n) (already extracted)
+	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in val_nuc:
 			continue # prevents loop from adding test isotope to training data
 		if [Z[idx], A[idx]] in test_nuc:
@@ -667,7 +610,7 @@ if __name__ == "__main__":
 			 'subsample': hp.loguniform('subsample', np.log(0.05), np.log(1.0)),
 			 'max_leaves': 0,
 			 'max_depth': scope.int(hp.quniform("max_depth", 6, 12, 1)),
-			 'learning_rate': hp.loguniform('learning_rate', np.log(0.001), np.log(0.05))}
+			 'learning_rate': hp.loguniform('learning_rate', np.log(0.001), np.log(0.03))}
 
 	def optimiser(space):
 
@@ -677,7 +620,8 @@ if __name__ == "__main__":
 		validation_nuclides = []  # list of nuclides used for validation
 		validation_set_size = 25  # number of nuclides used for validation
 
-		test_nuclides = [[26,56], [78,195], [24,52]]  # nuclides completely screened from training and optimisation. These will only be used in the main
+		test_nuclides = [[26,56], [78,195], [24,52], [92,235], [92,238],
+						 [40,90],]  # nuclides completely screened from training and optimisation. These will only be used in the main
 		# train and test script, and are left completely unseen in this script.
 
 		while len(validation_nuclides) < validation_set_size:
