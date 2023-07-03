@@ -103,9 +103,9 @@ for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
 
 
 
+print(len(al))
 
-
-benchmark_number = 21
+benchmark_number = 25
 
 nuclides_used = []
 
