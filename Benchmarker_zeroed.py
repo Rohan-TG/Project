@@ -25,13 +25,25 @@ df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")  # dataframe as above, but 
 
 df_test = anomaly_remover(dfa = df_test)
 
-al = []
-for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
-	if [j, i] in al or i > 210:
-		continue
-	else:
-		al.append([j, i]) # format is [Z, A]
+# for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
+# 	if [j, i] in al or i > 215 or i < 28:
+# 		continue
+# 	else:
+# 		al.append([j, i]) # format is [Z, A]
 
+def range_setter(la, ua):
+
+	nucs = []
+
+	for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
+		if [j, i] in nucs or i > ua or i < la:
+			continue
+		else:
+			nucs.append([j, i]) # format is [Z, A]
+
+	return nucs
+
+al = range_setter(la=50, ua=215)
 
 # cat_magic = []
 #
@@ -103,7 +115,7 @@ for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
 
 
 
-benchmark_number = 21
+
 
 nuclides_used = []
 
@@ -119,30 +131,39 @@ if __name__ == "__main__":
 	every_prediction_list = []
 	every_true_value_list = []
 
-	for i in tqdm.tqdm(range(benchmark_number)):
+	counter = 0
+	while len(nuclides_used) < len(al):
 
-		print(f"Epoch {i+1}/{benchmark_number}")
+
+		# print(f"{len(nuclides_used) // len(al)} Epochs left")
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 21  # number of nuclides hidden from training
+		validation_set_size = 25  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
+
 			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
 			if choice not in validation_nuclides and choice not in nuclides_used:
 				validation_nuclides.append(choice)
 				nuclides_used.append(choice)
+			if len(nuclides_used) == len(al):
+				break
+
+
 		print("Test nuclide selection complete")
+		print(f"{len(nuclides_used)}/{len(al)} selections")
+		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=210) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=50, ua=215) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df_test)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
 
-		print("\nTrain/val matrices generated")
+		print("Train/val matrices generated")
 
 
 		model = xg.XGBRegressor(n_estimators=900,
@@ -151,6 +172,14 @@ if __name__ == "__main__":
 								subsample=0.18236,
 								max_leaves=0,
 								seed=42,)
+
+		# model = xg.XGBRegressor(n_estimators=500,
+		# 						learning_rate=0.012,
+		# 						max_depth=6,
+		# 						subsample=0.1282,
+		# 						max_leaves=0,
+		# 						seed=42
+		# 						)
 
 		time1 = time.time()
 		model.fit(X_train, y_train)
@@ -347,20 +376,6 @@ Z_plots = [i[0] for i in nuclide_r2]
 
 log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
-
-# plt.figure()
-# plt.plot(A_plots, mse_log_plots, 'x')
-# plt.xlabel("A")
-# plt.ylabel("log MSE")
-# plt.title("log MSE")
-# plt.show()
-#
-# plt.figure()
-# plt.plot(A_plots, mse_plots, 'x')
-# plt.xlabel("A")
-# plt.ylabel("MSE")
-# plt.title("Normal MSE")
-# plt.show()
 
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
