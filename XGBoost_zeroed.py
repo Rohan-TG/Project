@@ -49,15 +49,38 @@ df_test = anomaly_remover(dfa = df_test)
 # 	return grad, hess
 
 
+def range_setter(la, ua):
+	nucs = []
 
-al = []
-for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
-	if [j, i] in al:
-		continue
-	else:
-		al.append([j, i]) # format is [Z, A]
-		# print([j,i])
+	for i, j, in zip(df['A'], df['Z']):  # i is A, j is Z
+		if [j, i] in nucs or i > ua or i < la:
+			continue
+		else:
+			nucs.append([j, i])  # format is [Z, A]
+	return nucs
 
+al = range_setter(la=28, ua=215)
+
+magic_numbers = [2, 8, 20, 28, 50, 82, 126]
+
+doubly_magic = []
+n_magic = []
+p_magic = []
+all_magic = []
+
+for nuc in al:
+	if nuc[0] in magic_numbers and (nuc[1] - nuc[0]) in magic_numbers:
+		# print(f"Double: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
+		doubly_magic.append(nuc)
+		all_magic.append(nuc)
+	elif nuc[0] in magic_numbers and (nuc[1] - nuc[0]) not in magic_numbers:
+		# print(f"Protonic: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
+		p_magic.append(nuc)
+		all_magic.append(nuc)
+	elif nuc[0] not in magic_numbers and (nuc[1] - nuc[0]) in magic_numbers:
+		# print(f"Neutronic: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
+		n_magic.append(nuc)
+		all_magic.append(nuc)
 
 # cat_magic = []
 #
@@ -126,12 +149,13 @@ for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
 # df['cat_magic_neutron'].astype('category')
 # df['cat_magic_double'].astype("category")
 
-validation_nuclides = [[92,238]] # list of nuclides used for validation
+# validation_nuclides = [[82,208]] # list of nuclides used for validation
+validation_nuclides =
 validation_set_size = 20 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
-	if choice not in validation_nuclides and choice[-1] > 208:
+	if choice not in validation_nuclides and choice[-1] < 215 and choice[1] > 27:
 		validation_nuclides.append(choice)
 print("Test nuclide selection complete")
 
@@ -139,7 +163,7 @@ print("Test nuclide selection complete")
 
 if __name__ == "__main__":
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=200, ua=260) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=27, ua=210) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -274,10 +298,10 @@ if __name__ == "__main__":
 	plt.show()
 
 	# Splits-based feature importance plot
-	plt.figure(figsize=(10, 12))
-	plt.title("Splits-based FI")
-	xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
-	plt.show()
+	# plt.figure(figsize=(10, 12))
+	# plt.title("Splits-based FI")
+	# xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
+	# plt.show()
 
 	# explainer = shap.Explainer(model.predict, X_train,
 	# 						   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
