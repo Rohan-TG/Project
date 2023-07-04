@@ -59,7 +59,7 @@ def range_setter(la, ua):
 			nucs.append([j, i])  # format is [Z, A]
 	return nucs
 
-al = range_setter(la=28, ua=215)
+al = range_setter(la=50, ua=215)
 
 magic_numbers = [2, 8, 20, 28, 50, 82, 126]
 
@@ -150,7 +150,7 @@ for nuc in al:
 # df['cat_magic_double'].astype("category")
 
 # validation_nuclides = [[82,208]] # list of nuclides used for validation
-validation_nuclides =
+validation_nuclides = [[20,40], [28,58], [24,50]]
 validation_set_size = 20 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -163,7 +163,7 @@ print("Test nuclide selection complete")
 
 if __name__ == "__main__":
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=27, ua=210) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=50, ua=215) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
