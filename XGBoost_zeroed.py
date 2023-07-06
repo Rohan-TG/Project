@@ -59,7 +59,7 @@ def range_setter(la, ua):
 			nucs.append([j, i])  # format is [Z, A]
 	return nucs
 
-al = range_setter(la=50, ua=215)
+al = range_setter(la=30, ua=215)
 
 magic_numbers = [2, 8, 20, 28, 50, 82, 126]
 
@@ -150,12 +150,13 @@ for nuc in al:
 # df['cat_magic_double'].astype("category")
 
 # validation_nuclides = [[82,208]] # list of nuclides used for validation
-validation_nuclides = [[20,40], [28,58], [24,50]]
+# validation_nuclides = [[20,40], [28,58], [24,50]]
+validation_nuclides = []
 validation_set_size = 20 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
-	if choice not in validation_nuclides and choice[-1] < 215 and choice[1] > 27:
+	if choice not in validation_nuclides:
 		validation_nuclides.append(choice)
 print("Test nuclide selection complete")
 
