@@ -43,7 +43,7 @@ def range_setter(la, ua):
 
 	return nucs
 
-al = range_setter(la=50, ua=215)
+al = range_setter(la=0, ua=40)
 
 # cat_magic = []
 #
@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 25  # number of nuclides hidden from training
+		validation_set_size = 5  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 
@@ -156,7 +156,7 @@ if __name__ == "__main__":
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=50, ua=215) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=40) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -209,6 +209,15 @@ if __name__ == "__main__":
 
 		# plot predictions against data
 		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+			nuc = validation_nuclides[i]
+			# plt.plot(erg, pred_xs, label='predictions')
+			# plt.plot(erg, true_xs, label='data')
+			# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+			# plt.legend()
+			# plt.grid()
+			# plt.ylabel('XS / b')
+			# plt.xlabel('Energy / MeV')
+			# plt.show()
 
 			nuc = validation_nuclides[i] # validation nuclide
 			r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
@@ -231,6 +240,8 @@ if __name__ == "__main__":
 		print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
 		time_taken = time.time() - time1
 		print(f'completed in {time_taken} s.\n')
+
+		# time.sleep(10)
 
 
 		# explainer = shap.Explainer(model.predict, X_train,
@@ -376,6 +387,9 @@ Z_plots = [i[0] for i in nuclide_r2]
 
 log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
+
+heavy_performance = [abs(np.log(abs(i[-1]))) for i in nuclide_r2 if i[1] < 40]
+print(f"Heavy performance: {heavy_performance}, mean: {np.mean(heavy_performance)}")
 
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
