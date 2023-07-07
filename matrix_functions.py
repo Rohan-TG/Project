@@ -121,7 +121,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	# magic_d = df['cat_magic_double']
 	Nlow = df['Nlow']
 	Ulow = df['Ulow']
-	Ntop = df['Ntop']
+	# Ntop = df['Ntop']
 	Utop = df['Utop']
 	ainf = df['ainf']
 
@@ -194,7 +194,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	rms_radius_train = []
 	Nlow_train = []
 	Ulow_train = []
-	Ntop_train = []
+	# Ntop_train = []
 	Utop_train = []
 	ainf_train = []
 
@@ -302,7 +302,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			Deform_daughter_train.append(Deform_daughter[idx])
 			Nlow_train.append(Nlow[idx])
 			Ulow_train.append(Ulow[idx])
-			Ntop_train.append(Ntop[idx])
+			# Ntop_train.append(Ntop[idx])
 			Utop_train.append(Utop[idx])
 			ainf_train.append(ainf[idx])
 
@@ -362,7 +362,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 				  # cat_double_train,
 				  Nlow_train,
 				  Ulow_train,
-				  Ntop_train,
+				  # Ntop_train,
 				  Utop_train,
 				  ainf_train,
 				  ])
@@ -423,7 +423,7 @@ def make_test(nuclides, df):
 	# magic_d = df['cat_magic_double']
 	Nlow = df['Nlow']
 	Ulow = df['Ulow']
-	Ntop = df['Ntop']
+	# Ntop = df['Ntop']
 	Utop = df['Utop']
 	ainf = df['ainf']
 
@@ -494,7 +494,7 @@ def make_test(nuclides, df):
 	# octupole_deformation_test = []
 	Nlow_test = []
 	Ulow_test = []
-	Ntop_test = []
+	# Ntop_test = []
 	Utop_test = []
 	ainf_test = []
 
@@ -605,7 +605,7 @@ def make_test(nuclides, df):
 				Deform_daughter_test.append(Deform_daughter[j])
 				Nlow_test.append(Nlow[j])
 				Ulow_test.append(Ulow[j])
-				Ntop_test.append(Ntop[j])
+				# Ntop_test.append(Ntop[j])
 				Utop_test.append(Utop[j])
 				ainf_test.append(ainf[j])
 
@@ -668,7 +668,7 @@ def make_test(nuclides, df):
 					  # cat_double_test,
 					  Nlow_test,
 					  Ulow_test,
-					  Ntop_test,
+					  # Ntop_test,
 					  Utop_test,
 					  ainf_test,
 					  ])
