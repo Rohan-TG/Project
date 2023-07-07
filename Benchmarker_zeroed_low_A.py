@@ -11,11 +11,7 @@ import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import anomaly_remover, make_train_low, make_test_low
-import tqdm
-
-
-# df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-# df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
+# import tqdm
 
 df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
 df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
@@ -113,17 +109,12 @@ al = range_setter(la=0, ua=50)
 # df['cat_magic_double'].astype("category")
 
 
-
 nuclides_used = []
 
 nuclide_mse = []
 nuclide_r2 = []
 
 if __name__ == "__main__":
-	# lower_a = int(input("Enter lower boundary A: "))
-	# upper_a = int(input("Enter upper boundary A: "))
-
-	# overall_r2_list = []
 
 	every_prediction_list = []
 	every_true_value_list = []
