@@ -16,16 +16,7 @@ from matrix_functions import anomaly_remover, make_train_low, make_test_low
 df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
 df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 
-
-
-
 df_test = anomaly_remover(dfa = df_test)
-
-# for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
-# 	if [j, i] in al or i > 215 or i < 28:
-# 		continue
-# 	else:
-# 		al.append([j, i]) # format is [Z, A]
 
 def range_setter(la, ua):
 
@@ -122,9 +113,6 @@ if __name__ == "__main__":
 	counter = 0
 	while len(nuclides_used) < len(al):
 
-
-		# print(f"{len(nuclides_used) // len(al)} Epochs left")
-
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
 		validation_set_size = 10  # number of nuclides hidden from training
@@ -167,7 +155,6 @@ if __name__ == "__main__":
 		print("Training complete")
 
 		predictions = model.predict(X_test) # XS predictions
-
 
 		# Form arrays for plots below
 		XS_plotmatrix = []
