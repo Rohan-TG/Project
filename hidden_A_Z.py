@@ -7,7 +7,7 @@ import numpy as np
 import random
 import xgboost as xg
 import time
-# import shap
+import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import make_test_hidden, make_train_hidden, anomaly_remover, make_test_unhidden
@@ -164,7 +164,7 @@ print("Test nuclide selection complete")
 
 if __name__ == "__main__":
 
-	X_train, y_train = make_train_hidden(df=df, validation_nuclides=validation_nuclides, la=50, ua=215) # make training matrix
+	X_train, y_train = make_train_hidden(df=df, validation_nuclides=validation_nuclides, la=30, ua=215) # make training matrix
 
 	X_test, y_test = make_test_unhidden(validation_nuclides, df=df_test)
 
@@ -229,10 +229,7 @@ if __name__ == "__main__":
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
 
-	model.get_booster().feature_names = [# 'Z',
-										 # 'A',
-										 # 'N',
-										 'S2n', 'S2p', 'E', 'Sp', 'Sn',
+	model.get_booster().feature_names = ['S2n', 'S2p', 'E', 'Sp', 'Sn',
 										 'BEA',
 										 # 'P',
 										 'Snc', 'g-def',
@@ -299,78 +296,72 @@ if __name__ == "__main__":
 	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
 	plt.show()
 
-	# Splits-based feature importance plot
-	# plt.figure(figsize=(10, 12))
-	# plt.title("Splits-based FI")
-	# xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
-	# plt.show()
-
-	# explainer = shap.Explainer(model.predict, X_train,
-	# 						   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
-	# 										   'BEA',
-	# 										   # 'P',
-	# 										   'Snc', 'g-def', 'N',
-	# 										   'b-def',
-	# 										   'Sn_da',
-	# 										   'Sp_d',
-	# 										   'S2n_d',
-	# 										   'Radius',
-	# 										   'n_g_erg',
-	# 										   'n_c_erg',
-	# 										   # 'xsmax',
-	# 										   'n_rms_r',
-	# 										   # 'oct_def',
-	# 										   'D_c',
-	# 										   'BEA_d',
-	# 										   'BEA_c',
-	# 										   # 'Pair_d',
-	# 										   # 'Par_d',
-	# 										   'S2n_c',
-	# 										   'S2p_c',
-	# 										   'ME',
-	# 										   # 'Z_even',
-	# 										   # 'A_even',
-	# 										   # 'N_even',
-	# 										   'Shell',
-	# 										   'Par',
-	# 										   'Spin',
-	# 										   'Decay',
-	# 										   'Deform',
-	# 										   'p_g_e',
-	# 										   'p_c_e',
-	# 										   'p_rms_r',
-	# 										   'rms_r',
-	# 										   'Sp_c',
-	# 										   # 'S_n_c',
-	# 										   'Shell_c',
-	# 										   # 'S2p-d',
-	# 										   # 'Shell-d',
-	# 										   'Spin-c',
-	# 										   'Rad-c',
-	# 										   'Def-c',
-	# 										   'ME-c',
-	# 										   'BEA-A-c',
-	# 										   'Decay-d',
-	# 										   'ME-d',
-	# 										   # 'Rad-d',
-	# 										   # 'Pair-c',
-	# 										   # 'Par-c',
-	# 										   'BEA-A-d',
-	# 										   # 'Spin-d',
-	# 										   'Def-d',
-	# 										   # 'mag_p',
-	# 										   # 'mag_n',
-	# 										   # 'mag_d',
-	# 										   'Nlow',
-	# 										   'Ulow',
-	# 										   'Ntop',
-	# 										   'Utop',
-	# 										   'ainf',
-	# 										   ]) # SHAP feature importance analysis
-	# shap_values = explainer(X_test)
+	explainer = shap.Explainer(model.predict, X_train,
+							   feature_names= ['S2n', 'S2p', 'E', 'Sp', 'Sn',
+										 'BEA',
+										 # 'P',
+										 'Snc', 'g-def',
+										 'b-def',
+										 'Sn da',
+										 'Sp d',
+										 'S2n d',
+										 'Radius',
+										 'n_g_erg',
+										 'n_c_erg',
+										 # 'xsmax',
+										 'n_rms_r',
+										 # 'oct_def',
+										 'D_c',
+										 'BEA_d',
+										 'BEA_c',
+										 # 'Pair_d',
+										 # 'Par_d',
+										 'S2n_c',
+										 'S2p_c',
+										 'ME',
+										 # 'Z_even',
+										 # 'A_even',
+										 # 'N_even',
+										 'Shell',
+										 'Parity',
+										 'Spin',
+										 'Decay',
+										 'Deform',
+										 'p_g_e',
+										 'p_c_e',
+										 'p_rms_r',
+										 'rms_r',
+										 'Sp_c',
+										 # 'Sn_c',
+										 'Shell_c',
+										 # 'S2p-d',
+										 # 'Shell-d',
+										 'Spin-c',
+										 'Rad-c',
+										 'Def-c',
+										 'ME-c',
+										 'BEA-A-c',
+										 'Decay-d',
+										 'ME-d',
+										 # 'Rad-d',
+										 # 'Pair-c',
+										 # 'Par-c',
+										 'BEA-A-d',
+										 # 'Spin-d',
+										 'Def-d',
+										 # 'mag_p',
+										 # 'mag-n',
+										 # 'mag-d',
+										 'Nlow',
+										 'Ulow',
+										 'Ntop',
+										 'Utop',
+										 'ainf',
+										 ]) # SHAP feature importance analysis
+	shap_values = explainer(X_test_passed)
 
 	# name features for FIA
 
 
-	# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
 	# shap.plots.waterfall(shap_values[0], max_display=70)
