@@ -240,7 +240,6 @@ if __name__ == "__main__":
 		print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
 		time_taken = time.time() - time1
 		print(f'completed in {time_taken} s.\n')
-
 		# time.sleep(10)
 
 
