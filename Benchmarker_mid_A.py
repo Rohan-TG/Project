@@ -43,7 +43,7 @@ def range_setter(la, ua):
 
 	return nucs
 
-al = range_setter(la=3, ua=215)
+al = range_setter(la=30, ua=215)
 
 # cat_magic = []
 #
@@ -120,9 +120,6 @@ nuclide_mse = []
 nuclide_r2 = []
 
 if __name__ == "__main__":
-	# lower_a = int(input("Enter lower boundary A: "))
-	# upper_a = int(input("Enter upper boundary A: "))
-
 	# overall_r2_list = []
 
 	every_prediction_list = []
@@ -136,7 +133,7 @@ if __name__ == "__main__":
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 10  # number of nuclides hidden from training
+		validation_set_size = 20  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 
@@ -153,7 +150,7 @@ if __name__ == "__main__":
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=50) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -372,8 +369,10 @@ Z_plots = [i[0] for i in nuclide_r2]
 log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 
-heavy_performance = [abs(np.log(abs(i[-1]))) for i in nuclide_r2 if i[1] < 50]
-print(f"Heavy performance: {heavy_performance}, mean: {np.mean(heavy_performance)}")
+for nuc in nuclide_r2:
+	metric = abs(np.log(abs(nuc[-1])))
+	if metric > 0.5:
+		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]}")
 
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
@@ -390,3 +389,4 @@ plt.ylabel("log abs r2")
 plt.title("log abs r2 - Z")
 plt.grid()
 plt.show()
+
