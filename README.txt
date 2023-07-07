@@ -6,7 +6,7 @@ Linearly interpolated 0+ data (42.6 MB): https://drive.google.com/file/d/1PqMRNO
 
 Original data with 0+ (21.1 MB): https://drive.google.com/file/d/1huTXxWFD6Vj-d5p5YzQChUqSdV0Z_kAO/view?usp=drive_link
 -----------------------------------------------------------------------------------------------------------------------------
-CURRENTLY IN USE - 1 < A < 255 ENDF/B-VIII data (18.5 MB) https://drive.google.com/file/d/1034KwhX4Oi96-S28vfqhHhJSy1KWN6J4/view?usp=drive_link
+CURRENTLY IN USE - 1 < A < 255 ENDF/B-VIII data (18.5 MB) https://drive.google.com/file/d/1yg6T5YeE6EmQTUIGo8hmnoFJNp2GjPSW/view?usp=drive_link
 
 
 XGBoost_zeroed.py is the main script in use for training and testing.
