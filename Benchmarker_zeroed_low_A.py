@@ -10,7 +10,7 @@ import time
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import anomaly_remover, make_train, make_test
+from matrix_functions import anomaly_remover, make_train_low, make_test_low
 import tqdm
 
 
@@ -153,9 +153,9 @@ if __name__ == "__main__":
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=50) # make training matrix
+		X_train, y_train = make_train_low(df=df, validation_nuclides=validation_nuclides, la=0, ua=50) # make training matrix
 
-		X_test, y_test = make_test(validation_nuclides, df=df_test)
+		X_test, y_test = make_test_low(validation_nuclides, df=df_test)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
