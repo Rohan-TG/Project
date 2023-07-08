@@ -115,7 +115,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	p_chem_erg = df['p_chem_erg']
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
-	rms_radius = df['rms_radius']
+	# rms_radius = df['rms_radius']
 	# magic_p = df['cat_magic_proton']
 	# magic_n = df['cat_magic_neutron']
 	# magic_d = df['cat_magic_double']
@@ -191,7 +191,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	p_gap_erg_train = []
 	p_chem_erg_train = []
 	p_rms_radius_train = []
-	rms_radius_train = []
+	# rms_radius_train = []
 	Nlow_train = []
 	Ulow_train = []
 	# Ntop_train = []
@@ -281,7 +281,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			p_gap_erg_train.append(p_gap_erg[idx])
 			p_chem_erg_train.append(p_chem_erg[idx])
 			p_rms_radius_train.append(p_rms_radius[idx])
-			rms_radius_train.append(rms_radius[idx])
+			# rms_radius_train.append(rms_radius[idx])
 			Sp_compound_train.append(Sp_compound[idx])
 			# Sn_compound_train.append(Sn_compound[idx])
 			Shell_compound_train.append(Shell_compound[idx])
@@ -338,7 +338,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 				  p_gap_erg_train,
 				  p_chem_erg_train,
 				  p_rms_radius_train,
-				  rms_radius_train,
+				  # rms_radius_train,
 				  Sp_compound_train,
 				  # Sn_compound_train,
 				  Shell_compound_train,
@@ -416,7 +416,7 @@ def make_test(nuclides, df):
 	p_chem_erg = df['p_chem_erg']
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
-	rms_radius = df['rms_radius']
+	# rms_radius = df['rms_radius']
 	# magic_p = df['cat_magic_proton']
 	# magic_n = df['cat_magic_neutron']
 	# magic_d = df['cat_magic_double']
@@ -488,7 +488,7 @@ def make_test(nuclides, df):
 	p_gap_erg_test = []
 	p_chem_erg_test = []
 	p_rms_radius_test = []
-	rms_radius_test = []
+	# rms_radius_test = []
 	# xs_max_test = []
 	# octupole_deformation_test = []
 	Nlow_test = []
@@ -583,7 +583,7 @@ def make_test(nuclides, df):
 				p_gap_erg_test.append(p_gap_erg[j])
 				p_chem_erg_test.append(p_chem_erg[j])
 				p_rms_radius_test.append(p_rms_radius[j])
-				rms_radius_test.append(rms_radius[j])
+				# rms_radius_test.append(rms_radius[j])
 				Sp_compound_test.append(Sp_compound[j])
 				# Sn_compound_test.append(Sn_compound[j])
 				Shell_compound_test.append(Shell_compound[j])
@@ -643,7 +643,7 @@ def make_test(nuclides, df):
 					  p_gap_erg_test,
 					  p_chem_erg_test,
 					  p_rms_radius_test,
-					  rms_radius_test,
+					  # rms_radius_test,
 					  Sp_compound_test,
 					  # Sn_compound_test,
 					  Shell_compound_test,
