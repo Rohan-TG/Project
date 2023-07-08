@@ -13,12 +13,6 @@ import periodictable
 from matrix_functions import make_test, make_train, anomaly_remover
 
 
-# df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-# df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
-
-# df = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")
-# df_test = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-
 df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
 df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
 
@@ -29,7 +23,6 @@ df = df[df.Z != 11]
 # df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
-
 
 
 df_test = anomaly_remover(dfa = df_test)
@@ -56,7 +49,7 @@ def range_setter(la, ua):
 			nucs.append([j, i])  # format is [Z, A]
 	return nucs
 
-al = range_setter(la=0, ua=50)
+al = range_setter(la=30, ua=215)
 
 magic_numbers = [2, 8, 20, 28, 50, 82, 126]
 
@@ -148,7 +141,7 @@ for nuc in al:
 
 # validation_nuclides = [[82,208]] # list of nuclides used for validation
 # validation_nuclides = [[20,40], [28,58], [24,50]]
-validation_nuclides = []
+validation_nuclides = [[55,137]]
 validation_set_size = 25 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -161,7 +154,7 @@ print("Test nuclide selection complete")
 
 if __name__ == "__main__":
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=50) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -222,7 +215,7 @@ if __name__ == "__main__":
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		time.sleep(0.7)
+		time.sleep(0.8)
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
