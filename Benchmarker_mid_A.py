@@ -25,12 +25,6 @@ df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")  # dataframe as above, but 
 
 df_test = anomaly_remover(dfa = df_test)
 
-# for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
-# 	if [j, i] in al or i > 215 or i < 28:
-# 		continue
-# 	else:
-# 		al.append([j, i]) # format is [Z, A]
-
 def range_setter(la, ua):
 
 	nucs = []
@@ -128,7 +122,6 @@ if __name__ == "__main__":
 	counter = 0
 	while len(nuclides_used) < len(al):
 
-
 		# print(f"{len(nuclides_used) // len(al)} Epochs left")
 
 		validation_nuclides = []  # list of nuclides used for validation
@@ -183,11 +176,13 @@ if __name__ == "__main__":
 			dummy_test_XS = []
 			dummy_test_E = []
 			dummy_predictions = []
+			dummy_shell = []
 			for i, row in enumerate(X_test):
 				if [row[0], row[1]] == nuclide:
 					dummy_test_XS.append(y_test[i])
 					dummy_test_E.append(row[4]) # Energy values are in 5th row
 					dummy_predictions.append(predictions[i])
+					dummy_shell.append(row[25])
 
 			XS_plotmatrix.append(dummy_test_XS)
 			E_plotmatrix.append(dummy_test_E)
@@ -213,6 +208,16 @@ if __name__ == "__main__":
 
 			nuclide_mse.append([nuc[0], nuc[1], mse])
 			nuclide_r2.append([nuc[0], nuc[1], r2])
+
+			shell_used = []
+			for z, a, shell in zip(df['Z'], df['A'], df['Shell']):
+				if [z, a, shell] in shell_used:
+					continue
+				elif a < 30 or a > 215:
+					continue
+				else:
+					shell_used.append([z,a,shell])
+
 			# individual_r2_list.append(r2)
 
 		overall_r2 = r2_score(y_test, predictions)
@@ -387,6 +392,15 @@ plt.plot(Z_plots, log_plots_Z, 'x')
 plt.xlabel('Z')
 plt.ylabel("log abs r2")
 plt.title("log abs r2 - Z")
+plt.grid()
+plt.show()
+
+
+shell_plots = [shell_val[-1] for shell_val in shell_used]
+plt.plot(shell_plots, log_plots, 'x')
+plt.xlabel("Shell")
+plt.ylabel("log abs r2")
+plt.title("Shell behaviour")
 plt.grid()
 plt.show()
 
