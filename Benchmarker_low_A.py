@@ -351,7 +351,7 @@ log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 
 heavy_performance = [abs(np.log(abs(i[-1]))) for i in nuclide_r2 if i[1] < 50]
-print(f"Heavy performance: {heavy_performance}, mean: {np.mean(heavy_performance)}")
+print(f"Light performance: {heavy_performance},\n mean: {np.mean(heavy_performance)}")
 
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
