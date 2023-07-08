@@ -33,9 +33,6 @@ df.index = range(len(df))
 
 
 df_test = anomaly_remover(dfa = df_test)
-# use once then save dataframe
-
-
 
 # def custom_loss(y_pred, y_true):
 # 	num = y_pred + 1
@@ -59,7 +56,7 @@ def range_setter(la, ua):
 			nucs.append([j, i])  # format is [Z, A]
 	return nucs
 
-al = range_setter(la=30, ua=215)
+al = range_setter(la=0, ua=50)
 
 magic_numbers = [2, 8, 20, 28, 50, 82, 126]
 
@@ -152,7 +149,7 @@ for nuc in al:
 # validation_nuclides = [[82,208]] # list of nuclides used for validation
 # validation_nuclides = [[20,40], [28,58], [24,50]]
 validation_nuclides = []
-validation_set_size = 20 # number of nuclides hidden from training
+validation_set_size = 25 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -164,7 +161,7 @@ print("Test nuclide selection complete")
 
 if __name__ == "__main__":
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=50, ua=215) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=50) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -225,6 +222,7 @@ if __name__ == "__main__":
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+		time.sleep(0.7)
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
@@ -264,7 +262,7 @@ if __name__ == "__main__":
 										 'p_g_e',
 										 'p_c_e',
 										 'p_rms_r',
-										 'rms_r',
+										 # 'rms_r',
 										 'Sp_c',
 										 # 'Sn_c',
 										 'Shell_c',
@@ -288,7 +286,7 @@ if __name__ == "__main__":
 										 # 'mag-d',
 										 'Nlow',
 										 'Ulow',
-										 'Ntop',
+										 # 'Ntop',
 										 'Utop',
 										 'ainf',
 										 ]
@@ -338,7 +336,7 @@ if __name__ == "__main__":
 											   'p_g_e',
 											   'p_c_e',
 											   'p_rms_r',
-											   'rms_r',
+											   # 'rms_r',
 											   'Sp_c',
 											   # 'S_n_c',
 											   'Shell_c',
@@ -362,7 +360,7 @@ if __name__ == "__main__":
 											   # 'mag_d',
 											   'Nlow',
 											   'Ulow',
-											   'Ntop',
+											   # 'Ntop',
 											   'Utop',
 											   'ainf',
 											   ]) # SHAP feature importance analysis
