@@ -30,6 +30,15 @@ def anomaly_remover(dfa):
 
 	return dfa
 
+def range_setter(df, la, ua):
+	nucs = []
+
+	for i, j, in zip(df['A'], df['Z']):  # i is A, j is Z
+		if [j, i] in nucs or i > ua or i < la:
+			continue
+		else:
+			nucs.append([j, i])  # format is [Z, A]
+	return nucs
 
 def interpolate_pandas(df, inter_col):
 	"""Performs linear interpolation on XS data, using pandas.
