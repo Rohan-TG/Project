@@ -35,3 +35,5 @@ df.insert(71, 'Asymmetry_compound', value=s_c)
 df.insert(72, 'Asymmetry_daughter', value=s_d)
 
 print(df.shape)
+
+# df.to_csv("ENDFBVIII_MT16_XS_feateng.csv")
