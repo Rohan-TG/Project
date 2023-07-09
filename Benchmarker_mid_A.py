@@ -211,8 +211,12 @@ if __name__ == "__main__":
 		# overall_r2_list.append(overall_r2)
 		# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 		print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
-		time_taken = time.time() - time1
-		print(f'completed in {time_taken} s.\n')
+		time_taken = float(time.time() - time1)
+		print(f'completed in {time_taken} s.')
+		counter += 1
+
+		time_remaining = ((len(al) - counter*validation_set_size) / validation_set_size) * time_taken
+		print(f"Time remaining: {time_remaining:0.1f} s. \n")
 		# time.sleep(10)
 
 
@@ -346,7 +350,7 @@ if __name__ == "__main__":
 
 print()
 
-print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
+
 
 A_plots = [i[1] for i in nuclide_r2]
 Z_plots = [i[0] for i in nuclide_r2]
@@ -386,3 +390,4 @@ plt.title("Shell behaviour")
 plt.grid()
 plt.show()
 
+print(f"Overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
