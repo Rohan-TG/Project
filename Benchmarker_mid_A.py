@@ -10,32 +10,22 @@ import time
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import anomaly_remover, make_train, make_test
+from matrix_functions import anomaly_remover, make_train, make_test, range_setter
 import tqdm
 
 
 # df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
 # df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
 
-df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
+# df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+# df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 
-
+df = pd.read_csv("ENDFBVIII_MT16_XS.csv")
+df_test = pd.read_csv("ENDFBVIII_MT16_XS.csv")
 
 
 df_test = anomaly_remover(dfa = df_test)
 
-def range_setter(la, ua):
-
-	nucs = []
-
-	for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
-		if [j, i] in nucs or i > ua or i < la:
-			continue
-		else:
-			nucs.append([j, i]) # format is [Z, A]
-
-	return nucs
 
 al = range_setter(la=30, ua=215)
 
