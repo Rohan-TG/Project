@@ -10,7 +10,7 @@ import time
 import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import make_test, make_train, anomaly_remover
+from matrix_functions import make_test, make_train, anomaly_remover, range_setter
 
 
 df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
@@ -38,18 +38,7 @@ df_test = anomaly_remover(dfa = df_test)
 #
 # 	return grad, hess
 
-
-def range_setter(la, ua):
-	nucs = []
-
-	for i, j, in zip(df['A'], df['Z']):  # i is A, j is Z
-		if [j, i] in nucs or i > ua or i < la:
-			continue
-		else:
-			nucs.append([j, i])  # format is [Z, A]
-	return nucs
-
-al = range_setter(la=30, ua=215)
+al = range_setter(la=30, ua=215, df=df)
 
 magic_numbers = [2, 8, 20, 28, 50, 82, 126]
 
@@ -141,7 +130,7 @@ for nuc in al:
 
 # validation_nuclides = [[82,208]] # list of nuclides used for validation
 # validation_nuclides = [[20,40], [28,58], [24,50]]
-validation_nuclides = [[55,137]]
+validation_nuclides = [[40,91],[41,93]]
 validation_set_size = 25 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
