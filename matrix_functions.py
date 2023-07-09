@@ -324,8 +324,8 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			# Ntop_train.append(Ntop[idx])
 			Utop_train.append(Utop[idx])
 			ainf_train.append(ainf[idx])
-			XSlow_train.append(XSlow[idx])
-			XSupp_train.append(XSupp[idx])
+			# XSlow_train.append(XSlow[idx])
+			# XSupp_train.append(XSupp[idx])
 			Asymmetry_train.append(Asymmetry[idx])
 			Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
@@ -388,8 +388,8 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 				  # Ntop_train,
 				  Utop_train,
 				  ainf_train,
-				  XSlow_train,
-				  XSupp_train,
+				  # XSlow_train,
+				  # XSupp_train,
 				  Asymmetry_train,
 				  Asymmetry_compound_train,
 				  Asymmetry_daughter_train,
@@ -713,8 +713,8 @@ def make_test(nuclides, df):
 					  # Ntop_test,
 					  Utop_test,
 					  ainf_test,
-					  XSlow_test,
-					  XSupp_test,
+					  # XSlow_test,
+					  # XSupp_test,
 					  Asymmetry_test,
 					  Asymmetry_compound_test,
 					  Asymmetry_daughter_test,
