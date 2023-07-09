@@ -135,6 +135,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	ainf = df['ainf']
 	XSlow = df['XSlow']
 	XSupp = df['XSupp']
+	Asymmetry = df['Asymmetry']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -151,6 +152,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	Spin_compound = df['Spin_compound']
 	# Parity_compound = df['Parity_compound']
 	Deform_compound = df['Deform_compound']
+	Asymmetry_compound = df['Asymmetry_compound']
 
 	# Daughter nucleus properties
 	Sn_daughter = df['Sn_daughter']
@@ -167,6 +169,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	# Spin_daughter = df['Spin_daughter']
 	Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
+	Asymmetry_daughter = df['Asymmetry_daughter']
 
 	Z_train = []
 	A_train = []
@@ -210,6 +213,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	ainf_train = []
 	XSlow_train = []
 	XSupp_train = []
+	Asymmetry_train = []
 
 
 
@@ -228,6 +232,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	BEA_A_daughter_train = []
 	# Spin_daughter_train = []
 	Deform_daughter_train = []
+	Asymmetry_daughter_train = []
 
 	# Compound nucleus properties
 	Sn_c_train = []  # Sn compound
@@ -245,6 +250,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	BEA_A_compound_train = []
 	# Pairing_compound_train = []
 	# Parity_compound_train = []
+	Asymmetry_compound_train = []
 
 	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
@@ -320,7 +326,9 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			ainf_train.append(ainf[idx])
 			XSlow_train.append(XSlow[idx])
 			XSupp_train.append(XSupp[idx])
-
+			Asymmetry_train.append(Asymmetry[idx])
+			Asymmetry_compound_train.append(Asymmetry_compound[idx])
+			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
 
 	X = np.array([Z_train, A_train, S2n_train, S2p_train, Energy_train,
 				  Sp_train, Sn_train, BEA_train,
@@ -382,6 +390,9 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 				  ainf_train,
 				  XSlow_train,
 				  XSupp_train,
+				  Asymmetry_train,
+				  Asymmetry_compound_train,
+				  Asymmetry_daughter_train,
 				  ])
 	y = np.array(XS_train) # cross sections
 
@@ -444,6 +455,7 @@ def make_test(nuclides, df):
 	ainf = df['ainf']
 	XSlow = df['XSlow']
 	XSupp = df['XSupp']
+	Asymmetry = df['Asymmetry']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -460,6 +472,7 @@ def make_test(nuclides, df):
 	Spin_compound = df['Spin_compound']
 	# Parity_compound = df['Parity_compound']
 	Deform_compound = df['Deform_compound']
+	Asymmetry_compound = df['Asymmetry_compound']
 
 	# Daughter nucleus properties
 	Sn_daughter = df['Sn_daughter']
@@ -476,6 +489,7 @@ def make_test(nuclides, df):
 	# Spin_daughter = df['Spin_daughter']
 	Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
+	Asymmetry_daughter = df['Asymmetry_daughter']
 
 
 	Z_test = []
@@ -517,6 +531,7 @@ def make_test(nuclides, df):
 	ainf_test = []
 	XSlow_test = []
 	XSupp_test = []
+	Asymmetry_test = []
 
 
 	# Daughter features
@@ -536,6 +551,7 @@ def make_test(nuclides, df):
 	Deform_daughter_test = []
 	# Pairing_daughter_test = []
 	# Parity_daughter_test = []
+	Asymmetry_daughter_test = []
 
 	Sp_compound_test = []
 	# Sn_compound_test = []
@@ -550,6 +566,7 @@ def make_test(nuclides, df):
 	BEA_compound_test = []
 	S2n_compound_test = []
 	S2p_compound_test = []
+	Asymmetry_compound_test = []
 
 	# cat_proton_test = []
 	# cat_neutron_test = []
@@ -630,6 +647,9 @@ def make_test(nuclides, df):
 				ainf_test.append(ainf[j])
 				XSlow_test.append(XSlow[j])
 				XSupp_test.append(XSupp[j])
+				Asymmetry_test.append(Asymmetry[j])
+				Asymmetry_compound_test.append(Asymmetry_compound[j])
+				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 
 
 
@@ -695,6 +715,9 @@ def make_test(nuclides, df):
 					  ainf_test,
 					  XSlow_test,
 					  XSupp_test,
+					  Asymmetry_test,
+					  Asymmetry_compound_test,
+					  Asymmetry_daughter_test,
 					  ])
 	xtest = np.transpose(xtest)
 
