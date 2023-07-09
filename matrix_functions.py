@@ -133,6 +133,8 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	# Ntop = df['Ntop']
 	Utop = df['Utop']
 	ainf = df['ainf']
+	XSlow = df['XSlow']
+	XSupp = df['XSupp']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -206,6 +208,8 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	# Ntop_train = []
 	Utop_train = []
 	ainf_train = []
+	XSlow_train = []
+	XSupp_train = []
 
 
 
@@ -314,6 +318,8 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			# Ntop_train.append(Ntop[idx])
 			Utop_train.append(Utop[idx])
 			ainf_train.append(ainf[idx])
+			XSlow_train.append(XSlow[idx])
+			XSupp_train.append(XSupp[idx])
 
 
 	X = np.array([Z_train, A_train, S2n_train, S2p_train, Energy_train,
@@ -374,6 +380,8 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 				  # Ntop_train,
 				  Utop_train,
 				  ainf_train,
+				  XSlow_train,
+				  XSupp_train,
 				  ])
 	y = np.array(XS_train) # cross sections
 
@@ -434,6 +442,8 @@ def make_test(nuclides, df):
 	# Ntop = df['Ntop']
 	Utop = df['Utop']
 	ainf = df['ainf']
+	XSlow = df['XSlow']
+	XSupp = df['XSupp']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -505,6 +515,8 @@ def make_test(nuclides, df):
 	# Ntop_test = []
 	Utop_test = []
 	ainf_test = []
+	XSlow_test = []
+	XSupp_test = []
 
 
 	# Daughter features
@@ -616,6 +628,8 @@ def make_test(nuclides, df):
 				# Ntop_test.append(Ntop[j])
 				Utop_test.append(Utop[j])
 				ainf_test.append(ainf[j])
+				XSlow_test.append(XSlow[j])
+				XSupp_test.append(XSupp[j])
 
 
 
@@ -679,6 +693,8 @@ def make_test(nuclides, df):
 					  # Ntop_test,
 					  Utop_test,
 					  ainf_test,
+					  XSlow_test,
+					  XSupp_test,
 					  ])
 	xtest = np.transpose(xtest)
 
