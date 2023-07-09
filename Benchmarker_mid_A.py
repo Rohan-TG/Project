@@ -20,8 +20,11 @@ import tqdm
 # df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
 # df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 
-df = pd.read_csv("ENDFBVIII_MT16_XS.csv")
-df_test = pd.read_csv("ENDFBVIII_MT16_XS.csv")
+# df = pd.read_csv("ENDFBVIII_MT16_XS.csv")
+# df_test = pd.read_csv("ENDFBVIII_MT16_XS.csv")
+
+df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 
 df_test = anomaly_remover(dfa = df_test)
