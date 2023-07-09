@@ -27,7 +27,7 @@ df_test = pd.read_csv("ENDFBVIII_MT16_XS.csv")
 df_test = anomaly_remover(dfa = df_test)
 
 
-al = range_setter(la=30, ua=215)
+al = range_setter(la=30, ua=215, df=df)
 
 # cat_magic = []
 #
