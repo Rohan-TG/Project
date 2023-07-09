@@ -11,17 +11,6 @@ import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import anomaly_remover, make_train, make_test, range_setter
-import tqdm
-
-
-# df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-# df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
-
-# df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-# df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-
-# df = pd.read_csv("ENDFBVIII_MT16_XS.csv")
-# df_test = pd.read_csv("ENDFBVIII_MT16_XS.csv")
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
