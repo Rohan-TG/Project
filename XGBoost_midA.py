@@ -13,8 +13,11 @@ import periodictable
 from matrix_functions import make_test, make_train, anomaly_remover, range_setter
 
 
-df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+# df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+# df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+
+df_test = pd.read_csv("ENDFBVIII_MT16_XS.csv")
+df = pd.read_csv("ENDFBVIII_MT16_XS.csv")
 
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
@@ -271,6 +274,8 @@ if __name__ == "__main__":
 										 # 'Ntop',
 										 'Utop',
 										 'ainf',
+										 'XSlow',
+										 'XSupp',
 										 ]
 
 	# Gain-based feature importance plot
@@ -345,6 +350,8 @@ if __name__ == "__main__":
 											   # 'Ntop',
 											   'Utop',
 											   'ainf',
+											   'XSlow',
+											   'XSupp'
 											   ]) # SHAP feature importance analysis
 	shap_values = explainer(X_test)
 
