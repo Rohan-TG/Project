@@ -17,7 +17,6 @@ for i, j, in zip(df['A'], df['Z']):  # i is A, j is Z
 
 print(nucs)
 
-
 def asymmetry_term(N, Z, A):
 
     s_target = (N - Z)/A
@@ -31,8 +30,14 @@ def asymmetry_term(N, Z, A):
     s_daughter = (daughter_N - Z)/daughter_A
 
     return s_target, s_compound, s_daughter
-
 s, s_c, s_d = asymmetry_term(N=df['N'], Z=df['Z'], A=df['A'])
 
-# for n, z, a in zip(df['N'], df['Z'], df['A']):
-#     pass
+
+
+# import pandas
+#
+# # df = pandas.read_csv("ENDFBVIII_MT16_XS.csv")
+# df = pandas.read_csv("zeroed_1_xs_fund_feateng.csv")
+# df = df.dropna(axis=1)
+# print(df.shape)
+# print(df.columns)
