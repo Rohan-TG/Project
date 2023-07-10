@@ -31,16 +31,19 @@ def TENDL_UNPACKER():
 
             for j in range(len(xs_reaction)):
                 xs_mt = xs_reaction[j]["MT"]
+                xs_LFS = xs_reaction[j]["LFS"]
 
-                if xs_mt == 16:
-                    xs_erg = xs_reaction[j]["Energy"]
-                    xs_xs = xs_reaction[j]["XS"]
+                if xs_LFS == -1:
 
-                    for erg, xs in zip(xs_erg, xs_xs):
-                        ALL_XS.append(xs)
-                        ALL_ERG.append(erg)
-                        ALL_A.append(xs_a)
-                        ALL_Z.append(xs_z)
+                    if xs_mt == 16:
+                        xs_erg = xs_reaction[j]["Energy"]
+                        xs_xs = xs_reaction[j]["XS"]
+
+                        for erg, xs in zip(xs_erg, xs_xs):
+                            ALL_XS.append(xs)
+                            ALL_ERG.append(erg)
+                            ALL_A.append(xs_a)
+                            ALL_Z.append(xs_z)
 
     return ALL_Z, ALL_A, ALL_ERG, ALL_XS
 
@@ -66,4 +69,4 @@ TENDL_DATAFRAME = pd.DataFrame(data=TENDL_dictionary)
 print(TENDL_DATAFRAME.head())
 print(TENDL_DATAFRAME.shape)
 
-TENDL_DATAFRAME.to_csv("TENDL_MT16_XS_NOLISO.csv")
+TENDL_DATAFRAME.to_csv("TENDL_MT16_XS_NOLISO_LFS.csv")
