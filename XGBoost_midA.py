@@ -3,7 +3,6 @@ from numba.core.errors import NumbaDeprecationWarning
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import random
 import xgboost as xg
 import time
@@ -64,77 +63,9 @@ for nuc in al:
 		n_magic.append(nuc)
 		all_magic.append(nuc)
 
-# cat_magic = []
-#
-# magic_numbers = [2, 8, 20, 28, 50, 82, 126]
-#
-#
-# cat_magic_double_original = []
-# cat_magic_neutron_original = []
-# cat_magic_proton_original = []
-#
-# for z, n in zip(df_test['Z'], df_test['A']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_double_original.append(1)
-# 		cat_magic_neutron_original.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_neutron_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron_original.append(1)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_proton_original.append(0)
-# 	else:
-# 		cat_magic_proton_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_neutron_original.append(0)
-#
-# df_test.insert(78, 'cat_magic_proton', cat_magic_proton_original)
-# df_test.insert(79, 'cat_magic_neutron', cat_magic_neutron_original)
-# df_test.insert(80, 'cat_magic_double', cat_magic_double_original)
-#
-# df_test['cat_magic_proton'].astype('category')
-# df_test['cat_magic_neutron'].astype('category')
-# df_test['cat_magic_double'].astype("category")
-#
-#
-# cat_magic_proton = []
-# cat_magic_neutron = []
-# cat_magic_double = []
-#
-# for z, n in zip(df['Z'], df['N']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_double.append(1)
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton.append(1)
-# 		cat_magic_neutron.append(0)
-# 		cat_magic_double.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 	else:
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 		cat_magic_neutron.append(0)
-#
-#
-# df.insert(78, 'cat_magic_proton', cat_magic_proton)
-# df.insert(79, 'cat_magic_neutron', cat_magic_neutron)
-# df.insert(80, 'cat_magic_double', cat_magic_double)
-#
-# df['cat_magic_proton'].astype('category')
-# df['cat_magic_neutron'].astype('category')
-# df['cat_magic_double'].astype("category")
 
-# validation_nuclides = [[82,208]] # list of nuclides used for validation
-# validation_nuclides = [[20,40], [28,58], [24,50]]
-validation_nuclides = [[40,91],[41,93]]
-validation_set_size = 25 # number of nuclides hidden from training
+validation_nuclides = []
+validation_set_size = 50 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -207,7 +138,7 @@ if __name__ == "__main__":
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		time.sleep(0.8)
+		time.sleep(1)
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
@@ -274,8 +205,8 @@ if __name__ == "__main__":
 										 # 'Ntop',
 										 'Utop',
 										 'ainf',
-										 'XSlow',
-										 'XSupp',
+										 # 'XSlow',
+										 # 'XSupp',
 										 'Asym',
 										 'Asym_c',
 										 'Asym_d',
@@ -353,8 +284,8 @@ if __name__ == "__main__":
 											   # 'Ntop',
 											   'Utop',
 											   'ainf',
-											   'XSlow',
-											   'XSupp',
+											   # 'XSlow',
+											   # 'XSupp',
 											   'Asym',
 											   'Asym_c',
 											   'Asym_d',
