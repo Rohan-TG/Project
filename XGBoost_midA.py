@@ -127,27 +127,34 @@ if __name__ == "__main__":
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
 	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i] # validation nuclide
-		plt.plot(erg, pred_xs, label='predictions')
-		plt.plot(erg, true_xs, label='data')
-		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-		plt.legend()
-		plt.grid()
-		plt.ylabel('XS / b')
-		plt.xlabel('Energy / MeV')
-		plt.show()
+		# plt.plot(erg, pred_xs, label='predictions')
+		# plt.plot(erg, true_xs, label='data')
+		# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+		# plt.legend()
+		# plt.grid()
+		# plt.ylabel('XS / b')
+		# plt.xlabel('Energy / MeV')
+		# plt.show()
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		time.sleep(1)
+		# time.sleep(1)
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
 
-	model.get_booster().feature_names = ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
+	model.get_booster().feature_names = ['Z',
+										 'A',
+										 'S2n',
+										 'S2p',
+										 'E',
+										 'Sp',
+										 'Sn',
 										 'BEA',
 										 # 'P',
-										 'Snc', 'g-def',
+										 'Snc',
+										 'g-def',
 										 'N',
 										 'b-def',
 										 'Sn da',
@@ -224,7 +231,12 @@ if __name__ == "__main__":
 	plt.show()
 
 	explainer = shap.Explainer(model.predict, X_train,
-							   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
+							   feature_names= ['Z', 'A',
+											   'S2n',
+											   'S2p',
+											   'E',
+											   'Sp',
+											   'Sn',
 											   'BEA',
 											   # 'P',
 											   'Snc', 'g-def', 'N',
