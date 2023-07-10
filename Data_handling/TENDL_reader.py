@@ -44,6 +44,8 @@ def TENDL_UNPACKER():
 
 TENDL_z,TENDL_a,TENDL_e,TENDL_xs = TENDL_UNPACKER()
 
+TENDL_e = [ENERGY / 1000000 for ENERGY in TENDL_e]
+
 TENDL_nuclides = []
 for zval, aval in zip(TENDL_z, TENDL_a):
     if [zval,aval] in TENDL_nuclides:
@@ -51,19 +53,14 @@ for zval, aval in zip(TENDL_z, TENDL_a):
     else:
         TENDL_nuclides.append([zval,aval])
 
-print(len(TENDL_nuclides))
-print(TENDL_nuclides)
+TENDL_dictionary = {'Z': TENDL_z,
+                    'A': TENDL_a,
+                    'ERG': TENDL_e,
+                    'XS': TENDL_xs}
 
-Nuclear_features = pd.read_csv("Nuclear_Data_features.csv")
-Nuclear_features = Nuclear_features.drop(axis=1, labels=['Unnamed: 0'])
+TENDL_DATAFRAME = pd.DataFrame(data=TENDL_dictionary)
 
-TENDL_dataframe_columns = Nuclear_features.columns
+print(TENDL_DATAFRAME.head())
+print(TENDL_DATAFRAME.shape)
 
-print(TENDL_dataframe_columns)
-
-def TENDL_TO_DF():
-
-    TENDL_dataframe = pd.DataFrame(columns= TENDL_dataframe_columns)
-
-    pass
-
+# TENDL_DATAFRAME.to_csv("TENDL_MT16_XS.csv")
