@@ -23,21 +23,24 @@ def TENDL_UNPACKER():
         xs_z = int(TENDL[i]["Z"])
         xs_a = int(TENDL[i]["A"])
         xs_m = int(TENDL[i]["LISO"])
+        # print(xs_m)
 
         xs_reaction = TENDL[i]["REACTION"]
 
-        for j in range(len(xs_reaction)):
-            xs_mt = xs_reaction[j]["MT"]
+        if xs_m == 0:
 
-            if xs_mt == 16:
-                xs_erg = xs_reaction[j]["Energy"]
-                xs_xs = xs_reaction[j]["XS"]
+            for j in range(len(xs_reaction)):
+                xs_mt = xs_reaction[j]["MT"]
 
-                for erg, xs in zip(xs_erg, xs_xs):
-                    ALL_XS.append(xs)
-                    ALL_ERG.append(erg)
-                    ALL_A.append(xs_a)
-                    ALL_Z.append(xs_z)
+                if xs_mt == 16:
+                    xs_erg = xs_reaction[j]["Energy"]
+                    xs_xs = xs_reaction[j]["XS"]
+
+                    for erg, xs in zip(xs_erg, xs_xs):
+                        ALL_XS.append(xs)
+                        ALL_ERG.append(erg)
+                        ALL_A.append(xs_a)
+                        ALL_Z.append(xs_z)
 
     return ALL_Z, ALL_A, ALL_ERG, ALL_XS
 
@@ -63,4 +66,4 @@ TENDL_DATAFRAME = pd.DataFrame(data=TENDL_dictionary)
 print(TENDL_DATAFRAME.head())
 print(TENDL_DATAFRAME.shape)
 
-# TENDL_DATAFRAME.to_csv("TENDL_MT16_XS.csv")
+TENDL_DATAFRAME.to_csv("TENDL_MT16_XS_NOLISO.csv")
