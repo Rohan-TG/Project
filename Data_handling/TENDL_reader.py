@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+from matrix_functions import range_setter
 
 with open("/Users/rntg/Project/Data_handling/TENDL19_xs.json", 'r') as file:
     TENDL_df = json.load(file)
@@ -18,10 +19,6 @@ def TENDL_UNPACKER():
     ALL_A = []
 
     for i in range(len(TENDL)):
-
-        if i > 0:
-            print("Done")
-            break
 
         xs_z = int(TENDL[i]["Z"])
         xs_a = int(TENDL[i]["A"])
@@ -45,12 +42,28 @@ def TENDL_UNPACKER():
     return ALL_Z, ALL_A, ALL_ERG, ALL_XS
 
 
+TENDL_z,TENDL_a,TENDL_e,TENDL_xs = TENDL_UNPACKER()
 
+TENDL_nuclides = []
+for zval, aval in zip(TENDL_z, TENDL_a):
+    if [zval,aval] in TENDL_nuclides:
+        continue
+    else:
+        TENDL_nuclides.append([zval,aval])
 
-z,a,e,xs = TENDL_UNPACKER()
+print(len(TENDL_nuclides))
+print(TENDL_nuclides)
 
-print(len(xs))
-print(len(z))
+Nuclear_features = pd.read_csv("Nuclear_Data_features.csv")
+Nuclear_features = Nuclear_features.drop(axis=1, labels=['Unnamed: 0'])
 
-plt.plot(e[:60], xs[:60])
-plt.show()
+TENDL_dataframe_columns = Nuclear_features.columns
+
+print(TENDL_dataframe_columns)
+
+def TENDL_TO_DF():
+
+    TENDL_dataframe = pd.DataFrame(columns= TENDL_dataframe_columns)
+
+    pass
+
