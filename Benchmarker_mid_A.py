@@ -15,79 +15,10 @@ from matrix_functions import anomaly_remover, make_train, make_test, range_sette
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-
 df_test = anomaly_remover(dfa = df_test)
 
 
 al = range_setter(la=30, ua=215, df=df)
-
-# cat_magic = []
-#
-# magic_numbers = [2, 8, 20, 28, 50, 82, 126]
-#
-#
-# cat_magic_double_original = []
-# cat_magic_neutron_original = []
-# cat_magic_proton_original = []
-#
-# for z, n in zip(df_test['Z'], df_test['A']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_double_original.append(1)
-# 		cat_magic_neutron_original.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_neutron_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron_original.append(1)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_proton_original.append(0)
-# 	else:
-# 		cat_magic_proton_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_neutron_original.append(0)
-#
-# df_test.insert(78, 'cat_magic_proton', cat_magic_proton_original)
-# df_test.insert(79, 'cat_magic_neutron', cat_magic_neutron_original)
-# df_test.insert(80, 'cat_magic_double', cat_magic_double_original)
-#
-# df_test['cat_magic_proton'].astype('category')
-# df_test['cat_magic_neutron'].astype('category')
-# df_test['cat_magic_double'].astype("category")
-#
-#
-# cat_magic_proton = []
-# cat_magic_neutron = []
-# cat_magic_double = []
-#
-# for z, n in zip(df['Z'], df['N']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_double.append(1)
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton.append(1)
-# 		cat_magic_neutron.append(0)
-# 		cat_magic_double.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 	else:
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 		cat_magic_neutron.append(0)
-#
-#
-# df.insert(78, 'cat_magic_proton', cat_magic_proton)
-# df.insert(79, 'cat_magic_neutron', cat_magic_neutron)
-# df.insert(80, 'cat_magic_double', cat_magic_double)
-#
-# df['cat_magic_proton'].astype('category')
-# df['cat_magic_neutron'].astype('category')
-# df['cat_magic_double'].astype("category")
-
 
 
 nuclides_used = []
