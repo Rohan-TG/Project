@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import random
 import xgboost as xg
 import time
-import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import make_test, make_train, anomaly_remover, range_setter
@@ -19,25 +18,13 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
 
-TENDL_DATAFRAME = pd.read_csv()
+TENDL = pd.read_csv("TENDL_MT16_XS.csv")
 
-# df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
 
 df_test = anomaly_remover(dfa = df_test)
-
-# def custom_loss(y_pred, y_true):
-# 	num = y_pred + 1
-# 	den = y_true + 1
-#
-# 	ln = np.log(y_pred + 1)
-#
-# 	grad = (num/den) - ln
-# 	hess = np.repeat(2, y_true.shape[0])
-#
-# 	return grad, hess
 
 al = range_setter(la=30, ua=215, df=df)
 
@@ -84,7 +71,6 @@ if __name__ == "__main__":
 	# and y_train must be in the shape (n_samples) of the target
 
 	print("Data prep done")
-
 
 	model = xg.XGBRegressor(n_estimators=900,
 							learning_rate=0.015,
@@ -142,3 +128,7 @@ if __name__ == "__main__":
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
+
+
+
+
