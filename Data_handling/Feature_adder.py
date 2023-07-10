@@ -11,12 +11,10 @@ import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 
-for i in range(4):
-	print(i)
 
-df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
+df = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv') # new interpolated dataset, used for training only
 
-
+df = df.drop(axis=1, labels=['Unnamed: 0.2', 'Unnamed: 0.1', 'Unnamed: 0'])
 
 Z_l_unpack, A_l_unpack, Nlow_unpack, Ulow_unpack, Ntop_unpack, Utop_unpack, ainf_unpack, = np.loadtxt("level-densities-ctmeff.txt",
 													 usecols=(0,1,7,8,9,10,13),
