@@ -330,8 +330,14 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
 
-	X = np.array([Z_train, A_train, S2n_train, S2p_train, Energy_train,
-				  Sp_train, Sn_train, BEA_train,
+	X = np.array([Z_train,
+				  A_train,
+				  S2n_train,
+				  S2p_train,
+				  Energy_train,
+				  Sp_train,
+				  Sn_train,
+				  BEA_train,
 				  # Pairing_train,
 				  Sn_c_train,
 				  gd_train, N_train, bd_train, Sn_d_train,
@@ -653,8 +659,14 @@ def make_test(nuclides, df):
 
 
 
-	xtest = np.array([Z_test, A_test, Sep2n_test, Sep2p_test, Energy_test,
-					  Sp_test, Sn_test, BEA_test,
+	xtest = np.array([Z_test,
+					  A_test,
+					  Sep2n_test,
+					  Sep2p_test,
+					  Energy_test,
+					  Sp_test,
+					  Sn_test,
+					  BEA_test,
 					  # Pairing_test,
 					  Sn_c_test,
 					  gd_test, N_test, bd_test,
