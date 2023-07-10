@@ -4,6 +4,42 @@ warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 import pandas as pd
 import numpy as np
 
+
+def TENDL_plotter(df, nuclides):
+
+	ztest = [nuclide[0] for nuclide in nuclides]  # first element is the Z-value of the given test nuclide
+	atest = [nuclide[1] for nuclide in nuclides]
+
+	Z = df['Z']
+	A = df['A']
+
+	Energy = df['ERG']
+	XS = df['XS']
+
+	Z_test = []
+	A_test = []
+	Energy_test = []
+	XS_test = []
+
+	for nuc_test_z, nuc_test_a in zip(ztest, atest):
+		for j, (zval, aval) in enumerate(zip(Z, A)):
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 30:
+				Z_test.append(Z[j])
+				A_test.append(A[j])
+				Energy_test.append(Energy[j])
+				XS_test.append(XS[j])
+
+	xtest = np.array([Z_test, A_test,
+					  Energy_test])
+	xtest = np.transpose(xtest)
+
+	y_test = XS_test
+
+	return xtest, y_test
+
+
+
+
 def anomaly_remover(dfa):
 	anomalies = [[14, 28], [14, 29], [14, 30], [15, 31], [20, 40], [20, 42], [20, 43], [20, 44], [20, 46],
 				 [20, 48], [24, 50], [24, 52], [24, 53], [24, 54], [28, 58], [28, 60], [28, 61], [28, 62], [28, 64],
