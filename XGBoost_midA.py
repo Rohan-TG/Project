@@ -64,10 +64,7 @@ for nuc in al:
 		all_magic.append(nuc)
 
 
-validation_nuclides = [[26,54], [28,58], [18,38], [30,64],
-					   [16,33], [14,32], [18,36], [17,35],
-					   [19,41], [16,34], [20,40], [19,40],
-					   [63,152], [20,43], [42,92], [16,32]]
+validation_nuclides = []
 validation_set_size = 50 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -141,10 +138,10 @@ if __name__ == "__main__":
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		# time.sleep(1)
+		time.sleep(1.2)
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
-	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
+	print(f"R2: {r2_score(y_test, predictions):0.5f}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
 
 	model.get_booster().feature_names = ['Z',
@@ -160,8 +157,8 @@ if __name__ == "__main__":
 										 'g-def',
 										 'N',
 										 'b-def',
-										 'Sn da',
-										 'Sp d',
+										 'Sn d',
+										 # 'Sp d',
 										 'S2n d',
 										 'Radius',
 										 'n_g_erg',
@@ -169,7 +166,7 @@ if __name__ == "__main__":
 										 # 'xsmax',
 										 'n_rms_r',
 										 # 'oct_def',
-										 'D_c',
+										 # 'Decay_c',
 										 'BEA_d',
 										 'BEA_c',
 										 # 'Pair_d',
@@ -184,10 +181,10 @@ if __name__ == "__main__":
 										 'Parity',
 										 'Spin',
 										 'Decay',
-										 'Deform',
+										 # 'Deform',
 										 'p_g_e',
 										 'p_c_e',
-										 'p_rms_r',
+										 # 'p_rms_r',
 										 # 'rms_r',
 										 'Sp_c',
 										 # 'Sn_c',
@@ -214,11 +211,11 @@ if __name__ == "__main__":
 										 # 'Ulow',
 										 # 'Ntop',
 										 'Utop',
-										 'ainf',
+										 # 'ainf',
 										 # 'XSlow',
 										 # 'XSupp',
 										 'Asym',
-										 'Asym_c',
+										 # 'Asym_c',
 										 'Asym_d',
 										 ]
 
@@ -244,8 +241,8 @@ if __name__ == "__main__":
 											   # 'P',
 											   'Snc', 'g-def', 'N',
 											   'b-def',
-											   'Sn_da',
-											   'Sp_d',
+											   'Sn_d',
+											   # 'Sp_d',
 											   'S2n_d',
 											   'Radius',
 											   'n_g_erg',
@@ -253,7 +250,7 @@ if __name__ == "__main__":
 											   # 'xsmax',
 											   'n_rms_r',
 											   # 'oct_def',
-											   'D_c',
+											   # 'Decay_c',
 											   'BEA_d',
 											   'BEA_c',
 											   # 'Pair_d',
@@ -268,10 +265,10 @@ if __name__ == "__main__":
 											   'Par',
 											   'Spin',
 											   'Decay',
-											   'Deform',
+											   # 'Deform',
 											   'p_g_e',
 											   'p_c_e',
-											   'p_rms_r',
+											   # 'p_rms_r',
 											   # 'rms_r',
 											   'Sp_c',
 											   # 'S_n_c',
@@ -298,11 +295,11 @@ if __name__ == "__main__":
 											   # 'Ulow',
 											   # 'Ntop',
 											   'Utop',
-											   'ainf',
+											   # 'ainf',
 											   # 'XSlow',
 											   # 'XSupp',
 											   'Asym',
-											   'Asym_c',
+											   # 'Asym_c',
 											   'Asym_d',
 											   ]) # SHAP feature importance analysis
 	shap_values = explainer(X_test)
