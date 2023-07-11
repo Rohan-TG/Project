@@ -20,7 +20,7 @@ df_test = anomaly_remover(dfa = df_test)
 
 al = range_setter(la=30, ua=215, df=df)
 
-
+random.seed(a=42, version=2)
 nuclides_used = []
 
 nuclide_mse = []
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 					dummy_test_XS.append(y_test[i])
 					dummy_test_E.append(row[4]) # Energy values are in 5th row
 					dummy_predictions.append(predictions[i])
-					dummy_shell.append(row[25])
+					dummy_shell.append(row[23])
 
 			XS_plotmatrix.append(dummy_test_XS)
 			E_plotmatrix.append(dummy_test_E)
@@ -321,4 +321,4 @@ plt.title("Shell behaviour")
 plt.grid()
 plt.show()
 
-print(f"Overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
+print(f"Overall r2: {r2_score(every_true_value_list, every_prediction_list):0.5f}")
