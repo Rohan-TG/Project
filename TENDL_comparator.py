@@ -55,7 +55,7 @@ validation_nuclides = [[22,49], [69,171], [81,203],
 					   [73,181], [37,87], [73,180],
 					   [80,197], [34,79], [42,99],
 					   [18,38], [31,69], [56,139],
-					   ]
+					   [16,33], [21,45]]
 validation_set_size = 20 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
