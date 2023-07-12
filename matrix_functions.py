@@ -23,19 +23,20 @@ def TENDL_plotter(df, nuclides):
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
-			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 30:
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
 				Energy_test.append(Energy[j])
 				XS_test.append(XS[j])
 
-	xtest = np.array([Z_test, A_test,
+	xtest = np.array([#Z_test, A_test,
 					  Energy_test])
-	xtest = np.transpose(xtest)
 
-	y_test = XS_test
+	# xtest = np.transpose(xtest)
 
-	return xtest, y_test
+	tendl_xs = XS_test
+
+	return xtest, tendl_xs
 
 
 
