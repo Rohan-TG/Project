@@ -89,13 +89,13 @@ if __name__ == "__main__":
 			dummy_test_XS = []
 			dummy_test_E = []
 			dummy_predictions = []
-			# dummy_shell = []
+			dummy_shell = []
 			for i, row in enumerate(X_test):
 				if [row[0], row[1]] == nuclide:
 					dummy_test_XS.append(y_test[i])
-					dummy_test_E.append(row[3]) # Energy values are in 5th row
+					dummy_test_E.append(row[4]) # Energy values are in 5th row
 					dummy_predictions.append(predictions[i])
-					# dummy_shell.append(row[2])
+					dummy_shell.append(row[23])
 
 			XS_plotmatrix.append(dummy_test_XS)
 			E_plotmatrix.append(dummy_test_E)
@@ -122,14 +122,14 @@ if __name__ == "__main__":
 			nuclide_mse.append([nuc[0], nuc[1], mse])
 			nuclide_r2.append([nuc[0], nuc[1], r2])
 
-			# shell_used = []
-			# for z, a, shell in zip(df['Z'], df['A'], df['Shell']):
-			# 	if [z, a, shell] in shell_used:
-			# 		continue
-			# 	elif a < 30 or a > 215:
-			# 		continue
-			# 	else:
-			# 		shell_used.append([z,a,shell])
+			shell_used = []
+			for z, a, shell in zip(df['Z'], df['A'], df['Shell']):
+				if [z, a, shell] in shell_used:
+					continue
+				elif a < 30 or a > 215:
+					continue
+				else:
+					shell_used.append([z,a,shell])
 
 			# individual_r2_list.append(r2)
 
@@ -148,7 +148,136 @@ if __name__ == "__main__":
 
 		time_remaining = ((len(al) - counter*validation_set_size) / validation_set_size) * time_taken
 		print(f"Time remaining: {time_remaining:0.1f} s. \n")
+		# time.sleep(10)
 
+
+		# explainer = shap.Explainer(model.predict, X_train,
+		# 						   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
+		# 										   'BEA', 'P', 'Snc', 'g-def', 'N',
+		# 										   'b-def',
+		# 										   'Sn_da',
+		# 										   'Sp_d',
+		# 										   'S2n_d',
+		# 										   'Radius',
+		# 										   'n_g_erg',
+		# 										   'n_c_erg',
+		# 										   # 'xsmax',
+		# 										   'n_rms_r',
+		# 										   # 'oct_def',
+		# 										   'D_c',
+		# 										   'BEA_d',
+		# 										   'BEA_c',
+		# 										   'Pair_d',
+		# 										   # 'Par_d',
+		# 										   'S2n_c',
+		# 										   'S2p_c',
+		# 										   'ME',
+		# 										   # 'Z_even',
+		# 										   # 'A_even',
+		# 										   # 'N_even',
+		# 										   'Shell',
+		# 										   # 'Par',
+		# 										   'Spin',
+		# 										   'Decay',
+		# 										   'Deform',
+		# 										   'p_g_e',
+		# 										   'p_c_e',
+		# 										   'p_rms_r',
+		# 										   'rms_r',
+		# 										   'Sp_c',
+		# 										   'S_n_c',
+		# 										   'Shell_c',
+		# 										   # 'S2p-d',
+		# 										   'Shell-d',
+		# 										   'Spin-c',
+		# 										   'Rad-c',
+		# 										   'Def-c',
+		# 										   'ME-c',
+		# 										   'BEA-A-c',
+		# 										   'Decay-d',
+		# 										   'ME-d',
+		# 										   'Rad-d',
+		# 										   'Pair-c',
+		# 										   # 'Par-c',
+		# 										   'BEA-A-d',
+		# 										   # 'Spin-d',
+		# 										   'Def-d',
+		# 										   'mag_p',
+		# 										   'mag_n',
+		# 										   'mag_d',
+		# 										   ]) # SHAP feature importance analysis
+		# shap_values = explainer(X_test)
+
+		# name features for FIA
+		# model.get_booster().feature_names = ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
+		# 									 'BEA',
+		# 									 # 'P',
+		# 									 'Snc', 'g-def',
+		# 									 'N',
+		# 									 'b-def',
+		# 									 'Sn da',
+		# 									 'Sp d',
+		# 									 'S2n d',
+		# 									 'Radius',
+		# 									 'n_g_erg',
+		# 									 'n_c_erg',
+		# 									 # 'xsmax',
+		# 									 'n_rms_r',
+		# 									 # 'oct_def',
+		# 									 'D_c',
+		# 									 'BEA_d',
+		# 									 'BEA_c',
+		# 									 # 'Pair_d',
+		# 									 # 'Par_d',
+		# 									 'S2n_c',
+		# 									 'S2p_c',
+		# 									 'ME',
+		# 									 # 'Z_even',
+		# 									 # 'A_even',
+		# 									 # 'N_even',
+		# 									 'Shell',
+		# 									 'Parity',
+		# 									 'Spin',
+		# 									 'Decay',
+		# 									 'Deform',
+		# 									 'p_g_e',
+		# 									 'p_c_e',
+		# 									 'p_rms_r',
+		# 									 'rms_r',
+		# 									 'Sp_c',
+		# 									 # 'Sn_c',
+		# 									 'Shell_c',
+		# 									 # 'S2p-d',
+		# 									 # 'Shell-d',
+		# 									 'Spin-c',
+		# 									 'Rad-c',
+		# 									 'Def-c',
+		# 									 'ME-c',
+		# 									 'BEA-A-c',
+		# 									 'Decay-d',
+		# 									 'ME-d',
+		# 									 # 'Rad-d',
+		# 									 # 'Pair-c',
+		# 									 # 'Par-c',
+		# 									 'BEA-A-d',
+		# 									 # 'Spin-d',
+		# 									 'Def-d',
+		# 									 # 'mag_p',
+		# 									 # 'mag-n',
+		# 									 # 'mag-d',
+		# 									 'Nlow',
+		# 									 'Ulow',
+		# 									 'Ntop',
+		# 									 'Utop',
+		# 									 'ainf',
+		# 									 ]
+		#
+		# plt.figure(figsize=(10,12))
+		# xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60) # metric is total gain
+		# plt.show()
+
+		# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+		# shap.plots.waterfall(shap_values[0], max_display=70)
 
 print()
 
@@ -184,12 +313,12 @@ plt.grid()
 plt.show()
 
 
-# shell_plots = [shell_val[-1] for shell_val in shell_used]
-# plt.plot(shell_plots, log_plots, 'x')
-# plt.xlabel("Shell")
-# plt.ylabel("log abs r2")
-# plt.title("Shell behaviour")
-# plt.grid()
-# plt.show()
+shell_plots = [shell_val[-1] for shell_val in shell_used]
+plt.plot(shell_plots, log_plots, 'x')
+plt.xlabel("Shell")
+plt.ylabel("log abs r2")
+plt.title("Shell behaviour")
+plt.grid()
+plt.show()
 
 print(f"Overall r2: {r2_score(every_true_value_list, every_prediction_list):0.5f}")

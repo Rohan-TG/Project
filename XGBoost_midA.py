@@ -12,17 +12,12 @@ import periodictable
 from matrix_functions import make_test, make_train, anomaly_remover, range_setter
 
 
-# df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-# df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
 
-
-# df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
@@ -64,7 +59,7 @@ for nuc in al:
 		all_magic.append(nuc)
 
 
-validation_nuclides = []
+validation_nuclides = [[21,45]]
 validation_set_size = 50 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -115,7 +110,7 @@ if __name__ == "__main__":
 		for i, row in enumerate(X_test):
 			if [row[0], row[1]] == nuclide:
 				dummy_test_XS.append(y_test[i])
-				dummy_test_E.append(row[3]) # Energy values are in 5th row
+				dummy_test_E.append(row[4]) # Energy values are in 5th row
 				dummy_predictions.append(predictions[i])
 
 		XS_plotmatrix.append(dummy_test_XS)
@@ -127,18 +122,18 @@ if __name__ == "__main__":
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
 	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i] # validation nuclide
-		# plt.plot(erg, pred_xs, label='predictions')
-		# plt.plot(erg, true_xs, label='data')
-		# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-		# plt.legend()
-		# plt.grid()
-		# plt.ylabel('XS / b')
-		# plt.xlabel('Energy / MeV')
-		# plt.show()
+		plt.plot(erg, pred_xs, label='predictions')
+		plt.plot(erg, true_xs, label='data')
+		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+		plt.legend()
+		plt.grid()
+		plt.ylabel('XS / b')
+		plt.xlabel('Energy / MeV')
+		plt.show()
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		# time.sleep(1.2)
+		time.sleep(1.2)
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions):0.5f}") # Total R^2 for all predictions in this training campaign
@@ -146,7 +141,7 @@ if __name__ == "__main__":
 
 	model.get_booster().feature_names = ['Z',
 										 'A',
-										 # 'S2n',
+										 'S2n',
 										 'S2p',
 										 'E',
 										 'Sp',
@@ -159,7 +154,7 @@ if __name__ == "__main__":
 										 'b-def',
 										 'Sn d',
 										 # 'Sp d',
-										 # 'S2n d',
+										 'S2n d',
 										 'Radius',
 										 'n_g_erg',
 										 'n_c_erg',
@@ -171,7 +166,7 @@ if __name__ == "__main__":
 										 'BEA_c',
 										 # 'Pair_d',
 										 # 'Par_d',
-										 'S2n_c',
+										 # 'S2n_c',
 										 'S2p_c',
 										 'ME',
 										 # 'Z_even',
@@ -232,7 +227,7 @@ if __name__ == "__main__":
 
 	explainer = shap.Explainer(model.predict, X_train,
 							   feature_names= ['Z', 'A',
-											   # 'S2n',
+											   'S2n',
 											   'S2p',
 											   'E',
 											   'Sp',
@@ -243,7 +238,7 @@ if __name__ == "__main__":
 											   'b-def',
 											   'Sn_d',
 											   # 'Sp_d',
-											   # 'S2n_d',
+											   'S2n_d',
 											   'Radius',
 											   'n_g_erg',
 											   'n_c_erg',
@@ -255,7 +250,7 @@ if __name__ == "__main__":
 											   'BEA_c',
 											   # 'Pair_d',
 											   # 'Par_d',
-											   'S2n_c',
+											   # 'S2n_c',
 											   'S2p_c',
 											   'ME',
 											   # 'Z_even',
