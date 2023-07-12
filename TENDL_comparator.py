@@ -8,7 +8,7 @@ import xgboost as xg
 import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import make_test, make_train, anomaly_remover, range_setter
+from matrix_functions import make_test, make_train, anomaly_remover, range_setter, TENDL_plotter
 
 
 
@@ -17,16 +17,17 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
-
-TENDL = pd.read_csv("TENDL_MT16_XS.csv")
-
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
-
-
 df_test = anomaly_remover(dfa = df_test)
-
 al = range_setter(la=30, ua=215, df=df)
+
+
+TENDL = pd.read_csv("TENDL_MT16_XS.csv")
+TENDL.index = range(len(TENDL))
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
+
+
 
 magic_numbers = [2, 8, 20, 28, 50, 82, 126]
 
@@ -50,8 +51,12 @@ for nuc in al:
 		all_magic.append(nuc)
 
 
-validation_nuclides = []
-validation_set_size = 50 # number of nuclides hidden from training
+validation_nuclides = [[22,49], [69,171], [81,203],
+					   [73,181], [37,87], [73,180],
+					   [80,197], [34,79], [42,99],
+					   [18,38], [31,69], [56,139],
+					   ]
+validation_set_size = 20 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -79,7 +84,6 @@ if __name__ == "__main__":
 							max_leaves=0,
 							seed=42,)
 
-
 	time1 = time.time()
 	model.fit(X_train, y_train)
 
@@ -93,6 +97,10 @@ if __name__ == "__main__":
 	XS_plotmatrix = []
 	E_plotmatrix = []
 	P_plotmatrix = []
+
+	TENDL_XS_plotmatrix = []
+	TENDL_E_plotmatrix = []
+
 	for nuclide in validation_nuclides:
 		dummy_test_XS = []
 		dummy_test_E = []
@@ -107,28 +115,41 @@ if __name__ == "__main__":
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
 
+		if nuclide in TENDL_nuclides:
+			dummy_tendl_XS = []
+			dummy_tendl_ERG = []
+
+			TENDL_ERG_matrix, TENDL_XS = TENDL_plotter(df=TENDL, nuclides=[nuclide])
+
+			dummy_tendl_XS.append(TENDL_XS)
+			dummy_tendl_ERG.append(TENDL_ERG_matrix[-1])
+
+			TENDL_XS_plotmatrix.append(dummy_tendl_XS)
+			TENDL_E_plotmatrix.append(dummy_tendl_ERG)
+
+			# print(TENDL_E_plotmatrix)
+
 	# plot predictions against data
 	# note: python lists allow elements to be lists of varying lengths. This would not work using numpy arrays; the for
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
-	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+	for i, (pred_xs, true_xs, erg, tendl_xs, tendl_erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix, TENDL_XS_plotmatrix, TENDL_E_plotmatrix)):
+		tendl_erg_plot = tendl_erg[0]
+		tendl_xs_plot = tendl_xs[0]
 		nuc = validation_nuclides[i] # validation nuclide
-		# plt.plot(erg, pred_xs, label='predictions')
-		# plt.plot(erg, true_xs, label='data')
-		# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-		# plt.legend()
-		# plt.grid()
-		# plt.ylabel('XS / b')
-		# plt.xlabel('Energy / MeV')
-		# plt.show()
+		plt.plot(erg, pred_xs, label='Predictions')
+		plt.plot(erg, true_xs, label='ENDF/B-VIII')
+		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL")
+		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+		plt.legend()
+		plt.grid()
+		plt.ylabel('XS / b')
+		plt.xlabel('Energy / MeV')
+		plt.show()
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		# time.sleep(1)
+		time.sleep(0.5)
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
-
-
-
-
