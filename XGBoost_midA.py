@@ -12,12 +12,17 @@ import periodictable
 from matrix_functions import make_test, make_train, anomaly_remover, range_setter
 
 
+# df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+# df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
 
+
+# df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
@@ -59,7 +64,7 @@ for nuc in al:
 		all_magic.append(nuc)
 
 
-validation_nuclides = [[21,45]]
+validation_nuclides = []
 validation_set_size = 50 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -71,6 +76,8 @@ print("Test nuclide selection complete")
 
 
 if __name__ == "__main__":
+
+	time1 = time.time()
 
 	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215) # make training matrix
 
@@ -90,7 +97,7 @@ if __name__ == "__main__":
 							seed=42,)
 
 
-	time1 = time.time()
+
 	model.fit(X_train, y_train)
 
 	print("Training complete")
@@ -110,7 +117,7 @@ if __name__ == "__main__":
 		for i, row in enumerate(X_test):
 			if [row[0], row[1]] == nuclide:
 				dummy_test_XS.append(y_test[i])
-				dummy_test_E.append(row[4]) # Energy values are in 5th row
+				dummy_test_E.append(row[3]) # Energy values are in 5th row
 				dummy_predictions.append(predictions[i])
 
 		XS_plotmatrix.append(dummy_test_XS)
@@ -122,18 +129,18 @@ if __name__ == "__main__":
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
 	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i] # validation nuclide
-		plt.plot(erg, pred_xs, label='predictions')
-		plt.plot(erg, true_xs, label='data')
-		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-		plt.legend()
-		plt.grid()
-		plt.ylabel('XS / b')
-		plt.xlabel('Energy / MeV')
-		plt.show()
+		# plt.plot(erg, pred_xs, label='predictions')
+		# plt.plot(erg, true_xs, label='data')
+		# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+		# plt.legend()
+		# plt.grid()
+		# plt.ylabel('XS / b')
+		# plt.xlabel('Energy / MeV')
+		# plt.show()
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		time.sleep(1.2)
+		# time.sleep(1.2)
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions):0.5f}") # Total R^2 for all predictions in this training campaign
@@ -187,9 +194,9 @@ if __name__ == "__main__":
 										 # 'S2p-d',
 										 # 'Shell-d',
 										 'Spin-c',
-										 'Rad-c',
+										 # 'Rad-c',
 										 'Def-c',
-										 'ME-c',
+										 # 'ME-c',
 										 'BEA-A-c',
 										 'Decay-d',
 										 # 'ME-d',
@@ -221,8 +228,7 @@ if __name__ == "__main__":
 
 	# Splits-based feature importance plot
 	plt.figure(figsize=(10, 12))
-	plt.title("Splits-based FI")
-	xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
+	xg.plot_importance(model, ax=plt.gca(), max_num_features=60, title='Splits-based')
 	plt.show()
 
 	explainer = shap.Explainer(model.predict, X_train,
@@ -271,9 +277,9 @@ if __name__ == "__main__":
 											   # 'S2p-d',
 											   # 'Shell-d',
 											   'Spin-c',
-											   'Rad-c',
+											   # 'Rad-c',
 											   'Def-c',
-											   'ME-c',
+											   # 'ME-c',
 											   'BEA-A-c',
 											   'Decay-d',
 											   # 'ME-d',
