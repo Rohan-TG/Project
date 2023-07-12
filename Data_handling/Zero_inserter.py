@@ -10,7 +10,7 @@ import periodictable
 
 
 # df = pd.read_csv('interpolated_n2_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-df_test = pd.read_csv('TENDL_MT16_XS_NOLISO.csv') # original dataset, used for validation
+df_test = pd.read_csv('TENDL_MT16_XS_NOLISO_LFS.csv') # original dataset, used for validation
 
 # df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 # df_test.index = range(len(df_test)) # re-label indices
@@ -314,7 +314,7 @@ def zero_maker(df):
 	current_nuclide = [] # iteration nuclide
 
 	for i, row in df.iterrows():
-		if i % 5000 == 0:
+		if i % 10000 == 0:
 			print(f"{i}/{len(df['Z'])}")
 
 		if [row['Z'], row['A']] != current_nuclide: # for new nuclide in iteration, insert n number of 0 values
@@ -344,9 +344,9 @@ def zero_maker(df):
 df_zero = zero_maker(df=df_test)
 print(df_zero.head())
 
-# df_zero.to_csv('First_attempt_TENDL.csv')
+df_zero.to_csv('Third_attempt_TENDL.csv')
 
-# df_zero = pd.read_csv("First_attempt_TENDL.csv")
+df_zero = pd.read_csv("Third_attempt_TENDL.csv")
 #
 df_using = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 #
@@ -372,4 +372,4 @@ for nuc in TENDL_nuclides:
 		plt.legend()
 		plt.show()
 
-		time.sleep(2)
+		time.sleep(1.5)
