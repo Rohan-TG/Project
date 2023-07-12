@@ -12,17 +12,12 @@ import periodictable
 from matrix_functions import make_test, make_train, anomaly_remover, range_setter
 
 
-# df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-# df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
 
-
-# df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
