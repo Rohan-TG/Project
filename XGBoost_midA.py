@@ -64,7 +64,7 @@ for nuc in al:
 		all_magic.append(nuc)
 
 
-validation_nuclides = []
+validation_nuclides = [[21,45]]
 validation_set_size = 50 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -171,7 +171,7 @@ if __name__ == "__main__":
 										 'BEA_c',
 										 # 'Pair_d',
 										 # 'Par_d',
-										 'S2n_c',
+										 # 'S2n_c',
 										 'S2p_c',
 										 'ME',
 										 # 'Z_even',
@@ -255,7 +255,7 @@ if __name__ == "__main__":
 											   'BEA_c',
 											   # 'Pair_d',
 											   # 'Par_d',
-											   'S2n_c',
+											   # 'S2n_c',
 											   'S2p_c',
 											   'ME',
 											   # 'Z_even',
