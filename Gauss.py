@@ -10,119 +10,16 @@ import periodictable
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.metrics import r2_score
-# import george
+from matrix_functions import anomaly_remover, range_setter
 
 
 
-df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
-
-df_test = df_test[df_test.MT == 16] # extract (n,2n) only
-df_test.index = range(len(df_test)) # re-label indices
-
-
-def anomaly_remover(dfa):
-	anomalies = [[14, 28], [14, 29], [14, 30], [15, 31], [20, 40], [20, 42], [20, 43], [20, 44], [20, 46],
-				 [20, 48], [24, 50], [24, 52], [24, 53], [24, 54], [28, 58], [28, 60], [28, 61], [28, 62], [28, 64],
-				 [29, 63], [29, 65], [41, 93], [80, 196], [80, 198], [80, 199], [80, 200], [80, 201], [80, 202],
-				 [80, 204], [82, 206], [82, 207]]
-	"""list of nuclides with cutoff value @ 20 MeV - format is [Z,A]"""
-
-	anomaly_indices = []
-	for set in anomalies:
-		z = set[0]
-		a = set[1]
-
-		remover = dfa[dfa.A == a]
-		remove = remover[remover.Z == z]
-
-		last_row_index = remove.index[-1]
-		anomaly_indices.append(last_row_index)
-
-
-	for i in anomaly_indices:
-		dfa = dfa.drop(index=i)
-
-	dfa.index = range(len(dfa))
-
-	return dfa
+df = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv') # new interpolated dataset, used for training only
+df_test = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv') # original dataset, used for validation
 
 df_test = anomaly_remover(dfa = df_test)
 
-al = []
-for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
-	if [j, i] in al:
-		continue
-	else:
-		al.append([j, i]) # format is [Z, A]
-
-
-# cat_magic = []
-#
-# magic_numbers = [2, 8, 20, 28, 50, 82, 126]
-#
-#
-# cat_magic_double_original = []
-# cat_magic_neutron_original = []
-# cat_magic_proton_original = []
-#
-# for z, n in zip(df_test['Z'], df_test['A']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_double_original.append(1)
-# 		cat_magic_neutron_original.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_neutron_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron_original.append(1)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_proton_original.append(0)
-# 	else:
-# 		cat_magic_proton_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_neutron_original.append(0)
-#
-# df_test.insert(78, 'cat_magic_proton', cat_magic_proton_original)
-# df_test.insert(79, 'cat_magic_neutron', cat_magic_neutron_original)
-# df_test.insert(80, 'cat_magic_double', cat_magic_double_original)
-#
-# df_test['cat_magic_proton'].astype('category')
-# df_test['cat_magic_neutron'].astype('category')
-# df_test['cat_magic_double'].astype("category")
-#
-#
-# cat_magic_proton = []
-# cat_magic_neutron = []
-# cat_magic_double = []
-#
-# for z, n in zip(df['Z'], df['N']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_double.append(1)
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton.append(1)
-# 		cat_magic_neutron.append(0)
-# 		cat_magic_double.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 	else:
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 		cat_magic_neutron.append(0)
-#
-#
-# df.insert(78, 'cat_magic_proton', cat_magic_proton)
-# df.insert(79, 'cat_magic_neutron', cat_magic_neutron)
-# df.insert(80, 'cat_magic_double', cat_magic_double)
-#
-# df['cat_magic_proton'].astype('category')
-# df['cat_magic_neutron'].astype('category')
-# df['cat_magic_double'].astype("category")
+al = range_setter(df=df, la=30, ua=215)
 
 validation_nuclides = [] # list of nuclides used for validation
 validation_set_size = 1 # number of nuclides hidden from training
@@ -140,17 +37,17 @@ def make_train(df, la=25, ua=210):
 	df: dataframe to use
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
 
-	MT = df['MT']
+	# MT = df['MT']
 	# ME = df['ME']
 	Z = df['Z']
 	A = df['A']
-	Sep_2n = df['S2n']
-	Sep_2p = df['S2p']
+	# Sep_2n = df['S2n']
+	# Sep_2p = df['S2p']
 	Energy = df['ERG']
 	XS = df['XS']
-	Sep_p = df['Sp']
-	Sep_n = df['Sn']
-	N = df['N']
+	# Sep_p = df['Sp']
+	# Sep_n = df['Sn']
+	# N = df['N']
 	# BEA = df['BEA']
 	# Pairing = df['Pairing']
 	# gamma_deformation = df['gamma_deformation']
@@ -214,26 +111,26 @@ def make_train(df, la=25, ua=210):
 
 	X = []
 
-	for idx, r_type in enumerate(MT):  # MT = 16 is (n,2n) (already extracted)
-		working_array = []
+	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope to training data
 		if Energy[idx] >= 30: # training on data less than 30 MeV
 			continue
-		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
+		if not XS[idx] > 0:
+			continue
+		if A[idx] <= ua and A[idx] >= la and Energy[idx] > 0: # checks that nuclide is within bounds for A
 
 			# working_array.append(Z[idx])
 			# working_array.append(A[idx])
 			# working_array.append(Sep_2n[idx])
 			# working_array.append(Sep_2p[idx])
-			working_array.append(Energy[idx])
+			X.append(Energy[idx])
 			# working_array.append(Sep_p[idx])
 			# working_array.append(Sep_n[idx])
 			# working_array.append(N[idx])
 
 			XS_train.append(XS[idx])
 
-			X.append(working_array)
 			# Z_train.append(Z[idx])
 			# A_train.append(A[idx])
 			# S2n_train.append(Sep_2n[idx])
@@ -301,11 +198,12 @@ def make_train(df, la=25, ua=210):
 			# cat_double_train.append(magic_d[idx])
 
 
-	# X = np.array(X)
+	X = np.array(X)
 
 	y = XS_train # cross sections
 
-	# X = np.transpose(X) # forms matrix into correct shape (values, features)
+	X = X.reshape(-1,1) # forms matrix into correct shape (values, features)
+	# print(X)
 	return X, y
 
 def make_test(nuclides, df):
@@ -320,18 +218,17 @@ def make_test(nuclides, df):
 	ztest = [nuclide[0] for nuclide in nuclides] # first element is the Z-value of the given test nuclide
 	atest = [nuclide[1] for nuclide in nuclides]
 
-
 	# MT = df['MT']
 	# ME = df['ME']
 	Z = df['Z']
 	A = df['A']
-	Sep_2n = df['S2n']
-	Sep_2p = df['S2p']
+	# Sep_2n = df['S2n']
+	# Sep_2p = df['S2p']
 	Energy = df['ERG']
 	XS = df['XS']
-	Sep_p = df['Sp']
-	Sep_n = df['Sn']
-	N = df['N']
+	# Sep_p = df['Sp']
+	# Sep_n = df['Sn']
+	# N = df['N']
 	# BEA = df['BEA']
 	# Pairing = df['Pairing']
 	# gamma_deformation = df['gamma_deformation']
@@ -396,43 +293,47 @@ def make_test(nuclides, df):
 	xtest = []
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
-		working_array = []
 		for j, (zval, aval) in enumerate(zip(Z, A)):
-			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 30:
+			if zval == nuc_test_z and aval == nuc_test_a:
+				if Energy[j] > 0 and XS[j] > 0:
 
-				# working_array.append(Z[j])
-				# working_array.append(A[j])
-				# working_array.append(Sep_2n[j])
-				# working_array.append(Sep_2p[j])
-				working_array.append(Energy[j])
-				# working_array.append(Sep_p[j])
-				# working_array.append(Sep_n[j])
-				# working_array.append(N[j])
+					# working_array.append(Z[j])
+					# working_array.append(A[j])
+					# working_array.append(Sep_2n[j])
+					# working_array.append(Sep_2p[j])
+					xtest.append(Energy[j])
+					# working_array.append(Sep_p[j])
+					# working_array.append(Sep_n[j])
+					# working_array.append(N[j])
 
-				XS_test.append(XS[j])
-
-				xtest.append(working_array)
-
+					XS_test.append(XS[j])
 
 	y_test = XS_test
-
+	xtest = np.array(xtest)
+	xtest = xtest.reshape(-1,1)
 	return xtest, y_test
 
 
 X_train, y_train = make_train(df=df) # make training matrix
 
+
 X_test, y_test = make_test(validation_nuclides, df=df_test)
 
 print("Data prep complete")
 
-kernel = RBF(length_scale='auto')
 
+kernel = RBF(length_scale=1.0)
 gaussian_process = GaussianProcessRegressor(kernel=kernel)
 print("Regressor generated")
 
-gaussian_process.fit(X_train, y_train)
-# gaussian_process.kernel_
+gaussian_process.fit(X_train,y_train)
 print("Training complete")
+
+mean_prediction, std_prediction = gaussian_process.predict(X_test, return_std=True)
+
+plt.plot(X_test, mean_prediction, label="Mean prediction")
+plt.show()
+
 #
 # mean_predictions, std_prediction = gaussian_process.predict(X_test, return_std=True)
 #
