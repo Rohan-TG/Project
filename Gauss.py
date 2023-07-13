@@ -116,9 +116,7 @@ def make_train(df, la=25, ua=210):
 			continue # prevents loop from adding test isotope to training data
 		if Energy[idx] >= 30: # training on data less than 30 MeV
 			continue
-		if not XS[idx] > 0:
-			continue
-		if A[idx] <= ua and A[idx] >= la and Energy[idx] > 0: # checks that nuclide is within bounds for A
+		if A[idx] <= ua and A[idx]:# >= la and Energy[idx] > 0: # checks that nuclide is within bounds for A
 
 			# working_array.append(Z[idx])
 			# working_array.append(A[idx])
@@ -294,19 +292,19 @@ def make_test(nuclides, df):
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
-			if zval == nuc_test_z and aval == nuc_test_a:
-				if Energy[j] > 0 and XS[j] > 0:
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] < 30:
+				# if Energy[j] > 0 and XS[j] > 0:
 
-					# working_array.append(Z[j])
-					# working_array.append(A[j])
-					# working_array.append(Sep_2n[j])
-					# working_array.append(Sep_2p[j])
-					xtest.append(Energy[j])
-					# working_array.append(Sep_p[j])
-					# working_array.append(Sep_n[j])
-					# working_array.append(N[j])
+				# working_array.append(Z[j])
+				# working_array.append(A[j])
+				# working_array.append(Sep_2n[j])
+				# working_array.append(Sep_2p[j])
+				xtest.append(Energy[j])
+				# working_array.append(Sep_p[j])
+				# working_array.append(Sep_n[j])
+				# working_array.append(N[j])
 
-					XS_test.append(XS[j])
+				XS_test.append(XS[j])
 
 	y_test = XS_test
 	xtest = np.array(xtest)
@@ -314,10 +312,15 @@ def make_test(nuclides, df):
 	return xtest, y_test
 
 
-X_train, y_train = make_train(df=df) # make training matrix
+# X_train, y_train = make_train(df=df) # make training matrix
 
 
 X_test, y_test = make_test(validation_nuclides, df=df_test)
+
+y_test = np.array(y_test)
+rng = np.random.RandomState(1)
+training_indices = rng.choice(np.arange(y_test.size), size=10, replace=False)
+X_train, y_train = X_test[training_indices], y_test[training_indices]
 
 print("Data prep complete")
 
@@ -331,9 +334,28 @@ print("Training complete")
 
 mean_prediction, std_prediction = gaussian_process.predict(X_test, return_std=True)
 
+# plt.plot(X_test, mean_prediction, label="Mean prediction")
+# plt.show()
+
+
+plt.plot(X_test, y_test, label=r"$", linestyle="dotted")
+plt.scatter(X_train, y_train, label="Observations")
 plt.plot(X_test, mean_prediction, label="Mean prediction")
+plt.fill_between(
+    X_test.ravel(),
+    mean_prediction - 1.96 * std_prediction,
+    mean_prediction + 1.96 * std_prediction,
+    alpha=0.5,
+    label=r"95% confidence interval",
+)
+plt.legend()
+plt.xlabel("Energy / MeV")
+plt.ylabel("$\sigma_{n,2n}$ / b")
+plt.title(f"{periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
+plt.grid()
 plt.show()
 
+print(f"r2: {r2_score(y_true=y_test, y_pred=mean_prediction)}")
 #
 # mean_predictions, std_prediction = gaussian_process.predict(X_test, return_std=True)
 #
