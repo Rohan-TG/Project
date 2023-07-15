@@ -64,9 +64,10 @@ for nuc in al:
 		n_magic.append(nuc)
 		all_magic.append(nuc)
 
-# [26,56], [78,195], [20,40], [82,208]
-validation_nuclides = []
-validation_set_size = 20 # number of nuclides hidden from training
+validation_nuclides = [
+					   [19,41],
+					   ]
+validation_set_size = 30 # number of nuclides hidden from training
 
 # random.seed(a=2)
 
@@ -76,7 +77,7 @@ while len(validation_nuclides) < validation_set_size:
 		validation_nuclides.append(choice)
 print("Test nuclide selection complete")
 
-
+log_reduction_var = 0.00001
 
 if __name__ == "__main__":
 
@@ -89,11 +90,13 @@ if __name__ == "__main__":
 	# X_train must be in the shape (n_samples, n_features)
 	# and y_train must be in the shape (n_samples) of the target
 
+
+
 	print("Data prep done")
 
 
 	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.015,
+							learning_rate=0.012,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
@@ -119,9 +122,9 @@ if __name__ == "__main__":
 		dummy_predictions = []
 		for i, row in enumerate(X_test):
 			if [row[0], row[1]] == nuclide:
-				dummy_test_XS.append(np.exp(y_test[i]) - 0.001)
+				dummy_test_XS.append(np.exp(y_test[i]) - log_reduction_var)
 				dummy_test_E.append(row[4]) # Energy values are in 5th row
-				dummy_predictions.append(np.exp(predictions[i]) - 0.001)
+				dummy_predictions.append(np.exp(predictions[i]) - log_reduction_var)
 
 		XS_plotmatrix.append(dummy_test_XS)
 		E_plotmatrix.append(dummy_test_E)
@@ -143,10 +146,10 @@ if __name__ == "__main__":
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		# time.sleep(1.2)
+		time.sleep(1.2)
 
-	exp_true_xs = [np.exp(y) -0.001 for y in y_test]
-	exp_pred_xs = [np.exp(xs)- 0.001 for xs in predictions]
+	exp_true_xs = [np.exp(y) -log_reduction_var for y in y_test]
+	exp_pred_xs = [np.exp(xs)- log_reduction_var for xs in predictions]
 
 	print(f"MSE: {mean_squared_error(exp_true_xs, exp_pred_xs, squared=False)}") # MSE
 	print(f"R2: {r2_score(exp_true_xs, exp_pred_xs):0.5f}") # Total R^2 for all predictions in this training campaign
