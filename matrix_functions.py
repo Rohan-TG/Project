@@ -779,7 +779,7 @@ def make_test(nuclides, df):
 	return xtest, y_test
 
 
-
+log_reduction_variable = 0.00001
 def log_make_train(df, validation_nuclides, la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A
@@ -958,7 +958,7 @@ def log_make_train(df, validation_nuclides, la=0, ua=260):
 			S2n_train.append(Sep_2n[idx])
 			S2p_train.append(Sep_2p[idx])
 			Energy_train.append(Energy[idx])
-			xs_log = np.log(XS[idx] + 0.001)
+			xs_log = np.log(XS[idx] + log_reduction_variable)
 			XS_train.append(xs_log)
 			Sp_train.append(Sep_p[idx])
 			Sn_train.append(Sep_n[idx])
@@ -1287,7 +1287,7 @@ def log_make_test(nuclides, df):
 				S2p_test.append(S_2p[j])
 				Energy_test.append(Energy[j])
 
-				xs_log = np.log(XS[j] + 0.001)
+				xs_log = np.log(XS[j] + log_reduction_variable)
 				XS_test.append(xs_log)
 				Sp_test.append(S_p[j])
 				Sn_test.append(S_n[j])
