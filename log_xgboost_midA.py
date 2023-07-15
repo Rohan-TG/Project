@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
 
 	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.012,
+							learning_rate=0.01,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
