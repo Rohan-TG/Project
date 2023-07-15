@@ -19,19 +19,26 @@ from matrix_functions import make_test_hidden, make_train_hidden, anomaly_remove
 # df = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")
 # df_test = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 
-df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
 
+used = []
+for i, row in df.iterrows():
+	if row['A'] not in used:
+		# print(row['A'])
+		used.append(row['A'])
 
+asdf = sorted(used)
+print(asdf)
 # df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
 
-
+print(max)
 df_test = anomaly_remover(dfa = df_test)
 # use once then save dataframe
 
@@ -59,7 +66,7 @@ def range_setter(la, ua):
 			nucs.append([j, i])  # format is [Z, A]
 	return nucs
 
-al = range_setter(la=30, ua=215)
+al = range_setter(la=0, ua=260)
 
 magic_numbers = [2, 8, 20, 28, 50, 82, 126]
 
@@ -82,75 +89,7 @@ for nuc in al:
 		n_magic.append(nuc)
 		all_magic.append(nuc)
 
-# cat_magic = []
-#
-# magic_numbers = [2, 8, 20, 28, 50, 82, 126]
-#
-#
-# cat_magic_double_original = []
-# cat_magic_neutron_original = []
-# cat_magic_proton_original = []
-#
-# for z, n in zip(df_test['Z'], df_test['A']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_double_original.append(1)
-# 		cat_magic_neutron_original.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_neutron_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron_original.append(1)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_proton_original.append(0)
-# 	else:
-# 		cat_magic_proton_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_neutron_original.append(0)
-#
-# df_test.insert(78, 'cat_magic_proton', cat_magic_proton_original)
-# df_test.insert(79, 'cat_magic_neutron', cat_magic_neutron_original)
-# df_test.insert(80, 'cat_magic_double', cat_magic_double_original)
-#
-# df_test['cat_magic_proton'].astype('category')
-# df_test['cat_magic_neutron'].astype('category')
-# df_test['cat_magic_double'].astype("category")
-#
-#
-# cat_magic_proton = []
-# cat_magic_neutron = []
-# cat_magic_double = []
-#
-# for z, n in zip(df['Z'], df['N']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_double.append(1)
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton.append(1)
-# 		cat_magic_neutron.append(0)
-# 		cat_magic_double.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 	else:
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 		cat_magic_neutron.append(0)
-#
-#
-# df.insert(78, 'cat_magic_proton', cat_magic_proton)
-# df.insert(79, 'cat_magic_neutron', cat_magic_neutron)
-# df.insert(80, 'cat_magic_double', cat_magic_double)
-#
-# df['cat_magic_proton'].astype('category')
-# df['cat_magic_neutron'].astype('category')
-# df['cat_magic_double'].astype("category")
 
-# validation_nuclides = [[82,208]] # list of nuclides used for validation
-# validation_nuclides = [[20,40], [28,58], [24,50]]
 validation_nuclides = []
 validation_set_size = 20 # number of nuclides hidden from training
 
