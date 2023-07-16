@@ -111,12 +111,21 @@ def make_train(df, la=25, ua=210):
 
     X = []
 
+<<<<<<< HEAD
+	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
+		if [Z[idx], A[idx]] in validation_nuclides:
+			continue # prevents loop from adding test isotope to training data
+		if Energy[idx] >= 30: # training on data less than 30 MeV
+			continue
+		if A[idx] <= ua and A[idx]:# >= la and Energy[idx] > 0: # checks that nuclide is within bounds for A
+=======
     for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
        if [Z[idx], A[idx]] in validation_nuclides:
           continue # prevents loop from adding test isotope to training data
        if Energy[idx] >= 30: # training on data less than 30 MeV
           continue
        if A[idx] <= ua and A[idx]:# >= la and Energy[idx] > 0: # checks that nuclide is within bounds for A
+>>>>>>> e240e16bc4d12209544eec4461043305f97e2d54
 
           # working_array.append(Z[idx])
           # working_array.append(A[idx])
@@ -290,6 +299,23 @@ def make_test(nuclides, df):
 
     xtest = []
 
+<<<<<<< HEAD
+	for nuc_test_z, nuc_test_a in zip(ztest, atest):
+		for j, (zval, aval) in enumerate(zip(Z, A)):
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] < 30:
+				# if Energy[j] > 0 and XS[j] > 0:
+
+				# working_array.append(Z[j])
+				# working_array.append(A[j])
+				# working_array.append(Sep_2n[j])
+				# working_array.append(Sep_2p[j])
+				xtest.append(Energy[j])
+				# working_array.append(Sep_p[j])
+				# working_array.append(Sep_n[j])
+				# working_array.append(N[j])
+
+				XS_test.append(XS[j])
+=======
     for nuc_test_z, nuc_test_a in zip(ztest, atest):
        for j, (zval, aval) in enumerate(zip(Z, A)):
           if zval == nuc_test_z and aval == nuc_test_a and Energy[j] < 30:
@@ -305,6 +331,7 @@ def make_test(nuclides, df):
              # working_array.append(N[j])
 
              XS_test.append(XS[j])
+>>>>>>> e240e16bc4d12209544eec4461043305f97e2d54
 
     y_test = XS_test
     xtest = np.array(xtest)
@@ -355,4 +382,44 @@ plt.title(f"{periodictable.elements[validation_nuclides[0][0]]}-{validation_nucl
 plt.grid()
 plt.show()
 
+<<<<<<< HEAD
 print(f"r2: {r2_score(y_true=y_test, y_pred=mean_prediction)}")
+#
+# mean_predictions, std_prediction = gaussian_process.predict(X_test, return_std=True)
+#
+#
+# XS_plotmatrix = []
+# E_plotmatrix = []
+# P_plotmatrix = []
+#
+# for nuclide in validation_nuclides:
+# 	dummy_test_XS = []
+# 	dummy_test_E = []
+# 	dummy_predictions = []
+# 	for i, row in enumerate(X_test):
+# 		if [row[0], row[1]] == nuclide:
+# 			dummy_test_XS.append(y_test[i])
+# 			dummy_test_E.append(row[4]) # Energy values are in 5th row
+# 			dummy_predictions.append(mean_predictions[i])
+#
+# 	XS_plotmatrix.append(dummy_test_XS)
+# 	E_plotmatrix.append(dummy_test_E)
+# 	P_plotmatrix.append(dummy_predictions)
+#
+# # plot predictions against data
+# for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+# 	nuc = validation_nuclides[i] # validation nuclide
+# 	plt.plot(erg, pred_xs, label='predictions')
+# 	plt.plot(erg, true_xs, label='data')
+# 	plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+# 	plt.legend()
+# 	plt.grid()
+# 	plt.ylabel('XS / b')
+# 	plt.xlabel('Energy / MeV')
+# 	plt.show()
+#
+# 	r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
+# 	print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+=======
+print(f"r2: {r2_score(y_true=y_test, y_pred=mean_prediction)}")
+>>>>>>> e240e16bc4d12209544eec4461043305f97e2d54
