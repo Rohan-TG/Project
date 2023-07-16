@@ -10,7 +10,7 @@ import time
 import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import log_make_test, log_make_train, anomaly_remover, range_setter
+from matrix_functions import log_make_test, log_make_train, anomaly_remover, range_setter, delogger
 
 
 # df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
@@ -81,9 +81,11 @@ if __name__ == "__main__":
 
 	time1 = time.time()
 
-	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215) # make training matrix
+	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides,
+									  log_reduction_variable=log_reduction_var, la=30, ua=215) # make training matrix
 
-	X_test, y_test = log_make_test(validation_nuclides, df=df_test)
+	X_test, y_test = log_make_test(validation_nuclides, log_reduction_variable=log_reduction_var,
+								   df=df_test)
 
 	# X_train must be in the shape (n_samples, n_features)
 	# and y_train must be in the shape (n_samples) of the target
@@ -92,13 +94,14 @@ if __name__ == "__main__":
 
 	print("Data prep done")
 
+	model_seed = random.randint(a=1, b=1000)
 
 	model = xg.XGBRegressor(n_estimators=900,
 							learning_rate=0.01,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
-							seed=42,)
+							seed=model_seed,)
 
 
 
