@@ -68,13 +68,13 @@ log_reduction_var = 0.00001
 
 
 
-n_evaluations = 30
+n_evaluations = 100
 datapoint_matrix = []
 
 for i in range(n_evaluations):
-	print(f"Run {i+1}/{n_evaluations}")
+	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[82,208]]
+	validation_nuclides = [[31,69]]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
@@ -182,15 +182,21 @@ datapoint_means = []
 datapoint_upper_interval = []
 datapoint_lower_interval = []
 
+d_l_1sigma = []
+d_u_1sigma = []
+
 for point in datapoint_matrix:
 	# print(point)
 	mu = np.mean(point)
 	sigma = np.std(point)
 	interval_low, interval_high = scipy.stats.t.interval(0.95, loc=mu, scale=sigma, df=(len(point) - 1))
+	il_1sigma, ih_1sigma = scipy.stats.t.interval(0.68, loc=mu, scale=sigma, df=(len(point) - 1))
 	datapoint_means.append(mu)
 	datapoint_upper_interval.append(interval_high)
 	datapoint_lower_interval.append(interval_low)
 
+	d_l_1sigma.append(il_1sigma)
+	d_u_1sigma.append(ih_1sigma)
 
 lower_bound = []
 upper_bound = []
@@ -202,7 +208,17 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 # print(datapoint_means)
 plt.plot(E_plot, datapoint_means, label = 'Prediction')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
-plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.4, label='95% CF')
+plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.4, label='95% CI')
+plt.grid()
+plt.title(f"(n,2n) XS for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
+plt.xlabel("Energy / MeV")
+plt.ylabel("XS / b")
+plt.legend()
+plt.show()
+
+plt.plot(E_plot, datapoint_means, label = 'Prediction')
+plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
+plt.fill_between(E_plot, d_l_1sigma, d_u_1sigma, alpha=0.4, label='68% CI')
 plt.grid()
 plt.title(f"(n,2n) XS for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
 plt.xlabel("Energy / MeV")
