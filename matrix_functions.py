@@ -779,8 +779,7 @@ def make_test(nuclides, df):
 	return xtest, y_test
 
 
-log_reduction_variable = 0.00001
-def log_make_train(df, validation_nuclides, la=0, ua=260):
+def log_make_train(df, validation_nuclides, log_reduction_variable, la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -1105,7 +1104,7 @@ def log_make_train(df, validation_nuclides, la=0, ua=260):
 	X = np.transpose(X) # forms matrix into correct shape (values, features)
 	return X, y
 
-def log_make_test(nuclides, df):
+def log_make_test(nuclides, log_reduction_variable, df):
 	"""
 	nuclides: array of (1x2) arrays containing Z of nuclide at index 0, and A at index 1.
 	df: dataframe used for validation data
@@ -1442,7 +1441,10 @@ def log_make_test(nuclides, df):
 
 
 
+def delogger(prediction, log_reduction_variable):
 
+	value = np.exp(prediction) - log_reduction_variable
+	return value
 
 
 
