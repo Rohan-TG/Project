@@ -64,9 +64,7 @@ for nuc in al:
 		n_magic.append(nuc)
 		all_magic.append(nuc)
 
-validation_nuclides = [
-					   [19,41],
-					   ]
+validation_nuclides = []
 validation_set_size = 30 # number of nuclides hidden from training
 
 # random.seed(a=2)
