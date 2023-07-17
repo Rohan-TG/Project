@@ -14,6 +14,7 @@ import periodictable
 from matrix_functions import anomaly_remover, log_make_train, log_make_test, range_setter, delogger
 import scipy.stats
 from datetime import timedelta
+import tqdm
 
 runtime = time.time()
 
@@ -60,7 +61,7 @@ log_reduction_var = 0.00001
 n_evaluations = 100
 datapoint_matrix = []
 
-for i in range(n_evaluations):
+for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
 	validation_nuclides = [[74,184]]
