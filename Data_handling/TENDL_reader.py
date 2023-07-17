@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matrix_functions import range_setter
 
-with open("/Users/rntg/Project/Data_handling/TENDL19_xs.json", 'r') as file:
+with open("C:\\Users\\TG300\\Project\\Data_handling\\TENDL21_xs.json", 'r') as file:
     TENDL_df = json.load(file)
 
 TENDL = TENDL_df['Nuclear_Info']["Nuclear_Data"]
@@ -69,4 +69,4 @@ TENDL_DATAFRAME = pd.DataFrame(data=TENDL_dictionary)
 print(TENDL_DATAFRAME.head())
 print(TENDL_DATAFRAME.shape)
 
-TENDL_DATAFRAME.to_csv("TENDL_MT16_XS_NOLISO_LFS.csv")
+TENDL_DATAFRAME.to_csv("TENDL21_MT16_XS_NOLISO_LFS.csv")
