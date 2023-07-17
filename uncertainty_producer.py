@@ -1,3 +1,4 @@
+import datetime
 import warnings
 import scipy.stats
 from numba.core.errors import NumbaDeprecationWarning
@@ -12,8 +13,9 @@ from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import anomaly_remover, log_make_train, log_make_test, range_setter, delogger
 import scipy.stats
+from datetime import timedelta
 
-
+runtime = time.time()
 
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
@@ -61,7 +63,7 @@ datapoint_matrix = []
 for i in range(n_evaluations):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[31,69]]
+	validation_nuclides = [[74,184]]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
@@ -197,3 +199,8 @@ plt.xlabel("Energy / MeV")
 plt.ylabel("XS / b")
 plt.legend()
 plt.show()
+
+final_runtime = time.time() - runtime
+
+print(f"Runtime: {timedelta(seconds=final_runtime)}")
+
