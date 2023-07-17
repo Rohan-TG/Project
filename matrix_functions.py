@@ -29,14 +29,14 @@ def TENDL_plotter(df, nuclides):
 				Energy_test.append(Energy[j])
 				XS_test.append(XS[j])
 
-	xtest = np.array([#Z_test, A_test,
+	tendl_energies = np.array([#Z_test, A_test,
 					  Energy_test])
 
 	# xtest = np.transpose(xtest)
 
 	tendl_xs = XS_test
 
-	return xtest, tendl_xs
+	return tendl_energies, tendl_xs
 
 
 
