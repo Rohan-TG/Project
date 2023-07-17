@@ -58,7 +58,7 @@ log_reduction_var = 0.00001
 
 
 
-n_evaluations = 2
+n_evaluations = 100
 datapoint_matrix = []
 
 for i in range(n_evaluations):
