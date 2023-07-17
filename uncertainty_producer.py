@@ -14,7 +14,6 @@ import periodictable
 from matrix_functions import anomaly_remover, log_make_train, log_make_test, range_setter, delogger
 import scipy.stats
 from datetime import timedelta
-import tqdm
 
 runtime = time.time()
 
@@ -61,7 +60,7 @@ log_reduction_var = 0.00001
 n_evaluations = 100
 datapoint_matrix = []
 
-for i in tqdm.tqdm(range(n_evaluations)):
+for i in range(n_evaluations):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
 	validation_nuclides = [[74,184]]
@@ -80,7 +79,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	X_test, y_test = log_make_test(validation_nuclides, df=df_test, log_reduction_variable=log_reduction_var)
 
-	print("Data prep done")
+	print("\nData prep done")
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
