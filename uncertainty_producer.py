@@ -11,7 +11,8 @@ import xgboost as xg
 import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import anomaly_remover, log_make_train, log_make_test, range_setter, delogger
+from matrix_functions import anomaly_remover, log_make_train, log_make_test,\
+	range_setter, TENDL_plotter
 import scipy.stats
 from datetime import timedelta
 
@@ -57,13 +58,13 @@ log_reduction_var = 0.00001
 
 
 
-n_evaluations = 100
+n_evaluations = 2
 datapoint_matrix = []
 
 for i in range(n_evaluations):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[74,184]]
+	validation_nuclides = [[22,49]]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
@@ -79,7 +80,7 @@ for i in range(n_evaluations):
 
 	X_test, y_test = log_make_test(validation_nuclides, df=df_test, log_reduction_variable=log_reduction_var)
 
-	print("\nData prep done")
+	print("Data prep done")
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
@@ -139,7 +140,7 @@ for i in range(n_evaluations):
 
 	print(f"MSE: {mean_squared_error(exp_true_xs, exp_pred_xs, squared=False)}") # MSE
 	print(f"R2: {r2_score(exp_true_xs, exp_pred_xs):0.5f}") # Total R^2 for all predictions in this training campaign
-	print(f'completed in {time.time() - time1} s')
+	print(f'completed in {time.time() - time1:0.1f} s')
 
 
 XS_plot = []
@@ -178,26 +179,42 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 	upper_bound.append(point+up)
 
 
+
+TENDL = pd.read_csv("TENDL_MT16_XS.csv")
+TENDL.index = range(len(TENDL))
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
+
+tendl_energy, tendl_xs = TENDL_plotter(df=TENDL, nuclides=[validation_nuclides[0]])
+
+time.sleep(2)
+
+title_string_latex = "$\sigma_{n,2n}$"
+title_string_nuclide = f"for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}"
+title_string = title_string_latex+title_string_nuclide
+
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
+plt.plot(tendl_energy[-1], tendl_xs, label = 'TENDL21')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.4, label='95% CI')
 plt.grid()
-plt.title(f"(n,2n) XS for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
+plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
 plt.xlabel("Energy / MeV")
 plt.ylabel("XS / b")
-plt.legend()
+plt.legend(loc='upper left')
 plt.show()
+time.sleep(1)
 
 # 1sigma CI
 plt.plot(E_plot, datapoint_means, label = 'Prediction')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
+plt.plot(tendl_energy[-1], tendl_xs, label = 'TENDL21')
 plt.fill_between(E_plot, d_l_1sigma, d_u_1sigma, alpha=0.4, label='68% CI')
 plt.grid()
-plt.title(f"(n,2n) XS for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
+plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
 plt.xlabel("Energy / MeV")
 plt.ylabel("XS / b")
-plt.legend()
+plt.legend(loc='upper left')
 plt.show()
 
 final_runtime = time.time() - runtime
