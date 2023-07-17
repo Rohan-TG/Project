@@ -10,7 +10,7 @@ import periodictable
 
 
 # df = pd.read_csv('interpolated_n2_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-df_test = pd.read_csv('TENDL_MT16_XS_NOLISO_LFS.csv') # original dataset, used for validation
+df_test = pd.read_csv('TENDL21_MT16_XS.csv') # original dataset, used for validation
 
 # df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 # df_test.index = range(len(df_test)) # re-label indices
@@ -341,35 +341,43 @@ def zero_maker(df):
 
 
 
-df_zero = zero_maker(df=df_test)
-print(df_zero.head())
-
-df_zero.to_csv('Third_attempt_TENDL.csv')
-
-df_zero = pd.read_csv("Third_attempt_TENDL.csv")
+# df_zero = zero_maker(df=df_test)
+# print(df_zero.head())
 #
-df_using = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+# df_zero.to_csv('TENDL21_MT16_XS_ZEROED.csv')
+
+to_reduce = pd.read_csv('TENDL21_MT16_XS.csv')
+
+to_reduce = to_reduce[to_reduce.ERG <30.0]
+to_reduce.index = range(len(to_reduce))
+
+to_reduce = to_reduce.drop(columns=['Unnamed: 0.1', 'Unnamed: 0'])
+
+to_reduce.to_csv('TENDL21_xs_MT16_fewerenergies_fewercolumns.csv')
+# df_zero = pd.read_csv("Third_attempt_TENDL.csv")
+# #
+# df_using = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+# #
+# from matrix_functions import range_setter
+# al = range_setter(df=df_using, la=0, ua=260)
 #
-from matrix_functions import range_setter
-al = range_setter(df=df_using, la=0, ua=260)
-
-TENDL_nuclides = range_setter(df=df_zero, la=0, ua=300)
-
-for nuc in TENDL_nuclides:
-
-	if nuc in al:
-
-		X_test, y_test = make_test(nuclides=[nuc], df=df_zero)
-
-		endfx, endfy = make_test(nuclides=[nuc], df=df_using)
-
-		plt.figure()
-		plt.plot(X_test[:,2], y_test, label='TENDL')
-		plt.grid()
-		plt.title(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-
-		plt.plot(endfx[:,2], endfy, 'x-', label='ENDF/B')
-		plt.legend()
-		plt.show()
-
-		time.sleep(1.5)
+# TENDL_nuclides = range_setter(df=df_zero, la=0, ua=300)
+#
+# for nuc in TENDL_nuclides:
+#
+# 	if nuc in al:
+#
+# 		X_test, y_test = make_test(nuclides=[nuc], df=df_zero)
+#
+# 		endfx, endfy = make_test(nuclides=[nuc], df=df_using)
+#
+# 		plt.figure()
+# 		plt.plot(X_test[:,2], y_test, label='TENDL')
+# 		plt.grid()
+# 		plt.title(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+#
+# 		plt.plot(endfx[:,2], endfy, 'x-', label='ENDF/B')
+# 		plt.legend()
+# 		plt.show()
+#
+# 		time.sleep(1.5)
