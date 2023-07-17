@@ -31,28 +31,6 @@ df.index = range(len(df))
 df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=215, df=df)
 
-magic_numbers = [2, 8, 20, 28, 50, 82, 126]
-
-doubly_magic = []
-n_magic = []
-p_magic = []
-all_magic = []
-
-for nuc in al:
-	if nuc[0] in magic_numbers and (nuc[1] - nuc[0]) in magic_numbers:
-		# print(f"Double: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		doubly_magic.append(nuc)
-		all_magic.append(nuc)
-	elif nuc[0] in magic_numbers and (nuc[1] - nuc[0]) not in magic_numbers:
-		# print(f"Protonic: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		p_magic.append(nuc)
-		all_magic.append(nuc)
-	elif nuc[0] not in magic_numbers and (nuc[1] - nuc[0]) in magic_numbers:
-		# print(f"Neutronic: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		n_magic.append(nuc)
-		all_magic.append(nuc)
-
-
 
 log_reduction_var = 0.00001
 
@@ -64,7 +42,7 @@ datapoint_matrix = []
 for i in range(n_evaluations):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[22,49]]
+	validation_nuclides = [[]]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
