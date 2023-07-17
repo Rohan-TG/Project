@@ -26,18 +26,6 @@ df.index = range(len(df))
 
 
 df_test = anomaly_remover(dfa = df_test)
-
-# def custom_loss(y_pred, y_true):
-# 	num = y_pred + 1
-# 	den = y_true + 1
-#
-# 	ln = np.log(y_pred + 1)
-#
-# 	grad = (num/den) - ln
-# 	hess = np.repeat(2, y_true.shape[0])
-#
-# 	return grad, hess
-
 al = range_setter(la=30, ua=215, df=df)
 
 magic_numbers = [2, 8, 20, 28, 50, 82, 126]
@@ -67,7 +55,6 @@ log_reduction_var = 0.00001
 
 
 
-
 n_evaluations = 100
 datapoint_matrix = []
 
@@ -92,7 +79,7 @@ for i in range(n_evaluations):
 
 	print("Data prep done")
 
-	model_seed = random.randint(a=1, b=1000)
+	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
 	model = xg.XGBRegressor(n_estimators=900,
 							learning_rate=0.01,
@@ -120,8 +107,6 @@ for i in range(n_evaluations):
 		for m, prediction in zip(datapoint_matrix, valid_predictions):
 			m.append(prediction)
 
-	# shap_val_gpu = model.predict(X_test, pred_interactions=True)
-
 	# Form arrays for plots below
 	XS_plotmatrix = []
 	E_plotmatrix = []
@@ -145,18 +130,7 @@ for i in range(n_evaluations):
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
 	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i] # validation nuclide
-		# plt.plot(erg, pred_xs, label='predictions')
-		# plt.plot(erg, true_xs, label='data')
-		# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-		# plt.legend()
-		# plt.grid()
-		# plt.ylabel('XS / b')
-		# plt.xlabel('Energy / MeV')
-		# plt.show()
-
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
-		# print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		# time.sleep(1.2)
 
 	exp_true_xs = [np.exp(y) -log_reduction_var for y in y_test]
 	exp_pred_xs = [np.exp(xs)- log_reduction_var for xs in predictions]
@@ -164,8 +138,6 @@ for i in range(n_evaluations):
 	print(f"MSE: {mean_squared_error(exp_true_xs, exp_pred_xs, squared=False)}") # MSE
 	print(f"R2: {r2_score(exp_true_xs, exp_pred_xs):0.5f}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
-
-
 
 
 XS_plot = []
@@ -176,7 +148,6 @@ for i, row in enumerate(X_test):
 		XS_plot.append(np.exp(y_test[i]) - log_reduction_var)
 		E_plot.append(row[4]) # Energy values are in 5th row
 
-# print(datapoint_matrix)
 
 datapoint_means = []
 datapoint_upper_interval = []
@@ -186,7 +157,7 @@ d_l_1sigma = []
 d_u_1sigma = []
 
 for point in datapoint_matrix:
-	# print(point)
+
 	mu = np.mean(point)
 	sigma = np.std(point)
 	interval_low, interval_high = scipy.stats.t.interval(0.95, loc=mu, scale=sigma, df=(len(point) - 1))
@@ -205,7 +176,7 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 	upper_bound.append(point+up)
 
 
-# print(datapoint_means)
+#2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.4, label='95% CI')
@@ -216,6 +187,7 @@ plt.ylabel("XS / b")
 plt.legend()
 plt.show()
 
+# 1sigma CI
 plt.plot(E_plot, datapoint_means, label = 'Prediction')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
 plt.fill_between(E_plot, d_l_1sigma, d_u_1sigma, alpha=0.4, label='68% CI')
