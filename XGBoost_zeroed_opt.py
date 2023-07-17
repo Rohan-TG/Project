@@ -606,7 +606,7 @@ def make_test(nuclides, df):
 
 if __name__ == "__main__":
 
-	space = {'n_estimators': hp.choice('n_estimators', [500, 600, 650, 700, 750, 800, 850, 900, 1000, 1100, 1200,]),
+	space = {'n_estimators': hp.choice('n_estimators', [500, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1100, 1200, 1300]),
 			 'subsample': hp.loguniform('subsample', np.log(0.05), np.log(1.0)),
 			 'max_leaves': 0,
 			 'max_depth': scope.int(hp.quniform("max_depth", 6, 12, 1)),
@@ -626,7 +626,7 @@ if __name__ == "__main__":
 
 		while len(validation_nuclides) < validation_set_size:
 			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
-			if choice not in validation_nuclides and choice not in test_nuclides:  # must not already be in validation set
+			if choice not in validation_nuclides and choice not in test_nuclides and choice[1] < 215:  # must not already be in validation set
 				validation_nuclides.append(choice)
 
 		print("Nuclide selection complete")
@@ -806,7 +806,7 @@ if __name__ == "__main__":
 				space=space,
 				algo= tpe.suggest,
 				trials=trials,
-				max_evals=70,
+				max_evals=130,
 				early_stop_fn=hyperopt.early_stop.no_progress_loss(50))
 
 	print(best)
