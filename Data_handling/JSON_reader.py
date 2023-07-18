@@ -68,5 +68,5 @@ ENDF_DATAFRAME = pd.DataFrame(data=ENDF_dictionary)
 print(ENDF_DATAFRAME.head())
 print(ENDF_DATAFRAME.shape)
 
-ENDF_DATAFRAME.to_csv("JENDL4.csv")
-print("complete")
+# ENDF_DATAFRAME.to_csv("JENDL4.csv")
+# print("complete")
