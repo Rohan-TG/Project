@@ -8,13 +8,8 @@ import numpy as np
 import periodictable
 
 
-
 # df = pd.read_csv('interpolated_n2_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-df_test = pd.read_csv('TENDL21_MT16_XS.csv') # original dataset, used for validation
-
-# df_test = df_test[df_test.MT == 16] # extract (n,2n) only
-# df_test.index = range(len(df_test)) # re-label indices
-
+df_test = pd.read_csv('CENDL33_features_unzeroed.csv') # original dataset, used for validation
 
 
 def make_test(nuclides, df):
@@ -307,21 +302,20 @@ def zero_maker(df):
 
 	Function inserts 0 XS values for energies below reaction threshold.
 
-	Returns: New dataframe with the additional values. Currently 20 values from 0 MeV to threshold, with capability
-	to increase this resolution if necessary"""
+	Returns: New dataframe with the additional values."""
 
 	df_zeroed = pd.DataFrame(columns=df.columns)  # empty dataframe with column names only, to be appended to
 	current_nuclide = [] # iteration nuclide
 
 	for i, row in df.iterrows():
-		if i % 10000 == 0:
+		if i % 1000 == 0:
 			print(f"{i}/{len(df['Z'])}")
 
 		if [row['Z'], row['A']] != current_nuclide: # for new nuclide in iteration, insert n number of 0 values
 
 			min_energy = row['ERG'] # Threshold energy
 			# energy_app_list = np.linspace(0, min_energy-0.1, 20) # 20 values, 0 to threshold MeV - 0.1
-			energy_app_list = np.arange(0.0, min_energy, 0.2)
+			energy_app_list = np.arange(0.0, min_energy, 0.1)
 
 			dummy_row = row # to be copied
 			dummy_row['XS'] = 0.0 # set XS value to 0 for all energies below threshold
@@ -342,19 +336,18 @@ def zero_maker(df):
 
 
 
-# df_zero = zero_maker(df=df_test)
-# print(df_zero.head())
+df_zero = zero_maker(df=df_test)
+print(df_zero.head())
+
+df_zero.to_csv('CENDL33_features_correctly_zeroed.csv')
+
+# to_reduce = pd.read_csv('TENDL21_MT16_XS.csv')
 #
-# df_zero.to_csv('TENDL21_MT16_XS_ZEROED.csv')
-
-to_reduce = pd.read_csv('TENDL21_MT16_XS.csv')
-
-to_reduce = to_reduce[to_reduce.ERG <30.0]
-to_reduce.index = range(len(to_reduce))
-
-to_reduce = to_reduce.drop(columns=['Unnamed: 0.1', 'Unnamed: 0'])
-
-to_reduce.to_csv('TENDL21_xs_MT16_fewerenergies_fewercolumns.csv')
+# to_reduce = to_reduce[to_reduce.ERG <20.0]
+# to_reduce.index = range(len(to_reduce))
+#
+#
+# to_reduce.to_csv('JENDL4_correctly_zeroed_with_features.csv')
 # df_zero = pd.read_csv("Third_attempt_TENDL.csv")
 # #
 # df_using = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
