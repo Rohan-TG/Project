@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 
 
-def TENDL_plotter(df, nuclides):
+def General_plotter(df, nuclides):
 
 	ztest = [nuclide[0] for nuclide in nuclides]  # first element is the Z-value of the given test nuclide
 	atest = [nuclide[1] for nuclide in nuclides]
