@@ -43,7 +43,7 @@ datapoint_matrix = []
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[40,90]]
+	validation_nuclides = [[44,103]]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
@@ -167,18 +167,18 @@ tendl_energy, tendl_xs = General_plotter(df=TENDL, nuclides=[validation_nuclides
 time.sleep(2)
 
 
-JEFF33 = pd.read_csv('JEFF33_features_correctly_zeroed.csv')
+JEFF33 = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF33.index = range(len(JEFF33))
 JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=215)
 JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[validation_nuclides[0]])
 time.sleep(2)
 
-JENDL4 = pd.read_csv('JENDL4_features_correctly_zeroed.csv')
+JENDL4 = pd.read_csv('JENDL4_features_arange_zeroed.csv')
 JENDL4.index = range(len(JENDL4))
 JENDL4_energy, JENDL4_XS = General_plotter(df=JENDL4, nuclides=[validation_nuclides[0]])
 time.sleep(2)
 
-CENDL33 = pd.read_csv('CENDL33_features_correctly_zeroed.csv')
+CENDL33 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 CENDL33.index = range(len(CENDL33))
 CENDL33_energy, CENDL33_XS = General_plotter(df=CENDL33, nuclides=[validation_nuclides[0]])
 time.sleep(2)
@@ -203,17 +203,6 @@ plt.legend(loc='upper left')
 plt.show()
 time.sleep(1)
 
-# 1sigma CI
-plt.plot(E_plot, datapoint_means, label = 'Prediction')
-plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
-plt.plot(tendl_energy[-1], tendl_xs, label = 'TENDL21')
-plt.fill_between(E_plot, d_l_1sigma, d_u_1sigma, alpha=0.4, label='68% CI')
-plt.grid()
-plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
-plt.xlabel("Energy / MeV")
-plt.ylabel("XS / b")
-plt.legend(loc='upper left')
-plt.show()
 
 final_runtime = time.time() - runtime
 
