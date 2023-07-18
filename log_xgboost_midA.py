@@ -12,10 +12,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import log_make_test, log_make_train, anomaly_remover, range_setter, delogger
 
-
-# df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-# df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
@@ -23,23 +19,11 @@ df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
 
 
-# df_test = df_test[df_test.MT == 16] # extract (n,2n) only
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
 
 df_test = anomaly_remover(dfa = df_test)
-
-# def custom_loss(y_pred, y_true):
-# 	num = y_pred + 1
-# 	den = y_true + 1
-#
-# 	ln = np.log(y_pred + 1)
-#
-# 	grad = (num/den) - ln
-# 	hess = np.repeat(2, y_true.shape[0])
-#
-# 	return grad, hess
 
 al = range_setter(la=30, ua=215, df=df)
 
@@ -64,7 +48,7 @@ for nuc in al:
 		n_magic.append(nuc)
 		all_magic.append(nuc)
 
-validation_nuclides = []
+validation_nuclides = [[50,122], [82,208], [47,116]]
 validation_set_size = 30 # number of nuclides hidden from training
 
 # random.seed(a=2)
@@ -90,8 +74,6 @@ if __name__ == "__main__":
 	# X_train must be in the shape (n_samples, n_features)
 	# and y_train must be in the shape (n_samples) of the target
 
-
-
 	print("Data prep done")
 
 	model_seed = random.randint(a=1, b=1000)
@@ -103,13 +85,14 @@ if __name__ == "__main__":
 							max_leaves=0,
 							seed=model_seed,)
 
-
-
 	model.fit(X_train, y_train)
 
+	# best_model = model.best_iteration
 	print("Training complete")
 
-	predictions = model.predict(X_test) # XS predictions
+	predictions = model.predict(X_test,
+								# ntree_limit=best_model,
+								) # XS predictions
 
 	# shap_val_gpu = model.predict(X_test, pred_interactions=True)
 
@@ -147,7 +130,7 @@ if __name__ == "__main__":
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		time.sleep(1.2)
+		time.sleep(0.4)
 
 	exp_true_xs = [np.exp(y) -log_reduction_var for y in y_test]
 	exp_pred_xs = [np.exp(xs)- log_reduction_var for xs in predictions]
