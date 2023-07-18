@@ -12,9 +12,10 @@ import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import anomaly_remover, log_make_train, log_make_test,\
-	range_setter, TENDL_plotter
+	range_setter, General_plotter
 import scipy.stats
 from datetime import timedelta
+import tqdm
 
 runtime = time.time()
 
@@ -39,10 +40,10 @@ log_reduction_var = 0.00001
 n_evaluations = 100
 datapoint_matrix = []
 
-for i in range(n_evaluations):
+for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[]]
+	validation_nuclides = [[71,175]]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
@@ -162,8 +163,24 @@ TENDL = pd.read_csv("TENDL_MT16_XS.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
-tendl_energy, tendl_xs = TENDL_plotter(df=TENDL, nuclides=[validation_nuclides[0]])
+tendl_energy, tendl_xs = General_plotter(df=TENDL, nuclides=[validation_nuclides[0]])
+time.sleep(2)
 
+
+JEFF33 = pd.read_csv('JEFF33_features_correctly_zeroed.csv')
+JEFF33.index = range(len(JEFF33))
+JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=215)
+JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[validation_nuclides[0]])
+time.sleep(2)
+
+JENDL4 = pd.read_csv('JENDL4_features_correctly_zeroed.csv')
+JENDL4.index = range(len(JENDL4))
+JENDL4_energy, JENDL4_XS = General_plotter(df=JENDL4, nuclides=[validation_nuclides[0]])
+time.sleep(2)
+
+CENDL33 = pd.read_csv('CENDL33_features_correctly_zeroed.csv')
+CENDL33.index = range(len(CENDL33))
+CENDL33_energy, CENDL33_XS = General_plotter(df=CENDL33, nuclides=[validation_nuclides[0]])
 time.sleep(2)
 
 title_string_latex = "$\sigma_{n,2n}$"
@@ -171,10 +188,13 @@ title_string_nuclide = f"for {periodictable.elements[validation_nuclides[0][0]]}
 title_string = title_string_latex+title_string_nuclide
 
 #2sigma CF
-plt.plot(E_plot, datapoint_means, label = 'Prediction')
+plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
-plt.plot(tendl_energy[-1], tendl_xs, label = 'TENDL21')
-plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.4, label='95% CI')
+plt.plot(tendl_energy[-1], tendl_xs, label = 'TENDL21', color='dimgrey')
+plt.plot(JEFF_energy[-1], JEFF_XS, label='JEFF3.3', color='mediumvioletred')
+plt.plot(JENDL4_energy[-1], JENDL4_XS, label='JENDL4', color='green')
+plt.plot(CENDL33_energy[-1], CENDL33_XS, label = 'CENDL3.3', color='gold')
+plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 plt.grid()
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
 plt.xlabel("Energy / MeV")
@@ -198,4 +218,3 @@ plt.show()
 final_runtime = time.time() - runtime
 
 print(f"Runtime: {timedelta(seconds=final_runtime)}")
-
