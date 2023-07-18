@@ -320,7 +320,8 @@ def zero_maker(df):
 		if [row['Z'], row['A']] != current_nuclide: # for new nuclide in iteration, insert n number of 0 values
 
 			min_energy = row['ERG'] # Threshold energy
-			energy_app_list = np.linspace(0, min_energy-0.1, 20) # 20 values, 0 to threshold MeV - 0.1
+			# energy_app_list = np.linspace(0, min_energy-0.1, 20) # 20 values, 0 to threshold MeV - 0.1
+			energy_app_list = np.arange(0.0, min_energy, 0.2)
 
 			dummy_row = row # to be copied
 			dummy_row['XS'] = 0.0 # set XS value to 0 for all energies below threshold
