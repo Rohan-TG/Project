@@ -10,17 +10,10 @@ import time
 import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import make_test_low, make_train_low, anomaly_remover
+from matrix_functions import log_make_test_low, log_make_train_low, anomaly_remover, range_setter
 
-
-# df = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # new interpolated dataset, used for training only
-# df_test = pd.read_csv('zeroed_1_xs_fund_feateng.csv') # original dataset, used for validation
-
-# df = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")
-# df_test = pd.read_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-
-df = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
-df_test = pd.read_csv("ENDFBVIII_zeroed_LDP_XS.csv")
+df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
@@ -30,33 +23,12 @@ df = df[df.Z != 11]
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
+log_red_var = 0.00001
 
 
 df_test = anomaly_remover(dfa = df_test)
 
-# def custom_loss(y_pred, y_true):
-# 	num = y_pred + 1
-# 	den = y_true + 1
-#
-# 	ln = np.log(y_pred + 1)
-#
-# 	grad = (num/den) - ln
-# 	hess = np.repeat(2, y_true.shape[0])
-#
-# 	return grad, hess
-
-
-def range_setter(la, ua):
-	nucs = []
-
-	for i, j, in zip(df['A'], df['Z']):  # i is A, j is Z
-		if [j, i] in nucs or i > ua or i < la:
-			continue
-		else:
-			nucs.append([j, i])  # format is [Z, A]
-	return nucs
-
-al = range_setter(la=0, ua=50)
+al = range_setter(la=0, ua=50, df=df)
 
 magic_numbers = [2, 8, 20, 28, 50, 82, 126]
 
@@ -79,77 +51,9 @@ for nuc in al:
 		n_magic.append(nuc)
 		all_magic.append(nuc)
 
-# cat_magic = []
-#
-# magic_numbers = [2, 8, 20, 28, 50, 82, 126]
-#
-#
-# cat_magic_double_original = []
-# cat_magic_neutron_original = []
-# cat_magic_proton_original = []
-#
-# for z, n in zip(df_test['Z'], df_test['A']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_double_original.append(1)
-# 		cat_magic_neutron_original.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton_original.append(1)
-# 		cat_magic_neutron_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron_original.append(1)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_proton_original.append(0)
-# 	else:
-# 		cat_magic_proton_original.append(0)
-# 		cat_magic_double_original.append(0)
-# 		cat_magic_neutron_original.append(0)
-#
-# df_test.insert(78, 'cat_magic_proton', cat_magic_proton_original)
-# df_test.insert(79, 'cat_magic_neutron', cat_magic_neutron_original)
-# df_test.insert(80, 'cat_magic_double', cat_magic_double_original)
-#
-# df_test['cat_magic_proton'].astype('category')
-# df_test['cat_magic_neutron'].astype('category')
-# df_test['cat_magic_double'].astype("category")
-#
-#
-# cat_magic_proton = []
-# cat_magic_neutron = []
-# cat_magic_double = []
-#
-# for z, n in zip(df['Z'], df['N']):
-# 	if z in magic_numbers and n in magic_numbers:
-# 		cat_magic_double.append(1)
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(1)
-# 	elif z in magic_numbers and n not in magic_numbers:
-# 		cat_magic_proton.append(1)
-# 		cat_magic_neutron.append(0)
-# 		cat_magic_double.append(0)
-# 	elif z not in magic_numbers and n in magic_numbers:
-# 		cat_magic_neutron.append(1)
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 	else:
-# 		cat_magic_proton.append(0)
-# 		cat_magic_double.append(0)
-# 		cat_magic_neutron.append(0)
-#
-#
-# df.insert(78, 'cat_magic_proton', cat_magic_proton)
-# df.insert(79, 'cat_magic_neutron', cat_magic_neutron)
-# df.insert(80, 'cat_magic_double', cat_magic_double)
-#
-# df['cat_magic_proton'].astype('category')
-# df['cat_magic_neutron'].astype('category')
-# df['cat_magic_double'].astype("category")
 
-# validation_nuclides = [[82,208]] # list of nuclides used for validation
-# validation_nuclides = [[20,40], [28,58], [24,50]]
 validation_nuclides = []
-validation_set_size = 15 # number of nuclides hidden from training
+validation_set_size = 5 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -161,9 +65,10 @@ print("Test nuclide selection complete")
 
 if __name__ == "__main__":
 
-	X_train, y_train = make_train_low(df=df, validation_nuclides=validation_nuclides, la=0, ua=50) # make training matrix
+	X_train, y_train = log_make_train_low(df=df, validation_nuclides=validation_nuclides,
+										  la=0, ua=50, log_reduction_variable=log_red_var) # make training matrix
 
-	X_test, y_test = make_test_low(validation_nuclides, df=df_test)
+	X_test, y_test = log_make_test_low(validation_nuclides, df=df_test,log_reduction_variable=log_red_var)
 
 	# X_train must be in the shape (n_samples, n_features)
 	# and y_train must be in the shape (n_samples) of the target
@@ -172,7 +77,7 @@ if __name__ == "__main__":
 
 
 	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.015,
+							learning_rate=0.005,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
@@ -198,9 +103,9 @@ if __name__ == "__main__":
 		dummy_predictions = []
 		for i, row in enumerate(X_test):
 			if [row[0], row[1]] == nuclide:
-				dummy_test_XS.append(y_test[i])
+				dummy_test_XS.append(np.exp(y_test[i]) - log_red_var)
 				dummy_test_E.append(row[4]) # Energy values are in 5th row
-				dummy_predictions.append(predictions[i])
+				dummy_predictions.append(np.exp(predictions[i]) - log_red_var)
 
 		XS_plotmatrix.append(dummy_test_XS)
 		E_plotmatrix.append(dummy_test_E)
@@ -224,8 +129,11 @@ if __name__ == "__main__":
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 		time.sleep(0.7)
 
-	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
-	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
+	exp_true_xs = [np.exp(y) -log_red_var for y in y_test]
+	exp_pred_xs = [np.exp(xs)- log_red_var for xs in predictions]
+
+	print(f"MSE: {mean_squared_error(exp_true_xs, exp_pred_xs, squared=False)}")  # MSE
+	print(f"R2: {r2_score(exp_true_xs, exp_pred_xs):0.5f}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
 
 	model.get_booster().feature_names = ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
@@ -302,72 +210,72 @@ if __name__ == "__main__":
 	xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
 	plt.show()
 
-	explainer = shap.Explainer(model.predict, X_train,
-							   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
-											   'BEA',
-											   # 'P',
-											   'Snc', 'g-def', 'N',
-											   'b-def',
-											   'Sn_da',
-											   'Sp_d',
-											   'S2n_d',
-											   'Radius',
-											   'n_g_erg',
-											   'n_c_erg',
-											   # 'xsmax',
-											   'n_rms_r',
-											   # 'oct_def',
-											   'D_c',
-											   'BEA_d',
-											   'BEA_c',
-											   # 'Pair_d',
-											   # 'Par_d',
-											   'S2n_c',
-											   'S2p_c',
-											   'ME',
-											   # 'Z_even',
-											   # 'A_even',
-											   # 'N_even',
-											   'Shell',
-											   'Par',
-											   'Spin',
-											   'Decay',
-											   'Deform',
-											   'p_g_e',
-											   'p_c_e',
-											   'p_rms_r',
-											   # 'rms_r',
-											   'Sp_c',
-											   # 'S_n_c',
-											   'Shell_c',
-											   # 'S2p-d',
-											   # 'Shell-d',
-											   'Spin-c',
-											   'Rad-c',
-											   'Def-c',
-											   'ME-c',
-											   'BEA-A-c',
-											   'Decay-d',
-											   'ME-d',
-											   # 'Rad-d',
-											   # 'Pair-c',
-											   # 'Par-c',
-											   'BEA-A-d',
-											   # 'Spin-d',
-											   'Def-d',
-											   # 'mag_p',
-											   # 'mag_n',
-											   # 'mag_d',
-											   'Nlow',
-											   'Ulow',
-											   # 'Ntop',
-											   'Utop',
-											   'ainf',
-											   ]) # SHAP feature importance analysis
-	shap_values = explainer(X_test)
-
+	# explainer = shap.Explainer(model.predict, X_train,
+	# 						   feature_names= ['Z', 'A', 'S2n', 'S2p', 'E', 'Sp', 'Sn',
+	# 										   'BEA',
+	# 										   # 'P',
+	# 										   'Snc', 'g-def', 'N',
+	# 										   'b-def',
+	# 										   'Sn_da',
+	# 										   'Sp_d',
+	# 										   'S2n_d',
+	# 										   'Radius',
+	# 										   'n_g_erg',
+	# 										   'n_c_erg',
+	# 										   # 'xsmax',
+	# 										   'n_rms_r',
+	# 										   # 'oct_def',
+	# 										   'D_c',
+	# 										   'BEA_d',
+	# 										   'BEA_c',
+	# 										   # 'Pair_d',
+	# 										   # 'Par_d',
+	# 										   'S2n_c',
+	# 										   'S2p_c',
+	# 										   'ME',
+	# 										   # 'Z_even',
+	# 										   # 'A_even',
+	# 										   # 'N_even',
+	# 										   'Shell',
+	# 										   'Par',
+	# 										   'Spin',
+	# 										   'Decay',
+	# 										   'Deform',
+	# 										   'p_g_e',
+	# 										   'p_c_e',
+	# 										   'p_rms_r',
+	# 										   # 'rms_r',
+	# 										   'Sp_c',
+	# 										   # 'S_n_c',
+	# 										   'Shell_c',
+	# 										   # 'S2p-d',
+	# 										   # 'Shell-d',
+	# 										   'Spin-c',
+	# 										   'Rad-c',
+	# 										   'Def-c',
+	# 										   'ME-c',
+	# 										   'BEA-A-c',
+	# 										   'Decay-d',
+	# 										   'ME-d',
+	# 										   # 'Rad-d',
+	# 										   # 'Pair-c',
+	# 										   # 'Par-c',
+	# 										   'BEA-A-d',
+	# 										   # 'Spin-d',
+	# 										   'Def-d',
+	# 										   # 'mag_p',
+	# 										   # 'mag_n',
+	# 										   # 'mag_d',
+	# 										   'Nlow',
+	# 										   'Ulow',
+	# 										   # 'Ntop',
+	# 										   'Utop',
+	# 										   'ainf',
+	# 										   ]) # SHAP feature importance analysis
+	# shap_values = explainer(X_test)
+	#
 	# name features for FIA
-
-
-	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+	#
+	#
+	# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
 	# shap.plots.waterfall(shap_values[0], max_display=70)
