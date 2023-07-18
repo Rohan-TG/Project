@@ -59,9 +59,11 @@ if __name__ == "__main__":
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215) # make training matrix
+		X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides,
+										  la=30, ua=215, log_reduction_variable=log_reduction_var) # make training matrix
 
-		X_test, y_test = log_make_test(validation_nuclides, df=df_test)
+		X_test, y_test = log_make_test(validation_nuclides, df=df_test,
+									   log_reduction_variable=log_reduction_var)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
