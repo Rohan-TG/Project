@@ -21,12 +21,15 @@ df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=215, df=df)
 
 
-TENDL = pd.read_csv("TENDL21_features_arange_zeroed.csv")
+TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
 
-validation_nuclides = [[40,102]]
+validation_nuclides = [[39,85], [39,86],[39,87],
+					   [39,88],[39,90],[39,91],
+					   [39,92],[39,93],[39,94],
+					   [39,95]]
 validation_set_size = 1 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
