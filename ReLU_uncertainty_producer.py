@@ -41,7 +41,7 @@ datapoint_matrix = []
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[42,99]]
+	validation_nuclides = [[56,139]]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
@@ -197,7 +197,7 @@ plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 plt.plot(tendl_energy[-1], tendl_xs, label = 'TENDL21', color='dimgrey')
 plt.plot(JEFF_energy[-1], JEFF_XS, label='JEFF3.3', color='mediumvioletred')
-plt.plot(JENDL4_energy[-1], JENDL4_XS, label='JENDL4', color='green')
+plt.plot(JENDL4_energy[-1], JENDL4_XS, '--', label='JENDL4', color='green')
 plt.plot(CENDL33_energy[-1], CENDL33_XS, '--', label = 'CENDL3.3', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 plt.grid()
