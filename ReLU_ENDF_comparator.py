@@ -100,7 +100,7 @@ if __name__ == "__main__":
 	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
 	for pred in predictions:
-		if pred >= 0.0:
+		if pred >= 0.001:
 			predictions_ReLU.append(pred)
 		else:
 			predictions_ReLU.append(0)
