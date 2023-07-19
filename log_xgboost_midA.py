@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import random
 import xgboost as xg
 import time
-# import shap
 import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
@@ -94,8 +93,6 @@ if __name__ == "__main__":
 								# ntree_limit=best_model,
 								) # XS predictions
 
-	# shap_val_gpu = model.predict(X_test, pred_interactions=True)
-
 	# Form arrays for plots below
 	XS_plotmatrix = []
 	E_plotmatrix = []
@@ -124,7 +121,7 @@ if __name__ == "__main__":
 		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 		plt.legend()
 		plt.grid()
-		plt.ylabel('XS / b')
+		plt.ylabel('$\sigma_{n,2n}$ / b')
 		plt.xlabel('Energy / MeV')
 		plt.show()
 
