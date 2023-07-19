@@ -48,7 +48,7 @@ for nuc in al:
 		n_magic.append(nuc)
 		all_magic.append(nuc)
 
-validation_nuclides = [[50,122], [82,208], [47,116]]
+validation_nuclides = [[44,103],[50,122], [82,208], [47,116], [40,90]]
 validation_set_size = 30 # number of nuclides hidden from training
 
 # random.seed(a=2)
@@ -119,8 +119,8 @@ if __name__ == "__main__":
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
 	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i] # validation nuclide
-		plt.plot(erg, pred_xs, label='predictions')
 		plt.plot(erg, true_xs, label='data')
+		plt.plot(erg, pred_xs, label='predictions', color='red')
 		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 		plt.legend()
 		plt.grid()
