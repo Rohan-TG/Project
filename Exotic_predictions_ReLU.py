@@ -25,17 +25,20 @@ TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
+JENDL = pd.read_csv('JENDL4_features_arange_zeroed.csv')
+JENDL.index = range(len(JENDL))
+JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
 
-# validation_nuclides = [[39,85], [39,86],[39,87],
-# 					   [39,88],[39,90],[39,91],
-# 					   [39,92],[39,93],[39,94],
-# 					   [39,95]]
+validation_nuclides = [[39,85], [39,86],[39,87],
+					   [39,88],[39,90],[39,91],
+					   [39,92],[39,93],[39,94],
+					   [39,95]]
 
-validation_nuclides = [[40,85], [40,86], [40,87],
-					   [40,88], [40,89], [40,93],
-					   [40,94], [40,95], [40,96],
-					   [40,97], [40,98], [40,99],
-					   [40,100], [40,101], [40,102]]
+# validation_nuclides = [[40,85], [40,86], [40,87],
+# 					   [40,88], [40,89], [40,93],
+# 					   [40,94], [40,95], [40,96],
+# 					   [40,97], [40,98], [40,99],
+# 					   [40,100], [40,101], [40,102]]
 
 validation_set_size = 1 # number of nuclides hidden from training
 
@@ -88,6 +91,9 @@ if __name__ == "__main__":
 	TENDL_XS_plotmatrix = []
 	TENDL_E_plotmatrix = []
 
+	JENDL_XS_plotmatrix = []
+	JENDL_E_plotmatrix = []
+
 	for nuclide in validation_nuclides:
 		dummy_test_XS = []
 		dummy_test_E = []
@@ -102,6 +108,22 @@ if __name__ == "__main__":
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
 
+
+
+		if nuclide in JENDL_nuclides:
+			dummy_jendl_XS = []
+			dummy_jendl_ERG = []
+			JENDL_ERG_matrix, JENDL_XS = General_plotter(df=JENDL, nuclides=[nuclide])
+			dummy_jendl_XS.append(JENDL_XS)
+			dummy_jendl_ERG.append(JENDL_ERG_matrix[-1])
+
+			JENDL_XS_plotmatrix.append(dummy_jendl_XS)
+			JENDL_E_plotmatrix.append(dummy_jendl_ERG)
+		else:
+			JENDL_XS_plotmatrix.append([[]])
+			JENDL_E_plotmatrix.append([[]])
+
+
 		if nuclide in TENDL_nuclides:
 			dummy_tendl_XS = []
 			dummy_tendl_ERG = []
@@ -113,23 +135,35 @@ if __name__ == "__main__":
 
 			TENDL_XS_plotmatrix.append(dummy_tendl_XS)
 			TENDL_E_plotmatrix.append(dummy_tendl_ERG)
+		else:
+			TENDL_XS_plotmatrix.append([[]])
+			TENDL_E_plotmatrix.append([[]])
 
-			# print(TENDL_E_plotmatrix)
 
 	# plot predictions against data
 	# note: python lists allow elements to be lists of varying lengths. This would not work using numpy arrays; the for
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
-	for i, (pred_xs, true_xs, erg, tendl_xs, tendl_erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix, TENDL_XS_plotmatrix, TENDL_E_plotmatrix)):
+	for i, (pred_xs, true_xs, erg,
+			tendl_xs, tendl_erg,
+			jendl_xs, jendl_erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix,
+												  TENDL_XS_plotmatrix, TENDL_E_plotmatrix,
+												  JENDL_XS_plotmatrix, JENDL_E_plotmatrix)):
 		tendl_erg_plot = tendl_erg[0]
 		tendl_xs_plot = tendl_xs[0]
+
+		jendlerg_plot = jendl_erg[0]
+		jendlxs_plot = jendl_xs[0]
+
 		nuc = validation_nuclides[i] # validation nuclide
-		plt.plot(erg, true_xs, label='ENDF/B-VIII')
-		plt.plot(erg, pred_xs, label='Predictions')
-		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21")
-		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+		# plt.plot(erg, true_xs, label='ENDF/B-VIII')
+		plt.plot(erg, pred_xs, label='Predictions', color='red')
+		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21", color='dimgrey')
+		if jendlerg_plot != []:
+			plt.plot(jendlerg_plot, jendlxs_plot, label ='JENDL4', color='green')
+		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 		plt.legend()
 		plt.grid()
-		plt.ylabel('XS / b')
+		plt.ylabel('$\sigma_{n,2n}$ / b')
 		plt.xlabel('Energy / MeV')
 		plt.show()
 
