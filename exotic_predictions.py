@@ -3,7 +3,7 @@ from matrix_functions import range_setter
 import numpy as np
 
 
-library = pd.read_csv('CENDL3-2.csv')
+library = pd.read_csv('TENDL_MT16_XS_NOLISO_LFS.csv')
 nuclide_feature_df = pd.read_csv('1_fund.csv')
 ENDFBVIII = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv')
 
@@ -23,6 +23,10 @@ columns = list(nuclide_feature_df.columns)
 library = library[library.ERG < 20]
 library.index = range(len(library))
 
+print(library.columns)
+library = library.drop(columns=['Unnamed: 0'])
+print(library.columns)
+print(library.head())
 target_nuclides = nuclides_for_extraction
 
 nuclide_feature_df.index = range(len(nuclide_feature_df))
@@ -70,5 +74,5 @@ def feature_engineer(df):
 
 
 library_with_features = feature_engineer(df=library)
-# library_with_features.to_csv("CENDL33_features_unzeroed.csv")
+library_with_features.to_csv("TENDL21_features_truly_unzeroed.csv")
 print(library_with_features.shape)
