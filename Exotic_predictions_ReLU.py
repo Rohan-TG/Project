@@ -26,10 +26,17 @@ TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
 
-validation_nuclides = [[39,85], [39,86],[39,87],
-					   [39,88],[39,90],[39,91],
-					   [39,92],[39,93],[39,94],
-					   [39,95]]
+# validation_nuclides = [[39,85], [39,86],[39,87],
+# 					   [39,88],[39,90],[39,91],
+# 					   [39,92],[39,93],[39,94],
+# 					   [39,95]]
+
+validation_nuclides = [[40,85], [40,86], [40,87],
+					   [40,88], [40,89], [40,93],
+					   [40,94], [40,95], [40,96],
+					   [40,97], [40,98], [40,99],
+					   [40,100], [40,101], [40,102]]
+
 validation_set_size = 1 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -116,8 +123,8 @@ if __name__ == "__main__":
 		tendl_erg_plot = tendl_erg[0]
 		tendl_xs_plot = tendl_xs[0]
 		nuc = validation_nuclides[i] # validation nuclide
-		plt.plot(erg, pred_xs, label='Predictions')
 		plt.plot(erg, true_xs, label='ENDF/B-VIII')
+		plt.plot(erg, pred_xs, label='Predictions')
 		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21")
 		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 		plt.legend()
