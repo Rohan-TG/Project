@@ -827,8 +827,8 @@ def log_make_train(df, validation_nuclides, log_reduction_variable, la=0, ua=260
 	# Ntop = df['Ntop']
 	Utop = df['Utop']
 	ainf = df['ainf']
-	XSlow = df['XSlow']
-	XSupp = df['XSupp']
+	# XSlow = df['XSlow']
+	# XSupp = df['XSupp']
 	Asymmetry = df['Asymmetry']
 
 	# Compound nucleus properties
@@ -905,11 +905,9 @@ def log_make_train(df, validation_nuclides, log_reduction_variable, la=0, ua=260
 	# Ntop_train = []
 	Utop_train = []
 	ainf_train = []
-	XSlow_train = []
-	XSupp_train = []
+	# XSlow_train = []
+	# XSupp_train = []
 	Asymmetry_train = []
-
-
 
 	# Daughter nucleus properties
 	Sn_d_train = []
@@ -1158,8 +1156,8 @@ def log_make_test(nuclides, log_reduction_variable, df):
 	# Ntop = df['Ntop']
 	Utop = df['Utop']
 	# ainf = df['ainf']
-	XSlow = df['XSlow']
-	XSupp = df['XSupp']
+	# XSlow = df['XSlow']
+	# XSupp = df['XSupp']
 	Asymmetry = df['Asymmetry']
 
 	# Compound nucleus properties
@@ -1234,8 +1232,8 @@ def log_make_test(nuclides, log_reduction_variable, df):
 	# Ntop_test = []
 	Utop_test = []
 	# ainf_test = []
-	XSlow_test = []
-	XSupp_test = []
+	# XSlow_test = []
+	# XSupp_test = []
 	Asymmetry_test = []
 
 
@@ -1352,8 +1350,8 @@ def log_make_test(nuclides, log_reduction_variable, df):
 				# Ntop_test.append(Ntop[j])
 				Utop_test.append(Utop[j])
 				# ainf_test.append(ainf[j])
-				XSlow_test.append(XSlow[j])
-				XSupp_test.append(XSupp[j])
+				# XSlow_test.append(XSlow[j])
+				# XSupp_test.append(XSupp[j])
 				Asymmetry_test.append(Asymmetry[j])
 				Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
