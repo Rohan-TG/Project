@@ -11,7 +11,7 @@ import xgboost as xg
 import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import anomaly_remover, log_make_train, log_make_test,\
+from matrix_functions import anomaly_remover, make_train, make_test,\
 	range_setter, General_plotter
 import scipy.stats
 from datetime import timedelta
@@ -33,8 +33,6 @@ df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=215, df=df)
 
 
-log_reduction_var = 0.00001
-
 
 
 n_evaluations = 100
@@ -54,10 +52,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	time1 = time.time()
 
-	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,
-									  log_reduction_variable=log_reduction_var) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,) # make training matrix
 
-	X_test, y_test = log_make_test(validation_nuclides, df=df_test, log_reduction_variable=log_reduction_var)
+	X_test, y_test = make_test(validation_nuclides, df=df_test,)
 
 	print("Data prep done")
 
@@ -76,16 +73,24 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	print("Training complete")
 
 	predictions = model.predict(X_test) # XS predictions
+	predictions_ReLU = []
+	for pred in predictions:
+		if pred >= 0.001:
+			predictions_ReLU.append(pred)
+		else:
+			predictions_ReLU.append(0)
+
+	predictions = predictions_ReLU
 
 	if i == 0:
 		for k, pred in enumerate(predictions):
 			if [X_test[k,0], X_test[k,1]] == validation_nuclides[0]:
-				datapoint_matrix.append([np.exp(pred) - log_reduction_var])
+				datapoint_matrix.append([pred])
 	else:
 		valid_predictions = []
 		for k, pred in enumerate(predictions):
 			if [X_test[k, 0], X_test[k, 1]] == validation_nuclides[0]:
-				valid_predictions.append(np.exp(pred) - log_reduction_var)
+				valid_predictions.append(pred)
 		for m, prediction in zip(datapoint_matrix, valid_predictions):
 			m.append(prediction)
 
@@ -99,9 +104,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		dummy_predictions = []
 		for i, row in enumerate(X_test):
 			if [row[0], row[1]] == nuclide:
-				dummy_test_XS.append(np.exp(y_test[i]) - log_reduction_var)
+				dummy_test_XS.append(y_test[i])
 				dummy_test_E.append(row[4]) # Energy values are in 5th row
-				dummy_predictions.append(np.exp(predictions[i]) - log_reduction_var)
+				dummy_predictions.append(predictions[i])
 
 		XS_plotmatrix.append(dummy_test_XS)
 		E_plotmatrix.append(dummy_test_E)
@@ -114,8 +119,8 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		nuc = validation_nuclides[i] # validation nuclide
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 
-	exp_true_xs = [np.exp(y) -log_reduction_var for y in y_test]
-	exp_pred_xs = [np.exp(xs)- log_reduction_var for xs in predictions]
+	exp_true_xs = [y for y in y_test]
+	exp_pred_xs = [xs for xs in predictions]
 
 	print(f"MSE: {mean_squared_error(exp_true_xs, exp_pred_xs, squared=False)}") # MSE
 	print(f"R2: {r2_score(exp_true_xs, exp_pred_xs):0.5f}") # Total R^2 for all predictions in this training campaign
@@ -127,7 +132,7 @@ E_plot = []
 
 for i, row in enumerate(X_test):
 	if [row[0], row[1]] == validation_nuclides[0]:
-		XS_plot.append(np.exp(y_test[i]) - log_reduction_var)
+		XS_plot.append(y_test[i])
 		E_plot.append(row[4]) # Energy values are in 5th row
 
 
