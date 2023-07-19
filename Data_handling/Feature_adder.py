@@ -7,15 +7,15 @@ import numpy as np
 import random
 import xgboost as xg
 import time
-import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 
 
-df = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv') # new interpolated dataset, used for training only
+df = pd.read_csv('TENDL21_features_arange_zeroed.csv') # new interpolated dataset, used for training only
 
-df = df.drop(axis=1, labels=['Unnamed: 0.2', 'Unnamed: 0.1', 'Unnamed: 0'])
-
+df = df.drop(columns=['Unnamed: 0.1', 'Unnamed: 0',])
+print(df.columns)
+print(len(df.columns))
 Z_l_unpack, A_l_unpack, Nlow_unpack, Ulow_unpack, Ntop_unpack, Utop_unpack, ainf_unpack, = np.loadtxt("level-densities-ctmeff.txt",
 													 usecols=(0,1,7,8,9,10,13),
 													 skiprows=1,
@@ -62,13 +62,13 @@ for z, a in zip(df['Z'], df['A']): # nuclides in dataframe
 
 df_new = df
 
-df_new.insert(79, "Nlow", Nlow)
-df_new.insert(80, "Ulow", Ulow)
-df_new.insert(81, "Ntop", Ntop)
-df_new.insert(82, "Utop", Utop)
-df_new.insert(83, "ainf", ainf)
-#
-#
-# print(df_new.columns)
+df_new.insert(61, "Nlow", Nlow)
+df_new.insert(62, "Ulow", Ulow)
+df_new.insert(63, "Ntop", Ntop)
+df_new.insert(64, "Utop", Utop)
+df_new.insert(65, "ainf", ainf)
 
-# df_new.to_csv("level_densities_v1_zeroed_1_xs_fund_feateng.csv")
+
+print(df_new.columns)
+
+df_new.to_csv("TENDL21_arange_zeroed_with_LDPs.csv")
