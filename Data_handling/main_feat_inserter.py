@@ -3,19 +3,15 @@ from matrix_functions import range_setter
 import numpy as np
 
 
-library = pd.read_csv('TENDL_MT16_XS_NOLISO_LFS.csv')
+library = pd.read_csv('XS_NOUNCERT_JENDL5.csv')
 nuclide_feature_df = pd.read_csv('1_fund.csv')
-ENDFBVIII = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv')
 
 library_nuclides = range_setter(df=library, la=0, ua=300)
-
-nuclides_already_in_ENDFBVIII = range_setter(la=0, ua=300, df=ENDFBVIII)
 
 
 nuclides_for_extraction = library_nuclides
 
 print(len(nuclides_for_extraction))
-print(len(nuclides_already_in_ENDFBVIII))
 print(len(library_nuclides))
 
 columns = list(nuclide_feature_df.columns)
