@@ -66,7 +66,7 @@ for nuc in al:
 validation_nuclides = [[38,87]]
 validation_set_size = 20 # number of nuclides hidden from training
 
-# random.seed(a=42)
+random.seed(a=42)
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
