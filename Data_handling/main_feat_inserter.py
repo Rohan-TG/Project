@@ -4,6 +4,11 @@ import numpy as np
 
 
 library = pd.read_csv('XS_NOUNCERT_JENDL5.csv')
+print(library['ERG'])
+
+library['ERG'] = library['ERG'] / (1e6)
+print(library['ERG'])
+
 nuclide_feature_df = pd.read_csv('1_fund.csv')
 
 library_nuclides = range_setter(df=library, la=0, ua=300)
@@ -16,13 +21,10 @@ print(len(library_nuclides))
 
 columns = list(nuclide_feature_df.columns)
 
-library = library[library.ERG < 20]
+library = library[library.ERG < 20.0]
 library.index = range(len(library))
 
-print(library.columns)
-library = library.drop(columns=['Unnamed: 0'])
-print(library.columns)
-print(library.head())
+
 target_nuclides = nuclides_for_extraction
 
 nuclide_feature_df.index = range(len(nuclide_feature_df))
@@ -41,34 +43,12 @@ def feature_engineer(df):
 						dummy_row['XS'] = row['XS']
 						dummy_row['ERG'] = row['ERG']
 
-						# df_r = pd.concat([df_r, dummy_row], ignore_index=True, axis=1)
 						df_r = df_r._append(dummy_row, ignore_index=True)
 
 	return df_r
 
-# def TENDL_feature_engineer(df):
-#
-# 	df_r = pd.DataFrame(columns=columns)
-# 	filled = 0
-# 	for j, feature_row in nuclide_feature_df.iterrows():
-# 		print(f"{j + 1}/3429")
-# 		for i, row in df.iterrows():
-# 			if [row['Z'], row['A']] == [feature_row['Z'], feature_row['A']]:
-# 				dummy_row = feature_row
-# 				dummy_row['XS'] = row['XS']
-# 				dummy_row['ERG'] = row['ERG']
-#
-# 				df_r = df_r._append(dummy_row, ignore_index=True)
-# 				filled = 1
-# 			elif filled > 0:
-# 				filled = 0
-# 				break
-# 		if j > 25:
-# 			break
-#
-# 	return df_r
 
 
 library_with_features = feature_engineer(df=library)
-library_with_features.to_csv("TENDL21_features_truly_unzeroed.csv")
+library_with_features.to_csv("JENDL5_main_branch_features_unzeroed.csv")
 print(library_with_features.shape)
