@@ -24,7 +24,7 @@ df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=215, ua=270, df=df)
 
 
-TENDL = pd.read_csv("TENDL_MT16_XS.csv")
+TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=215, ua=270)
 
