@@ -6,6 +6,8 @@ import numpy as np
 
 
 def General_plotter(df, nuclides):
+	"""df: dataframe source of XSs
+	nuclides: must be array of 1x2 arrays [z,a]"""
 
 	ztest = [nuclide[0] for nuclide in nuclides]  # first element is the Z-value of the given test nuclide
 	atest = [nuclide[1] for nuclide in nuclides]
@@ -29,14 +31,11 @@ def General_plotter(df, nuclides):
 				Energy_test.append(Energy[j])
 				XS_test.append(XS[j])
 
-	tendl_energies = np.array([#Z_test, A_test,
-					  Energy_test])
+	energies = np.array([Energy_test])
 
-	# xtest = np.transpose(xtest)
+	xs = XS_test
 
-	tendl_xs = XS_test
-
-	return tendl_energies, tendl_xs
+	return energies, xs
 
 
 
