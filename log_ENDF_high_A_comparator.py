@@ -207,11 +207,11 @@ if __name__ == "__main__":
 		plt.plot(erg, pred_xs, label='Predictions', color='red')
 		plt.plot(erg, true_xs, label='ENDF/B-VIII')
 		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21", color='dimgrey')
-		if jefferg_plot != []:
+		if len(jefferg_plot) > 1:
 			plt.plot(jefferg_plot, jeffxs_plot, label='JEFF3.3',color='mediumvioletred')
-		if jendlerg_plot != []:
+		if len(jendlerg_plot) > 1:
 			plt.plot(jendlerg_plot, jendlxs_plot, label='JENDL4', color='green')
-		if cendlerg_plot != []:
+		if len(cendlerg_plot) > 1:
 			plt.plot(cendlerg_plot, cendlxs_plot, label='CENDL3.3', color='gold')
 		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 		plt.legend()
