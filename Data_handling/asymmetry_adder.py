@@ -1,10 +1,10 @@
 import pandas as pd
 
 
-df = pd.read_csv("TENDL21_arange_zeroed_with_LDPs.csv")
+df = pd.read_csv("JENDL5_main_branch_features_unzeroed.csv")
 
 print(df.shape)
-
+print(df.columns)
 
 nucs = []
 
@@ -30,13 +30,15 @@ def asymmetry_term(N, Z, A):
 
 s, s_c, s_d = asymmetry_term(N=df['N'], Z=df['Z'], A=df['A'])
 
-df.insert(67, 'Asymmetry', value=s)
-df.insert(68, 'Asymmetry_compound', value=s_c)
-df.insert(69, 'Asymmetry_daughter', value=s_d)
-
-df.index = range(len(df))
 df = df.drop(columns=['Unnamed: 0'])
 print(df.columns)
 print(df.shape)
 
-df.to_csv("TENDL21_MT16_XS_features_zeroed.csv")
+df.insert(61, 'Asymmetry', value=s)
+df.insert(62, 'Asymmetry_compound', value=s_c)
+df.insert(63, 'Asymmetry_daughter', value=s_d)
+
+print(df.columns)
+print(df.shape)
+
+df.to_csv("JENDL5_asym_unzeroed_noLDPs.csv")
