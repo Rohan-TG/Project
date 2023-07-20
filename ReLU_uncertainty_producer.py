@@ -41,7 +41,7 @@ datapoint_matrix = []
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[56,139]]
+	validation_nuclides = [[39,89]]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
