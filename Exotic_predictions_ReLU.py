@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import random
 import xgboost as xg
 import time
+import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import make_test, make_train, anomaly_remover, range_setter, General_plotter
@@ -25,20 +26,20 @@ TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
-JENDL = pd.read_csv('JENDL4_features_arange_zeroed.csv')
+JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
 
-validation_nuclides = [[39,85], [39,86],[39,87],
-					   [39,88],[39,90],[39,91],
-					   [39,92],[39,93],[39,94],
-					   [39,95]]
+# validation_nuclides = [[39,85], [39,86],[39,87],
+# 					   [39,88],[39,90],[39,91],
+# 					   [39,92],[39,93],[39,94],
+# 					   [39,95]]
 
-# validation_nuclides = [[40,85], [40,86], [40,87],
-# 					   [40,88], [40,89], [40,93],
-# 					   [40,94], [40,95], [40,96],
-# 					   [40,97], [40,98], [40,99],
-# 					   [40,100], [40,101], [40,102]]
+validation_nuclides = [[40,85], [40,86], [40,87],
+					   [40,88], [40,89], [40,93],
+					   [40,94], [40,95], [40,96],
+					   [40,97], [40,98], [40,99],
+					   [40,100], [40,101], [40,102]]
 
 validation_set_size = 1 # number of nuclides hidden from training
 
@@ -159,7 +160,7 @@ if __name__ == "__main__":
 		plt.plot(erg, pred_xs, label='Predictions', color='red')
 		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21", color='dimgrey')
 		if jendlerg_plot != []:
-			plt.plot(jendlerg_plot, jendlxs_plot, label ='JENDL4', color='green')
+			plt.plot(jendlerg_plot, jendlxs_plot, label ='JENDL5', color='green')
 		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 		plt.legend()
 		plt.grid()
@@ -174,3 +175,81 @@ if __name__ == "__main__":
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
+
+	explainer = shap.Explainer(model.predict, X_train,
+							   feature_names=['Z', 'A',
+											  'S2n',
+											  'S2p',
+											  'E',
+											  'Sp',
+											  'Sn',
+											  'BEA',
+											  # 'P',
+											  'Snc', 'g-def', 'N',
+											  'b-def',
+											  'Sn_d',
+											  # 'Sp_d',
+											  'S2n_d',
+											  'Radius',
+											  'n_g_erg',
+											  'n_c_erg',
+											  # 'xsmax',
+											  'n_rms_r',
+											  # 'oct_def',
+											  # 'Decay_c',
+											  'BEA_d',
+											  'BEA_c',
+											  # 'Pair_d',
+											  # 'Par_d',
+											  # 'S2n_c',
+											  'S2p_c',
+											  'ME',
+											  # 'Z_even',
+											  # 'A_even',
+											  # 'N_even',
+											  'Shell',
+											  'Par',
+											  'Spin',
+											  'Decay',
+											  # 'Deform',
+											  'p_g_e',
+											  'p_c_e',
+											  # 'p_rms_r',
+											  # 'rms_r',
+											  # 'Sp_c',
+											  # 'S_n_c',
+											  'Shell_c',
+											  # 'S2p-d',
+											  # 'Shell-d',
+											  'Spin-c',
+											  # 'Rad-c',
+											  'Def-c',
+											  # 'ME-c',
+											  'BEA-A-c',
+											  'Decay-d',
+											  # 'ME-d',
+											  # 'Rad-d',
+											  # 'Pair-c',
+											  # 'Par-c',
+											  'BEA-A-d',
+											  # 'Spin-d',
+											  'Def-d',
+											  # 'mag_p',
+											  # 'mag_n',
+											  # 'mag_d',
+											  'Nlow',
+											  # 'Ulow',
+											  # 'Ntop',
+											  'Utop',
+											  # 'ainf',
+											  # 'XSlow',
+											  # 'XSupp',
+											  'Asym',
+											  # 'Asym_c',
+											  'Asym_d',
+											  ])  # SHAP feature importance analysis
+	shap_values = explainer(X_test)
+
+	# name features for FIA
+
+	shap.plots.bar(shap_values, max_display=70)
