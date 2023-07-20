@@ -32,7 +32,7 @@ JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
 JEFF_nuclides = range_setter(df=JEFF, la=30, ua=215)
 
-JENDL = pd.read_csv('JENDL4_features_arange_zeroed.csv')
+JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
 
@@ -63,10 +63,10 @@ for nuc in al:
 		all_magic.append(nuc)
 
 
-validation_nuclides = [[38,87]]
+validation_nuclides = []
 validation_set_size = 20 # number of nuclides hidden from training
 
-random.seed(a=42)
+# random.seed(a=42)
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -231,14 +231,14 @@ if __name__ == "__main__":
 
 		nuc = validation_nuclides[i] # validation nuclide
 		plt.plot(erg, pred_xs, label='Predictions', color='red')
-		plt.plot(erg, true_xs, label='ENDF/B-VIII')
-		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21", color='dimgrey')
+		plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
+		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21", color='dimgrey', linewidth=2)
 		if jefferg_plot != []:
-			plt.plot(jefferg_plot, jeffxs_plot, label='JEFF3.3',color='mediumvioletred')
+			plt.plot(jefferg_plot, jeffxs_plot, '--', label='JEFF3.3',color='mediumvioletred')
 		if jendlerg_plot != []:
-			plt.plot(jendlerg_plot, jendlxs_plot, label='JENDL4', color='green')
+			plt.plot(jendlerg_plot, jendlxs_plot, label='JENDL5', color='green')
 		if cendlerg_plot != []:
-			plt.plot(cendlerg_plot, cendlxs_plot, label='CENDL3.3', color='gold')
+			plt.plot(cendlerg_plot, cendlxs_plot, '--', label='CENDL3.3', color='gold')
 		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 		plt.legend()
 		plt.grid()
