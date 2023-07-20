@@ -41,7 +41,7 @@ datapoint_matrix = []
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[39,89]]
+	validation_nuclides = [[26,56]]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
@@ -178,9 +178,9 @@ JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=215)
 JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[validation_nuclides[0]])
 time.sleep(2)
 
-JENDL4 = pd.read_csv('JENDL4_features_arange_zeroed.csv')
-JENDL4.index = range(len(JENDL4))
-JENDL4_energy, JENDL4_XS = General_plotter(df=JENDL4, nuclides=[validation_nuclides[0]])
+JENDL5 = pd.read_csv('JENDL5_arange_all_features.csv')
+JENDL5.index = range(len(JENDL5))
+JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[validation_nuclides[0]])
 time.sleep(2)
 
 CENDL33 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
@@ -197,7 +197,7 @@ plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 plt.plot(tendl_energy[-1], tendl_xs, label = 'TENDL21', color='dimgrey')
 plt.plot(JEFF_energy[-1], JEFF_XS, label='JEFF3.3', color='mediumvioletred')
-plt.plot(JENDL4_energy[-1], JENDL4_XS, '--', label='JENDL4', color='green')
+plt.plot(JENDL5_energy[-1], JENDL5_XS, '--', label='JENDL5', color='green')
 plt.plot(CENDL33_energy[-1], CENDL33_XS, '--', label = 'CENDL3.3', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 plt.grid()
