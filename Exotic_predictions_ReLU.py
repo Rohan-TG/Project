@@ -28,6 +28,7 @@ TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
+print("Data loaded")
 
 # validation_nuclides = [[39,85], [39,86],[39,87],
 # 					   [39,88],[39,90],[39,91],
