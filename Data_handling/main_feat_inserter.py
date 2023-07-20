@@ -3,7 +3,7 @@ from matrix_functions import range_setter
 import numpy as np
 
 
-library = pd.read_csv('XS_NOUNCERT_JENDL5.csv')
+library = pd.read_csv('XS_NOUNCERT_JENDL5_ERG.csv')
 print(library['ERG'])
 
 library['ERG'] = library['ERG'] / (1e6)
@@ -22,6 +22,7 @@ print(len(library_nuclides))
 columns = list(nuclide_feature_df.columns)
 
 library = library[library.ERG < 20.0]
+library = library[library.LISO == 0]
 library.index = range(len(library))
 
 
