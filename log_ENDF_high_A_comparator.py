@@ -21,50 +21,28 @@ df = df[df.Z != 11]
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 df_test = anomaly_remover(dfa = df_test)
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=215, ua=270, df=df)
 
 
 TENDL = pd.read_csv("TENDL_MT16_XS.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
+TENDL_nuclides = range_setter(df=TENDL, la=215, ua=270)
 
 JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=215)
+JEFF_nuclides = range_setter(df=JEFF, la=215, ua=270)
 
 JENDL = pd.read_csv('JENDL4_features_arange_zeroed.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
+JENDL_nuclides = range_setter(df=JENDL, la=215, ua=270)
 
 CENDL = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
+CENDL_nuclides = range_setter(df=CENDL, la=215, ua=270)
 
 
-magic_numbers = [2, 8, 20, 28, 50, 82, 126]
-
-doubly_magic = []
-n_magic = []
-p_magic = []
-all_magic = []
-
-for nuc in al:
-	if nuc[0] in magic_numbers and (nuc[1] - nuc[0]) in magic_numbers:
-		# print(f"Double: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		doubly_magic.append(nuc)
-		all_magic.append(nuc)
-	elif nuc[0] in magic_numbers and (nuc[1] - nuc[0]) not in magic_numbers:
-		# print(f"Protonic: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		p_magic.append(nuc)
-		all_magic.append(nuc)
-	elif nuc[0] not in magic_numbers and (nuc[1] - nuc[0]) in magic_numbers:
-		# print(f"Neutronic: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		n_magic.append(nuc)
-		all_magic.append(nuc)
-
-
-validation_nuclides = [[38,87]]
-validation_set_size = 20 # number of nuclides hidden from training
+validation_nuclides = []
+validation_set_size = 10 # number of nuclides hidden from training
 
 random.seed(a=42)
 
@@ -78,7 +56,7 @@ log_reduction_var = 0.00001
 
 if __name__ == "__main__":
 
-	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,
+	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides, la=200, ua=270,
 									  log_reduction_variable=log_reduction_var) # make training matrix
 
 	X_test, y_test = log_make_test(validation_nuclides, df=df_test,
