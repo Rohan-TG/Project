@@ -11,9 +11,9 @@ from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 
 
-df = pd.read_csv('TENDL21_features_arange_zeroed.csv') # new interpolated dataset, used for training only
+df = pd.read_csv('JENDL5_asym_unzeroed_noLDPs.csv') # new interpolated dataset, used for training only
 
-df = df.drop(columns=['Unnamed: 0.1', 'Unnamed: 0',])
+df = df.drop(columns=['Unnamed: 0',])
 print(df.columns)
 print(len(df.columns))
 Z_l_unpack, A_l_unpack, Nlow_unpack, Ulow_unpack, Ntop_unpack, Utop_unpack, ainf_unpack, = np.loadtxt("level-densities-ctmeff.txt",
@@ -62,13 +62,13 @@ for z, a in zip(df['Z'], df['A']): # nuclides in dataframe
 
 df_new = df
 
-df_new.insert(61, "Nlow", Nlow)
-df_new.insert(62, "Ulow", Ulow)
-df_new.insert(63, "Ntop", Ntop)
-df_new.insert(64, "Utop", Utop)
-df_new.insert(65, "ainf", ainf)
+df_new.insert(64, "Nlow", Nlow)
+df_new.insert(65, "Ulow", Ulow)
+df_new.insert(66, "Ntop", Ntop)
+df_new.insert(67, "Utop", Utop)
+df_new.insert(68, "ainf", ainf)
 
 
 print(df_new.columns)
 
-df_new.to_csv("TENDL21_arange_zeroed_with_LDPs.csv")
+df_new.to_csv('JENDL5_all_features_unzeroed.csv')
