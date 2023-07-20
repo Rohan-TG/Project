@@ -44,7 +44,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=215, ua=270)
 validation_nuclides = []
 validation_set_size = 10 # number of nuclides hidden from training
 
-random.seed(a=42)
+# random.seed(a=42)
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
