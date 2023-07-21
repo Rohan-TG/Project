@@ -19,29 +19,28 @@ import tqdm
 
 runtime = time.time()
 
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+TENDL21 = pd.read_csv('TENDL21_MT16_XS_features_zeroed.csv')
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
 
-df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
 
-df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=215, df=df)
 
 
 
 
-n_evaluations = 100
+n_evaluations = 50
 datapoint_matrix = []
+target_nuclide = [39,88]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[26,56]]
+
+	validation_nuclides = [target_nuclide]
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
@@ -54,7 +53,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,) # make training matrix
 
-	X_test, y_test = make_test(validation_nuclides, df=df_test,)
+	X_test, y_test = make_test(validation_nuclides, df=TENDL21,)
 
 	print("Data prep done")
 
@@ -95,35 +94,35 @@ for i in tqdm.tqdm(range(n_evaluations)):
 			m.append(prediction)
 
 	# Form arrays for plots below
-	XS_plotmatrix = []
-	E_plotmatrix = []
-	P_plotmatrix = []
-	for nuclide in validation_nuclides:
-		dummy_test_XS = []
-		dummy_test_E = []
-		dummy_predictions = []
-		for i, row in enumerate(X_test):
-			if [row[0], row[1]] == nuclide:
-				dummy_test_XS.append(y_test[i])
-				dummy_test_E.append(row[4]) # Energy values are in 5th row
-				dummy_predictions.append(predictions[i])
-
-		XS_plotmatrix.append(dummy_test_XS)
-		E_plotmatrix.append(dummy_test_E)
-		P_plotmatrix.append(dummy_predictions)
+	# XS_plotmatrix = []
+	# E_plotmatrix = []
+	# P_plotmatrix = []
+	# for nuclide in validation_nuclides:
+	# 	dummy_test_XS = []
+	# 	dummy_test_E = []
+	# 	dummy_predictions = []
+	# 	for i, row in enumerate(X_test):
+	# 		if [row[0], row[1]] == nuclide:
+	# 			dummy_test_XS.append(y_test[i])
+	# 			dummy_test_E.append(row[4]) # Energy values are in 5th row
+	# 			dummy_predictions.append(predictions[i])
+	#
+	# 	XS_plotmatrix.append(dummy_test_XS)
+	# 	E_plotmatrix.append(dummy_test_E)
+	# 	P_plotmatrix.append(dummy_predictions)
 
 	# plot predictions against data
 	# note: python lists allow elements to be lists of varying lengths. This would not work using numpy arrays; the for
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
-	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
-		nuc = validation_nuclides[i] # validation nuclide
-		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
+	# for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+	# 	nuc = validation_nuclides[i] # validation nuclide
+	# 	r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 
-	exp_true_xs = [y for y in y_test]
-	exp_pred_xs = [xs for xs in predictions]
+	# exp_true_xs = [y for y in y_test]
+	# exp_pred_xs = [xs for xs in predictions]
 
-	print(f"MSE: {mean_squared_error(exp_true_xs, exp_pred_xs, squared=False)}") # MSE
-	print(f"R2: {r2_score(exp_true_xs, exp_pred_xs):0.5f}") # Total R^2 for all predictions in this training campaign
+	# print(f"MSE: {mean_squared_error(exp_true_xs, exp_pred_xs, squared=False)}") # MSE
+	# print(f"R2: {r2_score(exp_true_xs, exp_pred_xs):0.5f}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1:0.1f} s')
 
 
@@ -164,44 +163,50 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 
 
 
-TENDL = pd.read_csv("TENDL_MT16_XS.csv")
+TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
-tendl_energy, tendl_xs = General_plotter(df=TENDL, nuclides=[validation_nuclides[0]])
+tendl_energy, tendl_xs = General_plotter(df=TENDL, nuclides=[target_nuclide])
 time.sleep(2)
 
 
 JEFF33 = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF33.index = range(len(JEFF33))
 JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=215)
-JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[validation_nuclides[0]])
+JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[target_nuclide])
 time.sleep(2)
 
 JENDL5 = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL5.index = range(len(JENDL5))
-JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[validation_nuclides[0]])
+JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=215)
+JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 time.sleep(2)
 
 CENDL33 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 CENDL33.index = range(len(CENDL33))
-CENDL33_energy, CENDL33_XS = General_plotter(df=CENDL33, nuclides=[validation_nuclides[0]])
+CENDL_nuclides = range_setter(df=CENDL33, la=30, ua=215)
+CENDL33_energy, CENDL33_XS = General_plotter(df=CENDL33, nuclides=[target_nuclide])
 time.sleep(2)
 
 title_string_latex = "$\sigma_{n,2n}$"
-title_string_nuclide = f"for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}"
+title_string_nuclide = f"for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}"
 title_string = title_string_latex+title_string_nuclide
 
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
-plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
+if target_nuclide in al:
+	plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 plt.plot(tendl_energy[-1], tendl_xs, label = 'TENDL21', color='dimgrey')
-plt.plot(JEFF_energy[-1], JEFF_XS, label='JEFF3.3', color='mediumvioletred')
-plt.plot(JENDL5_energy[-1], JENDL5_XS, '--', label='JENDL5', color='green')
-plt.plot(CENDL33_energy[-1], CENDL33_XS, '--', label = 'CENDL3.3', color='gold')
+if target_nuclide in JEFF_nuclides:
+	plt.plot(JEFF_energy[-1], JEFF_XS, label='JEFF3.3', color='mediumvioletred')
+if target_nuclide in JENDL_nuclides:
+	plt.plot(JENDL5_energy[-1], JENDL5_XS, '--', label='JENDL5', color='green')
+if target_nuclide in CENDL_nuclides:
+	plt.plot(CENDL33_energy[-1], CENDL33_XS, '--', label = 'CENDL3.3', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 plt.grid()
-plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
+plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}")
 plt.xlabel("Energy / MeV")
 plt.ylabel("$\sigma_{n,2n}$ / b")
 plt.legend(loc='upper left')
