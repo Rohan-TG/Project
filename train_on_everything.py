@@ -14,19 +14,12 @@ jeff33 = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 cendl32 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 
 all_libraries = pd.concat([endfb8, jendl5])
-print(all_libraries.shape)
-print(endfb8.shape)
-print(jendl5.shape)
 
 # all_libraries = pd.concat([all_libraries, tendl21])
 all_libraries = pd.concat([all_libraries, jeff33])
 all_libraries = pd.concat([all_libraries, cendl32])
-print(all_libraries.shape)
-
-
 
 nucs = range_setter(df=all_libraries, la=30, ua=210)
-print(len(nucs))
 
 all_libraries.index = range(len(all_libraries))
 
@@ -49,10 +42,10 @@ X_test, y_test = make_test(validation_nuclides, df=tendl21)
 
 print("Data prep done")
 
-model = xg.XGBRegressor(n_estimators=900,
-                        learning_rate=0.01,
-                        max_depth=8,
-                        subsample=0.18236,
+model = xg.XGBRegressor(n_estimators=850,
+                        learning_rate=0.01987,
+                        max_depth=11,
+                        subsample=0.1314,
                         max_leaves=0,
                         seed=42, )
 
