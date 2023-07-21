@@ -159,7 +159,7 @@ if __name__ == "__main__":
 		# plt.plot(erg, true_xs, label='ENDF/B-VIII')
 		plt.plot(erg, pred_xs, label='Predictions', color='red')
 		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21", color='dimgrey')
-		if jendlerg_plot != []:
+		if len(jendlerg_plot) > 1:
 			plt.plot(jendlerg_plot, jendlxs_plot, label ='JENDL5', color='green')
 		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 		plt.legend()
