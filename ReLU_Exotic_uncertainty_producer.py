@@ -32,7 +32,7 @@ al = range_setter(la=30, ua=215, df=df)
 
 
 
-n_evaluations = 50
+n_evaluations = 100
 datapoint_matrix = []
 target_nuclide = [39,88]
 
