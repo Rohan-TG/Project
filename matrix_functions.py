@@ -31,7 +31,7 @@ def General_plotter(df, nuclides):
 				Energy_test.append(Energy[j])
 				XS_test.append(XS[j])
 
-	energies = np.array([Energy_test])
+	energies = np.array(Energy_test)
 
 	xs = XS_test
 
