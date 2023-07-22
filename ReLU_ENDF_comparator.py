@@ -86,18 +86,6 @@ if __name__ == "__main__":
 	E_plotmatrix = []
 	P_plotmatrix = []
 
-	TENDL_XS_plotmatrix = []
-	TENDL_E_plotmatrix = []
-
-	JENDL_XS_plotmatrix = []
-	JENDL_E_plotmatrix = []
-
-	CENDL_XS_plotmatrix = []
-	CENDL_E_plotmatrix = []
-
-	JEFF_XS_plotmatrix = []
-	JEFF_E_plotmatrix = []
-
 	for nuclide in validation_nuclides:
 		dummy_test_XS = []
 		dummy_test_E = []
@@ -137,7 +125,7 @@ if __name__ == "__main__":
 		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 		plt.legend()
 		plt.grid()
-		plt.ylabel('XS / b')
+		plt.ylabel('$\sigma_{n,2n}$ / b')
 		plt.xlabel('Energy / MeV')
 		plt.show()
 
