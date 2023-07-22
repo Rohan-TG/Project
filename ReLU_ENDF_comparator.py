@@ -145,6 +145,14 @@ if __name__ == "__main__":
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 		time.sleep(0.5)
 
-	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
-	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
-	print(f'completed in {time.time() - time1} s')
+	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False):0.5f}") # MSE
+	print(f"R2: {r2_score(y_test, predictions):0.5f}") # Total R^2 for all predictions in this training campaign
+	print(f'completed in {time.time() - time1:0.1f} s')
+
+
+train_predictions = model.predict(X_train)
+
+train_r2 = r2_score(y_true=y_train, y_pred=train_predictions)
+train_mse = mean_squared_error(y_true=y_train, y_pred=train_predictions)
+print(f"Training R2: {train_r2:0.5f}")
+print(f"Training MSE: {train_mse:0.5f}")
