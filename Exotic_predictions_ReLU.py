@@ -30,16 +30,16 @@ JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
 print("Data loaded")
 
-validation_nuclides = [[39,85], [39,86],[39,87],
-					   [39,88],[39,90],[39,91],
-					   [39,92],[39,93],[39,94],
-					   [39,95]]
+# validation_nuclides = [[39,85], [39,86],[39,87],
+# 					   [39,88],[39,90],[39,91],
+# 					   [39,92],[39,93],[39,94],
+# 					   [39,95]]
 
-# validation_nuclides = [[40,85], [40,86], [40,87],
-# 					   [40,88], [40,89], [40,93],
-# 					   [40,94], [40,95], [40,96],
-# 					   [40,97], [40,98], [40,99],
-# 					   [40,100], [40,101], [40,102]]
+validation_nuclides = [[40,85], [40,86], [40,87],
+					   [40,88], [40,89], [40,93],
+					   [40,94], [40,95], [40,96],
+					   [40,97], [40,98], [40,99],
+					   [40,100], [40,101], [40,102]]
 
 validation_set_size = 1 # number of nuclides hidden from training
 
@@ -109,58 +109,20 @@ if __name__ == "__main__":
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
 
-
-
-		if nuclide in JENDL_nuclides:
-			dummy_jendl_XS = []
-			dummy_jendl_ERG = []
-			JENDL_ERG_matrix, JENDL_XS = General_plotter(df=JENDL, nuclides=[nuclide])
-			dummy_jendl_XS.append(JENDL_XS)
-			dummy_jendl_ERG.append(JENDL_ERG_matrix[-1])
-
-			JENDL_XS_plotmatrix.append(dummy_jendl_XS)
-			JENDL_E_plotmatrix.append(dummy_jendl_ERG)
-		else:
-			JENDL_XS_plotmatrix.append([[]])
-			JENDL_E_plotmatrix.append([[]])
-
-
-		if nuclide in TENDL_nuclides:
-			dummy_tendl_XS = []
-			dummy_tendl_ERG = []
-
-			TENDL_ERG_matrix, TENDL_XS = General_plotter(df=TENDL, nuclides=[nuclide])
-
-			dummy_tendl_XS.append(TENDL_XS)
-			dummy_tendl_ERG.append(TENDL_ERG_matrix[-1])
-
-			TENDL_XS_plotmatrix.append(dummy_tendl_XS)
-			TENDL_E_plotmatrix.append(dummy_tendl_ERG)
-		else:
-			TENDL_XS_plotmatrix.append([[]])
-			TENDL_E_plotmatrix.append([[]])
-
-
 	# plot predictions against data
 	# note: python lists allow elements to be lists of varying lengths. This would not work using numpy arrays; the for
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
-	for i, (pred_xs, true_xs, erg,
-			tendl_xs, tendl_erg,
-			jendl_xs, jendl_erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix,
-												  TENDL_XS_plotmatrix, TENDL_E_plotmatrix,
-												  JENDL_XS_plotmatrix, JENDL_E_plotmatrix)):
-		tendl_erg_plot = tendl_erg[0]
-		tendl_xs_plot = tendl_xs[0]
-
-		jendlerg_plot = jendl_erg[0]
-		jendlxs_plot = jendl_xs[0]
+	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 
 		nuc = validation_nuclides[i] # validation nuclide
-		# plt.plot(erg, true_xs, label='ENDF/B-VIII')
+
+		jendl_erg, jendl_xs = General_plotter(df=JENDL, nuclides=[nuc])
+		tendl_erg, tendl_xs = General_plotter(df=TENDL, nuclides=[nuc])
+
 		plt.plot(erg, pred_xs, label='Predictions', color='red')
-		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21", color='dimgrey')
-		if len(jendlerg_plot) > 1:
-			plt.plot(jendlerg_plot, jendlxs_plot, label ='JENDL5', color='green')
+		plt.plot(tendl_erg, tendl_xs, label = "TENDL21", color='dimgrey')
+		if len(jendl_erg) > 1:
+			plt.plot(jendl_erg, jendl_xs, label ='JENDL5', color='green')
 		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 		plt.legend()
 		plt.grid()
