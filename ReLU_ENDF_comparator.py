@@ -37,7 +37,7 @@ CENDL = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
 
-validation_nuclides = []
+validation_nuclides = [[73,181]]
 validation_set_size = 20 # number of nuclides hidden from training
 
 # random.seed(a=42)
@@ -121,7 +121,7 @@ if __name__ == "__main__":
 		if nuc in JENDL_nuclides:
 			plt.plot(jendlerg, jendlxs, label='JENDL5', color='green')
 		if nuc in CENDL_nuclides:
-			plt.plot(cendlerg, cendlxs, '--', label='CENDL3.3', color='gold')
+			plt.plot(cendlerg, cendlxs, '--', label='CENDL3.2', color='gold')
 		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 		plt.legend()
 		plt.grid()
