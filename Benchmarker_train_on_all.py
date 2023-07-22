@@ -12,13 +12,24 @@ from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import anomaly_remover, make_train, make_test, range_setter
 
-df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+endfb8 = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv')
+jendl5 = pd.read_csv('JENDL5_arange_all_features.csv')
+tendl21 = pd.read_csv('TENDL21_MT16_XS_features_zeroed.csv')
+jeff33 = pd.read_csv('JEFF33_features_arange_zeroed.csv')
+cendl32 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 
-df_test = anomaly_remover(dfa = df_test)
+all_libraries = pd.concat([endfb8, jendl5])
+
+# all_libraries = pd.concat([all_libraries, tendl21])
+all_libraries = pd.concat([all_libraries, jeff33])
+all_libraries = pd.concat([all_libraries, cendl32])
+
+nucs = range_setter(df=all_libraries, la=30, ua=210)
+
+all_libraries.index = range(len(all_libraries))
 
 
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=30, ua=215, df=all_libraries)
 
 random.seed(a=2, version=2)
 nuclides_used = []
@@ -57,9 +68,9 @@ if __name__ == "__main__":
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215) # make training matrix
+		X_train, y_train = make_train(df=all_libraries, validation_nuclides=validation_nuclides, la=30, ua=215) # make training matrix
 
-		X_test, y_test = make_test(validation_nuclides, df=df_test)
+		X_test, y_test = make_test(validation_nuclides, df=tendl21)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
@@ -105,14 +116,6 @@ if __name__ == "__main__":
 		# plot predictions against data
 		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 			nuc = validation_nuclides[i]
-			# plt.plot(erg, pred_xs, label='predictions')
-			# plt.plot(erg, true_xs, label='data')
-			# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-			# plt.legend()
-			# plt.grid()
-			# plt.ylabel('XS / b')
-			# plt.xlabel('Energy / MeV')
-			# plt.show()
 
 			nuc = validation_nuclides[i] # validation nuclide
 			r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
@@ -122,17 +125,6 @@ if __name__ == "__main__":
 
 			nuclide_mse.append([nuc[0], nuc[1], mse])
 			nuclide_r2.append([nuc[0], nuc[1], r2])
-
-			# shell_used = []
-			# for z, a, shell in zip(df['Z'], df['A'], df['Shell']):
-			# 	if [z, a, shell] in shell_used:
-			# 		continue
-			# 	elif a < 30 or a > 215:
-			# 		continue
-			# 	else:
-			# 		shell_used.append([z,a,shell])
-
-			# individual_r2_list.append(r2)
 
 		overall_r2 = r2_score(y_test, predictions)
 		for pred in predictions:
@@ -184,13 +176,5 @@ plt.title("log abs r2 - Z")
 plt.grid()
 plt.show()
 
-
-# shell_plots = [shell_val[-1] for shell_val in shell_used]
-# plt.plot(shell_plots, log_plots, 'x')
-# plt.xlabel("Shell")
-# plt.ylabel("log abs r2")
-# plt.title("Shell behaviour")
-# plt.grid()
-# plt.show()
 
 print(f"Overall r2: {r2_score(every_true_value_list, every_prediction_list):0.5f}")
