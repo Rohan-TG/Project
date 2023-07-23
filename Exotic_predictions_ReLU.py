@@ -137,3 +137,7 @@ if __name__ == "__main__":
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
+
+fig, ax = plt.subplots(figsize=(30, 30))
+xg.plot_tree(model, num_trees=0, ax=ax)
+plt.show()
