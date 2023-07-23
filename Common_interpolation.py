@@ -43,7 +43,7 @@ target_nuclide = [31,69]
 
 
 validation_nuclides = []
-validation_set_size = 1
+validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -120,23 +120,16 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
     plt.xlabel('Energy / MeV')
     plt.show()
 
+    mse = mean_squared_error(y_true=true_xs, y_pred=pred_xs)
     r2 = r2_score(true_xs, pred_xs)  # R^2 score for this specific nuclide
-    print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-    time.sleep(0.5)
+    print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}, MSE: {mse:0.5f}")
+    time.sleep(0.8)
 
-    x_interpolate = np.linspace(stop=19.0, start=0, num=500)
+    x_interpolate = np.linspace(stop=19.6, start=0, num=500)
 
     f_predictions = scipy.interpolate.interp1d(x=erg, y=pred_xs)
     predictions_interpolated = f_predictions(x_interpolate)
 
-
-    if current_nuclide in CENDL_nuclides:
-        cendl_erg, cendl_xs = General_plotter(df=CENDL, nuclides=[current_nuclide])
-        f_cendl32 = scipy.interpolate.interp1d(x=cendl_erg, y=cendl_xs)
-        cendl_interp_xs = f_cendl32(x_interpolate)
-        pred_cendl_mse = mean_squared_error(predictions_interpolated, cendl_interp_xs)
-        pred_cendl_r2 = r2_score(y_true=cendl_interp_xs, y_pred=predictions_interpolated)
-        print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
     if current_nuclide in al:
         endfb8_erg, endfb8_xs = General_plotter(df=df, nuclides=[current_nuclide])
@@ -146,7 +139,15 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
         pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs, y_pred=predictions_interpolated)
         print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
 
-    if current_nuclide in JENDL_nuclides:
+    if current_nuclide in CENDL_nuclides:
+        cendl_erg, cendl_xs = General_plotter(df=CENDL, nuclides=[current_nuclide])
+        f_cendl32 = scipy.interpolate.interp1d(x=cendl_erg, y=cendl_xs)
+        cendl_interp_xs = f_cendl32(x_interpolate)
+        pred_cendl_mse = mean_squared_error(predictions_interpolated, cendl_interp_xs)
+        pred_cendl_r2 = r2_score(y_true=cendl_interp_xs, y_pred=predictions_interpolated)
+        print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
+
+    if current_nuclide in JENDL_nuclides and max(erg) <= 18:
         jendl_erg, jendl_xs = General_plotter(df=JENDL, nuclides=[current_nuclide])
         f_jendl5 = scipy.interpolate.interp1d(x=jendl_erg, y=jendl_xs)
         jendl_interp_xs = f_jendl5(x_interpolate)
@@ -169,9 +170,6 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
         pred_tendl_mse = mean_squared_error(predictions_interpolated, tendl_interp_xs)
         pred_tendl_r2 = r2_score(y_true=tendl_interp_xs, y_pred=predictions_interpolated)
         print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
-
-
-
 
 
 
