@@ -21,7 +21,7 @@ df.index = range(len(df))
 df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=215, df=df)
 
-TENDL = pd.read_csv("TENDL_MT16_XS.csv")
+TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
@@ -144,3 +144,5 @@ train_r2 = r2_score(y_true=y_train, y_pred=train_predictions)
 train_mse = mean_squared_error(y_true=y_train, y_pred=train_predictions)
 print(f"Training R2: {train_r2:0.5f}")
 print(f"Training MSE: {train_mse:0.5f}")
+
+xg.plot_tree(booster=model, num_trees=0)
