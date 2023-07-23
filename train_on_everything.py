@@ -19,7 +19,7 @@ all_libraries = pd.concat([endfb8, jendl5])
 all_libraries = pd.concat([all_libraries, jeff33])
 all_libraries = pd.concat([all_libraries, cendl32])
 
-nucs = range_setter(df=all_libraries, la=30, ua=210)
+nucs = range_setter(df=endfb8, la=30, ua=210)
 
 all_libraries.index = range(len(all_libraries))
 
@@ -29,15 +29,15 @@ all_libraries.index = range(len(all_libraries))
 # 					   [39,92],[39,93],[39,94],
 # 					   [39,95]]
 
-# validation_nuclides = []
+validation_nuclides = []
 
-validation_nuclides = [[40,85], [40,86], [40,87],
-					   [40,88], [40,89], [40,93],
-					   [40,94], [40,95], [40,96],
-					   [40,97], [40,98], [40,99],
-					   [40,100], [40,101], [40,102]]
+# validation_nuclides = [[40,85], [40,86], [40,87],
+# 					   [40,88], [40,89], [40,93],
+# 					   [40,94], [40,95], [40,96],
+# 					   [40,97], [40,98], [40,99],
+# 					   [40,100], [40,101], [40,102]]
 
-validation_set_size = 10 # number of nuclides hidden from training
+validation_set_size = 30 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(nucs) # randomly select nuclide from list of all nuclides
@@ -52,8 +52,7 @@ X_test, y_test = make_test(validation_nuclides, df=tendl21)
 print("Data prep done")
 
 model = xg.XGBRegressor(n_estimators=850,
-                        # learning_rate=0.01987,
-                        learning_rate=0.01,
+                        learning_rate=0.007,
                         max_depth=11,
                         subsample=0.1314,
                         max_leaves=0,
@@ -112,6 +111,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
         plt.plot(cendlerg, cendlxs, '--', label='CENDL3.3', color='gold')
     if nuc in jendl_nucs:
         plt.plot(jendlerg, jendlxs, label='JENDL5', color='green')
+    if nuc in endfb_nucs:
+        plt.plot(endfberg, endfbxs, label='ENDF/B-VIII')
     plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
     plt.legend()
     plt.grid()
@@ -121,7 +122,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
     r2 = r2_score(true_xs, pred_xs)  # R^2 score for this specific nuclide
     print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-    # time.sleep(1.2)
+    time.sleep(2)
 
 print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}")  # MSE
 print(f"R2: {r2_score(y_test, predictions)}")  # Total R^2 for all predictions in this training campaign
