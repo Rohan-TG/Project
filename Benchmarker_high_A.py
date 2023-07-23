@@ -28,7 +28,7 @@ df_test = anomaly_remover(dfa = df_test)
 
 
 
-al = range_setter(la=0, ua=270)
+al = range_setter(df=df, la=0, ua=270)
 
 
 nuclides_used = []
@@ -123,8 +123,6 @@ if __name__ == "__main__":
 			# plt.ylabel('XS / b')
 			# plt.xlabel('Energy / MeV')
 			# plt.show()
-
-			nuc = validation_nuclides[i] # validation nuclide
 			r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 			print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
@@ -167,15 +165,16 @@ print(f"Heavy performance: {heavy_performance}, mean: {np.mean(heavy_performance
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
 plt.xlabel("A")
-plt.ylabel("log abs r2")
-plt.title("log abs r2")
+plt.ylabel("$|\ln(|r^2|)|$")
+plt.yticks(rotation=90)
+plt.title("Performance - A")
 plt.grid()
 plt.show()
 
 plt.figure()
 plt.plot(Z_plots, log_plots_Z, 'x')
 plt.xlabel('Z')
-plt.ylabel("log abs r2")
-plt.title("log abs r2 - Z")
+plt.ylabel("$|\ln(|r^2|)|$")
+plt.title("Performance - Z")
 plt.grid()
 plt.show()
