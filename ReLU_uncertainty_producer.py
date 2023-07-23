@@ -35,7 +35,7 @@ al = range_setter(la=30, ua=215, df=df)
 
 
 
-n_evaluations = 2
+n_evaluations = 100
 datapoint_matrix = []
 target_nuclide = [42,99]
 
@@ -202,7 +202,7 @@ if target_nuclide in al:
 	endfb8_interp_xs = f_endfb8(x_interpolate_endfb8)
 	pred_endfb_mse = mean_squared_error(predictions_interpolated_endfb8, endfb8_interp_xs)
 	pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs, y_pred=predictions_interpolated_endfb8)
-	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
+	print(f"\nPredictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
 
 if target_nuclide in CENDL_nuclides:
 	cendl_erg, cendl_xs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
