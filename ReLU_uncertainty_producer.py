@@ -250,7 +250,11 @@ if target_nuclide in TENDL_nuclides:
 
 
 
+Veeser_energies = []
+Veeser_delta_energies = []
 
+Veeser_XS = []
+Veeser_delta_XS = []
 
 
 
