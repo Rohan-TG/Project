@@ -10,7 +10,7 @@ import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 
-TENDL = pd.read_csv("TENDL_MT16_XS.csv")
+TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
