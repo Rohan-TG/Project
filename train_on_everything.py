@@ -108,7 +108,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	if nuc in jeff_nucs:
 		plt.plot(jefferg, jeffxs, '--', label='JEFF3.3', color='mediumvioletred')
 	if nuc in cendl_nucs:
-		plt.plot(cendlerg, cendlxs, '--', label='CENDL3.3', color='gold')
+		plt.plot(cendlerg, cendlxs, '--', label='CENDL3.2', color='gold')
 	if nuc in jendl_nucs:
 		plt.plot(jendlerg, jendlxs, label='JENDL5', color='green')
 	if nuc in endfb_nucs:
