@@ -39,11 +39,12 @@ log_reduction_var = 0.00001
 
 n_evaluations = 100
 datapoint_matrix = []
+target_nuclide = [40,101]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
-	validation_nuclides = [[44,103]]
+	validation_nuclides = []
 	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
@@ -159,7 +160,7 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 
 
 
-TENDL = pd.read_csv("TENDL_MT16_XS.csv")
+TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
@@ -173,13 +174,15 @@ JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=215)
 JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[validation_nuclides[0]])
 time.sleep(2)
 
-JENDL4 = pd.read_csv('JENDL4_features_arange_zeroed.csv')
-JENDL4.index = range(len(JENDL4))
-JENDL4_energy, JENDL4_XS = General_plotter(df=JENDL4, nuclides=[validation_nuclides[0]])
+JENDL5 = pd.read_csv('JENDL5_arange_all_features.csv')
+JENDL5.index = range(len(JENDL5))
+JENDL5_nuclides = range_setter(df=JENDL5, la=30, ua=215)
+JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[validation_nuclides[0]])
 time.sleep(2)
 
 CENDL33 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 CENDL33.index = range(len(CENDL33))
+CENDL33_nuclides = range_setter(df=CENDL33, la=30, ua=210)
 CENDL33_energy, CENDL33_XS = General_plotter(df=CENDL33, nuclides=[validation_nuclides[0]])
 time.sleep(2)
 
@@ -189,11 +192,15 @@ title_string = title_string_latex+title_string_nuclide
 
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
-plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
-plt.plot(tendl_energy[-1], tendl_xs, label = 'TENDL21', color='dimgrey')
-plt.plot(JEFF_energy[-1], JEFF_XS, label='JEFF3.3', color='mediumvioletred')
-plt.plot(JENDL4_energy[-1], JENDL4_XS, label='JENDL4', color='green')
-plt.plot(CENDL33_energy[-1], CENDL33_XS, label = 'CENDL3.3', color='gold')
+if target_nuclide in al:
+	plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII')
+plt.plot(tendl_energy, tendl_xs, label = 'TENDL21', color='dimgrey')
+if target_nuclide in JEFF_nuclides:
+	plt.plot(JEFF_energy, JEFF_XS, label='JEFF3.3', color='mediumvioletred')
+if target_nuclide in JENDL5_nuclides:
+	plt.plot(JENDL5_energy, JENDL5_XS, label='JENDL5', color='green')
+if target_nuclide in CENDL33_nuclides:
+	plt.plot(CENDL33_energy, CENDL33_XS, label = 'CENDL3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 plt.grid()
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
