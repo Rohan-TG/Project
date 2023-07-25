@@ -1,15 +1,12 @@
-Linearly interpolated data file - interpolated_n2_1_xs_fund_feateng.csv (36 MB) : https://drive.google.com/file/d/1AUeGnzfO5BqdUDftE5lYGQVHNH0M8mkT/view?usp=share_link
+CURRENTLY IN USE - 1 < A < 255
+ENDF/B-VIII data with features (19.2 MB): https://drive.google.com/file/d/1jG6yP5L9XUsA3KXYVl3jfXoITtOxTJYb/view?usp=drive_link
+JENDL5 with features (39.3 MB): https://drive.google.com/file/d/1gx1tGePpG61Y7ykC73r8uO-3NaPNg-lq/view?usp=drive_link
+CENDL3.2 with features (16.8 MB): https://drive.google.com/file/d/1hXg8GL-GLiGKVD2M8cJebGo7UPHoJajU/view?usp=drive_link
+TENDL21 with features (154.1 MB): https://drive.google.com/file/d/1V-qARaUFJ3UG-IMjvzxLzNFH306A5OfP/view?usp=drive_link
+JEFF3.3 with features (33.7 MB): https://drive.google.com/file/d/1eHnWfEl0uAWXg8rA9wbisTZf3hv6VfhV/view?usp=drive_link
 
-Original data - 1_xs_fund_feateng.csv (15 MB): https://drive.google.com/file/d/1a1VaVLPuFGAqF8EOutKTETSM5FN4KN37/view?usp=drive_link
------------------------------------------------------------------------------------------------------------------------------
-Linearly interpolated 0+ data (42.6 MB): https://drive.google.com/file/d/1PqMRNOkVa4ejFMlQ0dFmiLB5pjaaZPfX/view?usp=drive_link
-
-Original data with 0+ (21.1 MB): https://drive.google.com/file/d/1huTXxWFD6Vj-d5p5YzQChUqSdV0Z_kAO/view?usp=drive_link
------------------------------------------------------------------------------------------------------------------------------
-CURRENTLY IN USE - 1 < A < 255 ENDF/B-VIII data (19.7 MB) https://drive.google.com/file/d/1jG6yP5L9XUsA3KXYVl3jfXoITtOxTJYb/view?usp=drive_link
-
-
-XGBoost_zeroed.py is the main script in use for training and testing.
+ReLU_ENDF_comparator.py
+ is the main script in use for training and testing.
 Benchmarker_zeroed.py evaluates a given model's performance over all the data using manual k-fold cross validation.
 
 Requirements for running the script:
