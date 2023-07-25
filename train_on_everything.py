@@ -29,13 +29,13 @@ all_libraries.index = range(len(all_libraries))
 # 					   [39,92],[39,93],[39,94],
 # 					   [39,95]]
 
-validation_nuclides = []
+# validation_nuclides = []
 
-# validation_nuclides = [[40,85], [40,86], [40,87],
-# 					   [40,88], [40,89], [40,93],
-# 					   [40,94], [40,95], [40,96],
-# 					   [40,97], [40,98], [40,99],
-# 					   [40,100], [40,101], [40,102]]
+validation_nuclides = [[40,85], [40,86], [40,87],
+					   [40,88], [40,89], [40,93],
+					   [40,94], [40,95], [40,96],
+					   [40,97], [40,98], [40,99],
+					   [40,100], [40,101], [40,102]]
 
 validation_set_size = 30 # number of nuclides hidden from training
 
