@@ -168,7 +168,13 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
 
-
+	# rmse_endf_tendl = mean_squared_error(endfb8_interp_xs, tendl_interp_xs)
+	# rmse_endf_jendl = mean_squared_error(endfb8_interp_xs, jendl_interp_xs)
+	# rmse_tendl_jendl = mean_squared_error(jendl_interp_xs, tendl_interp_xs)
+	# rmse_tendl_jeff = mean_squared_error(jeff_interp_xs, tendl_interp_xs)
+	# rmse_endfb_jeff = mean_squared_error(endfb8_interp_xs, jeff_interp_xs)
+	# rmse_jeff_jendl = mean_squared_error(jeff_interp_xs, jendl_interp_xs)
+	#
 	# print(f"ENDF/B-VIII - TENDL21: {rmse_endf_tendl:0.6f}")
 	# print(f"ENDF/B-VIII - JENDL5: {rmse_endf_jendl:0.6f}")
 	# print(f"TENDL21 - JENDL5: {rmse_tendl_jendl:0.6f}")
@@ -176,9 +182,3 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	# print(f"ENDF/B-VIII - JEFF3.3: {rmse_endfb_jeff:0.6f}")
 	# print(f"JEFF3.3 - JENDL5: {rmse_jeff_jendl:0.6f}")
 
-	# rmse_endf_tendl = mean_squared_error(endfb8_interp_xs, tendl_interp_xs)
-	# rmse_endf_jendl = mean_squared_error(endfb8_interp_xs, jendl_interp_xs)
-	# rmse_tendl_jendl = mean_squared_error(jendl_interp_xs, tendl_interp_xs)
-	# rmse_tendl_jeff = mean_squared_error(jeff_interp_xs, tendl_interp_xs)
-	# rmse_endfb_jeff = mean_squared_error(endfb8_interp_xs, jeff_interp_xs)
-	# rmse_jeff_jendl = mean_squared_error(jeff_interp_xs, jendl_interp_xs)
