@@ -87,12 +87,6 @@ if __name__ == "__main__":
 	E_plotmatrix = []
 	P_plotmatrix = []
 
-	TENDL_XS_plotmatrix = []
-	TENDL_E_plotmatrix = []
-
-	JENDL_XS_plotmatrix = []
-	JENDL_E_plotmatrix = []
-
 	for nuclide in validation_nuclides:
 		dummy_test_XS = []
 		dummy_test_E = []
@@ -107,53 +101,21 @@ if __name__ == "__main__":
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
 
-		if nuclide in JENDL_nuclides:
-			dummy_jendl_XS = []
-			dummy_jendl_ERG = []
-			JENDL_ERG_matrix, JENDL_XS = General_plotter(df=JENDL, nuclides=[nuclide])
-			dummy_jendl_XS.append(JENDL_XS)
-			dummy_jendl_ERG.append(JENDL_ERG_matrix[-1])
-
-			JENDL_XS_plotmatrix.append(dummy_jendl_XS)
-			JENDL_E_plotmatrix.append(dummy_jendl_ERG)
-		else:
-			JENDL_XS_plotmatrix.append([[]])
-			JENDL_E_plotmatrix.append([[]])
-
-		if nuclide in TENDL_nuclides:
-			dummy_tendl_XS = []
-			dummy_tendl_ERG = []
-
-			TENDL_ERG_matrix, TENDL_XS = General_plotter(df=TENDL, nuclides=[nuclide])
-
-			dummy_tendl_XS.append(TENDL_XS)
-			dummy_tendl_ERG.append(TENDL_ERG_matrix[-1])
-
-			TENDL_XS_plotmatrix.append(dummy_tendl_XS)
-			TENDL_E_plotmatrix.append(dummy_tendl_ERG)
-
-			# print(TENDL_E_plotmatrix)
-
 	# plot predictions against data
 	# note: python lists allow elements to be lists of varying lengths. This would not work using numpy arrays; the for
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
-	for i, (pred_xs, true_xs, erg,
-			tendl_xs, tendl_erg,
-			jendl_xs, jendl_erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix,
-												  TENDL_XS_plotmatrix, TENDL_E_plotmatrix,
-												  JENDL_XS_plotmatrix, JENDL_E_plotmatrix)):
-		tendl_erg_plot = tendl_erg[0]
-		tendl_xs_plot = tendl_xs[0]
+	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+		current_nuclide = validation_nuclides[i]
 
-		jendlerg_plot = jendl_erg[0]
-		jendlxs_plot = jendl_xs[0]
+		tendl_energy, tendl_xs = General_plotter(df=TENDL, nuclides=[current_nuclide])
+		JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL, nuclides=[current_nuclide])
 
 		nuc = validation_nuclides[i] # validation nuclide
 		# plt.plot(erg, true_xs, label='ENDF/B-VIII')
 		plt.plot(erg, pred_xs, label='Predictions', color = 'red')
-		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21", color='dimgrey')
-		if jendlerg_plot != []:
-			plt.plot(jendlerg_plot, jendlxs_plot, label ='JENDL5', color='green')
+		plt.plot(tendl_energy, tendl_xs, label = "TENDL21", color='dimgrey')
+		if nuc in JENDL_nuclides:
+			plt.plot(JENDL5_energy, JENDL5_XS, label ='JENDL5', color='green')
 		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 		plt.legend()
 		plt.grid()
@@ -163,7 +125,6 @@ if __name__ == "__main__":
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		time.sleep(0.5)
 
 
 	exp_true_xs = [np.exp(y) - lrv for y in y_test]

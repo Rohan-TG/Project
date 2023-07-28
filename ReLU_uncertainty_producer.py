@@ -187,7 +187,7 @@ time.sleep(2)
 
 CENDL32 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 CENDL32.index = range(len(CENDL32))
-CENDL32_energy, CENDL33_XS = General_plotter(df=CENDL32, nuclides=[validation_nuclides[0]])
+CENDL32_energy, CENDL33_XS = General_plotter(df=CENDL32, nuclides=[target_nuclide])
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 time.sleep(2)
 

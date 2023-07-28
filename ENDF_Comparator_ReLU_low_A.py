@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import periodictable
 from sklearn.metrics import mean_squared_error
 import scipy
-from matrix_functions import General_plotter, range_setter, anomaly_remover, make_train, make_test
+from matrix_functions import General_plotter, range_setter, anomaly_remover, make_train_low, make_test_low
 import random
 import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error
@@ -35,7 +35,7 @@ df = df[df.Z != 11]
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 df_test = anomaly_remover(dfa = df_test)
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=0, ua=40, df=df)
 
 
 validation_nuclides = []
@@ -49,8 +49,8 @@ print("Test nuclide selection complete")
 
 
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,)
-X_test, y_test = make_test(validation_nuclides, df=df_test,)
+X_train, y_train = make_train_low(df=df, validation_nuclides=validation_nuclides, la=0, ua=50,)
+X_test, y_test = make_test_low(validation_nuclides, df=df_test)
 print("Data prep done")
 
 model = xg.XGBRegressor(n_estimators=900,
@@ -121,7 +121,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}, MSE: {mse:0.5f}")
 	time.sleep(0.8)
 
-	x_interpolate = np.linspace(stop=19.6, start=0, num=500)
+	x_interpolate = np.linspace(stop=19.4, start=0, num=500)
 
 	f_predictions = scipy.interpolate.interp1d(x=erg, y=pred_xs)
 	predictions_interpolated = f_predictions(x_interpolate)

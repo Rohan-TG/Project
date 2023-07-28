@@ -64,8 +64,8 @@ for nuc in al:
 		all_magic.append(nuc)
 
 
-validation_nuclides = []
-validation_set_size = 50 # number of nuclides hidden from training
+validation_nuclides = [[20,40]]
+validation_set_size = 1 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -129,12 +129,12 @@ if __name__ == "__main__":
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
 	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i] # validation nuclide
-		plt.plot(erg, pred_xs, label='predictions')
-		plt.plot(erg, true_xs, label='data')
-		plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+		plt.plot(erg, pred_xs, label='Prediction', color='red')
+		plt.plot(erg, true_xs, label='ENDF/B-VIII')
+		plt.title(f"$\sigma_{{n,2n}}$ XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 		plt.legend()
 		plt.grid()
-		plt.ylabel('XS / b')
+		plt.ylabel('$\sigma_{n,2n}$ / b')
 		plt.xlabel('Energy / MeV')
 		plt.show()
 
@@ -231,82 +231,82 @@ if __name__ == "__main__":
 	xg.plot_importance(model, ax=plt.gca(), max_num_features=60, title='Splits-based')
 	plt.show()
 
-	explainer = shap.Explainer(model.predict, X_train,
-							   feature_names= ['Z', 'A',
-											   'S2n',
-											   'S2p',
-											   'E',
-											   'Sp',
-											   'Sn',
-											   'BEA',
-											   # 'P',
-											   'Snc', 'g-def', 'N',
-											   'b-def',
-											   'Sn_d',
-											   # 'Sp_d',
-											   'S2n_d',
-											   'Radius',
-											   'n_g_erg',
-											   'n_c_erg',
-											   # 'xsmax',
-											   'n_rms_r',
-											   # 'oct_def',
-											   # 'Decay_c',
-											   'BEA_d',
-											   'BEA_c',
-											   # 'Pair_d',
-											   # 'Par_d',
-											   # 'S2n_c',
-											   'S2p_c',
-											   'ME',
-											   # 'Z_even',
-											   # 'A_even',
-											   # 'N_even',
-											   'Shell',
-											   'Par',
-											   'Spin',
-											   'Decay',
-											   # 'Deform',
-											   'p_g_e',
-											   'p_c_e',
-											   # 'p_rms_r',
-											   # 'rms_r',
-											   # 'Sp_c',
-											   # 'S_n_c',
-											   'Shell_c',
-											   # 'S2p-d',
-											   # 'Shell-d',
-											   'Spin-c',
-											   # 'Rad-c',
-											   'Def-c',
-											   # 'ME-c',
-											   'BEA-A-c',
-											   'Decay-d',
-											   # 'ME-d',
-											   # 'Rad-d',
-											   # 'Pair-c',
-											   # 'Par-c',
-											   'BEA-A-d',
-											   # 'Spin-d',
-											   'Def-d',
-											   # 'mag_p',
-											   # 'mag_n',
-											   # 'mag_d',
-											   'Nlow',
-											   # 'Ulow',
-											   # 'Ntop',
-											   'Utop',
-											   # 'ainf',
-											   # 'XSlow',
-											   # 'XSupp',
-											   'Asym',
-											   # 'Asym_c',
-											   'Asym_d',
-											   ]) # SHAP feature importance analysis
-	shap_values = explainer(X_test)
-
-	# name features for FIA
-
-
-	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
-	# shap.plots.waterfall(shap_values[0], max_display=70)
+	# explainer = shap.Explainer(model.predict, X_train,
+	# 						   feature_names= ['Z', 'A',
+	# 										   'S2n',
+	# 										   'S2p',
+	# 										   'E',
+	# 										   'Sp',
+	# 										   'Sn',
+	# 										   'BEA',
+	# 										   # 'P',
+	# 										   'Snc', 'g-def', 'N',
+	# 										   'b-def',
+	# 										   'Sn_d',
+	# 										   # 'Sp_d',
+	# 										   'S2n_d',
+	# 										   'Radius',
+	# 										   'n_g_erg',
+	# 										   'n_c_erg',
+	# 										   # 'xsmax',
+	# 										   'n_rms_r',
+	# 										   # 'oct_def',
+	# 										   # 'Decay_c',
+	# 										   'BEA_d',
+	# 										   'BEA_c',
+	# 										   # 'Pair_d',
+	# 										   # 'Par_d',
+	# 										   # 'S2n_c',
+	# 										   'S2p_c',
+	# 										   'ME',
+	# 										   # 'Z_even',
+	# 										   # 'A_even',
+	# 										   # 'N_even',
+	# 										   'Shell',
+	# 										   'Par',
+	# 										   'Spin',
+	# 										   'Decay',
+	# 										   # 'Deform',
+	# 										   'p_g_e',
+	# 										   'p_c_e',
+	# 										   # 'p_rms_r',
+	# 										   # 'rms_r',
+	# 										   # 'Sp_c',
+	# 										   # 'S_n_c',
+	# 										   'Shell_c',
+	# 										   # 'S2p-d',
+	# 										   # 'Shell-d',
+	# 										   'Spin-c',
+	# 										   # 'Rad-c',
+	# 										   'Def-c',
+	# 										   # 'ME-c',
+	# 										   'BEA-A-c',
+	# 										   'Decay-d',
+	# 										   # 'ME-d',
+	# 										   # 'Rad-d',
+	# 										   # 'Pair-c',
+	# 										   # 'Par-c',
+	# 										   'BEA-A-d',
+	# 										   # 'Spin-d',
+	# 										   'Def-d',
+	# 										   # 'mag_p',
+	# 										   # 'mag_n',
+	# 										   # 'mag_d',
+	# 										   'Nlow',
+	# 										   # 'Ulow',
+	# 										   # 'Ntop',
+	# 										   'Utop',
+	# 										   # 'ainf',
+	# 										   # 'XSlow',
+	# 										   # 'XSupp',
+	# 										   'Asym',
+	# 										   # 'Asym_c',
+	# 										   'Asym_d',
+	# 										   ]) # SHAP feature importance analysis
+	# shap_values = explainer(X_test)
+	#
+	# # name features for FIA
+	#
+	#
+	# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+	# # shap.plots.waterfall(shap_values[0], max_display=70)

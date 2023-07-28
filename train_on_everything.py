@@ -29,13 +29,13 @@ all_libraries.index = range(len(all_libraries))
 # 					   [39,92],[39,93],[39,94],
 # 					   [39,95]]
 
-validation_nuclides = []
+# validation_nuclides = []
 
-# validation_nuclides = [[40,85], [40,86], [40,87],
-# 					   [40,88], [40,89], [40,93],
-# 					   [40,94], [40,95], [40,96],
-# 					   [40,97], [40,98], [40,99],
-# 					   [40,100], [40,101], [40,102]]
+validation_nuclides = [[40,85], [40,86], [40,87],
+					   [40,88], [40,89], [40,93],
+					   [40,94], [40,95], [40,96],
+					   [40,97], [40,98], [40,99],
+					   [40,100], [40,101], [40,102]]
 
 validation_set_size = 30 # number of nuclides hidden from training
 
@@ -108,7 +108,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	if nuc in jeff_nucs:
 		plt.plot(jefferg, jeffxs, '--', label='JEFF3.3', color='mediumvioletred')
 	if nuc in cendl_nucs:
-		plt.plot(cendlerg, cendlxs, '--', label='CENDL3.3', color='gold')
+		plt.plot(cendlerg, cendlxs, '--', label='CENDL3.2', color='gold')
 	if nuc in jendl_nucs:
 		plt.plot(jendlerg, jendlxs, label='JENDL5', color='green')
 	if nuc in endfb_nucs:

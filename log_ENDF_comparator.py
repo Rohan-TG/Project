@@ -24,7 +24,7 @@ df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=215, df=df)
 
 
-TENDL = pd.read_csv("TENDL_MT16_XS.csv")
+TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
 
@@ -32,7 +32,7 @@ JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
 JEFF_nuclides = range_setter(df=JEFF, la=30, ua=215)
 
-JENDL = pd.read_csv('JENDL4_features_arange_zeroed.csv')
+JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
 
@@ -63,7 +63,7 @@ for nuc in al:
 		all_magic.append(nuc)
 
 
-validation_nuclides = [[38,87]]
+validation_nuclides = [[20,40]]
 validation_set_size = 20 # number of nuclides hidden from training
 
 random.seed(a=42)
@@ -103,24 +103,10 @@ if __name__ == "__main__":
 
 	predictions = model.predict(X_test) # XS predictions
 
-	# shap_val_gpu = model.predict(X_test, pred_interactions=True)
-
 	# Form arrays for plots below
 	XS_plotmatrix = []
 	E_plotmatrix = []
 	P_plotmatrix = []
-
-	TENDL_XS_plotmatrix = []
-	TENDL_E_plotmatrix = []
-
-	JENDL_XS_plotmatrix = []
-	JENDL_E_plotmatrix = []
-
-	CENDL_XS_plotmatrix = []
-	CENDL_E_plotmatrix = []
-
-	JEFF_XS_plotmatrix = []
-	JEFF_E_plotmatrix = []
 
 	for nuclide in validation_nuclides:
 		dummy_test_XS = []
@@ -136,105 +122,34 @@ if __name__ == "__main__":
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
 
-		if nuclide in TENDL_nuclides:
-			dummy_tendl_XS = []
-			dummy_tendl_ERG = []
-
-			TENDL_ERG_matrix, TENDL_XS = General_plotter(df=TENDL, nuclides=[nuclide])
-
-			dummy_tendl_XS.append(TENDL_XS)
-			dummy_tendl_ERG.append(TENDL_ERG_matrix[-1])
-
-			TENDL_XS_plotmatrix.append(dummy_tendl_XS)
-			TENDL_E_plotmatrix.append(dummy_tendl_ERG)
-		else:
-			TENDL_XS_plotmatrix.append([[]])
-			TENDL_E_plotmatrix.append([[]])
-
-		if nuclide in JEFF_nuclides:
-			dummy_JEFF_XS = []
-			dummy_JEFF_ERG = []
-
-			JEFF_ERG_matrix, JEFF_XS = General_plotter(df=JEFF, nuclides=[nuclide])
-
-			dummy_JEFF_XS.append(JEFF_XS)
-			dummy_JEFF_ERG.append(JEFF_ERG_matrix[-1])
-
-			JEFF_XS_plotmatrix.append(dummy_JEFF_XS)
-			JEFF_E_plotmatrix.append(dummy_JEFF_ERG)
-		else:
-			JEFF_XS_plotmatrix.append([[]])
-			JEFF_E_plotmatrix.append([[]])
-
-		if nuclide in JENDL_nuclides:
-			dummy_JENDL_XS = []
-			dummy_JENDL_ERG = []
-
-			JENDL_ERG_matrix, JENDL_XS = General_plotter(df=JENDL, nuclides=[nuclide])
-
-			dummy_JENDL_XS.append(JENDL_XS)
-			dummy_JENDL_ERG.append(JENDL_ERG_matrix[-1])
-
-			JENDL_XS_plotmatrix.append(dummy_JENDL_XS)
-			JENDL_E_plotmatrix.append(dummy_JENDL_ERG)
-		else:
-			JENDL_XS_plotmatrix.append([[]])
-			JENDL_E_plotmatrix.append([[]])
-
-		if nuclide in CENDL_nuclides:
-			dummy_CENDL_XS = []
-			dummy_CENDL_ERG = []
-
-			CENDL_ERG_matrix, CENDL_XS = General_plotter(df=CENDL, nuclides=[nuclide])
-
-			dummy_CENDL_XS.append(CENDL_XS)
-			dummy_CENDL_ERG.append(CENDL_ERG_matrix[-1])
-
-			CENDL_XS_plotmatrix.append(dummy_CENDL_XS)
-			CENDL_E_plotmatrix.append(dummy_CENDL_ERG)
-		else:
-			CENDL_XS_plotmatrix.append([[]])
-			CENDL_E_plotmatrix.append([[]])
-
-			# print(TENDL_E_plotmatrix)
 
 	# plot predictions against data
 	# note: python lists allow elements to be lists of varying lengths. This would not work using numpy arrays; the for
 	# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
-	for i, (pred_xs, true_xs, erg,
-			tendl_xs, tendl_erg,
-			jeffxs, jefferg,
-			jendlxs, jendlerg,
-			cendlxs, cendlerg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix,
-												TENDL_XS_plotmatrix, TENDL_E_plotmatrix,
-												JEFF_XS_plotmatrix, JEFF_E_plotmatrix,
-												JENDL_XS_plotmatrix, JENDL_E_plotmatrix,
-												CENDL_XS_plotmatrix, CENDL_E_plotmatrix)):
+	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 
 		current_nuclide = validation_nuclides[i]
 
-		tendl_erg_plot = tendl_erg[0]
-		tendl_xs_plot = tendl_xs[0]
+		tendl_energy, tendl_xs = General_plotter(df=TENDL, nuclides=[current_nuclide])
+		JEFF_energy, JEFF_XS = General_plotter(df=JEFF, nuclides=[current_nuclide])
+		JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL, nuclides=[current_nuclide])
+		CENDL32_energy, CENDL32_XS = General_plotter(df=CENDL, nuclides=[current_nuclide])
 
-		jefferg_plot = jefferg[0]
-		jeffxs_plot = jeffxs[0]
-
-		jendlerg_plot = jendlerg[0]
-		jendlxs_plot = jendlxs[0]
-
-		cendlerg_plot = cendlerg[0]
-		cendlxs_plot = cendlxs[0]
+		JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
+		CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
+		JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
+		TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
 		nuc = validation_nuclides[i] # validation nuclide
 		plt.plot(erg, pred_xs, label='Predictions', color='red')
 		plt.plot(erg, true_xs, label='ENDF/B-VIII')
-		plt.plot(tendl_erg_plot, tendl_xs_plot, label = "TENDL21", color='dimgrey')
-		if jefferg_plot != []:
-			plt.plot(jefferg_plot, jeffxs_plot, label='JEFF3.3',color='mediumvioletred')
-		if jendlerg_plot != []:
-			plt.plot(jendlerg_plot, jendlxs_plot, label='JENDL4', color='green')
-		if cendlerg_plot != []:
-			plt.plot(cendlerg_plot, cendlxs_plot, label='CENDL3.3', color='gold')
+		plt.plot(tendl_energy, tendl_xs, label = "TENDL21", color='dimgrey')
+		if current_nuclide in JEFF_nuclides:
+			plt.plot(JEFF_energy, JEFF_XS, label='JEFF3.3',color='mediumvioletred')
+		if current_nuclide in JENDL_nuclides:
+			plt.plot(JENDL5_energy, JENDL5_XS, label='JENDL5', color='green')
+		if current_nuclide in CENDL_nuclides:
+			plt.plot(CENDL32_energy, CENDL32_XS, label='CENDL3.2', color='gold')
 		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 		plt.legend()
 		plt.grid()
@@ -244,7 +159,6 @@ if __name__ == "__main__":
 
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-		time.sleep(0.5)
 
 	exp_true_xs = [np.exp(y) -log_reduction_var for y in y_test]
 	exp_pred_xs = [np.exp(xs)- log_reduction_var for xs in predictions]
