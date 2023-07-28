@@ -250,12 +250,91 @@ if target_nuclide in TENDL_nuclides:
 
 
 
-Veeser_energies = []
-Veeser_delta_energies = []
+Veeser_energies = [1.47000E+01,
+1.60000E+01,
+1.70000E+01,
+1.80000E+01,
+1.90000E+01,
+2.00000E+01,]
+Veeser_delta_energies = [7.50000E-02,
+1.00000E-01,
+1.00000E-01,
+7.50000E-02,
+7.50000E-02,
+5.50000E-02,]
 
-Veeser_XS = []
-Veeser_delta_XS = []
+Veeser_XS = [1.98400E+03,
+1.99200E+03,
+1.78700E+03,
+1.32000E+03,
+9.57000E+02,
+7.70000E+02,] # in mb
 
+Veeser_XS = [xs / 1000 for xs in Veeser_XS]
+Veeser_delta_XS = [1.15000E+02,
+1.05000E+02,
+8.50000E+01,
+8.80000E+01,
+6.40000E+01,
+1.04000E+02,]
+
+Veeser_delta_XS = [delxs / 1000 for delxs in Veeser_delta_XS]
+
+
+Dzysiuk_energies = []
+Dzysiuk_delta_energies = []
+
+Dzysiuk_delta_XS = []
+Dzysiuk_delta_XS = [xs / 1000 for xs in Dzysiuk_delta_XS]
+Dzysiuk_XS = []
+Dzysiuk_XS = [xs / 1000 for xs in Dzysiuk_XS]
+
+Bayhurst_XS = [3.23000E+02,
+8.16000E+02,
+1.78900E+03,
+1.66800E+03,
+1.33700E+03,
+9.65000E+02,
+5.74000E+02,]
+Bayhurst_delta_XS = [1.50000E+01,
+3.50000E+01,
+7.60000E+01,
+7.10000E+01,
+0.00000E+00,
+0.00000E+00,
+0.00000E+00,]
+Bayhurst_XS = [xs/1000 for xs in Bayhurst_XS]
+Bayhurst_delta_XS = [xs/1000 for xs in Bayhurst_delta_XS]
+
+
+Bayhurst_energies = [8.51000E+00,
+9.27000E+00,
+1.41000E+01,
+1.49200E+01,
+1.71900E+01,
+1.81900E+01,
+1.99400E+01,]
+Bayhurst_delta_energies = [3.40000E-01,
+3.60000E-01,
+5.00000E-02,
+5.00000E-02,
+1.90000E-01,
+1.30000E-01,
+1.50000E-01,]
+
+Frehaut_E = [8.44000E+00,8.94000E+00,9.44000E+00,9.93000E+00,1.04200E+01,1.09100E+01,1.14000E+01,1.18800E+01,1.23600E+01,1.28500E+01,1.33300E+01,1.38000E+01,
+1.42800E+01,1.47600E+01]
+
+Frehaut_E_d = [1.35000E-01,1.25000E-01,1.15000E-01,1.10000E-01,1.00000E-01,9.50000E-02,9.00000E-02,
+8.50000E-02,8.50000E-02,8.00000E-02,7.50000E-02,7.50000E-02,7.00000E-02,6.50000E-02]
+
+Frehaut_XS = [2.03000E+02,6.59000E+02,1.16200E+03,1.40400E+03,1.56000E+03,1.72000E+03,1.69600E+03,1.81300E+03,1.91900E+03,1.99600E+03,2.03600E+03,
+2.07600E+03,2.11300E+03,2.09400E+03]
+
+Frehaut_XS_d = [3.30000E+01 ,5.00000E+01 ,1.12000E+02 ,8.60000E+01 ,9.50000E+01 ,1.24000E+02 ,1.07000E+02 ,1.10000E+02 ,1.21000E+02 ,1.25000E+02 ,1.26000E+02 ,1.23000E+02 ,1.55000E+02 ,1.57000E+02 ]
+
+Frehaut_XS = [xs/1000 for xs in Frehaut_XS]
+Frehaut_XS_d = [xs/1000 for xs in Frehaut_XS_d]
 
 
 title_string_latex = "$\sigma_{n,2n}$"
@@ -266,10 +345,22 @@ title_string = title_string_latex+title_string_nuclide
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 plt.plot(tendl_energy, tendl_xs, label = 'TENDL21', color='dimgrey')
-plt.plot(JEFF_energy, JEFF_XS, label='JEFF3.3', color='mediumvioletred')
-plt.plot(JENDL5_energy, JENDL5_XS, '--', label='JENDL5', color='green')
-plt.plot(CENDL32_energy, CENDL33_XS, '--', label = 'CENDL3.3', color='gold')
+if target_nuclide in JEFF_nuclides:
+	plt.plot(JEFF_energy, JEFF_XS, label='JEFF3.3', color='mediumvioletred')
+if target_nuclide in JENDL_nuclides:
+	plt.plot(JENDL5_energy, JENDL5_XS, '--', label='JENDL5', color='green')
+if target_nuclide in CENDL_nuclides:
+	plt.plot(CENDL32_energy, CENDL33_XS, '--', label = 'CENDL3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
+# plt.errorbar(Bayhurst_energies, Bayhurst_XS, Bayhurst_delta_XS, Bayhurst_delta_energies, fmt='x',
+# 			 capsize=2, label='Bayhurst, 1975', color='indigo')
+# plt.errorbar(Frehaut_E, Frehaut_XS, Frehaut_XS_d, Frehaut_E_d, fmt='x',
+# 			 capsize=2, label='Frehaut, 1980', color='violet')
+# plt.errorbar(Dzysiuk_energies, Dzysiuk_XS, Dzysiuk_delta_XS, Dzysiuk_delta_energies, fmt='x',
+# 			 capsize=2, label='Dzysiuk, 2010', color='blue')
+# plt.errorbar(Veeser_energies, Veeser_XS, Veeser_delta_XS, Veeser_delta_energies, fmt='x',
+# 			 capsize=2, label='Veeser, 1977', color='orangered')
+
 plt.grid()
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
 plt.xlabel("Energy / MeV")
