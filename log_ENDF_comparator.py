@@ -41,26 +41,7 @@ CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
 
 
-magic_numbers = [2, 8, 20, 28, 50, 82, 126]
 
-doubly_magic = []
-n_magic = []
-p_magic = []
-all_magic = []
-
-for nuc in al:
-	if nuc[0] in magic_numbers and (nuc[1] - nuc[0]) in magic_numbers:
-		# print(f"Double: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		doubly_magic.append(nuc)
-		all_magic.append(nuc)
-	elif nuc[0] in magic_numbers and (nuc[1] - nuc[0]) not in magic_numbers:
-		# print(f"Protonic: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		p_magic.append(nuc)
-		all_magic.append(nuc)
-	elif nuc[0] not in magic_numbers and (nuc[1] - nuc[0]) in magic_numbers:
-		# print(f"Neutronic: {nuc} - {periodictable.elements[nuc[0]]}-{nuc[1]}")
-		n_magic.append(nuc)
-		all_magic.append(nuc)
 
 
 validation_nuclides = [[20,40]]
@@ -134,11 +115,6 @@ if __name__ == "__main__":
 		JEFF_energy, JEFF_XS = General_plotter(df=JEFF, nuclides=[current_nuclide])
 		JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL, nuclides=[current_nuclide])
 		CENDL32_energy, CENDL32_XS = General_plotter(df=CENDL, nuclides=[current_nuclide])
-
-		JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
-		CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
-		JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
-		TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
 		nuc = validation_nuclides[i] # validation nuclide
 		plt.plot(erg, pred_xs, label='Predictions', color='red')
