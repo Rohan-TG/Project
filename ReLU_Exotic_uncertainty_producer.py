@@ -29,7 +29,7 @@ al = range_setter(la=30, ua=215, df=df)
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [40,100]
+target_nuclide = [39,94]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
