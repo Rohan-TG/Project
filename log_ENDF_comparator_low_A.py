@@ -7,6 +7,7 @@ import random
 import numpy as np
 import xgboost as xg
 import time
+import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import log_make_test, log_make_train, anomaly_remover, range_setter, General_plotter
@@ -18,27 +19,29 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
+df_test = df_test[df_test.Z != 12]
+df = df[df.Z != 12]
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 df_test = anomaly_remover(dfa = df_test)
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=0, ua=40, df=df)
 
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
+TENDL_nuclides = range_setter(df=TENDL, la=0, ua=40)
 
 JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=215)
+JEFF_nuclides = range_setter(df=JEFF, la=0, ua=40)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
+JENDL_nuclides = range_setter(df=JENDL, la=0, ua=40)
 
 CENDL = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
+CENDL_nuclides = range_setter(df=CENDL, la=0, ua=40)
 
 
 validation_nuclides = []
@@ -56,7 +59,7 @@ log_reduction_var = 0.00001
 
 if __name__ == "__main__":
 
-	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,
+	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=55,
 									  log_reduction_variable=log_reduction_var) # make training matrix
 
 	X_test, y_test = log_make_test(validation_nuclides, df=df_test,
@@ -68,9 +71,9 @@ if __name__ == "__main__":
 	print("Data prep done")
 
 	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.01,
+							learning_rate=0.007,
 							max_depth=8,
-							subsample=0.18236,
+							subsample=0.3,
 							max_leaves=0,
 							seed=42,)
 
@@ -113,11 +116,6 @@ if __name__ == "__main__":
 		JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL, nuclides=[current_nuclide])
 		CENDL32_energy, CENDL32_XS = General_plotter(df=CENDL, nuclides=[current_nuclide])
 
-		JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
-		CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
-		JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
-		TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
-
 		nuc = validation_nuclides[i] # validation nuclide
 		plt.plot(erg, pred_xs, label='Predictions', color='red')
 		plt.plot(erg, true_xs, label='ENDF/B-VIII')
@@ -135,6 +133,8 @@ if __name__ == "__main__":
 		plt.xlabel('Energy / MeV')
 		plt.show()
 
+		time.sleep(1)
+
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
@@ -144,3 +144,79 @@ if __name__ == "__main__":
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(exp_true_xs, exp_pred_xs)}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
+
+
+
+explainer = shap.Explainer(model.predict, X_train,
+						   feature_names= ['Z', 'A',
+										   'S2n',
+										   'S2p',
+										   'E',
+										   'Sp',
+										   'Sn',
+										   'BEA',
+										   'P',
+										   'Snc', 'g-def', 'N',
+										   'b-def',
+										   'Sn_d',
+										   'Sp_d',
+										   'S2n_d',
+										   'Radius',
+										   'n_g_erg',
+										   'n_c_erg',
+										   'n_rms_r',
+										   'oct_def',
+										   'Decay_c',
+										   'BEA_d',
+										   'BEA_c',
+										   'Pair_d',
+										   'Par_d',
+										   'S2n_c',
+										   # 'S2p_c',
+										   # 'ME',
+										   # 'Z_even',
+										   'A_even',
+										   'N_even',
+										   'Shell',
+										   'Par',
+										   'Spin',
+										   # 'Decay',
+										   'Deform',
+										   # 'p_g_e',
+										   # 'p_c_e',
+										   'p_rms_r',
+										   'rms_r',
+										   'Sp_c',
+										   # 'S_n_c',
+										   'Shell_c',
+										   # 'S2p-d',
+										   'Shell-d',
+										   'Spin-c',
+										   'Rad-c',
+										   # 'Def-c',
+										   'ME-c',
+										   'BEA-A-c',
+										   'Decay-d',
+										   'ME-d',
+										   'Rad-d',
+										   'Pair-c',
+										   'Par-c',
+										   'BEA-A-d',
+										   'Spin-d',
+										   'Def-d',
+										   'Nlow',
+										   'Ulow',
+										   'Ntop',
+										   'Utop',
+										   'ainf',
+										   'Asym',
+										   'Asym_c',
+										   'Asym_d',
+										   ]) # SHAP feature importance analysis
+shap_values = explainer(X_test)
+
+# name features for FIA
+
+
+shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+# shap.plots.waterfall(shap_values[0], max_display=70)
