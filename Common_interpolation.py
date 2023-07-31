@@ -34,7 +34,7 @@ df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
-df_test = anomaly_remover(dfa = df_test)
+# df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=215, df=df)
 
 
@@ -121,50 +121,70 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}, MSE: {mse:0.5f}")
 	time.sleep(0.8)
 
-	x_interpolate = np.linspace(stop=19.6, start=0, num=500)
-
-	f_predictions = scipy.interpolate.interp1d(x=erg, y=pred_xs)
-	predictions_interpolated = f_predictions(x_interpolate)
-
 
 	if current_nuclide in al:
 		endfb8_erg, endfb8_xs = General_plotter(df=df, nuclides=[current_nuclide])
+
+		x_interpolate_endfb8 = np.linspace(start=0, stop=max(endfb8_erg), num=500)
+		f_pred_endfb8 = scipy.interpolate.interp1d(x=erg, y=pred_xs)
+		predictions_interpolated_endfb8 = f_pred_endfb8(x_interpolate_endfb8)
+
 		f_endfb8 = scipy.interpolate.interp1d(x=endfb8_erg, y=endfb8_xs)
-		endfb8_interp_xs = f_endfb8(x_interpolate)
-		pred_endfb_mse = mean_squared_error(predictions_interpolated, endfb8_interp_xs)
-		pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs, y_pred=predictions_interpolated)
+		endfb8_interp_xs = f_endfb8(x_interpolate_endfb8)
+		pred_endfb_mse = mean_squared_error(predictions_interpolated_endfb8, endfb8_interp_xs)
+		pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs, y_pred=predictions_interpolated_endfb8)
 		print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
 
 	if current_nuclide in CENDL_nuclides:
 		cendl_erg, cendl_xs = General_plotter(df=CENDL, nuclides=[current_nuclide])
+
+		x_interpolate_cendl = np.linspace(start=0, stop=max(cendl_erg), num=500)
+		f_pred_cendl = scipy.interpolate.interp1d(x=erg, y=pred_xs)
+		predictions_interpolated_cendl = f_pred_cendl(x_interpolate_cendl)
+
 		f_cendl32 = scipy.interpolate.interp1d(x=cendl_erg, y=cendl_xs)
-		cendl_interp_xs = f_cendl32(x_interpolate)
-		pred_cendl_mse = mean_squared_error(predictions_interpolated, cendl_interp_xs)
-		pred_cendl_r2 = r2_score(y_true=cendl_interp_xs, y_pred=predictions_interpolated)
+		cendl_interp_xs = f_cendl32(x_interpolate_cendl)
+		pred_cendl_mse = mean_squared_error(predictions_interpolated_cendl, cendl_interp_xs)
+		pred_cendl_r2 = r2_score(y_true=cendl_interp_xs, y_pred=predictions_interpolated_cendl)
 		print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
-	if current_nuclide in JENDL_nuclides and max(erg) <= 18:
+	if current_nuclide in JENDL_nuclides:
 		jendl_erg, jendl_xs = General_plotter(df=JENDL, nuclides=[current_nuclide])
+
+		x_interpolate_jendl = np.linspace(start=0, stop=max(jendl_erg), num=500)
+		f_pred_jendl = scipy.interpolate.interp1d(x=erg, y=pred_xs)
+		predictions_interpolated_jendl = f_pred_jendl(x_interpolate_jendl)
+
 		f_jendl5 = scipy.interpolate.interp1d(x=jendl_erg, y=jendl_xs)
-		jendl_interp_xs = f_jendl5(x_interpolate)
-		pred_jendl_mse = mean_squared_error(predictions_interpolated, jendl_interp_xs)
-		pred_jendl_r2 = r2_score(y_true=jendl_interp_xs, y_pred=predictions_interpolated)
+		jendl_interp_xs = f_jendl5(x_interpolate_jendl)
+		pred_jendl_mse = mean_squared_error(predictions_interpolated_jendl, jendl_interp_xs)
+		pred_jendl_r2 = r2_score(y_true=jendl_interp_xs, y_pred=predictions_interpolated_jendl)
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 	if current_nuclide in JEFF_nuclides:
 		jeff_erg, jeff_xs = General_plotter(df=JEFF, nuclides=[current_nuclide])
+
+		x_interpolate_jeff = np.linspace(start=0, stop=max(jeff_erg), num=500)
+		f_pred_jeff = scipy.interpolate.interp1d(x=erg, y=pred_xs)
+		predictions_interpolated_jeff = f_pred_jeff(x_interpolate_jeff)
+
 		f_jeff33 = scipy.interpolate.interp1d(x=jeff_erg, y=jeff_xs)
-		jeff_interp_xs = f_jeff33(x_interpolate)
-		pred_jeff_mse = mean_squared_error(predictions_interpolated, jeff_interp_xs)
-		pred_jeff_r2 = r2_score(y_true=jeff_interp_xs, y_pred=predictions_interpolated)
+		jeff_interp_xs = f_jeff33(x_interpolate_jeff)
+		pred_jeff_mse = mean_squared_error(predictions_interpolated_jeff, jeff_interp_xs)
+		pred_jeff_r2 = r2_score(y_true=jeff_interp_xs, y_pred=predictions_interpolated_jeff)
 		print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
 
 	if current_nuclide in TENDL_nuclides:
 		tendl_erg, tendl_xs = General_plotter(df=TENDL, nuclides=[current_nuclide])
+
+		x_interpolate_tendl = np.linspace(start=0, stop=max(tendl_erg), num=500)
+		f_pred_tendl = scipy.interpolate.interp1d(x=erg, y=pred_xs)
+		predictions_interpolated_tendl = f_pred_tendl(x_interpolate_tendl)
+
 		f_tendl21 = scipy.interpolate.interp1d(x=tendl_erg, y=tendl_xs)
-		tendl_interp_xs = f_tendl21(x_interpolate)
-		pred_tendl_mse = mean_squared_error(predictions_interpolated, tendl_interp_xs)
-		pred_tendl_r2 = r2_score(y_true=tendl_interp_xs, y_pred=predictions_interpolated)
+		tendl_interp_xs = f_tendl21(x_interpolate_tendl)
+		pred_tendl_mse = mean_squared_error(predictions_interpolated_tendl, tendl_interp_xs)
+		pred_tendl_r2 = r2_score(y_true=tendl_interp_xs, y_pred=predictions_interpolated_tendl)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
 
