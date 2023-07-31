@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import periodictable
-from sklearn.metrics import mean_squared_error
 import scipy
 from matrix_functions import General_plotter, range_setter, anomaly_remover, make_train, make_test
 import random
