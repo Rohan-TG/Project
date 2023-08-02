@@ -23,21 +23,20 @@ all_libraries = pd.concat([all_libraries, jeff33])
 all_libraries = pd.concat([all_libraries, cendl32])
 
 
-CENDL_nuclides = range_setter(df=cendl32, la=0, ua=270)
-JENDL_nuclides = range_setter(df=jendl5, la=0, ua=270)
-JEFF_nuclides = range_setter(df=jeff33, la=0, ua=270)
-TENDL_nuclides = range_setter(df=tendl21, la=0, ua=270)
-al = range_setter(df=endfb8, la=0, ua=270)
+CENDL_nuclides = range_setter(df=cendl32, la=30, ua=210)
+JENDL_nuclides = range_setter(df=jendl5, la=30, ua=210)
+JEFF_nuclides = range_setter(df=jeff33, la=30, ua=210)
+TENDL_nuclides = range_setter(df=tendl21, la=30, ua=210)
+al = range_setter(df=endfb8, la=30, ua=210)
 
-space = {'n_estimators': hp.choice('n_estimators', [400, 500, 600, 700, 800, 850, 900, 1000, 1100,
-														]),
-			 'subsample': hp.loguniform('subsample', np.log(0.1), np.log(1.0)),
-			 'max_leaves': 0,
-			 'max_depth': scope.int(hp.quniform("max_depth", 6, 12, 1)),
-			 'learning_rate': hp.loguniform('learning_rate', np.log(0.001), np.log(0.15))}
+space = {'n_estimators': hp.choice('n_estimators', [500, 600, 700, 800, 850, 900, 1000, 1100,]),
+         'subsample': hp.loguniform('subsample', np.log(0.1), np.log(1.0)),
+         'max_leaves': 0,
+         'max_depth': scope.int(hp.quniform("max_depth", 6, 12, 1)),
+         'reg_lambda': hp.loguniform('lambda', np.log(0.5), np.log(3.0)),
+         'learning_rate': hp.loguniform('learning_rate', np.log(0.001), np.log(0.15))}
 
 nucs = range_setter(df=all_libraries, la=30, ua=210)
-
 
 all_libraries.index = range(len(all_libraries))
 
