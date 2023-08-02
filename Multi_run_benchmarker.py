@@ -19,19 +19,19 @@ al = range_setter(df=df, la=0, ua=270)
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
+TENDL_nuclides = range_setter(df=TENDL, la=0, ua=270)
 
 JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=215)
+JEFF_nuclides = range_setter(df=JEFF, la=0, ua=270)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
+JENDL_nuclides = range_setter(df=JENDL, la=0, ua=270)
 
 CENDL = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
+CENDL_nuclides = range_setter(df=CENDL, la=0, ua=270)
 
 
 
@@ -90,7 +90,14 @@ while len(nuclides_used) < len(al):
 	print("Training complete")
 
 	predictions = model.predict(X_test) # XS predictions
+	predictions_ReLU = []
+	for pred in predictions:
+		if pred >= 0.001:
+			predictions_ReLU.append(pred)
+		else:
+			predictions_ReLU.append(0)
 
+	predictions = predictions_ReLU
 
 	# Form arrays for plots below
 	XS_plotmatrix = []
@@ -126,6 +133,7 @@ while len(nuclides_used) < len(al):
 
 			f_endfb8 = scipy.interpolate.interp1d(x=endfb8_erg, y=endfb8_xs)
 			endfb8_interp_xs = f_endfb8(x_interpolate_endfb8)
+			# print(predictions_interpolated_endfb8)
 			pred_endfb_mse = mean_squared_error(predictions_interpolated_endfb8, endfb8_interp_xs)
 			pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs, y_pred=predictions_interpolated_endfb8)
 			evaluation_r2s.append(pred_endfb_r2)
@@ -134,10 +142,9 @@ while len(nuclides_used) < len(al):
 		if current_nuclide in CENDL_nuclides:
 			cendl_erg, cendl_xs = General_plotter(df=CENDL, nuclides=[current_nuclide])
 
-			x_interpolate_cendl = np.linspace(start=0, stop=max(cendl_erg), num=500)
+			x_interpolate_cendl = np.linspace(start=0.000000001, stop=max(cendl_erg), num=500)
 			f_pred_cendl = scipy.interpolate.interp1d(x=erg, y=pred_xs, fill_value='extrapolate')
 			predictions_interpolated_cendl = f_pred_cendl(x_interpolate_cendl)
-
 			f_cendl32 = scipy.interpolate.interp1d(x=cendl_erg, y=cendl_xs)
 			cendl_interp_xs = f_cendl32(x_interpolate_cendl)
 			pred_cendl_mse = mean_squared_error(predictions_interpolated_cendl, cendl_interp_xs)
@@ -162,8 +169,8 @@ while len(nuclides_used) < len(al):
 		if current_nuclide in JEFF_nuclides:
 			jeff_erg, jeff_xs = General_plotter(df=JEFF, nuclides=[current_nuclide])
 
-			x_interpolate_jeff = np.linspace(start=0, stop=max(jeff_erg), num=500)
-			f_pred_jeff = scipy.interpolate.interp1d(x=erg, y=pred_xs)
+			x_interpolate_jeff = np.linspace(start=0.0000000001, stop=max(jeff_erg), num=500)
+			f_pred_jeff = scipy.interpolate.interp1d(x=erg, y=pred_xs, fill_value='extrapolate')
 			predictions_interpolated_jeff = f_pred_jeff(x_interpolate_jeff)
 
 			f_jeff33 = scipy.interpolate.interp1d(x=jeff_erg, y=jeff_xs)
@@ -176,8 +183,8 @@ while len(nuclides_used) < len(al):
 		if current_nuclide in TENDL_nuclides:
 			tendl_erg, tendl_xs = General_plotter(df=TENDL, nuclides=[current_nuclide])
 
-			x_interpolate_tendl = np.linspace(start=0, stop=max(tendl_erg), num=500)
-			f_pred_tendl = scipy.interpolate.interp1d(x=erg, y=pred_xs)
+			x_interpolate_tendl = np.linspace(start=0.00000000001, stop=max(tendl_erg), num=500)
+			f_pred_tendl = scipy.interpolate.interp1d(x=erg, y=pred_xs, fill_value='extrapolate')
 			predictions_interpolated_tendl = f_pred_tendl(x_interpolate_tendl)
 
 			f_tendl21 = scipy.interpolate.interp1d(x=tendl_erg, y=tendl_xs)
@@ -208,7 +215,7 @@ while len(nuclides_used) < len(al):
 	# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
 	time_taken = time.time() - time1
-	print(f'completed in {time_taken} s.\n')
+	print(f'completed in {time_taken:0.1f} s.\n')
 
 
 
