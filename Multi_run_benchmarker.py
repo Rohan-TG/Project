@@ -205,7 +205,7 @@ while len(nuclides_used) < len(al):
 		nuclide_r2.append([nuc[0], nuc[1], r2])
 		# individual_r2_list.append(r2)
 
-	overall_r2 = r2_score(y_test, predictions)
+	# overall_r2 = r2_score(y_test, predictions)
 	for pred in predictions:
 		every_prediction_list.append(pred)
 
@@ -213,7 +213,7 @@ while len(nuclides_used) < len(al):
 		every_true_value_list.append(val)
 	# overall_r2_list.append(overall_r2)
 	# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
-	print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
+	# print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
 	time_taken = time.time() - time1
 	print(f'completed in {time_taken:0.1f} s.\n')
 
