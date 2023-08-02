@@ -21,6 +21,7 @@ cendl32 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 all_libraries = pd.concat([endfb8, jendl5])
 all_libraries = pd.concat([all_libraries, jeff33])
 all_libraries = pd.concat([all_libraries, cendl32])
+# all_libraries = pd.concat([all_libraries, tendl21])
 
 
 CENDL_nuclides = range_setter(df=cendl32, la=30, ua=210)
@@ -53,13 +54,13 @@ def optimiser(space):
 
 
     X_train, y_train = make_train(df=all_libraries, validation_nuclides=validation_nuclides, la=30, ua=215)
-    X_test, y_test = make_test(validation_nuclides, df=tendl21)
+    X_test, y_test = make_test(validation_nuclides, df=all_libraries)
 
     print("Data prep done")
 
     model = xg.XGBRegressor(**space, seed=42)
 
-    evaluation = [(X_test, y_test)]
+    evaluation = [(X_train, y_train), (X_test, y_test)]
 
     model.fit(X_train, y_train, eval_set= evaluation, eval_metric='rmse')
 
@@ -104,7 +105,7 @@ def optimiser(space):
         if current_nuclide in al:
             endfb8_erg, endfb8_xs = General_plotter(df=endfb8, nuclides=[current_nuclide])
 
-            x_interpolate_endfb8 = np.linspace(start=0, stop=max(endfb8_erg), num=500)
+            x_interpolate_endfb8 = np.linspace(start=0.000000001, stop=max(endfb8_erg), num=500)
             f_pred_endfb8 = scipy.interpolate.interp1d(x=erg, y=pred_xs)
             predictions_interpolated_endfb8 = f_pred_endfb8(x_interpolate_endfb8)
 
@@ -130,7 +131,7 @@ def optimiser(space):
         if current_nuclide in JENDL_nuclides:
             jendl_erg, jendl_xs = General_plotter(df=jendl5, nuclides=[current_nuclide])
 
-            x_interpolate_jendl = np.linspace(start=0, stop=max(jendl_erg), num=500)
+            x_interpolate_jendl = np.linspace(start=0.000000001, stop=max(jendl_erg), num=500)
             f_pred_jendl = scipy.interpolate.interp1d(x=erg, y=pred_xs)
             predictions_interpolated_jendl = f_pred_jendl(x_interpolate_jendl)
 
@@ -143,7 +144,7 @@ def optimiser(space):
         if current_nuclide in JEFF_nuclides:
             jeff_erg, jeff_xs = General_plotter(df=jeff33, nuclides=[current_nuclide])
 
-            x_interpolate_jeff = np.linspace(start=0.0000000001, stop=max(jeff_erg), num=500)
+            x_interpolate_jeff = np.linspace(start=0.000000001, stop=max(jeff_erg), num=500)
             f_pred_jeff = scipy.interpolate.interp1d(x=erg, y=pred_xs, fill_value='extrapolate')
             predictions_interpolated_jeff = f_pred_jeff(x_interpolate_jeff)
 
@@ -155,7 +156,7 @@ def optimiser(space):
         if current_nuclide in TENDL_nuclides:
             tendl_erg, tendl_xs = General_plotter(df=tendl21, nuclides=[current_nuclide])
 
-            x_interpolate_tendl = np.linspace(start=0.00000000001, stop=max(tendl_erg), num=500)
+            x_interpolate_tendl = np.linspace(start=0.000000001, stop=max(tendl_erg), num=500)
             f_pred_tendl = scipy.interpolate.interp1d(x=erg, y=pred_xs, fill_value='extrapolate')
             predictions_interpolated_tendl = f_pred_tendl(x_interpolate_tendl)
 
