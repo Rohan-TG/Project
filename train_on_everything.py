@@ -29,13 +29,13 @@ all_libraries.index = range(len(all_libraries))
 # 					   [39,92],[39,93],[39,94],
 # 					   [39,95]]
 
-validation_nuclides = []
+# validation_nuclides = []
 
-# validation_nuclides = [[40,85], [40,86], [40,87],
-# 					   [40,88], [40,89], [40,93],
-# 					   [40,94], [40,95], [40,96],
-# 					   [40,97], [40,98], [40,99],
-# 					   [40,100], [40,101], [40,102]]
+validation_nuclides = [[40,85], [40,86], [40,87],
+					   [40,88], [40,89], [40,93],
+					   [40,94], [40,95], [40,96],
+					   [40,97], [40,98], [40,99],
+					   [40,100], [40,101], [40,102]]
 
 validation_set_size = 30 # number of nuclides hidden from training
 
@@ -128,7 +128,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 	r2 = r2_score(true_xs, pred_xs)  # R^2 score for this specific nuclide
 	print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
-	time.sleep(2)
+	time.sleep(1)
 
 print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}")  # MSE
 print(f"R2: {r2_score(y_test, predictions)}")  # Total R^2 for all predictions in this training campaign
