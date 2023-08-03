@@ -14,9 +14,6 @@ from matrix_functions import exp_make_test, exp_make_train, anomaly_remover, ran
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-df_test = df_test[df_test.Z != 11]
-df = df[df.Z != 11]
-
 
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
@@ -25,7 +22,7 @@ df.index = range(len(df))
 al = range_setter(la=30, ua=215, df=df)
 
 
-validation_nuclides = [[44,103],[50,122], [82,208], [47,116], [40,90]]
+validation_nuclides = [[44,103],[50,122], [82,208], [47,116], [40,90], [20,40]]
 validation_set_size = 30 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
@@ -51,7 +48,7 @@ if __name__ == "__main__":
 	# model_seed = random.randint(a=1, b=1000)
 
 	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.01,
+							learning_rate=0.007,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
@@ -80,6 +77,9 @@ if __name__ == "__main__":
 		XS_plotmatrix.append(dummy_test_XS)
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
+
+
+
 
 	# plot predictions against data
 	# note: python lists allow elements to be lists of varying lengths. This would not work using numpy arrays; the for
