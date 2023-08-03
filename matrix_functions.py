@@ -39,6 +39,23 @@ def General_plotter(df, nuclides):
 
 
 
+def feature_fetcher(feature, df, z, a):
+	"""feature: String of feature name (corresponding to column in dataframe)
+	df: dataframe, Library of choice (not that it matters, but TENDL is the obvious
+	choice as it's the most complete.
+	passed_nuclide: in format [z,a]"""
+
+	truncated_df = df[df.Z == z]
+	truncated_df = truncated_df[truncated_df.A == a]
+	truncated_df.index = range(len(truncated_df))
+
+	retrieved_feature = truncated_df[feature][1]
+
+	return(retrieved_feature)
+
+
+
+
 def anomaly_remover(dfa):
 	anomalies = [[14, 28], [14, 29], [14, 30], [15, 31], [20, 40], [20, 42], [20, 43], [20, 44], [20, 46],
 				 [20, 48], [24, 50], [24, 52], [24, 53], [24, 54], [28, 58], [28, 60], [28, 61], [28, 62], [28, 64],
