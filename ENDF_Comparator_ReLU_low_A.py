@@ -12,34 +12,31 @@ import time
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
+TENDL_nuclides = range_setter(df=TENDL, la=0, ua=40)
 
 JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=215)
+JEFF_nuclides = range_setter(df=JEFF, la=0, ua=40)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
+JENDL_nuclides = range_setter(df=JENDL, la=0, ua=40)
 
 CENDL = pd.read_csv('CENDL33_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
+CENDL_nuclides = range_setter(df=CENDL, la=0, ua=40)
 
 
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-df_test = df_test[df_test.Z != 11]
-df = df[df.Z != 11]
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
-df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=0, ua=40, df=df)
 
 
-validation_nuclides = []
-validation_set_size = 20
+validation_nuclides = [[20,40]]
+validation_set_size = 10
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
