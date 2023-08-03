@@ -180,7 +180,7 @@ while len(nuclides_used) < len(al):
 
 		mean_nuclide_r2 = np.mean(evaluation_r2s) # r2 for nuclide nuc
 
-		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {mean_nuclide_r2:0.5f}")
+		# print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {mean_nuclide_r2:0.5f}")
 
 		# mse = mean_squared_error(true_xs, pred_xs)
 
@@ -218,7 +218,7 @@ plt.figure()
 plt.plot(target_feature_plots, log_plots, 'x')
 plt.xlabel(t_feat)
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title(f'|\ln(|r^2|)|$ Performance - {t_feat}')
+plt.title(f'$|\ln(|r^2|)|$ Performance - {t_feat}')
 plt.grid()
 plt.show()
 
