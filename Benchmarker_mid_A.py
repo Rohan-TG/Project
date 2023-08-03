@@ -10,7 +10,7 @@ import time
 import scipy
 from sklearn.metrics import r2_score
 import periodictable
-from matrix_functions import make_test, make_train, range_setter, General_plotter
+from matrix_functions import make_test, make_train, range_setter, General_plotter, feature_fetcher
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
@@ -43,6 +43,9 @@ nuclide_r2 = []
 
 every_prediction_list = []
 every_true_value_list = []
+
+feature_specific_r2 = []
+t_feat = 'Sn'
 
 counter = 0
 while len(nuclides_used) < len(al):
@@ -183,6 +186,10 @@ while len(nuclides_used) < len(al):
 
 		# nuclide_mse.append([nuc[0], nuc[1], mse])
 		nuclide_r2.append([nuc[0], nuc[1], mean_nuclide_r2])
+
+		target_feature = feature_fetcher(feature=t_feat, df=TENDL, z=nuc[0], a=nuc[1])
+
+		feature_specific_r2.append([mean_nuclide_r2, target_feature])
 		# individual_r2_list.append(r2)
 
 	for val in y_test:
@@ -200,11 +207,20 @@ Z_plots = [i[0] for i in nuclide_r2]
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
 # mse_plots = [i[-1] for i in nuclide_mse]
 
+target_feature_plots = [i[1] for i in feature_specific_r2]
+
 log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 
 # heavy_performance = [abs(np.log(abs(i[-1]))) for i in nuclide_r2 if i[1] < 50]
 # print(f"Light performance: {heavy_performance},\n mean: {np.mean(heavy_performance)}")
+plt.figure()
+plt.plot(target_feature_plots, log_plots, 'x')
+plt.xlabel(t_feat)
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title(f'|\ln(|r^2|)|$ Performance - {t_feat}')
+plt.grid()
+plt.show()
 
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
