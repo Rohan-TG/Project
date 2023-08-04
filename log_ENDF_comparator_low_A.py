@@ -16,31 +16,31 @@ from matrix_functions import log_make_test, log_make_train, anomaly_remover, ran
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-df = pd.concat([df, df])
+# df = pd.concat([df, df])
 
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
-al = range_setter(la=0, ua=30, df=df)
+al = range_setter(la=0, ua=50, df=df)
 
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=0, ua=30)
+TENDL_nuclides = range_setter(df=TENDL, la=0, ua=50)
 
 JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=0, ua=30)
+JEFF_nuclides = range_setter(df=JEFF, la=0, ua=50)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=0, ua=30)
+JENDL_nuclides = range_setter(df=JENDL, la=0, ua=50)
 
-CENDL = pd.read_csv('CENDL33_features_arange_zeroed.csv')
+CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=0, ua=30)
+CENDL_nuclides = range_setter(df=CENDL, la=0, ua=50)
 
 
-validation_nuclides = []
+validation_nuclides = [[20,40]]
 validation_set_size = 5 # number of nuclides hidden from training
 
 # random.seed(a=42)
@@ -69,7 +69,7 @@ if __name__ == "__main__":
 	model = xg.XGBRegressor(n_estimators=900,
 							learning_rate=0.007,
 							max_depth=8,
-							subsample=0.3,
+							subsample=0.5,
 							max_leaves=0,
 							seed=42,)
 
@@ -205,80 +205,3 @@ if __name__ == "__main__":
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(exp_true_xs, exp_pred_xs)}") # Total R^2 for all predictions in this training campaign
 	print(f'completed in {time.time() - time1} s')
-
-
-
-# explainer = shap.Explainer(model.predict, X_train,
-# 						   feature_names= ['Z', 'A',
-# 										   'S2n',
-# 										   'S2p',
-# 										   'E',
-# 										   'Sp',
-# 										   'Sn',
-# 										   'BEA',
-# 										   # 'P',
-# 										   'Snc',
-# 										   'g-def',
-# 										   'N',
-# 										   'b-def',
-# 										   # 'Sn_d',
-# 										   'Sp_d',
-# 										   'S2n_d',
-# 										   'Radius',
-# 										   'n_g_erg',
-# 										   'n_c_erg',
-# 										   'n_rms_r',
-# 										   # 'oct_def',
-# 										   'Decay_c',
-# 										   'BEA_d',
-# 										   # 'BEA_c',
-# 										   # 'Pair_d',
-# 										   # 'Par_d',
-# 										   # 'S2n_c',
-# 										   # 'S2p_c',
-# 										   # 'ME',
-# 										   # 'Z_even',
-# 										   # 'A_even',
-# 										   'N_even',
-# 										   'Shell',
-# 										   # 'Par',
-# 										   'Spin',
-# 										   # 'Decay',
-# 										   # 'Deform',
-# 										   # 'p_g_e',
-# 										   # 'p_c_e',
-# 										   # 'p_rms_r',
-# 										   # 'rms_r',
-# 										   # 'Sp_c',
-# 										   # 'S_n_c',
-# 										   'Shell_c',
-# 										   # 'S2p-d',
-# 										   # 'Shell-d',
-# 										   'Spin-c',
-# 										   'Rad-c',
-# 										   # 'Def-c',
-# 										   # 'ME-c',
-# 										   # 'BEA-A-c',
-# 										   'Decay-d',
-# 										   # 'ME-d',
-# 										   'Rad-d',
-# 										   # 'Pair-c',
-# 										   # 'Par-c',
-# 										   # 'BEA-A-d',
-# 										   'Spin-d',
-# 										   'Def-d',
-# 										   'Nlow',
-# 										   'Ulow',
-# 										   # 'Ntop',
-# 										   # 'Utop',
-# 										   # 'ainf',
-# 										   'Asym',
-# 										   'Asym_c',
-# 										   'Asym_d',
-# 										   ]) # SHAP feature importance analysis
-# shap_values = explainer(X_test)
-
-# name features for FIA
-
-
-# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
