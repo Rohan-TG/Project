@@ -98,7 +98,7 @@ for nuclide in al:
 	feature_matrix_Decay_Const.append([feat])
 
 
-n_runs = 10
+n_runs = 2
 
 for idx in tqdm.tqdm(range(n_runs)):
 	nuclides_used = []
@@ -107,7 +107,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 20  # number of nuclides hidden from training
+		validation_set_size = 210  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 
@@ -308,7 +308,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 		for val in y_test:
 			every_true_value_list.append(val)
 		time_taken = time.time() - time1
-		print(f'completed in {time_taken} s.\n')
+		print(f'completed in {time_taken:0.1f} s.\n')
 
 	print(f"Completed run {idx+1}/{n_runs}")
 
@@ -409,7 +409,7 @@ for i in feature_matrix_Asymmetry:
 	feature = i[0]
 	features_only_Asymmetry.append(feature)
 	avg = np.mean(dum)
-	r2_mean_Sn.append(avg)
+	r2_mean_Asymmetry.append(avg)
 
 log_r2_mean_Asymmetry = [abs(np.log(abs(i))) for i in r2_mean_Asymmetry]
 
@@ -425,18 +425,6 @@ for i in feature_matrix_BEA_A_daughter:
 	r2_mean_BEA_A_daughter.append(avg)
 
 log_r2_mean_BEA_A_daughter = [abs(np.log(abs(i))) for i in r2_mean_BEA_A_daughter]
-
-
-r2_mean_Sn = []
-features_only_Sn = []
-for i in feature_matrix_Sn:
-	dum = i[1:]
-	feature = i[0]
-	features_only_Sn.append(feature)
-	avg = np.mean(dum)
-	r2_mean_Sn.append(avg)
-
-log_r2_mean_Sn = [abs(np.log(abs(i))) for i in r2_mean_Sn]
 
 
 r2_mean_S2p = []
@@ -458,7 +446,7 @@ for i in feature_matrix_Shell:
 	feature = i[0]
 	features_only_Shell.append(feature)
 	avg = np.mean(dum)
-	r2_mean_Sn.append(avg)
+	r2_mean_Shell.append(avg)
 
 log_r2_mean_Shell = [abs(np.log(abs(i))) for i in r2_mean_Shell]
 
@@ -470,7 +458,7 @@ for i in feature_matrix_Decay_Const:
 	feature = i[0]
 	features_only_Decay_Const.append(feature)
 	avg = np.mean(dum)
-	r2_mean_Sn.append(avg)
+	r2_mean_Decay_Const.append(avg)
 
 log_r2_mean_Decay_Const = [abs(np.log(abs(i))) for i in r2_mean_Decay_Const]
 
@@ -485,69 +473,90 @@ plt.show()
 
 # Asymmetry_daughter
 plt.figure()
-plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
-plt.xlabel('Sn')
+plt.plot(features_only_Asymmetry_daughter, log_r2_mean_Asymmetry_daughter, 'x')
+plt.xlabel('Daughter Asymmetry')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.title('$|\ln(|r^2|)|$ Performance - Daughter Asymmetry')
 plt.grid()
 plt.show()
 
 plt.figure()
-plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.plot(features_only_BEA_A_compound, log_r2_mean_BEA_A_compound, 'x')
 plt.xlabel('Sn')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.title('$|\ln(|r^2|)|$ Performance - BEA_A Compound')
 plt.grid()
 plt.show()
 
 plt.figure()
-plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.plot(features_only_ME, log_r2_mean_ME, 'x')
 plt.xlabel('Sn')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.title('$|\ln(|r^2|)|$ Performance - Mass Excess')
+plt.grid()
+plt.show()
+time.sleep(2)
+
+plt.figure()
+plt.plot(features_only_N, log_r2_mean_N, 'x')
+plt.xlabel('Sn')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - N')
 plt.grid()
 plt.show()
 
 plt.figure()
-plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.plot(features_only_S2n, log_r2_mean_S2n, 'x')
 plt.xlabel('Sn')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.title('$|\ln(|r^2|)|$ Performance - S2n')
 plt.grid()
 plt.show()
 
 plt.figure()
-plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
-plt.xlabel('Sn')
+plt.plot(features_only_Asymmetry, log_r2_mean_Asymmetry, 'x')
+plt.xlabel('Asymmetry')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.title('$|\ln(|r^2|)|$ Performance - Asymmetry')
+plt.grid()
+plt.show()
+time.sleep(1)
+
+plt.figure()
+plt.plot(features_only_BEA_A_daughter, log_r2_mean_BEA_A_daughter, 'x')
+plt.xlabel('BEA_A Daughter')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - BEA_A Daughter')
 plt.grid()
 plt.show()
 
 plt.figure()
-plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
-plt.xlabel('Sn')
+plt.plot(features_only_S2p, log_r2_mean_S2p, 'x')
+plt.xlabel('S2p')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.title('$|\ln(|r^2|)|$ Performance - S2p')
 plt.grid()
 plt.show()
+
 
 plt.figure()
-plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
-plt.xlabel('Sn')
+plt.plot(features_only_Shell, log_r2_mean_Shell, 'x')
+plt.xlabel('Shell')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.title('$|\ln(|r^2|)|$ Performance - Shell')
 plt.grid()
 plt.show()
+time.sleep(2)
 
+
+log_decay_constant = [np.log(dec) for dec in features_only_Decay_Const]
 plt.figure()
-plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
-plt.xlabel('Sn')
+plt.plot(log_decay_constant, log_r2_mean_Decay_Const, 'x')
+plt.xlabel('ln(Decay Constant)')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.title('$|\ln(|r^2|)|$ Performance - Decay Constant')
 plt.grid()
 plt.show()
-
 
 
 plt.figure()
