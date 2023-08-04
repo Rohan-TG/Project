@@ -127,7 +127,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 		X_test, y_test = make_test(validation_nuclides, df=df)
 
-		print("Train/val matrices generated")
+		print("Training...")
 
 
 		model = xg.XGBRegressor(n_estimators=900,
