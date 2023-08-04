@@ -97,7 +97,7 @@ for nuclide in al:
 	feature_matrix_Decay_Const.append([feat])
 
 
-n_runs = 3
+n_runs = 20
 
 for idx in tqdm.tqdm(range(n_runs)):
 	nuclides_used = []
@@ -106,7 +106,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 210  # number of nuclides hidden from training
+		validation_set_size = 20  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 
