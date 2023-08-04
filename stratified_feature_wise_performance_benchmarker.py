@@ -13,7 +13,6 @@ from sklearn.metrics import r2_score
 from matrix_functions import make_test, make_train, range_setter, General_plotter, feature_fetcher
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
@@ -64,10 +63,10 @@ feature_matrix_Decay_Const = []
 
 
 for nuclide in al:
-	feat = feature_fetcher(feature='Sn', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feat = feature_fetcher(feature='Sn', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_Sn.append([feat])
 
-	feat = feature_fetcher(feature='Asymmetry_daughter', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feat = feature_fetcher(feature='Asymmetry_daughter', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_Asymmetry_daughter.append([feat])
 
 	feat = feature_fetcher(feature='BEA_A_compound', df=TENDL, z=nuclide[0], a=nuclide[1])
@@ -98,7 +97,7 @@ for nuclide in al:
 	feature_matrix_Decay_Const.append([feat])
 
 
-n_runs = 20
+n_runs = 15
 
 for idx in tqdm.tqdm(range(n_runs)):
 	nuclides_used = []
@@ -126,7 +125,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides,
 										  la=30, ua=210) # make training matrix
 
-		X_test, y_test = make_test(validation_nuclides, df=df_test)
+		X_test, y_test = make_test(validation_nuclides, df=df)
 
 		print("Train/val matrices generated")
 
@@ -238,27 +237,27 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 			nuclide_r2.append([nuc[0], nuc[1], mean_nuclide_r2])
 
-			feat_Sn = feature_fetcher(feature='Sn', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_Sn = feature_fetcher(feature='Sn', df=df, z=nuc[0], a=nuc[1])
 
-			feat_Asymmetry_daughter = feature_fetcher(feature='Asymmetry_daughter', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_Asymmetry_daughter = feature_fetcher(feature='Asymmetry_daughter', df=df, z=nuc[0], a=nuc[1])
 
-			feat_BEA_A_compound = feature_fetcher(feature='BEA_A_compound', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_BEA_A_compound = feature_fetcher(feature='BEA_A_compound', df=df, z=nuc[0], a=nuc[1])
 
-			feat_ME = feature_fetcher(feature='ME', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_ME = feature_fetcher(feature='ME', df=df, z=nuc[0], a=nuc[1])
 
-			feat_N = feature_fetcher(feature='N', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_N = feature_fetcher(feature='N', df=df, z=nuc[0], a=nuc[1])
 
-			feat_S2n = feature_fetcher(feature='S2n', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_S2n = feature_fetcher(feature='S2n', df=df, z=nuc[0], a=nuc[1])
 
-			feat_Asymmetry = feature_fetcher(feature='Asymmetry', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_Asymmetry = feature_fetcher(feature='Asymmetry', df=df, z=nuc[0], a=nuc[1])
 
-			feat_BEA_A_daughter = feature_fetcher(feature='BEA_A_daughter', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_BEA_A_daughter = feature_fetcher(feature='BEA_A_daughter', df=df, z=nuc[0], a=nuc[1])
 
-			feat_S2p = feature_fetcher(feature='S2p', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_S2p = feature_fetcher(feature='S2p', df=df, z=nuc[0], a=nuc[1])
 
-			feat_Shell = feature_fetcher(feature='Shell', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_Shell = feature_fetcher(feature='Shell', df=df, z=nuc[0], a=nuc[1])
 
-			feat_Decay_Const = feature_fetcher(feature='Decay_Const', df=TENDL, z=nuc[0], a=nuc[1])
+			feat_Decay_Const = feature_fetcher(feature='Decay_Const', df=df, z=nuc[0], a=nuc[1])
 
 			for i, ft in enumerate(feature_matrix_Sn):
 				if ft[0] == feat_Sn:
