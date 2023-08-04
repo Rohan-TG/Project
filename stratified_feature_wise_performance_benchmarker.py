@@ -17,22 +17,22 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=4, ua=270)
 
 JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
+JEFF_nuclides = range_setter(df=JEFF, la=4, ua=270)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
+JENDL_nuclides = range_setter(df=JENDL, la=4, ua=270)
 
 CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
+CENDL_nuclides = range_setter(df=CENDL, la=4, ua=270)
 
 
-al = range_setter(la=30, ua=210, df=df)
+al = range_setter(la=4, ua=270, df=df)
 
 
 
@@ -45,8 +45,8 @@ every_true_value_list = []
 
 feature_matrix_Sn = []
 feature_matrix_Asymmetry_daughter = []
-feature_matrix_BEA_A_compound = []
-feature_matrix_ME = []
+# feature_matrix_BEA_A_compound = []
+# feature_matrix_ME = []
 feature_matrix_N = []
 # feature_matrix_n_rms_radius = [] # 111 missing
 feature_matrix_S2n = []
@@ -69,35 +69,35 @@ for nuclide in al:
 	feat = feature_fetcher(feature='Asymmetry_daughter', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_Asymmetry_daughter.append([feat])
 
-	feat = feature_fetcher(feature='BEA_A_compound', df=TENDL, z=nuclide[0], a=nuclide[1])
-	feature_matrix_BEA_A_compound.append([feat])
+	# feat = feature_fetcher(feature='BEA_A_compound', df=TENDL, z=nuclide[0], a=nuclide[1])
+	# feature_matrix_BEA_A_compound.append([feat])
 
-	feat = feature_fetcher(feature='ME', df=TENDL, z=nuclide[0], a=nuclide[1])
-	feature_matrix_ME.append([feat])
+	# feat = feature_fetcher(feature='ME', df=TENDL, z=nuclide[0], a=nuclide[1])
+	# feature_matrix_ME.append([feat])
 
-	feat = feature_fetcher(feature='N', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feat = feature_fetcher(feature='N', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_N.append([feat])
 
-	feat = feature_fetcher(feature='S2n', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feat = feature_fetcher(feature='S2n', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_S2n.append([feat])
 
-	feat = feature_fetcher(feature='Asymmetry', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feat = feature_fetcher(feature='Asymmetry', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_Asymmetry.append([feat])
 
-	feat = feature_fetcher(feature='BEA_A_daughter', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feat = feature_fetcher(feature='BEA_A_daughter', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_BEA_A_daughter.append([feat])
 
-	feat = feature_fetcher(feature='S2p', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feat = feature_fetcher(feature='S2p', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_S2p.append([feat])
 
-	feat = feature_fetcher(feature='Shell', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feat = feature_fetcher(feature='Shell', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_Shell.append([feat])
 
-	feat = feature_fetcher(feature='Decay_Const', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feat = feature_fetcher(feature='Decay_Const', df=df, z=nuclide[0], a=nuclide[1])
 	feature_matrix_Decay_Const.append([feat])
 
 
-n_runs = 15
+n_runs = 3
 
 for idx in tqdm.tqdm(range(n_runs)):
 	nuclides_used = []
@@ -106,7 +106,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 20  # number of nuclides hidden from training
+		validation_set_size = 210  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 
@@ -123,7 +123,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 
 		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides,
-										  la=30, ua=210) # make training matrix
+										  la=4, ua=270) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df)
 
@@ -167,18 +167,18 @@ for idx in tqdm.tqdm(range(n_runs)):
 			nuc = validation_nuclides[i]
 
 			evaluation_r2s = []
-
-			if nuc in al:
-				endfb8_erg, endfb8_xs = General_plotter(df=df, nuclides=[nuc])
-
-				x_interpolate_endfb8 = np.linspace(start=0.00000000, stop=max(endfb8_erg), num=500)
-				f_pred_endfb8 = scipy.interpolate.interp1d(x=erg, y=pred_xs)
-				predictions_interpolated_endfb8 = f_pred_endfb8(x_interpolate_endfb8)
-
-				f_endfb8 = scipy.interpolate.interp1d(x=endfb8_erg, y=endfb8_xs)
-				endfb8_interp_xs = f_endfb8(x_interpolate_endfb8)
-				pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs, y_pred=predictions_interpolated_endfb8)
-				evaluation_r2s.append(pred_endfb_r2)
+			evaluation_r2s.append(r2_score(y_true=true_xs, y_pred=pred_xs))
+			# if nuc in al:
+			# 	endfb8_erg, endfb8_xs = General_plotter(df=df, nuclides=[nuc])
+			#
+			# 	x_interpolate_endfb8 = np.linspace(start=0.00000000, stop=max(endfb8_erg), num=500)
+			# 	f_pred_endfb8 = scipy.interpolate.interp1d(x=erg, y=pred_xs, fill_value='extrapolate')
+			# 	predictions_interpolated_endfb8 = f_pred_endfb8(x_interpolate_endfb8)
+			#
+			# 	f_endfb8 = scipy.interpolate.interp1d(x=endfb8_erg, y=endfb8_xs, fill_value='extrapolate')
+			# 	endfb8_interp_xs = f_endfb8(x_interpolate_endfb8)
+			# 	pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs, y_pred=predictions_interpolated_endfb8)
+			# 	evaluation_r2s.append(pred_endfb_r2)
 			# print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
 
 			if nuc in CENDL_nuclides:
@@ -241,9 +241,9 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 			feat_Asymmetry_daughter = feature_fetcher(feature='Asymmetry_daughter', df=df, z=nuc[0], a=nuc[1])
 
-			feat_BEA_A_compound = feature_fetcher(feature='BEA_A_compound', df=df, z=nuc[0], a=nuc[1])
+			# feat_BEA_A_compound = feature_fetcher(feature='BEA_A_compound', df=df, z=nuc[0], a=nuc[1])
 
-			feat_ME = feature_fetcher(feature='ME', df=df, z=nuc[0], a=nuc[1])
+			# feat_ME = feature_fetcher(feature='ME', df=df, z=nuc[0], a=nuc[1])
 
 			feat_N = feature_fetcher(feature='N', df=df, z=nuc[0], a=nuc[1])
 
@@ -267,13 +267,13 @@ for idx in tqdm.tqdm(range(n_runs)):
 				if ft[0] == feat_Asymmetry_daughter:
 					feature_matrix_Asymmetry_daughter[i].append(mean_nuclide_r2)
 
-			for i, ft in enumerate(feature_matrix_BEA_A_compound):
-				if ft[0] == feat_BEA_A_compound:
-					feature_matrix_BEA_A_compound[i].append(mean_nuclide_r2)
+			# for i, ft in enumerate(feature_matrix_BEA_A_compound):
+			# 	if ft[0] == feat_BEA_A_compound:
+			# 		feature_matrix_BEA_A_compound[i].append(mean_nuclide_r2)
 
-			for i, ft in enumerate(feature_matrix_ME):
-				if ft[0] == feat_ME:
-					feature_matrix_ME[i].append(mean_nuclide_r2)
+			# for i, ft in enumerate(feature_matrix_ME):
+			# 	if ft[0] == feat_ME:
+			# 		feature_matrix_ME[i].append(mean_nuclide_r2)
 
 			for i, ft in enumerate(feature_matrix_N):
 				if ft[0] == feat_N:
@@ -350,29 +350,29 @@ log_r2_mean_Asymmetry_daughter = [abs(np.log(abs(i))) for i in r2_mean_Asymmetry
 
 
 
-r2_mean_BEA_A_compound = []
-features_only_BEA_A_compound = []
-for i in feature_matrix_BEA_A_compound:
-	dum = i[1:]
-	feature = i[0]
-	features_only_BEA_A_compound.append(feature)
-	avg = np.mean(dum)
-	r2_mean_BEA_A_compound.append(avg)
+# r2_mean_BEA_A_compound = []
+# features_only_BEA_A_compound = []
+# for i in feature_matrix_BEA_A_compound:
+# 	dum = i[1:]
+# 	feature = i[0]
+# 	features_only_BEA_A_compound.append(feature)
+# 	avg = np.mean(dum)
+# 	r2_mean_BEA_A_compound.append(avg)
+#
+# log_r2_mean_BEA_A_compound = [abs(np.log(abs(i))) for i in r2_mean_Sn]
 
-log_r2_mean_BEA_A_compound = [abs(np.log(abs(i))) for i in r2_mean_Sn]
 
 
-
-r2_mean_ME = []
-features_only_ME = []
-for i in feature_matrix_ME:
-	dum = i[1:]
-	feature = i[0]
-	features_only_ME.append(feature)
-	avg = np.mean(dum)
-	r2_mean_ME.append(avg)
-
-log_r2_mean_ME = [abs(np.log(abs(i))) for i in r2_mean_ME]
+# r2_mean_ME = []
+# features_only_ME = []
+# for i in feature_matrix_ME:
+# 	dum = i[1:]
+# 	feature = i[0]
+# 	features_only_ME.append(feature)
+# 	avg = np.mean(dum)
+# 	r2_mean_ME.append(avg)
+#
+# log_r2_mean_ME = [abs(np.log(abs(i))) for i in r2_mean_ME]
 
 
 r2_mean_N = []
@@ -479,26 +479,26 @@ plt.title('$|\ln(|r^2|)|$ Performance - Daughter Asymmetry')
 plt.grid()
 plt.show()
 
-plt.figure()
-plt.plot(features_only_BEA_A_compound, log_r2_mean_BEA_A_compound, 'x')
-plt.xlabel('Sn')
-plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - BEA_A Compound')
-plt.grid()
-plt.show()
+# plt.figure()
+# plt.plot(features_only_BEA_A_compound, log_r2_mean_BEA_A_compound, 'x')
+# plt.xlabel('Sn')
+# plt.ylabel('$|\ln(|r^2|)|$')
+# plt.title('$|\ln(|r^2|)|$ Performance - BEA_A Compound')
+# plt.grid()
+# plt.show()
 
-plt.figure()
-plt.plot(features_only_ME, log_r2_mean_ME, 'x')
-plt.xlabel('Sn')
-plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - Mass Excess')
-plt.grid()
-plt.show()
-time.sleep(2)
+# plt.figure()
+# plt.plot(features_only_ME, log_r2_mean_ME, 'x')
+# plt.xlabel('Sn')
+# plt.ylabel('$|\ln(|r^2|)|$')
+# plt.title('$|\ln(|r^2|)|$ Performance - Mass Excess')
+# plt.grid()
+# plt.show()
+# time.sleep(2)
 
 plt.figure()
 plt.plot(features_only_N, log_r2_mean_N, 'x')
-plt.xlabel('Sn')
+plt.xlabel('N')
 plt.ylabel('$|\ln(|r^2|)|$')
 plt.title('$|\ln(|r^2|)|$ Performance - N')
 plt.grid()
@@ -506,7 +506,7 @@ plt.show()
 
 plt.figure()
 plt.plot(features_only_S2n, log_r2_mean_S2n, 'x')
-plt.xlabel('Sn')
+plt.xlabel('S2n')
 plt.ylabel('$|\ln(|r^2|)|$')
 plt.title('$|\ln(|r^2|)|$ Performance - S2n')
 plt.grid()
