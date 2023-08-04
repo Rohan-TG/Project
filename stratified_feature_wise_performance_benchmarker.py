@@ -44,14 +44,59 @@ nuclide_r2 = []
 every_prediction_list = []
 every_true_value_list = []
 
-t_feat = 'Sn'
+feature_matrix_Sn = []
+feature_matrix_Asymmetry_daughter = []
+feature_matrix_BEA_A_compound = []
+feature_matrix_ME = []
+feature_matrix_N = []
+# feature_matrix_n_rms_radius = [] # 111 missing
+feature_matrix_S2n = []
+feature_matrix_Asymmetry = []
+feature_matrix_BEA_A_daughter = []
+# feature_matrix_n_chem_erg = [] # 111 missing
+# feature_matrix_Radius = [] # 8253 missing
+feature_matrix_S2p = []
+# feature_matrix_Utop = [] # 16919 missing
+feature_matrix_Shell = []
+feature_matrix_Decay_Const = []
+# feature_matrix_Spin = [] # 61 missing
+# feature_matrix_Parity = [] # 61 missing
 
-feature_matrix = []
+
 for nuclide in al:
-	feat = feature_fetcher(feature=t_feat, df=TENDL, z=nuclide[0], a=nuclide[1])
-	feature_matrix.append([feat])
+	feat = feature_fetcher(feature='Sn', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_Sn.append([feat])
 
-print(feature_matrix)
+	feat = feature_fetcher(feature='Asymmetry_daughter', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_Asymmetry_daughter.append([feat])
+
+	feat = feature_fetcher(feature='BEA_A_compound', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_BEA_A_compound.append([feat])
+
+	feat = feature_fetcher(feature='ME', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_ME.append([feat])
+
+	feat = feature_fetcher(feature='N', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_N.append([feat])
+
+	feat = feature_fetcher(feature='S2n', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_S2n.append([feat])
+
+	feat = feature_fetcher(feature='Asymmetry', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_Asymmetry.append([feat])
+
+	feat = feature_fetcher(feature='BEA_A_daughter', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_BEA_A_daughter.append([feat])
+
+	feat = feature_fetcher(feature='S2p', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_S2p.append([feat])
+
+	feat = feature_fetcher(feature='Shell', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_Shell.append([feat])
+
+	feat = feature_fetcher(feature='Decay_Const', df=TENDL, z=nuclide[0], a=nuclide[1])
+	feature_matrix_Decay_Const.append([feat])
+
 
 n_runs = 10
 
@@ -193,11 +238,72 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 			nuclide_r2.append([nuc[0], nuc[1], mean_nuclide_r2])
 
-			target_feature = feature_fetcher(feature=t_feat, df=TENDL, z=nuc[0], a=nuc[1])
-			for i, ft in enumerate(feature_matrix):
-				if ft[0] == target_feature:
-					feature_matrix[i].append(mean_nuclide_r2)
-			# individual_r2_list.append(r2)
+			feat_Sn = feature_fetcher(feature='Sn', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_Asymmetry_daughter = feature_fetcher(feature='Asymmetry_daughter', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_BEA_A_compound = feature_fetcher(feature='BEA_A_compound', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_ME = feature_fetcher(feature='ME', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_N = feature_fetcher(feature='N', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_S2n = feature_fetcher(feature='S2n', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_Asymmetry = feature_fetcher(feature='Asymmetry', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_BEA_A_daughter = feature_fetcher(feature='BEA_A_daughter', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_S2p = feature_fetcher(feature='S2p', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_Shell = feature_fetcher(feature='Shell', df=TENDL, z=nuc[0], a=nuc[1])
+
+			feat_Decay_Const = feature_fetcher(feature='Decay_Const', df=TENDL, z=nuc[0], a=nuc[1])
+
+			for i, ft in enumerate(feature_matrix_Sn):
+				if ft[0] == feat_Sn:
+					feature_matrix_Sn[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_Asymmetry_daughter):
+				if ft[0] == feat_Asymmetry_daughter:
+					feature_matrix_Asymmetry_daughter[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_BEA_A_compound):
+				if ft[0] == feat_BEA_A_compound:
+					feature_matrix_BEA_A_compound[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_ME):
+				if ft[0] == feat_ME:
+					feature_matrix_ME[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_N):
+				if ft[0] == feat_N:
+					feature_matrix_N[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_S2n):
+				if ft[0] == feat_S2n:
+					feature_matrix_S2n[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_Asymmetry):
+				if ft[0] == feat_Asymmetry:
+					feature_matrix_Asymmetry[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_BEA_A_daughter):
+				if ft[0] == feat_BEA_A_daughter:
+					feature_matrix_BEA_A_daughter[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_S2p):
+				if ft[0] == feat_S2p:
+					feature_matrix_S2p[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_Shell):
+				if ft[0] == feat_Shell:
+					feature_matrix_Shell[i].append(mean_nuclide_r2)
+
+			for i, ft in enumerate(feature_matrix_Decay_Const):
+				if ft[0] == feat_Decay_Const:
+					feature_matrix_Decay_Const[i].append(mean_nuclide_r2)
+
 
 		for val in y_test:
 			every_true_value_list.append(val)
@@ -208,7 +314,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 
 print()
-print(feature_matrix)
+print(feature_matrix_Asymmetry)
 
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
@@ -219,27 +325,228 @@ Z_plots = [i[0] for i in nuclide_r2]
 log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 
-r2_mean = []
-features_only = []
-for i in feature_matrix:
+r2_mean_Sn = []
+features_only_Sn = []
+for i in feature_matrix_Sn:
 	dum = i[1:]
 	feature = i[0]
-	features_only.append(feature)
+	features_only_Sn.append(feature)
 	avg = np.mean(dum)
-	r2_mean.append(avg)
+	r2_mean_Sn.append(avg)
+
+log_r2_mean_Sn = [abs(np.log(abs(i))) for i in r2_mean_Sn]
 
 
-log_r2_mean = [abs(np.log(abs(i))) for i in r2_mean]
 
+r2_mean_Asymmetry_daughter = []
+features_only_Asymmetry_daughter = []
+for i in feature_matrix_Asymmetry_daughter:
+	dum = i[1:]
+	feature = i[0]
+	features_only_Asymmetry_daughter.append(feature)
+	avg = np.mean(dum)
+	r2_mean_Asymmetry_daughter.append(avg)
+
+log_r2_mean_Asymmetry_daughter = [abs(np.log(abs(i))) for i in r2_mean_Asymmetry_daughter]
+
+
+
+r2_mean_BEA_A_compound = []
+features_only_BEA_A_compound = []
+for i in feature_matrix_BEA_A_compound:
+	dum = i[1:]
+	feature = i[0]
+	features_only_BEA_A_compound.append(feature)
+	avg = np.mean(dum)
+	r2_mean_BEA_A_compound.append(avg)
+
+log_r2_mean_BEA_A_compound = [abs(np.log(abs(i))) for i in r2_mean_Sn]
+
+
+
+r2_mean_ME = []
+features_only_ME = []
+for i in feature_matrix_ME:
+	dum = i[1:]
+	feature = i[0]
+	features_only_ME.append(feature)
+	avg = np.mean(dum)
+	r2_mean_ME.append(avg)
+
+log_r2_mean_ME = [abs(np.log(abs(i))) for i in r2_mean_ME]
+
+
+r2_mean_N = []
+features_only_N = []
+for i in feature_matrix_N:
+	dum = i[1:]
+	feature = i[0]
+	features_only_N.append(feature)
+	avg = np.mean(dum)
+	r2_mean_N.append(avg)
+
+log_r2_mean_N = [abs(np.log(abs(i))) for i in r2_mean_N]
+
+
+
+r2_mean_S2n = []
+features_only_S2n = []
+for i in feature_matrix_S2n:
+	dum = i[1:]
+	feature = i[0]
+	features_only_S2n.append(feature)
+	avg = np.mean(dum)
+	r2_mean_S2n.append(avg)
+
+log_r2_mean_S2n = [abs(np.log(abs(i))) for i in r2_mean_S2n]
+
+
+
+r2_mean_Asymmetry = []
+features_only_Asymmetry = []
+for i in feature_matrix_Asymmetry:
+	dum = i[1:]
+	feature = i[0]
+	features_only_Asymmetry.append(feature)
+	avg = np.mean(dum)
+	r2_mean_Sn.append(avg)
+
+log_r2_mean_Asymmetry = [abs(np.log(abs(i))) for i in r2_mean_Asymmetry]
+
+
+
+r2_mean_BEA_A_daughter = []
+features_only_BEA_A_daughter = []
+for i in feature_matrix_BEA_A_daughter:
+	dum = i[1:]
+	feature = i[0]
+	features_only_BEA_A_daughter.append(feature)
+	avg = np.mean(dum)
+	r2_mean_BEA_A_daughter.append(avg)
+
+log_r2_mean_BEA_A_daughter = [abs(np.log(abs(i))) for i in r2_mean_BEA_A_daughter]
+
+
+r2_mean_Sn = []
+features_only_Sn = []
+for i in feature_matrix_Sn:
+	dum = i[1:]
+	feature = i[0]
+	features_only_Sn.append(feature)
+	avg = np.mean(dum)
+	r2_mean_Sn.append(avg)
+
+log_r2_mean_Sn = [abs(np.log(abs(i))) for i in r2_mean_Sn]
+
+
+r2_mean_S2p = []
+features_only_S2p = []
+for i in feature_matrix_S2p:
+	dum = i[1:]
+	feature = i[0]
+	features_only_S2p.append(feature)
+	avg = np.mean(dum)
+	r2_mean_S2p.append(avg)
+
+log_r2_mean_S2p = [abs(np.log(abs(i))) for i in r2_mean_S2p]
+
+
+r2_mean_Shell = []
+features_only_Shell = []
+for i in feature_matrix_Shell:
+	dum = i[1:]
+	feature = i[0]
+	features_only_Shell.append(feature)
+	avg = np.mean(dum)
+	r2_mean_Sn.append(avg)
+
+log_r2_mean_Shell = [abs(np.log(abs(i))) for i in r2_mean_Shell]
+
+
+r2_mean_Decay_Const = []
+features_only_Decay_Const = []
+for i in feature_matrix_Decay_Const:
+	dum = i[1:]
+	feature = i[0]
+	features_only_Decay_Const.append(feature)
+	avg = np.mean(dum)
+	r2_mean_Sn.append(avg)
+
+log_r2_mean_Decay_Const = [abs(np.log(abs(i))) for i in r2_mean_Decay_Const]
+
+# Sn
 plt.figure()
-plt.plot(features_only, log_r2_mean, 'x')
-plt.xlabel(t_feat)
+plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.xlabel('Sn')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title(f'$|\ln(|r^2|)|$ Performance - {t_feat}')
+plt.title('$|\ln(|r^2|)|$ Performance - Sn')
 plt.grid()
 plt.show()
 
+# Asymmetry_daughter
+plt.figure()
+plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.xlabel('Sn')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.grid()
+plt.show()
 
+plt.figure()
+plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.xlabel('Sn')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.grid()
+plt.show()
+
+plt.figure()
+plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.xlabel('Sn')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.grid()
+plt.show()
+
+plt.figure()
+plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.xlabel('Sn')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.grid()
+plt.show()
+
+plt.figure()
+plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.xlabel('Sn')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.grid()
+plt.show()
+
+plt.figure()
+plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.xlabel('Sn')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.grid()
+plt.show()
+
+plt.figure()
+plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.xlabel('Sn')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.grid()
+plt.show()
+
+plt.figure()
+plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
+plt.xlabel('Sn')
+plt.ylabel('$|\ln(|r^2|)|$')
+plt.title('$|\ln(|r^2|)|$ Performance - Sn')
+plt.grid()
+plt.show()
 
 
 
