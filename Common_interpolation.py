@@ -21,7 +21,7 @@ JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
 
-CENDL = pd.read_csv('CENDL33_features_arange_zeroed.csv')
+CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
 
