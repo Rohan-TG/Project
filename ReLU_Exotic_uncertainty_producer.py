@@ -29,14 +29,14 @@ al = range_setter(la=30, ua=215, df=df)
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [39,94]
+target_nuclide = [40,102]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
 
 	validation_nuclides = [target_nuclide]
-	validation_set_size = 20  # number of nuclides hidden from training
+	validation_set_size = 1  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
 		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
@@ -147,7 +147,7 @@ JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=215)
 JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 time.sleep(2)
 
-CENDL33 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
+CENDL33 = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL33.index = range(len(CENDL33))
 CENDL_nuclides = range_setter(df=CENDL33, la=30, ua=215)
 CENDL33_energy, CENDL33_XS = General_plotter(df=CENDL33, nuclides=[target_nuclide])
