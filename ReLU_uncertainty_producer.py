@@ -11,7 +11,7 @@ import xgboost as xg
 import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import anomaly_remover, make_train, make_test,\
+from matrix_functions import dsigma_dE, make_train, make_test,\
 	range_setter, General_plotter
 import scipy.stats
 from datetime import timedelta
@@ -36,7 +36,7 @@ al = range_setter(la=30, ua=215, df=df)
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [78,195]
+target_nuclide = [31,69]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
@@ -183,7 +183,7 @@ JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=210)
 
 
-CENDL32 = pd.read_csv('CENDL33_features_arange_zeroed.csv')
+CENDL32 = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL32.index = range(len(CENDL32))
 CENDL32_energy, CENDL33_XS = General_plotter(df=CENDL32, nuclides=[target_nuclide])
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
@@ -346,6 +346,8 @@ Frehaut_XS_d = [xs/1000 for xs in Frehaut_XS_d]
 title_string_latex = "$\sigma_{n,2n}$"
 title_string_nuclide = f"for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}"
 title_string = title_string_latex+title_string_nuclide
+
+print(f"Turning points: {dsigma_dE(XS=datapoint_means)}")
 
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
