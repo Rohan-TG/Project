@@ -124,7 +124,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	if current_nuclide in al:
 		endfb8_erg, endfb8_xs = General_plotter(df=df, nuclides=[current_nuclide])
 
-		x_interpolate_endfb8 = np.linspace(start=0, stop=max(endfb8_erg), num=500)
+		x_interpolate_endfb8 = np.linspace(start=0, stop=max(endfb8_erg), num=200)
 		f_pred_endfb8 = scipy.interpolate.interp1d(x=erg, y=pred_xs)
 		predictions_interpolated_endfb8 = f_pred_endfb8(x_interpolate_endfb8)
 
@@ -137,7 +137,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	if current_nuclide in CENDL_nuclides:
 		cendl_erg, cendl_xs = General_plotter(df=CENDL, nuclides=[current_nuclide])
 
-		x_interpolate_cendl = np.linspace(start=0, stop=max(cendl_erg), num=500)
+		x_interpolate_cendl = np.linspace(start=0, stop=max(cendl_erg), num=200)
 		f_pred_cendl = scipy.interpolate.interp1d(x=erg, y=pred_xs)
 		predictions_interpolated_cendl = f_pred_cendl(x_interpolate_cendl)
 
@@ -150,7 +150,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	if current_nuclide in JENDL_nuclides:
 		jendl_erg, jendl_xs = General_plotter(df=JENDL, nuclides=[current_nuclide])
 
-		x_interpolate_jendl = np.linspace(start=0, stop=max(jendl_erg), num=500)
+		x_interpolate_jendl = np.linspace(start=0, stop=max(jendl_erg), num=200)
 		f_pred_jendl = scipy.interpolate.interp1d(x=erg, y=pred_xs)
 		predictions_interpolated_jendl = f_pred_jendl(x_interpolate_jendl)
 
@@ -163,7 +163,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	if current_nuclide in JEFF_nuclides:
 		jeff_erg, jeff_xs = General_plotter(df=JEFF, nuclides=[current_nuclide])
 
-		x_interpolate_jeff = np.linspace(start=0, stop=max(jeff_erg), num=500)
+		x_interpolate_jeff = np.linspace(start=0, stop=max(jeff_erg), num=200)
 		f_pred_jeff = scipy.interpolate.interp1d(x=erg, y=pred_xs)
 		predictions_interpolated_jeff = f_pred_jeff(x_interpolate_jeff)
 
@@ -176,7 +176,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	if current_nuclide in TENDL_nuclides:
 		tendl_erg, tendl_xs = General_plotter(df=TENDL, nuclides=[current_nuclide])
 
-		x_interpolate_tendl = np.linspace(start=0, stop=max(tendl_erg), num=500)
+		x_interpolate_tendl = np.linspace(start=0, stop=max(tendl_erg), num=200)
 		f_pred_tendl = scipy.interpolate.interp1d(x=erg, y=pred_xs)
 		predictions_interpolated_tendl = f_pred_tendl(x_interpolate_tendl)
 
