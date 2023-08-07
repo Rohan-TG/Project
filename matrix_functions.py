@@ -39,6 +39,18 @@ def General_plotter(df, nuclides):
 
 
 
+
+def dsigma_dE(XS):
+    dsigma = [x - y for x, y in zip(XS[1:], XS[:-1])]
+    n_turning_points = sum(dsig1 * dsig2 < 0 for dsig1, dsig2 in zip(dsigma[1:], dsigma[:-1]))
+    # if there is a turning point, then consecutive gradients will have opposite polarities.
+    # Hence their product will be negative, which counts towards the number of turning points in
+    # the function.
+    return(n_turning_points)
+
+
+
+
 def feature_fetcher(feature, df, z, a):
 	"""feature: String of feature name (corresponding to column in dataframe)
 	df: dataframe, Library of choice (not that it matters, but TENDL is the obvious
