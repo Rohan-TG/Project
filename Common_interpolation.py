@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import periodictable
 import scipy
-from matrix_functions import General_plotter, range_setter, anomaly_remover, make_train, make_test
+from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE
 import random
 import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error
@@ -11,19 +11,19 @@ import time
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
 JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=215)
+JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
+JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
 
 CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
+CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 
 
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
@@ -34,7 +34,7 @@ df = df[df.Z != 11]
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=30, ua=210, df=df)
 
 
 validation_nuclides = []
@@ -186,7 +186,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_tendl_r2 = r2_score(y_true=tendl_interp_xs, y_pred=predictions_interpolated_tendl)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
-
+	print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
+	print(f"Mean gradient: {sum(abs(np.gradient(pred_xs)))/(len(pred_xs)):0.5f}")
 	# rmse_endf_tendl = mean_squared_error(endfb8_interp_xs, tendl_interp_xs)
 	# rmse_endf_jendl = mean_squared_error(endfb8_interp_xs, jendl_interp_xs)
 	# rmse_tendl_jendl = mean_squared_error(jendl_interp_xs, tendl_interp_xs)
