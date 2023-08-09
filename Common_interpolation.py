@@ -59,6 +59,14 @@ model = xg.XGBRegressor(n_estimators=900,
 						max_leaves=0,
 						seed=42, )
 
+
+# model = xg.XGBRegressor(n_estimators=600,
+# 						reg_lambda = 1.959,
+# 						learning_rate = 0.00856,
+# 						max_depth = 7,
+# 						subsample = 0.1895,
+# 						seed = 42)
+
 model.fit(X_train, y_train)
 print("Training complete")
 predictions = model.predict(X_test)  # XS predictions
