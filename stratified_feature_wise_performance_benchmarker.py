@@ -97,7 +97,7 @@ for nuclide in al:
 	feature_matrix_Decay_Const.append([feat])
 
 
-n_runs = 20
+n_runs = 2
 
 for idx in tqdm.tqdm(range(n_runs)):
 	nuclides_used = []
@@ -130,12 +130,19 @@ for idx in tqdm.tqdm(range(n_runs)):
 		print("Training...")
 
 
-		model = xg.XGBRegressor(n_estimators=900,
-								learning_rate=0.01,
-								max_depth=8,
-								subsample=0.18236,
-								max_leaves=0,
-								seed=42,)
+		# model = xg.XGBRegressor(n_estimators=900,
+		# 						learning_rate=0.01,
+		# 						max_depth=8,
+		# 						subsample=0.18236,
+		# 						max_leaves=0,
+		# 						seed=42,)
+
+		model = xg.XGBRegressor(n_estimators=600,
+								reg_lambda=1.959,
+								learning_rate=0.00856,
+								max_depth=7,
+								subsample=0.1895,
+								seed=42)
 
 		time1 = time.time()
 		model.fit(X_train, y_train)
