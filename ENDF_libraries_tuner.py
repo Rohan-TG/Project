@@ -25,11 +25,11 @@ nucs = range_setter(df=ENDFBVIII, la=30, ua=210)
 
 
 space = {'n_estimators': hp.choice('n_estimators', [500, 600, 700, 800, 850, 900, 950, 1000, 1100,]),
-		 'subsample': hp.loguniform('subsample', np.log(0.1), np.log(1.0)),
+		 'subsample': hp.loguniform('subsample', np.log(0.05), np.log(1.0)),
 		 'max_leaves': 0,
 		 'max_depth': scope.int(hp.quniform("max_depth", 6, 12, 1)),
-		 'reg_lambda': hp.loguniform('lambda', np.log(0.5), np.log(3.0)),
-		 'learning_rate': hp.loguniform('learning_rate', np.log(0.001), np.log(0.3)),
+		 # 'reg_lambda': hp.loguniform('lambda', np.log(0.5), np.log(3.0)),
+		 'learning_rate': hp.loguniform('learning_rate', np.log(0.001), np.log(0.25)),
 		 'gamma': hp.loguniform('gamma', np.log(0.1), np.log(5))}
 
 def optimiser(space):
@@ -163,8 +163,8 @@ best = fmin(fn=optimiser,
             space=space,
             algo=tpe.suggest,
             trials=trials,
-            max_evals=100,
-            early_stop_fn=hyperopt.early_stop.no_progress_loss(50))
+            max_evals=150,
+            early_stop_fn=hyperopt.early_stop.no_progress_loss(60))
 
 print(best)
 
