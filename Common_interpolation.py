@@ -53,16 +53,25 @@ X_test, y_test = make_test(validation_nuclides, df=df_test,)
 print("Data prep done")
 
 model = xg.XGBRegressor(n_estimators=900,
-						learning_rate=0.01,
+						learning_rate=0.008,
 						max_depth=8,
 						subsample=0.18236,
 						max_leaves=0,
 						seed=42, )
 
+# model = xg.XGBRegressor(n_estimators = 1000,
+# 						learning_rate = 0.015,
+# 						max_depth = 9,
+# 						subsample = 0.5222,
+# 						max_leaves = 0,
+# 						gamma = 0.64,
+# 						reg_lambda = 1.6627,
+# 						seed=42)
+
 
 # model = xg.XGBRegressor(n_estimators=600,
 # 						reg_lambda = 1.959,
-# 						learning_rate = 0.00856,
+# 						learning_rate = 0.0095,
 # 						max_depth = 7,
 # 						subsample = 0.1895,
 # 						seed = 42)
