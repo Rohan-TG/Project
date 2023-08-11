@@ -47,7 +47,6 @@ every_true_value_list = []
 all_library_evaluations = []
 all_interpolated_predictions = []
 
-counter = 0
 while len(nuclides_used) < len(al):
 
 
@@ -81,19 +80,19 @@ while len(nuclides_used) < len(al):
 
 	print("Train/val matrices generated")
 
-	# model = xg.XGBRegressor(n_estimators=900,
-	# 						learning_rate=0.01,
-	# 						max_depth=8,
-	# 						subsample=0.18236,
-	# 						max_leaves=0,
-	# 						seed=42,)
+	model = xg.XGBRegressor(n_estimators=900,
+							learning_rate=0.008,
+							max_depth=8,
+							subsample=0.18236,
+							max_leaves=0,
+							seed=42,)
 
-	model = xg.XGBRegressor(n_estimators=600,
-							reg_lambda=1.959,
-							learning_rate=0.00856,
-							max_depth=7,
-							subsample=0.1895,
-							seed=42)
+	# model = xg.XGBRegressor(n_estimators=600,
+	# 						reg_lambda=1.959,
+	# 						learning_rate=0.00856,
+	# 						max_depth=7,
+	# 						subsample=0.1895,
+	# 						seed=42)
 
 	time1 = time.time()
 	model.fit(X_train, y_train)
