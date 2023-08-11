@@ -64,7 +64,7 @@ if __name__ == "__main__":
 	print("Data prep done")
 
 	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.01,
+							learning_rate=0.008,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
