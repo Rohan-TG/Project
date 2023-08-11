@@ -8,7 +8,7 @@ import xgboost as xg
 import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import make_test, make_train, anomaly_remover, range_setter, General_plotter
+from matrix_functions import make_test, make_train, anomaly_remover, range_setter, General_plotter, dsigma_dE
 
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
@@ -134,6 +134,8 @@ if __name__ == "__main__":
 		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 		time.sleep(0.5)
+
+		print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
 
 	print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 	print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
