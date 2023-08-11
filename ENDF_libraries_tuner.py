@@ -78,10 +78,12 @@ def optimiser(space):
 		P_plotmatrix.append(dummy_predictions)
 
 	batch_r2 = []
+	batch_mse = []
 	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i]
 
 		evaluation_r2s = []
+		evaluation_mse = []
 		evaluation_r2s.append(r2_score(y_true=true_xs, y_pred=pred_xs))
 		if nuc in nucs:
 			endfb8_erg, endfb8_xs = General_plotter(df=ENDFBVIII, nuclides=[nuc])
@@ -93,7 +95,9 @@ def optimiser(space):
 			f_endfb8 = scipy.interpolate.interp1d(x=endfb8_erg, y=endfb8_xs, fill_value='extrapolate')
 			endfb8_interp_xs = f_endfb8(x_interpolate_endfb8)
 			pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs, y_pred=predictions_interpolated_endfb8)
+			pred_endfb_mse = mean_squared_error(y_true=endfb8_interp_xs, y_pred=predictions_interpolated_endfb8)
 			evaluation_r2s.append(pred_endfb_r2)
+			evaluation_mse.append(pred_endfb_mse)
 		# print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f}")
 
 		if nuc in CENDL_nuclides:
@@ -106,7 +110,9 @@ def optimiser(space):
 			f_cendl32 = scipy.interpolate.interp1d(x=cendl_erg, y=cendl_xs)
 			cendl_interp_xs = f_cendl32(x_interpolate_cendl)
 			pred_cendl_r2 = r2_score(y_true=cendl_interp_xs, y_pred=predictions_interpolated_cendl)
+			pred_cendl_mse = mean_squared_error(y_true=cendl_interp_xs, y_pred=predictions_interpolated_cendl)
 			evaluation_r2s.append(pred_cendl_r2)
+			evaluation_mse.append(pred_cendl_mse)
 
 		if nuc in JENDL_nuclides:
 			jendl_erg, jendl_xs = General_plotter(df=JENDL, nuclides=[nuc])
@@ -118,7 +124,9 @@ def optimiser(space):
 			f_jendl5 = scipy.interpolate.interp1d(x=jendl_erg, y=jendl_xs)
 			jendl_interp_xs = f_jendl5(x_interpolate_jendl)
 			pred_jendl_r2 = r2_score(y_true=jendl_interp_xs, y_pred=predictions_interpolated_jendl)
+			pred_jendl_mse = mean_squared_error(y_true=jendl_interp_xs, y_pred=predictions_interpolated_jendl)
 			evaluation_r2s.append(pred_jendl_r2)
+			evaluation_mse.append(pred_jendl_mse)
 		# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 		if nuc in JEFF_nuclides:
@@ -131,7 +139,9 @@ def optimiser(space):
 			f_jeff33 = scipy.interpolate.interp1d(x=jeff_erg, y=jeff_xs)
 			jeff_interp_xs = f_jeff33(x_interpolate_jeff)
 			pred_jeff_r2 = r2_score(y_true=jeff_interp_xs, y_pred=predictions_interpolated_jeff)
+			pred_jeff_mse = mean_squared_error(y_true=jeff_interp_xs, y_pred=predictions_interpolated_jeff)
 			evaluation_r2s.append(pred_jeff_r2)
+			evaluation_mse.append(pred_jeff_mse)
 
 		if nuc in TENDL_nuclides:
 			tendl_erg, tendl_xs = General_plotter(df=TENDL, nuclides=[nuc])
@@ -143,10 +153,15 @@ def optimiser(space):
 			f_tendl21 = scipy.interpolate.interp1d(x=tendl_erg, y=tendl_xs)
 			tendl_interp_xs = f_tendl21(x_interpolate_tendl)
 			pred_tendl_r2 = r2_score(y_true=tendl_interp_xs, y_pred=predictions_interpolated_tendl)
+			pred_tendl_mse = mean_squared_error(y_true=tendl_interp_xs, y_pred=predictions_interpolated_tendl)
 			evaluation_r2s.append(pred_tendl_r2)
+			evaluation_mse.append(pred_tendl_mse)
 		# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
 		mean_nuclide_r2 = np.mean(evaluation_r2s)  # r2 for nuclide nuc
+		mean_nuclide_mse = np.mean(evaluation_mse)
+
+		batch_mse.append(mean_nuclide_mse)
 
 		batch_r2.append(mean_nuclide_r2)
 
@@ -154,17 +169,19 @@ def optimiser(space):
 
 	r2 = np.mean(batch_r2)
 
+	mse_overall = np.mean(batch_mse)
+
 	r2_return = 1 - r2
 
-	return {'loss': r2_return, 'status': STATUS_OK, 'model': model}
+	return {'loss': mse_overall, 'status': STATUS_OK, 'model': model}
 
 trials = Trials()
 best = fmin(fn=optimiser,
             space=space,
             algo=tpe.suggest,
             trials=trials,
-            max_evals=150,
-            early_stop_fn=hyperopt.early_stop.no_progress_loss(60))
+            max_evals=250,
+            early_stop_fn=hyperopt.early_stop.no_progress_loss(100))
 
 print(best)
 
