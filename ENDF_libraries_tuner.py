@@ -180,8 +180,8 @@ best = fmin(fn=optimiser,
             space=space,
             algo=tpe.suggest,
             trials=trials,
-            max_evals=150,
-            early_stop_fn=hyperopt.early_stop.no_progress_loss(60))
+            max_evals=250,
+            early_stop_fn=hyperopt.early_stop.no_progress_loss(100))
 
 print(best)
 
