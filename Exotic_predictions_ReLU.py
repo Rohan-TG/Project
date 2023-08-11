@@ -23,11 +23,11 @@ al = range_setter(la=30, ua=215, df=df)
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
+JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
 print("Data loaded")
 
 # validation_nuclides = [[39,85], [39,86],[39,87],
