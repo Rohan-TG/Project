@@ -19,12 +19,14 @@ match_element = []
 for nuclide in endfb_nuclides:
     if nuclide[0] == nuc[0]:
         match_element.append(nuclide)
-min_difference = 100
+nuc_differences = []
 for match_nuclide in match_element:
     difference = match_nuclide[1] - nuc[1]
-    if abs(difference) < abs(min_difference):
-        min_difference = difference
+    nuc_differences.append(difference)
+
+    if difference == min(nuc_differences):
         min_difference_nuclide = match_nuclide
+min_difference = min(nuc_differences)
 
 print(match_element)
 print(min_difference_nuclide)
