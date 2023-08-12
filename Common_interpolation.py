@@ -38,7 +38,7 @@ al = range_setter(la=30, ua=210, df=df)
 
 
 validation_nuclides = []
-validation_set_size = 20
+validation_set_size = 28
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -81,7 +81,7 @@ print("Training complete")
 predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
 for pred in predictions:
-	if pred >= 0.001:
+	if pred >= 0.003:
 		predictions_ReLU.append(pred)
 	else:
 		predictions_ReLU.append(0)
