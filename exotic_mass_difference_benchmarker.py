@@ -73,27 +73,29 @@ for nuclide in exotic_TENDL_nuclides:
     E_plotmatrix.append(dummy_test_E)
     P_plotmatrix.append(dummy_predictions)
 
+r2count = []
+
 for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 
     target_exotic_nuclide = exotic_TENDL_nuclides[i]  # exotic nuclide
 
     r2 = r2_score(y_true=true_xs, y_pred=pred_xs)
+    if r2 > 0.85:
+        r2count.append(r2)
 
     match_element = []
     for nuclide in ENDFB_nuclides:
         if nuclide[0] == target_exotic_nuclide[0]:
             match_element.append(nuclide)
-    min_difference = 100
+    nuc_differences = []
     for match_nuclide in match_element:
         difference = match_nuclide[1] - target_exotic_nuclide[1]
-        if abs(difference) < abs(min_difference):
-            min_difference = difference
-            min_difference_nuclide = match_nuclide
+        nuc_differences.append(difference)
 
-        # if abs(difference) > 5:
-        #     print(match_nuclide, target_exotic_nuclide)
+    if len(nuc_differences) > 0:
+        min_difference = min(nuc_differences)
 
-    mass_difference_with_r2.append([r2, min_difference])
+        mass_difference_with_r2.append([r2, min_difference])
 
 
 log_r2_plots = [abs(np.log(abs(i[0]))) for i in mass_difference_with_r2]
@@ -109,4 +111,5 @@ time2 = time.time()
 
 timediff = time2 - time1
 
+print(f"Good prediction count: {len(r2count)}/{len(exotic_TENDL_nuclides)}")
 print(f"Time taken: {str(datetime.timedelta(seconds=timediff))}")
