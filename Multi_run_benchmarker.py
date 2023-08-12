@@ -163,11 +163,11 @@ while len(nuclides_used) < len(al):
 
 			predictions_interpolated_cendl = f_pred(cendl_erg)
 
-			pred_cendl_mse = mean_squared_error(predictions_interpolated_cendl, cendl_xs)
-			pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=predictions_interpolated_cendl)
+			pred_cendl_mse = mean_squared_error(predictions_interpolated_cendl[1:], cendl_xs[1:])
+			pred_cendl_r2 = r2_score(y_true=cendl_xs[1:], y_pred=predictions_interpolated_cendl[1:])
 
 
-			for libxs, p in zip(cendl_xs, predictions_interpolated_cendl):
+			for libxs, p in zip(cendl_xs[1:], predictions_interpolated_cendl[1:]):
 				all_library_evaluations.append(libxs)
 				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_cendl_r2)
@@ -178,8 +178,8 @@ while len(nuclides_used) < len(al):
 
 			predictions_interpolated_jendl = f_pred(jendl_erg)
 
-			pred_jendl_mse = mean_squared_error(predictions_interpolated_jendl, jendl_xs)
-			pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=predictions_interpolated_jendl)
+			pred_jendl_mse = mean_squared_error(predictions_interpolated_jendl[1:], jendl_xs[1:])
+			pred_jendl_r2 = r2_score(y_true=jendl_xs[1:], y_pred=predictions_interpolated_jendl[1:])
 
 
 			for libxs, p in zip(jendl_xs[1:], predictions_interpolated_jendl[1:]):
@@ -193,10 +193,10 @@ while len(nuclides_used) < len(al):
 
 			predictions_interpolated_jeff = f_pred(jeff_erg)
 
-			pred_jeff_mse = mean_squared_error(predictions_interpolated_jeff, jeff_xs)
-			pred_jeff_r2 = r2_score(y_true=jeff_xs, y_pred=predictions_interpolated_jeff)
+			pred_jeff_mse = mean_squared_error(predictions_interpolated_jeff[1:], jeff_xs[1:])
+			pred_jeff_r2 = r2_score(y_true=jeff_xs[1:], y_pred=predictions_interpolated_jeff[1:])
 
-			for libxs, p in zip(jeff_xs, predictions_interpolated_jeff):
+			for libxs, p in zip(jeff_xs[1:], predictions_interpolated_jeff[1:]):
 				all_library_evaluations.append(libxs)
 				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_jeff_r2)
@@ -206,10 +206,10 @@ while len(nuclides_used) < len(al):
 			tendl_erg, tendl_xs = General_plotter(df=TENDL, nuclides=[current_nuclide])
 			predictions_interpolated_tendl = f_pred(tendl_erg)
 
-			pred_tendl_mse = mean_squared_error(predictions_interpolated_tendl, tendl_xs)
-			pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=predictions_interpolated_tendl)
+			pred_tendl_mse = mean_squared_error(predictions_interpolated_tendl[1:], tendl_xs[1:])
+			pred_tendl_r2 = r2_score(y_true=tendl_xs[1:], y_pred=predictions_interpolated_tendl[1:])
 
-			for libxs, p in zip(tendl_xs, predictions_interpolated_tendl):
+			for libxs, p in zip(tendl_xs[1:], predictions_interpolated_tendl[1:]):
 				all_library_evaluations.append(libxs)
 				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_tendl_r2)
