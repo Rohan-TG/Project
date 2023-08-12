@@ -10,10 +10,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import make_test, make_train, anomaly_remover, range_setter, General_plotter, dsigma_dE
 
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
@@ -42,7 +40,7 @@ print("Data loaded")
 # 					   [40,99],[40,100], [40,101],
 # 					   [40,102]]
 
-validation_nuclides = [[27,63]]
+validation_nuclides = [[57,140]]
 
 validation_set_size = 1 # number of nuclides hidden from training
 
