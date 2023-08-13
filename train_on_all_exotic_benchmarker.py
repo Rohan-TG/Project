@@ -29,12 +29,17 @@ all_libraries = pd.concat([ENDFBVIII, JENDL5])
 # all_libraries = pd.concat([all_libraries, tendl21])
 all_libraries = pd.concat([all_libraries, JEFF33])
 all_libraries = pd.concat([all_libraries, CENDL32])
+all_libraries.index = range(len(all_libraries))
 
 all_libraries_nuclides = range_setter(df=all_libraries, la=30, ua=210)
 
 exotic_TENDL_nuclides = []
+# for tendl_nuclide in TENDL21_nuclides:
+#     if tendl_nuclide not in all_libraries_nuclides:
+#         exotic_TENDL_nuclides.append(tendl_nuclide)
+
 for tendl_nuclide in TENDL21_nuclides:
-    if tendl_nuclide not in all_libraries_nuclides:
+    if tendl_nuclide not in ENDFB_nuclides:
         exotic_TENDL_nuclides.append(tendl_nuclide)
 
 nuclides_used = []
@@ -43,7 +48,7 @@ mass_difference_with_r2 = []
 
 print("Forming matrices...")
 
-X_train, y_train = make_train(df=all_libraries, validation_nuclides=[], la=30, ua=210)  # make training matrix
+X_train, y_train = make_train(df=all_libraries, validation_nuclides=exotic_TENDL_nuclides, la=30, ua=210)  # make training matrix
 
 X_test, y_test = make_test(exotic_TENDL_nuclides, df=TENDL21)
 
