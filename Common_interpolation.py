@@ -182,6 +182,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	print(f"Mean gradient: {sum(abs(np.gradient(pred_xs)))/(len(pred_xs)):0.5f}")
 	# rmse_endf_tendl = mean_squared_error(endfb8_interp_xs, tendl_interp_xs)
 	# rmse_endf_jendl = mean_squared_error(endfb8_interp_xs, jendl_interp_xs)
+
 	# rmse_tendl_jendl = mean_squared_error(jendl_interp_xs, tendl_interp_xs)
 	# rmse_tendl_jeff = mean_squared_error(jeff_interp_xs, tendl_interp_xs)
 	# rmse_endfb_jeff = mean_squared_error(endfb8_interp_xs, jeff_interp_xs)
