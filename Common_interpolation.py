@@ -5,6 +5,7 @@ import periodictable
 import scipy
 from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE
 import random
+import shap
 import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error
 import time
@@ -180,18 +181,167 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 	print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
 	print(f"Mean gradient: {sum(abs(np.gradient(pred_xs)))/(len(pred_xs)):0.5f}")
-	# rmse_endf_tendl = mean_squared_error(endfb8_interp_xs, tendl_interp_xs)
-	# rmse_endf_jendl = mean_squared_error(endfb8_interp_xs, jendl_interp_xs)
 
-	# rmse_tendl_jendl = mean_squared_error(jendl_interp_xs, tendl_interp_xs)
-	# rmse_tendl_jeff = mean_squared_error(jeff_interp_xs, tendl_interp_xs)
-	# rmse_endfb_jeff = mean_squared_error(endfb8_interp_xs, jeff_interp_xs)
-	# rmse_jeff_jendl = mean_squared_error(jeff_interp_xs, jendl_interp_xs)
-	#
-	# print(f"ENDF/B-VIII - TENDL21: {rmse_endf_tendl:0.6f}")
-	# print(f"ENDF/B-VIII - JENDL5: {rmse_endf_jendl:0.6f}")
-	# print(f"TENDL21 - JENDL5: {rmse_tendl_jendl:0.6f}")
-	# print(f"TENDL21 - JEFF3.3: {rmse_tendl_jeff:0.6f}")
-	# print(f"ENDF/B-VIII - JEFF3.3: {rmse_endfb_jeff:0.6f}")
-	# print(f"JEFF3.3 - JENDL5: {rmse_jeff_jendl:0.6f}")
 
+
+model.get_booster().feature_names = ['Z',
+									 'A',
+									 'S2n',
+									 'S2p',
+									 'E',
+									 'Sp',
+									 'Sn',
+									 'BEA',
+									 # 'P',
+									 'Snc',
+									 'g-def',
+									 'N',
+									 'b-def',
+									 'Sn da',
+									 # 'Sp d',
+									 'S2n d',
+									 'Radius',
+									 'n_g_erg',
+									 'n_c_erg',
+									 'n_rms_r',
+									 # 'oct_def',
+									 # 'D_c',
+									 'BEA_d',
+									 'BEA_c',
+									 # 'Pair_d',
+									 # 'Par_d',
+									 # 'S2n_c',
+									 'S2p_c',
+									 'ME',
+									 # 'Z_even',
+									 # 'A_even',
+									 # 'N_even',
+									 'Shell',
+									 'Parity',
+									 'Spin',
+									 'Decay',
+									 # 'Deform',
+									 'p_g_e',
+									 'p_c_e',
+									 # 'p_rms_r',
+									 # 'rms_r',
+									 # 'Sp_c',
+									 # 'Sn_c',
+									 'Shell_c',
+									 # 'S2p-d',
+									 # 'Shell-d',
+									 'Spin-c',
+									 # 'Rad-c',
+									 'Def-c',
+									 # 'ME-c',
+									 'BEA-A-c',
+									 'Decay-d',
+									 # 'ME-d',
+									 # 'Rad-d',
+									 # 'Pair-c',
+									 # 'Par-c',
+									 'BEA-A-d',
+									 # 'Spin-d',
+									 'Def-d',
+									 # 'mag_p',
+									 # 'mag-n',
+									 # 'mag-d',
+									 'Nlow',
+									 # 'Ulow',
+									 # 'Ntop',
+									 'Utop',
+									 # 'ainf',
+									 'Asym',
+									 # 'Asym_c',
+									 'Asym_d',
+									 ]
+
+# Gain-based feature importance plot
+plt.figure(figsize=(10, 12))
+xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
+plt.show()
+
+# Splits-based feature importance plot
+plt.figure(figsize=(10, 12))
+plt.title("Splits-based FI")
+xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
+plt.show()
+
+explainer = shap.Explainer(model.predict, X_train,
+						   feature_names= ['Z',
+									 'A',
+									 'S2n',
+									 'S2p',
+									 'E',
+									 'Sp',
+									 'Sn',
+									 'BEA',
+									 # 'P',
+									 'Snc',
+									 'g-def',
+									 'N',
+									 'b-def',
+									 'Sn da',
+									 # 'Sp d',
+									 'S2n d',
+									 'Radius',
+									 'n_g_erg',
+									 'n_c_erg',
+									 'n_rms_r',
+									 # 'oct_def',
+									 # 'D_c',
+									 'BEA_d',
+									 'BEA_c',
+									 # 'Pair_d',
+									 # 'Par_d',
+									 # 'S2n_c',
+									 'S2p_c',
+									 'ME',
+									 # 'Z_even',
+									 # 'A_even',
+									 # 'N_even',
+									 'Shell',
+									 'Parity',
+									 'Spin',
+									 'Decay',
+									 # 'Deform',
+									 'p_g_e',
+									 'p_c_e',
+									 # 'p_rms_r',
+									 # 'rms_r',
+									 # 'Sp_c',
+									 # 'Sn_c',
+									 'Shell_c',
+									 # 'S2p-d',
+									 # 'Shell-d',
+									 'Spin-c',
+									 # 'Rad-c',
+									 'Def-c',
+									 # 'ME-c',
+									 'BEA-A-c',
+									 'Decay-d',
+									 # 'ME-d',
+									 # 'Rad-d',
+									 # 'Pair-c',
+									 # 'Par-c',
+									 'BEA-A-d',
+									 # 'Spin-d',
+									 'Def-d',
+									 # 'mag_p',
+									 # 'mag-n',
+									 # 'mag-d',
+									 'Nlow',
+									 # 'Ulow',
+									 # 'Ntop',
+									 'Utop',
+									 # 'ainf',
+									 'Asym',
+									 # 'Asym_c',
+									 'Asym_d',
+									 ]) # SHAP feature importance analysis
+shap_values = explainer(X_test)
+
+
+
+shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+shap.plots.waterfall(shap_values[0], max_display=70)
