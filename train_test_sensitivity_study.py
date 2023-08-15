@@ -47,7 +47,7 @@ every_true_value_list = []
 
 
 
-val_set_sizes = [5, 10, 20, 30, 40, 50, 75, 80, 90, 100]
+val_set_sizes = [5, 10, 20, 25, 30, 40, 50, 60, 75, 90, 100, 125, 150]
 # val_set_sizes = [200, 250]
 set_overall_r2 = []
 set_overall_train_r2 = []
