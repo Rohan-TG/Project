@@ -47,7 +47,7 @@ every_true_value_list = []
 
 
 
-val_set_sizes = [5, 10, 20, 25, 30, 40, 50, 60, 75, 90, 100, 125, 150]
+val_set_sizes = [5, 10, 20, 25, 30, 40, 50, 75, 90, 100, 125, 150]
 # val_set_sizes = [200, 250]
 set_overall_r2 = []
 set_overall_train_r2 = []
@@ -203,7 +203,7 @@ for set in tqdm.tqdm(val_set_sizes):
 
 			r2 = np.mean(evaluation_r2s)
 			# r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
-			print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+			# print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
 			mse = mean_squared_error(true_xs, pred_xs)
 
