@@ -4,9 +4,11 @@ from matrix_functions import range_setter, General_plotter
 from sklearn.metrics import r2_score
 import periodictable
 import scipy
+import matplotlib.pyplot as plt
+
 tendl = pd.read_csv('TENDL21_MT16_XS_features_zeroed.csv')
 endfb = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-cendl = pd.read_csv("CENDL33_features_arange_zeroed.csv")
+cendl = pd.read_csv("CENDL32_features_arange_zeroed.csv")
 jeff = pd.read_csv("JEFF33_features_arange_zeroed.csv")
 jendl = pd.read_csv("JENDL5_arange_all_features.csv")
 
@@ -19,6 +21,8 @@ jendl_nuclides = range_setter(df=jendl, la=30, ua=210)
 
 
 all_r2s = []
+
+endfb_nuclides = [[56,140]]
 
 for i in endfb_nuclides:
 
@@ -102,6 +106,20 @@ for i in endfb_nuclides:
 
     print(np.mean(nuclide_r2_array))
 
+    if current_nuclide in jeff_nuclides:
+        plt.plot(jefferg, jeffxs, '--', label='JEFF3.3', color='mediumvioletred')
+    if current_nuclide in jendl_nuclides:
+        plt.plot(jendlerg, jendlxs, label='JENDL5', color='green')
+    if current_nuclide in cendl_nuclides:
+        plt.plot(cendlerg, cendlxs, '--', label='CENDL3.2', color='gold')
+    plt.plot(tendlerg, tendlxs, label="TENDL21", color='dimgrey', linewidth=2)
+    plt.plot(endfb_erg,  endfb_xs, label = 'ENDF/B-VIII', linewidth=2)
+    plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
+    plt.legend()
+    plt.grid()
+    plt.ylabel('$\sigma_{n,2n}$ / b')
+    plt.xlabel('Energy / MeV')
+    plt.show()
 
     all_r2s.append(nuclide_r2_array)
 
