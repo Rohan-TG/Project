@@ -397,7 +397,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			Asymmetry_train.append(Asymmetry[idx])
 			Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
-			AM_train.append(AM[idk])
+			AM_train.append(AM[idx])
 
 	X = np.array([Z_train,
 				  A_train,
