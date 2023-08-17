@@ -254,6 +254,7 @@ model.get_booster().feature_names = ['Z',
 									 'Asym',
 									 # 'Asym_c',
 									 'Asym_d',
+									 'AM'
 									 ]
 
 # Gain-based feature importance plot
@@ -338,6 +339,7 @@ explainer = shap.Explainer(model.predict, X_train,
 									 'Asym',
 									 # 'Asym_c',
 									 'Asym_d',
+										   'AM'
 									 ]) # SHAP feature importance analysis
 shap_values = explainer(X_test)
 
