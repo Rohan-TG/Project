@@ -39,7 +39,7 @@ al = range_setter(la=30, ua=210, df=df)
 
 
 validation_nuclides = []
-validation_set_size = 28
+validation_set_size = 30
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -254,7 +254,7 @@ model.get_booster().feature_names = ['Z',
 									 'Asym',
 									 # 'Asym_c',
 									 'Asym_d',
-									 'AM'
+									 # 'AM'
 									 ]
 
 # Gain-based feature importance plot
@@ -339,7 +339,7 @@ explainer = shap.Explainer(model.predict, X_train,
 									 'Asym',
 									 # 'Asym_c',
 									 'Asym_d',
-										   'AM'
+										   # 'AM'
 									 ]) # SHAP feature importance analysis
 shap_values = explainer(X_test)
 
