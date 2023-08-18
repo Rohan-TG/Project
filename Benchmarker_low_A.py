@@ -18,22 +18,22 @@ df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, bu
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=0, ua=50)
+TENDL_nuclides = range_setter(df=TENDL, la=0, ua=60)
 
 JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=0, ua=50)
+JEFF_nuclides = range_setter(df=JEFF, la=0, ua=60)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=0, ua=50)
+JENDL_nuclides = range_setter(df=JENDL, la=0, ua=60)
 
-CENDL = pd.read_csv('CENDL33_features_arange_zeroed.csv')
+CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=0, ua=50)
+CENDL_nuclides = range_setter(df=CENDL, la=0, ua=60)
 
 
-al = range_setter(la=0, ua=50, df=df)
+al = range_setter(la=0, ua=60, df=df)
 
 log_reduction_var = 0.0001
 
@@ -41,7 +41,8 @@ nuclides_used = []
 
 nuclide_mse = []
 nuclide_r2 = []
-
+all_library_evaluations = []
+all_interpolated_predictions = []
 
 every_prediction_list = []
 every_true_value_list = []
@@ -68,7 +69,7 @@ while len(nuclides_used) < len(al):
 
 
 	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides,
-									  la=0, ua=50, log_reduction_variable=log_reduction_var) # make training matrix
+									  la=0, ua=60, log_reduction_variable=log_reduction_var) # make training matrix
 
 	X_test, y_test = log_make_test(validation_nuclides, df=df_test,
 								   log_reduction_variable=log_reduction_var)
@@ -76,8 +77,8 @@ while len(nuclides_used) < len(al):
 	print("Train/val matrices generated")
 
 
-	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.015,
+	model = xg.XGBRegressor(n_estimators=600,
+							learning_rate=0.01,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
@@ -116,29 +117,39 @@ while len(nuclides_used) < len(al):
 
 		evaluation_r2s = []
 
-		if nuc in al:
-			endfb8_erg, endfb8_xs = General_plotter(df=df, nuclides=[nuc])
+		# endf_erg, endf_xs = General_plotter(df=df, nuclides=[nuc])
 
-			x_interpolate_endfb8 = np.linspace(start=0.00000000, stop=max(endfb8_erg), num=500)
-			f_pred_endfb8 = scipy.interpolate.interp1d(x=erg, y=pred_xs)
-			predictions_interpolated_endfb8 = f_pred_endfb8(x_interpolate_endfb8)
+		for libxs, p in zip(true_xs, pred_xs):
+			all_library_evaluations.append(libxs)
+			all_interpolated_predictions.append(p)
 
-			f_endfb8 = scipy.interpolate.interp1d(x=endfb8_erg, y=endfb8_xs)
-			endfb8_interp_xs = f_endfb8(x_interpolate_endfb8)
-			pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs, y_pred=predictions_interpolated_endfb8)
-			evaluation_r2s.append(pred_endfb_r2)
+		# if nuc in al:
+		# 	endfb8_erg, endfb8_xs = General_plotter(df=df, nuclides=[nuc])
+		#
+		# 	x_interpolate_endfb8 = np.linspace(start=0.0, stop=max(endfb8_erg), num=500)
+		# 	f_pred_endfb8 = scipy.interpolate.interp1d(x=erg, y=pred_xs)
+		# 	predictions_interpolated_endfb8 = f_pred_endfb8(x_interpolate_endfb8)
+		#
+		# 	f_endfb8 = scipy.interpolate.interp1d(x=endfb8_erg, y=endfb8_xs)
+		# 	endfb8_interp_xs = f_endfb8(x_interpolate_endfb8)
+		# 	pred_endfb_r2 = r2_score(y_true=endfb8_interp_xs[1:], y_pred=predictions_interpolated_endfb8[1:])
+		# 	evaluation_r2s.append(pred_endfb_r2)
 		# print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
 
 		if nuc in CENDL_nuclides:
 			cendl_erg, cendl_xs = General_plotter(df=CENDL, nuclides=[nuc])
 
-			x_interpolate_cendl = np.linspace(start=0.000000001, stop=max(cendl_erg), num=500)
+			x_interpolate_cendl = np.linspace(start=0.0, stop=max(cendl_erg), num=500)
 			f_pred_cendl = scipy.interpolate.interp1d(x=erg, y=pred_xs, fill_value='extrapolate')
 			predictions_interpolated_cendl = f_pred_cendl(x_interpolate_cendl)
 
 			f_cendl32 = scipy.interpolate.interp1d(x=cendl_erg, y=cendl_xs)
 			cendl_interp_xs = f_cendl32(x_interpolate_cendl)
-			pred_cendl_r2 = r2_score(y_true=cendl_interp_xs, y_pred=predictions_interpolated_cendl)
+			pred_cendl_r2 = r2_score(y_true=cendl_interp_xs[1:], y_pred=predictions_interpolated_cendl[1:])
+
+			for libxs, p in zip(cendl_xs[1:], predictions_interpolated_cendl[1:]):
+				all_library_evaluations.append(libxs)
+				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_cendl_r2)
 		# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
@@ -151,7 +162,11 @@ while len(nuclides_used) < len(al):
 
 			f_jendl5 = scipy.interpolate.interp1d(x=jendl_erg, y=jendl_xs)
 			jendl_interp_xs = f_jendl5(x_interpolate_jendl)
-			pred_jendl_r2 = r2_score(y_true=jendl_interp_xs, y_pred=predictions_interpolated_jendl)
+			pred_jendl_r2 = r2_score(y_true=jendl_interp_xs[1:], y_pred=predictions_interpolated_jendl[1:])
+
+			for libxs, p in zip(jendl_xs[1:], predictions_interpolated_jendl[1:]):
+				all_library_evaluations.append(libxs)
+				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_jendl_r2)
 		# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
@@ -164,7 +179,11 @@ while len(nuclides_used) < len(al):
 
 			f_jeff33 = scipy.interpolate.interp1d(x=jeff_erg, y=jeff_xs)
 			jeff_interp_xs = f_jeff33(x_interpolate_jeff)
-			pred_jeff_r2 = r2_score(y_true=jeff_interp_xs, y_pred=predictions_interpolated_jeff)
+			pred_jeff_r2 = r2_score(y_true=jeff_interp_xs[1:], y_pred=predictions_interpolated_jeff[1:])
+
+			for libxs, p in zip(jeff_xs[1:], predictions_interpolated_jeff[1:]):
+				all_library_evaluations.append(libxs)
+				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_jeff_r2)
 
 		if nuc in TENDL_nuclides:
@@ -176,7 +195,11 @@ while len(nuclides_used) < len(al):
 
 			f_tendl21 = scipy.interpolate.interp1d(x=tendl_erg, y=tendl_xs)
 			tendl_interp_xs = f_tendl21(x_interpolate_tendl)
-			pred_tendl_r2 = r2_score(y_true=tendl_interp_xs, y_pred=predictions_interpolated_tendl)
+			pred_tendl_r2 = r2_score(y_true=tendl_interp_xs[1:], y_pred=predictions_interpolated_tendl[1:])
+			for libxs, p in zip(tendl_xs[1:], predictions_interpolated_tendl[1:]):
+				all_library_evaluations.append(libxs)
+				all_interpolated_predictions.append(p)
+
 			evaluation_r2s.append(pred_tendl_r2)
 		# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
@@ -203,6 +226,9 @@ print()
 
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
+all_libraries_r2 = r2_score(y_true=all_library_evaluations, y_pred= all_interpolated_predictions)
+print(f"Overall R2: {all_libraries_r2:0.5f}")
+
 A_plots = [i[1] for i in nuclide_r2]
 Z_plots = [i[0] for i in nuclide_r2]
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
@@ -211,8 +237,8 @@ Z_plots = [i[0] for i in nuclide_r2]
 log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 
-heavy_performance = [abs(np.log(abs(i[-1]))) for i in nuclide_r2 if i[1] < 50]
-print(f"Light performance: {heavy_performance},\n mean: {np.mean(heavy_performance)}")
+# heavy_performance = [abs(np.log(abs(i[-1]))) for i in nuclide_r2 if i[1] < 50]
+# print(f"Light performance: {heavy_performance},\n mean: {np.mean(heavy_performance)}")
 
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
