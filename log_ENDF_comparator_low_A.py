@@ -65,7 +65,7 @@ X_test, y_test = log_make_test(validation_nuclides, df=df_test,
 
 print("Data prep done")
 
-model = xg.XGBRegressor(n_estimators=600,
+model = xg.XGBRegressor(n_estimators=500,
 						learning_rate=0.007,
 						max_depth=8,
 						subsample=0.2,
@@ -116,11 +116,11 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.plot(erg, true_xs, label='ENDF/B-VIII')
 	plt.plot(tendl_energy, tendl_xs, label = "TENDL21", color='dimgrey')
 	if current_nuclide in JEFF_nuclides:
-		plt.plot(JEFF_energy, JEFF_XS, label='JEFF3.3',color='mediumvioletred')
+		plt.plot(JEFF_energy, JEFF_XS, '--', label='JEFF3.3',color='mediumvioletred')
 	if current_nuclide in JENDL_nuclides:
 		plt.plot(JENDL5_energy, JENDL5_XS, label='JENDL5', color='green')
 	if current_nuclide in CENDL_nuclides:
-		plt.plot(CENDL32_energy, CENDL32_XS, label='CENDL3.2', color='gold')
+		plt.plot(CENDL32_energy, CENDL32_XS, '--', label='CENDL3.2', color='gold')
 	plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 	plt.legend()
 	plt.grid()
@@ -133,7 +133,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 	print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
-	f_pred = scipy.interpolate.interp1d(x=erg, y=pred_xs)
+	f_pred = scipy.interpolate.interp1d(x=erg, y=pred_xs, fill_value='extrapolate')
 
 	if current_nuclide in CENDL_nuclides:
 		cendl_erg, cendl_xs = General_plotter(df=CENDL, nuclides=[current_nuclide])
