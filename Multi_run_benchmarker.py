@@ -54,7 +54,7 @@ while len(nuclides_used) < len(al):
 
 	validation_nuclides = []  # list of nuclides used for validation
 	# test_nuclides = []
-	validation_set_size = 250  # number of nuclides hidden from training
+	validation_set_size = 25  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
 
