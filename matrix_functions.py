@@ -235,7 +235,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	Decay_daughter = df['Decay_daughter']
 	Asymmetry_daughter = df['Asymmetry_daughter']
 
-	AM = df['AM']
+	# AM = df['AM']
 
 	Z_train = []
 	A_train = []
@@ -318,7 +318,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	# Parity_compound_train = []
 	Asymmetry_compound_train = []
 
-	AM_train = []
+	# AM_train = []
 
 	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
@@ -397,7 +397,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			Asymmetry_train.append(Asymmetry[idx])
 			Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
-			AM_train.append(AM[idx])
+			# AM_train.append(AM[idx])
 
 	X = np.array([Z_train,
 				  A_train,
@@ -472,7 +472,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 				  Asymmetry_train,
 				  # Asymmetry_compound_train,
 				  Asymmetry_daughter_train,
-				  AM_train,
+				  # AM_train,
 				  ])
 	y = np.array(XS_train) # cross sections
 
@@ -493,7 +493,7 @@ def make_test(nuclides, df):
 
 
 	# MT = df['MT']
-	AM = df['AM']
+	# AM = df['AM']
 	ME = df['ME']
 	Z = df['Z']
 	A = df['A']
@@ -572,7 +572,7 @@ def make_test(nuclides, df):
 	Decay_daughter = df['Decay_daughter']
 	Asymmetry_daughter = df['Asymmetry_daughter']
 
-	AM_test = []
+	# AM_test = []
 	Z_test = []
 	A_test = []
 	S2n_test = []
@@ -716,7 +716,7 @@ def make_test(nuclides, df):
 				Decay_daughter_test.append(Decay_daughter[j])
 				ME_daughter_test.append(ME_daughter[j])
 				# Radius_daughter_test.append(Radius_daughter[j])
-				AM_test.append(AM[j])
+				# AM_test.append(AM[j])
 				# Pairing_compound_test.append(Pairing_compound[j])
 				# Parity_compound_test.append(Parity_compound[j])
 				BEA_A_daughter_test.append(BEA_A_daughter[j])
@@ -735,78 +735,79 @@ def make_test(nuclides, df):
 
 
 	xtest = np.array([Z_test,
-				  A_test,
-				  S2n_test,
-				  S2p_test,
-				  Energy_test,
-				  Sp_test,
-				  Sn_test,
-				  BEA_test,
-				  # Pairing_train,
-				  Sn_c_test,
-				  gd_test,
-				  N_test,
-				  bd_test,
-				  Sn_d_test,
-				  # Sp_d_train,
-				  S2n_d_test,
-				  Radius_test,
-				  n_gap_erg_test,
-				  n_chem_erg_test,
-				  # xs_max_train,
-				  n_rms_radius_test,
-				  # octupole_deformation_train,
-				  # Decay_compound_train,
-				  BEA_daughter_test,
-				  BEA_compound_test,
-				  # Pairing_daughter_train,
-				  # Parity_daughter_train,
-				  # S2n_compound_train,
-				  S2p_compound_test,
-				  ME_test,
-				  # Z_even_train,
-				  # A_even_train,
-				  # N_even_train,
-				  Shell_test,
-				  Parity_test,
-				  Spin_test,
-				  Decay_Const_test,
-				  # Deform_train,
-				  p_gap_erg_test,
-				  p_chem_erg_test,
-				  # p_rms_radius_train,
-				  # rms_radius_train,
-				  # Sp_compound_test,
-				  # Sn_compound_train,
-				  Shell_compound_test,
-				  # S2p_daughter_train,
-				  # Shell_daughter_train,
-				  Spin_compound_test,
-				  # Radius_compound_train,
-				  Deform_compound_test,
-				  # ME_compound_train,
-				  BEA_A_compound_test,
-				  Decay_daughter_test,
-				  # ME_daughter_train,
-				  # Radius_daughter_train,
-				  # Pairing_compound_train,
-				  # Parity_compound_train,
-				  BEA_A_daughter_test,
-				  # Spin_daughter_train,
-				  Deform_daughter_test,
-				  # cat_proton_train,
-				  # cat_neutron_train,
-				  # cat_double_train,
-				  Nlow_test,
-				  # Ulow_train,
-				  # Ntop_train,
-				  Utop_test,
-				  # ainf_train,
-				  # XSlow_train,
-
-				  Asymmetry_test,
-				  # Asymmetry_compound_train,
-				  Asymmetry_daughter_test,AM_test,])
+	A_test,
+	S2n_test,
+	S2p_test,
+	Energy_test,
+	Sp_test,
+	Sn_test,
+	BEA_test,
+	# Pairing_train,
+	Sn_c_test,
+	gd_test,
+	N_test,
+	bd_test,
+	Sn_d_test,
+	# Sp_d_train,
+	S2n_d_test,
+	Radius_test,
+	n_gap_erg_test,
+	n_chem_erg_test,
+	# xs_max_train,
+	n_rms_radius_test,
+	# octupole_deformation_train,
+	# Decay_compound_train,
+	BEA_daughter_test,
+	  BEA_compound_test,
+	# Pairing_daughter_train,
+	# Parity_daughter_train,
+	# S2n_compound_train,
+	S2p_compound_test,
+	ME_test,
+	# Z_even_train,
+	# A_even_train,
+	# N_even_train,
+	Shell_test,
+	Parity_test,
+	Spin_test,
+	Decay_Const_test,
+	# Deform_train,
+	p_gap_erg_test,
+	p_chem_erg_test,
+	# p_rms_radius_train,
+	# rms_radius_train,
+	# Sp_compound_test,
+	# Sn_compound_train,
+	Shell_compound_test,
+	# S2p_daughter_train,
+	# Shell_daughter_train,
+	  Spin_compound_test,
+	# Radius_compound_train,
+	Deform_compound_test,
+	# ME_compound_train,
+	BEA_A_compound_test,
+	Decay_daughter_test,
+	# ME_daughter_train,
+	# Radius_daughter_train,
+	# Pairing_compound_train,
+	# Parity_compound_train,
+	BEA_A_daughter_test,
+	# Spin_daughter_train,
+	Deform_daughter_test,
+	# cat_proton_train,
+	# cat_neutron_train,
+	# cat_double_train,
+	Nlow_test,
+	  # Ulow_train,
+	# Ntop_train,
+	Utop_test,
+	# ainf_train,
+	# XSlow_train,
+	Asymmetry_test,
+	# Asymmetry_compound_train,
+	Asymmetry_daughter_test,
+	# AM_test,
+	])
 
 	xtest = np.transpose(xtest)
 
