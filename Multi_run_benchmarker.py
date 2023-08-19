@@ -15,23 +15,23 @@ from matrix_functions import make_train, make_test, range_setter, General_plotte
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-al = range_setter(df=df, la=0, ua=270)
+al = range_setter(df=df, la=30, ua=210)
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=0, ua=270)
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
 JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=0, ua=270)
+JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=0, ua=270)
+JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
 
 CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=0, ua=270)
+CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 
 
 
@@ -47,6 +47,7 @@ every_true_value_list = []
 all_library_evaluations = []
 all_interpolated_predictions = []
 
+tally = 0
 while len(nuclides_used) < len(al):
 
 
@@ -71,7 +72,7 @@ while len(nuclides_used) < len(al):
 	# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=1, ua=270) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -217,6 +218,8 @@ while len(nuclides_used) < len(al):
 
 
 		r2 = np.mean(evaluation_r2s)
+		if r2 > 0.95:
+			tally += 1
 		# r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
@@ -249,6 +252,8 @@ all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=al
 all_libraries_r2 = r2_score(y_true=all_library_evaluations, y_pred= all_interpolated_predictions)
 print(f"MSE: {all_libraries_mse:0.5f}")
 print(f"R2: {all_libraries_r2:0.5f}")
+
+print(f"Good predictions {tally}/{len(al)}")
 
 A_plots = [i[1] for i in nuclide_r2]
 Z_plots = [i[0] for i in nuclide_r2]
