@@ -138,8 +138,6 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}, MSE: {mse:0.5f}")
 	time.sleep(0.8)
 
-	f_pred = scipy.interpolate.interp1d(x=erg, y=pred_xs)
-
 	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
 	pred_endfb_r2 = r2_score(y_true=true_xs, y_pred=pred_xs)
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
