@@ -10,7 +10,7 @@ import time
 import scipy
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import make_test, make_train, range_setter, General_plotter
+from matrix_functions import log_make_test, log_make_train, range_setter, General_plotter
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
@@ -35,6 +35,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=60)
 
 al = range_setter(la=0, ua=60, df=df)
 
+log_reduction_var = 0.00001
 
 nuclides_used = []
 
@@ -66,10 +67,11 @@ while len(nuclides_used) < len(al):
 	print(f"{len(nuclides_used)}/{len(al)} selections")
 
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides,
-									  la=0, ua=60,) # make training matrix
+	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides,
+									  la=0, ua=60, log_reduction_variable=log_reduction_var) # make training matrix
 
-	X_test, y_test = make_test(validation_nuclides, df=df_test)
+	X_test, y_test = log_make_test(validation_nuclides, df=df_test,
+								   log_reduction_variable=log_reduction_var)
 
 	print("Train/val matrices generated")
 
@@ -121,50 +123,61 @@ while len(nuclides_used) < len(al):
 			all_interpolated_predictions.append(p)
 
 		if nuc in CENDL_nuclides:
-			cendl_test, cendl_xs = make_test(nuclides=[nuc], df=CENDL)
-			pred_cendl = model.predict(cendl_test)
+			cendl_test, cendl_xs = log_make_test(nuclides=[nuc], df=CENDL,
+												 log_reduction_variable=log_reduction_var)
 
-			pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
-			pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
-			for libxs, p in zip(cendl_xs, pred_cendl):
+			log_preds_cendl = model.predict(cendl_test)
+			cendl_xs = [(np.exp(k) - log_reduction_var) for k in cendl_xs]
+			preds_cendl = [(np.exp(k) - log_reduction_var) for k in log_preds_cendl]
+
+			pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=preds_cendl)
+
+			for libxs, p in zip(cendl_xs, preds_cendl):
 				all_library_evaluations.append(libxs)
 				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_cendl_r2)
 		# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
 		if nuc in JENDL_nuclides:
-			jendl_test, jendl_xs = make_test(nuclides=[nuc], df=JENDL)
-			pred_jendl = model.predict(jendl_test)
+			jendl_test, jendl_xs = log_make_test(nuclides=[nuc], df=JENDL,
+												 log_reduction_variable=log_reduction_var)
 
-			pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-			pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
+			log_preds_jendl = model.predict(jendl_test)
+			jendl_xs = [np.exp(k) - log_reduction_var for k in jendl_xs]
+			preds_jendl = [(np.exp(k) - log_reduction_var) for k in log_preds_jendl]
 
-			for libxs, p in zip(jendl_xs, pred_jendl):
+			pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=preds_jendl)
+
+			for libxs, p in zip(jendl_xs, preds_jendl):
 				all_library_evaluations.append(libxs)
 				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_jendl_r2)
 		# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 		if nuc in JEFF_nuclides:
-			jeff_test, jeff_xs = make_test(nuclides=[nuc], df=JEFF)
+			jeff_test, jeff_xs = log_make_test(nuclides=[nuc], df=JEFF,
+												 log_reduction_variable=log_reduction_var)
+			log_preds_jeff = model.predict(jeff_test)
+			jeff_xs = [np.exp(k) - log_reduction_var for k in jeff_xs]
+			preds_jeff = [(np.exp(k) - log_reduction_var) for k in log_preds_jeff]
 
-			pred_jeff = model.predict(jeff_test)
+			pred_jeff_r2 = r2_score(y_true=jeff_xs, y_pred=preds_jeff)
 
-			pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-			pred_jeff_r2 = r2_score(y_true=jeff_xs, y_pred=pred_jeff)
-			for libxs, p in zip(jeff_xs, pred_jeff):
+			for libxs, p in zip(jeff_xs, preds_jeff):
 				all_library_evaluations.append(libxs)
 				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_jeff_r2)
 
 		if nuc in TENDL_nuclides:
-			tendl_test, tendl_xs = make_test(nuclides=[nuc], df=TENDL)
-			pred_tendl = model.predict(tendl_test)
+			tendl_test, tendl_xs = log_make_test(nuclides=[nuc], df=TENDL,
+												 log_reduction_variable=log_reduction_var)
+			log_preds_tendl = model.predict(tendl_test)
+			tendl_xs = [np.exp(k) - log_reduction_var for k in tendl_xs]
+			preds_tendl = [(np.exp(k) - log_reduction_var) for k in log_preds_tendl]
 
-			pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-			pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
+			pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=preds_tendl)
 
-			for libxs, p in zip(tendl_xs, pred_tendl):
+			for libxs, p in zip(tendl_xs, preds_tendl):
 				all_library_evaluations.append(libxs)
 				all_interpolated_predictions.append(p)
 			evaluation_r2s.append(pred_tendl_r2)
@@ -174,6 +187,9 @@ while len(nuclides_used) < len(al):
 
 		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {mean_nuclide_r2:0.5f}")
 
+		# mse = mean_squared_error(true_xs, pred_xs)
+
+		# nuclide_mse.append([nuc[0], nuc[1], mse])
 		nuclide_r2.append([nuc[0], nuc[1], mean_nuclide_r2])
 		# individual_r2_list.append(r2)
 
