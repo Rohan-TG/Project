@@ -14,7 +14,7 @@ TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
-JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
+JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
 JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
 
@@ -22,7 +22,7 @@ JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
 
-CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
+CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 
@@ -145,12 +145,12 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
 
 	if current_nuclide in CENDL_nuclides:
-		cendl_erg, cendl_xs = General_plotter(df=CENDL, nuclides=[current_nuclide])
 
-		predictions_interpolated_cendl = f_pred(cendl_erg)
+		cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
+		pred_cendl = model.predict(cendl_test)
 
-		pred_cendl_mse = mean_squared_error(predictions_interpolated_cendl, cendl_xs)
-		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=predictions_interpolated_cendl)
+		pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
+		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
 		print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
 	if current_nuclide in JENDL_nuclides:
@@ -163,12 +163,12 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 	if current_nuclide in JEFF_nuclides:
-		jeff_erg, jeff_xs = General_plotter(df=JEFF, nuclides=[current_nuclide])
+		jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF)
 
-		predictions_interpolated_jeff = f_pred(jeff_erg)
+		pred_jeff = model.predict(jeff_test)
 
-		pred_jeff_mse = mean_squared_error(predictions_interpolated_jeff, jeff_xs)
-		pred_jeff_r2 = r2_score(y_true=jeff_xs, y_pred=predictions_interpolated_jeff)
+		pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
+		pred_jeff_r2 = r2_score(y_true=jeff_xs, y_pred=pred_jeff)
 		print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
 
 	if current_nuclide in TENDL_nuclides:
