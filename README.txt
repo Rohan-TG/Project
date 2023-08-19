@@ -1,15 +1,11 @@
 Any questions/concerns please email rnt26@cam.ac.uk
 
 CURRENTLY IN USE - 1 < A < 255
-ENDF/B-VIII data with features (19.2 MB): https://drive.google.com/file/d/1jG6yP5L9XUsA3KXYVl3jfXoITtOxTJYb/view?usp=drive_link
-JENDL5 with features (39.3 MB): https://drive.google.com/file/d/1gx1tGePpG61Y7ykC73r8uO-3NaPNg-lq/view?usp=drive_link
-CENDL3.2 with features (16.8 MB): https://drive.google.com/file/d/1hXg8GL-GLiGKVD2M8cJebGo7UPHoJajU/view?usp=drive_link
-TENDL21 with features (154.1 MB): https://drive.google.com/file/d/1V-qARaUFJ3UG-IMjvzxLzNFH306A5OfP/view?usp=drive_link
-JEFF3.3 with features (33.7 MB): https://drive.google.com/file/d/1eHnWfEl0uAWXg8rA9wbisTZf3hv6VfhV/view?usp=drive_link
-
-ReLU_ENDF_comparator.py
- is the main script in use for training and testing.
-Benchmarker_zeroed.py evaluates a given model's performance over all the data using manual k-fold cross validation.
+ENDF/B-VIII data with features (19.2 MB): https://drive.google.com/file/d/1QNpYC0647buCRA3PrY3MGJ0iRAaXFbWb/view?usp=drive_link
+JENDL-5 with features (34 MB): https://drive.google.com/file/d/1ekuekIWEKcv3qA9rhaVBDDewIMf3ETBl/view?usp=drive_link
+CENDL-3.2 with features (16.8 MB): https://drive.google.com/file/d/1eAymdoXFIY2z0qKjTzScVXTM30GmaH82/view?usp=drive_link
+TENDL-2021 with features (134.9 MB): https://drive.google.com/file/d/1SLPpO1IXmPAS7KqbIPIK_0W096Jd8kF7/view?usp=drive_link
+JEFF-3.3 with features (33.7 MB): https://drive.google.com/file/d/1CuneID6OurylE30MLkJ4MYwA6SY2zUIG/view?usp=drive_link
 
 Requirements for running the script:
 Numpy 1.24.3
