@@ -46,7 +46,7 @@ for x in TENDL_nuclides:
 
 validation_nuclides = []
 
-validation_set_size = 1 #
+validation_set_size = 25
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(exotic_nuclides) # randomly select nuclide from list of all nuclides
