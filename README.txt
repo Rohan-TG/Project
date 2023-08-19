@@ -7,6 +7,8 @@ CENDL-3.2 with features (16.8 MB): https://drive.google.com/file/d/1eAymdoXFIY2z
 TENDL-2021 with features (134.9 MB): https://drive.google.com/file/d/1SLPpO1IXmPAS7KqbIPIK_0W096Jd8kF7/view?usp=drive_link
 JEFF-3.3 with features (33.7 MB): https://drive.google.com/file/d/1CuneID6OurylE30MLkJ4MYwA6SY2zUIG/view?usp=drive_link
 
+Level Density Parameters: https://drive.google.com/file/d/1X_g66YiBr2ifDbQag7Gk3GLj4TzShGoP/view?usp=drive_link
+
 Requirements for running the script:
 Numpy 1.24.3
 pandas 2.0.1
