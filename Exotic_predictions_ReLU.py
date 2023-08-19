@@ -136,7 +136,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 	time.sleep(0.5)
 
-	print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
+	print(f"Turning points: {dsigma_dE(XS=pred_xs)}\n")
 
 print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
