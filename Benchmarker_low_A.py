@@ -98,9 +98,9 @@ while len(nuclides_used) < len(al):
 		dummy_predictions = []
 		for i, row in enumerate(X_test):
 			if [row[0], row[1]] == nuclide:
-				dummy_test_XS.append(np.exp(y_test[i]) - log_reduction_var)
+				dummy_test_XS.append(y_test[i])
 				dummy_test_E.append(row[4]) # Energy values are in 5th row
-				dummy_predictions.append(np.exp(predictions[i]) - log_reduction_var)
+				dummy_predictions.append(predictions[i])
 
 		XS_plotmatrix.append(dummy_test_XS)
 		E_plotmatrix.append(dummy_test_E)
