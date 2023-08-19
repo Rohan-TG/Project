@@ -39,7 +39,7 @@ al = range_setter(la=30, ua=210, df=df)
 
 
 validation_nuclides = []
-validation_set_size = 30
+validation_set_size = 25
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -217,8 +217,8 @@ model.get_booster().feature_names = ['Z',
 									 # 'A_even',
 									 # 'N_even',
 									 'Shell',
-									 'Parity',
-									 'Spin',
+									 # 'Parity',
+									 # 'Spin',
 									 'Decay',
 									 # 'Deform',
 									 'p_g_e',
@@ -302,8 +302,8 @@ explainer = shap.Explainer(model.predict, X_train,
 									 # 'A_even',
 									 # 'N_even',
 									 'Shell',
-									 'Parity',
-									 'Spin',
+									 # 'Parity',
+									 # 'Spin',
 									 'Decay',
 									 # 'Deform',
 									 'p_g_e',
