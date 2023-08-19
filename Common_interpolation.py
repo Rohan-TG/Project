@@ -154,12 +154,12 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
 	if current_nuclide in JENDL_nuclides:
-		jendl_erg, jendl_xs = General_plotter(df=JENDL, nuclides=[current_nuclide])
 
-		predictions_interpolated_jendl = f_pred(jendl_erg)
+		jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL)
+		pred_jendl = model.predict(jendl_test)
 
-		pred_jendl_mse = mean_squared_error(predictions_interpolated_jendl, jendl_xs)
-		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=predictions_interpolated_jendl)
+		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
+		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 	if current_nuclide in JEFF_nuclides:
@@ -172,11 +172,12 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
 
 	if current_nuclide in TENDL_nuclides:
-		tendl_erg, tendl_xs = General_plotter(df=TENDL, nuclides=[current_nuclide])
-		predictions_interpolated_tendl = f_pred(tendl_erg)
 
-		pred_tendl_mse = mean_squared_error(predictions_interpolated_tendl, tendl_xs)
-		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=predictions_interpolated_tendl)
+		tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL)
+		pred_tendl = model.predict(tendl_test)
+
+		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
+		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
 	print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
