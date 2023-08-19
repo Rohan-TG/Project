@@ -36,7 +36,7 @@ JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=215)
 
-CENDL = pd.read_csv('CENDL33_features_arange_zeroed.csv')
+CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
 
@@ -45,9 +45,9 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=215)
 
 
 validation_nuclides = [[20,40]]
-validation_set_size = 20 # number of nuclides hidden from training
+validation_set_size = 1 # number of nuclides hidden from training
 
-random.seed(a=42)
+
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -129,7 +129,7 @@ if __name__ == "__main__":
 		plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 		plt.legend()
 		plt.grid()
-		plt.ylabel('XS / b')
+		plt.ylabel('$\sigma_{n,2n}$ / b')
 		plt.xlabel('Energy / MeV')
 		plt.show()
 
