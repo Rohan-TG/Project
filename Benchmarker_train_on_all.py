@@ -39,7 +39,7 @@ all_libraries.index = range(len(all_libraries))
 
 al = range_setter(la=30, ua=210, df=all_libraries)
 
-random.seed(a=2, version=2)
+
 nuclides_used = []
 
 nuclide_mse = []
