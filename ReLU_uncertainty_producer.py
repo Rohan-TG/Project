@@ -577,43 +577,7 @@ if target_nuclide in TENDL_nuclides:
 
 
 
-wallnerxs = [3.00000E+02,
-3.22400E+02,
-3.81300E+02,
-3.81200E+02,
-4.69200E+02,
-4.67200E+02,
-5.01500E+02,
-4.61100E+02,
-4.83900E+02,
-5.08300E+02,
-5.45400E+02,
-6.47000E+02,
-6.22000E+02,
-7.02000E+02,
-5.68000E+02]
 
-wallnerxs = [i/1000 for i in wallnerxs]
-
-wallnerxsd = [1.00000E+02,1.61000E+01,3.29000E+01,1.91000E+01,2.35000E+01,4.05000E+01,2.51000E+01,
-2.31000E+01,2.81000E+01,2.54000E+01,2.73000E+01,6.00000E+01,4.70000E+01,4.10000E+01,3.80000E+01]
-wallnerxsd = [i/1000 for i in wallnerxsd]
-
-wallnere = [1.33500E+01,
-1.34900E+01,
-1.36900E+01,
-1.39700E+01,
-1.42400E+01,
-1.46300E+01,
-1.46700E+01,
-1.46700E+01,
-1.46900E+01,
-1.47400E+01,
-1.48200E+01,
-1.80000E+01,
-1.80000E+01,
-1.83300E+01,
-2.06800E+01]
 
 #    E(MeV)       xs(mb)      dxs(mb)
 
@@ -623,32 +587,6 @@ wallnere = [1.33500E+01,
 
 
 
-
-# fxs = [3.70000E+01  ,
-# 1.04000E+02  ,
-# 2.13000E+02  ,
-# 3.16000E+02  ,
-# 4.02000E+02  ,
-# 4.10000E+02  ,
-# 5.19000E+02  ]
-# fxsd = [4.00000E+00 ,
-# 6.00000E+00 ,
-# 1.20000E+01 ,
-# 1.90000E+01 ,
-# 2.40000E+01 ,
-# 3.30000E+01 ,
-# 4.10000E+01 ]
-#
-# fxs = [i/1000 for i in fxs]
-# fxsd = [i/1000 for i in fxsd]
-#
-# fe = [1.18800E+01,
-# 1.23600E+01,
-# 1.28500E+01,
-# 1.33300E+01,
-# 1.38000E+01,
-# 1.42800E+01,
-# 1.47600E+01]
 
 
 
@@ -672,8 +610,6 @@ if target_nuclide in JENDL_nuclides:
 if target_nuclide in CENDL_nuclides:
 	plt.plot(CENDL32_energy, CENDL33_XS, '--', label = 'CENDL3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
-plt.errorbar(fe, fxs, yerr=fxsd, fmt='x', color='indigo',capsize=2, label='Frehaut, 1980')
-plt.errorbar(wallnere, wallnerxs, yerr=wallnerxsd, fmt='x', color='indigo',capsize=2, label='Wallner, 2011')
 
 # plt.errorbar(pue, puxs, yerr=puxsd, fmt='x', color='indigo',capsize=2, label='Pu, 2006')
 # plt.errorbar(meghae, meghaxs, yerr=meghaxsd, fmt='x', color='violet',capsize=2, label='Megha, 2017')
