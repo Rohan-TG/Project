@@ -96,7 +96,7 @@ for nuclide in al:
 	feature_matrix_Decay_Const.append([feat])
 
 
-n_runs = 2
+n_runs = 5
 
 for idx in tqdm.tqdm(range(n_runs)):
 	nuclides_used = []
@@ -105,7 +105,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 20  # number of nuclides hidden from training
+		validation_set_size = 25  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 
@@ -127,14 +127,14 @@ for idx in tqdm.tqdm(range(n_runs)):
 		X_test, y_test = make_test(validation_nuclides, df=df)
 
 		print("Training...")
-
+		model_seed = random.randint(a=1, b=1000)
 
 		model = xg.XGBRegressor(n_estimators=900,
-								learning_rate=0.01,
+								learning_rate=0.008,
 								max_depth=8,
 								subsample=0.18236,
 								max_leaves=0,
-								seed=42,)
+								seed=model_seed,)
 
 
 		time1 = time.time()
@@ -176,7 +176,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 				pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
 
-				print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f}")
+				# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f}")
 				evaluation_r2s.append(pred_cendl_r2)
 			# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
@@ -186,7 +186,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 				pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
 				pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
-				print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
+				# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 				evaluation_r2s.append(pred_jendl_r2)
 			# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
@@ -197,7 +197,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 				pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
 				pred_jeff_r2 = r2_score(y_true=jeff_xs, y_pred=pred_jeff)
-				print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
+				# print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
 				evaluation_r2s.append(pred_jeff_r2)
 
 			if nuc in TENDL_nuclides:
@@ -206,7 +206,7 @@ for idx in tqdm.tqdm(range(n_runs)):
 
 				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 				pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
-				print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
+				# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 				evaluation_r2s.append(pred_tendl_r2)
 			# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
@@ -442,7 +442,7 @@ log_r2_mean_Decay_Const = [abs(np.log(abs(i))) for i in r2_mean_Decay_Const]
 # Sn
 plt.figure()
 plt.plot(features_only_Sn, log_r2_mean_Sn, 'x')
-plt.xlabel('Sn')
+plt.xlabel('Sn / keV')
 plt.ylabel('$|\ln(|r^2|)|$')
 plt.title('$|\ln(|r^2|)|$ Performance - Sn')
 plt.grid()
@@ -481,14 +481,16 @@ plt.ylabel('$|\ln(|r^2|)|$')
 plt.title('$|\ln(|r^2|)|$ Performance - N')
 plt.grid()
 plt.show()
+time.sleep(2)
 
 plt.figure()
 plt.plot(features_only_S2n, log_r2_mean_S2n, 'x')
-plt.xlabel('S2n')
+plt.xlabel('S2n / keV')
 plt.ylabel('$|\ln(|r^2|)|$')
 plt.title('$|\ln(|r^2|)|$ Performance - S2n')
 plt.grid()
 plt.show()
+time.sleep(2)
 
 plt.figure()
 plt.plot(features_only_Asymmetry, log_r2_mean_Asymmetry, 'x')
@@ -501,20 +503,20 @@ time.sleep(1)
 
 plt.figure()
 plt.plot(features_only_BEA_A_daughter, log_r2_mean_BEA_A_daughter, 'x')
-plt.xlabel('BEA_A Daughter')
+plt.xlabel('BEA_A Daughter / keV')
 plt.ylabel('$|\ln(|r^2|)|$')
-plt.title('$|\ln(|r^2|)|$ Performance - BEA_A Daughter')
+plt.title('$|\ln(|r^2|)|$ Performance - Daughter Total Binding Energy')
 plt.grid()
 plt.show()
 
 plt.figure()
 plt.plot(features_only_S2p, log_r2_mean_S2p, 'x')
-plt.xlabel('S2p')
+plt.xlabel('S2p / keV')
 plt.ylabel('$|\ln(|r^2|)|$')
 plt.title('$|\ln(|r^2|)|$ Performance - S2p')
 plt.grid()
 plt.show()
-
+time.sleep(2)
 
 plt.figure()
 plt.plot(features_only_Shell, log_r2_mean_Shell, 'x')
@@ -526,7 +528,7 @@ plt.show()
 time.sleep(2)
 
 
-log_decay_constant = [np.log(dec) for dec in features_only_Decay_Const]
+log_decay_constant = [np.log(dec + 0.000000000000001) for dec in features_only_Decay_Const]
 plt.figure()
 plt.plot(log_decay_constant, log_r2_mean_Decay_Const, 'x')
 plt.xlabel('ln(Decay Constant)')
@@ -543,7 +545,7 @@ plt.ylabel("log abs r2")
 plt.title("$|\ln(|r^2|)|$ Performance - A")
 plt.grid()
 plt.show()
-
+time.sleep(2)
 plt.figure()
 plt.plot(Z_plots, log_plots_Z, 'x')
 plt.xlabel('Z')
