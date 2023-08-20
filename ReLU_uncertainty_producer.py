@@ -36,7 +36,7 @@ al = range_setter(la=30, ua=215, df=df)
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [26,56]
+target_nuclide = [54,135]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
@@ -579,7 +579,6 @@ if target_nuclide in TENDL_nuclides:
 
 
 
-#    E(MeV)       xs(mb)      dxs(mb)
 
 
 
@@ -588,14 +587,51 @@ if target_nuclide in TENDL_nuclides:
 
 
 
+# betake = [  1.47000E+01]
+# betakxs = [0.613]
+# betakxsd = [0.06]
+#
+# ikedae = [1.33300E+01,
+# 1.35700E+01,
+# 1.37500E+01,
+# 1.39900E+01,
+# 1.42200E+01,
+# 1.44300E+01,
+# 1.46700E+01,
+# 1.49400E+01]
+# ikedaxs = [6.77000E+02,
+# 6.79000E+02,
+# 7.11000E+02,
+# 7.59000E+02,
+# 7.45000E+02,
+# 7.64000E+02,
+# 8.05000E+02,
+# 8.06000E+02]
+# ikedaxs = [i/1000 for i in ikedaxs]
+#
+# ikedaxsd = [4.70000E+01,
+# 5.60000E+01,
+# 7.00000E+01,
+# 5.00000E+01,
+# 5.00000E+01,
+# 4.80000E+01,
+# 6.70000E+01,
+# 7.80000E+01]
+# ikedaxsd = [i/1000 for i in ikedaxsd]
+#
+# hillmane = [1.45000E+01]
+# hillmanxs = [0.92]
+# hillmanxsd = [0.184]
+#
+# tiwarie = [1.42000E+01]
+# tiwarixs = [0.9]
+# tiwarixsd = [0.108]
+#
+# cse = [13.28]
+# csxs = [0.86]
+# csxsd = [0.129]
+#
 
-
-
-
-
-title_string_latex = "$\sigma_{n,2n}$"
-title_string_nuclide = f"for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}"
-title_string = title_string_latex+title_string_nuclide
 
 print(f"Turning points: {dsigma_dE(XS=datapoint_means)}")
 
@@ -610,7 +646,13 @@ if target_nuclide in JENDL_nuclides:
 if target_nuclide in CENDL_nuclides:
 	plt.plot(CENDL32_energy, CENDL33_XS, '--', label = 'CENDL3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
-
+# plt.errorbar(cse, csxs, yerr=csxsd, fmt='x', color='violet',capsize=2, label='Csikai, 1967')
+# plt.errorbar(tiwarie, tiwarixs, yerr=tiwarixsd,
+# 			 fmt='x', color='indigo',capsize=2, label='Tiwari, 1968')
+# plt.errorbar(hillmane, hillmanxs, yerr=hillmanxsd, fmt='x', color='orangered',capsize=2, label='Hillman, 1962')
+#
+# plt.errorbar(ikedae,ikedaxs, yerr=ikedaxsd, fmt='x',
+# 			 capsize=2, label='Ikeda, 1988', color='blue')
 # plt.errorbar(pue, puxs, yerr=puxsd, fmt='x', color='indigo',capsize=2, label='Pu, 2006')
 # plt.errorbar(meghae, meghaxs, yerr=meghaxsd, fmt='x', color='violet',capsize=2, label='Megha, 2017')
 # plt.errorbar(junhua_E, junhua_XS, yerr=junhua_XSd, fmt='x', color='orangered',capsize=2, label='Junhua, 2018')
