@@ -30,9 +30,9 @@ TENDL_nuclides = range_setter(df=TENDL21, la=30, ua=215)
 al = range_setter(la=30, ua=215, df=df)
 
 
-n_evaluations = 100
+n_evaluations = 40
 datapoint_matrix = []
-target_nuclide = [40,102]
+target_nuclide = [40,89]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
