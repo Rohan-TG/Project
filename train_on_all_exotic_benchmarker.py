@@ -1,3 +1,5 @@
+import random
+
 import pandas as pd
 import numpy as np
 from matrix_functions import make_test, make_train, range_setter
@@ -52,12 +54,14 @@ X_train, y_train = make_train(df=all_libraries, validation_nuclides=exotic_TENDL
 
 X_test, y_test = make_test(exotic_TENDL_nuclides, df=TENDL21)
 
+model_seed = random.randint(a=1, b=1000)
+
 model = xg.XGBRegressor(n_estimators=900,
                         learning_rate=0.008,
                         max_depth=8,
                         subsample=0.18236,
                         max_leaves=0,
-                        seed=42, )
+                        seed=model_seed, )
 
 print("Training...")
 model.fit(X_train, y_train)
