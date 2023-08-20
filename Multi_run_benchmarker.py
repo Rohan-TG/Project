@@ -47,6 +47,8 @@ every_true_value_list = []
 all_library_evaluations = []
 all_predictions = []
 
+low_mass_r2 = []
+
 tally = 0
 while len(nuclides_used) < len(al):
 
@@ -195,6 +197,9 @@ while len(nuclides_used) < len(al):
 
 
 		r2 = np.mean(evaluation_r2s)
+		if nuc[1] <= 60:
+			low_mass_r2.append(r2)
+
 		if r2 > 0.95:
 			tally += 1
 		# r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
@@ -258,3 +263,12 @@ plt.ylabel("$|\ln(|r^2|)|$")
 plt.title("Performance - Z")
 plt.grid()
 plt.show()
+
+tally2 = 0
+for x in low_mass_r2:
+	if x < 0.95:
+		tally2 += 1
+
+
+lowmass = range_setter(df=df, la=30, ua=60)
+print(f"{tally2}/{len(lowmass)}")
