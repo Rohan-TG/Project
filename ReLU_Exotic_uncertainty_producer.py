@@ -20,9 +20,12 @@ import tqdm
 runtime = time.time()
 
 TENDL21 = pd.read_csv('TENDL21_MT16_XS_features_zeroed.csv')
+TENDL21.index = range(len(TENDL21))
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv") # training
 df = df[df.Z != 11]
 df.index = range(len(df))
+
+TENDL_nuclides = range_setter(df=TENDL21, la=30, ua=215)
 
 al = range_setter(la=30, ua=215, df=df)
 
@@ -55,7 +58,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
 	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.01,
+							learning_rate=0.008,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
@@ -68,7 +71,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
 	for pred in predictions:
-		if pred >= 0.001:
+		if pred >= 0.003:
 			predictions_ReLU.append(pred)
 		else:
 			predictions_ReLU.append(0)
@@ -111,13 +114,11 @@ for point in datapoint_matrix:
 	mu = np.mean(point)
 	sigma = np.std(point)
 	interval_low, interval_high = scipy.stats.t.interval(0.95, loc=mu, scale=sigma, df=(len(point) - 1))
-	il_1sigma, ih_1sigma = scipy.stats.t.interval(0.68, loc=mu, scale=sigma, df=(len(point) - 1))
 	datapoint_means.append(mu)
 	datapoint_upper_interval.append(interval_high)
 	datapoint_lower_interval.append(interval_low)
 
-	d_l_1sigma.append(il_1sigma)
-	d_u_1sigma.append(ih_1sigma)
+
 
 lower_bound = []
 upper_bound = []
@@ -127,35 +128,31 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 
 
 
-TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
-TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=215)
-
-tendl_energy, tendl_xs = General_plotter(df=TENDL, nuclides=[target_nuclide])
-time.sleep(2)
 
 
-JEFF33 = pd.read_csv('JEFF33_features_arange_zeroed.csv')
+tendl_energy, tendl_xs = General_plotter(df=TENDL21, nuclides=[target_nuclide])
+
+
+
+JEFF33 = pd.read_csv('JEFF33_all_features.csv')
 JEFF33.index = range(len(JEFF33))
 JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=215)
 JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[target_nuclide])
-time.sleep(2)
+
 
 JENDL5 = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL5.index = range(len(JENDL5))
 JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=215)
 JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[target_nuclide])
-time.sleep(2)
 
-CENDL33 = pd.read_csv('CENDL32_features_arange_zeroed.csv')
+
+CENDL33 = pd.read_csv('CENDL32_all_features.csv')
 CENDL33.index = range(len(CENDL33))
 CENDL_nuclides = range_setter(df=CENDL33, la=30, ua=215)
 CENDL33_energy, CENDL33_XS = General_plotter(df=CENDL33, nuclides=[target_nuclide])
-time.sleep(2)
 
-title_string_latex = "$\sigma_{n,2n}$"
-title_string_nuclide = f"for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}"
-title_string = title_string_latex+title_string_nuclide
+
+
 
 # 2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
