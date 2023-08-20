@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 time1 = time.time()
 
 ENDFBVIII = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-CENDL32 = pd.read_csv("CENDL32_features_arange_zeroed.csv")
-JEFF33 = pd.read_csv("JEFF33_features_arange_zeroed.csv")
+CENDL32 = pd.read_csv("CENDL32_all_features.csv")
+JEFF33 = pd.read_csv("JEFF33_all_features.csv")
 TENDL21 = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 JENDL5 = pd.read_csv("JENDL5_arange_all_features.csv")
 
