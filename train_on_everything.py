@@ -10,8 +10,8 @@ import time
 endfb8 = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv')
 jendl5 = pd.read_csv('JENDL5_arange_all_features.csv')
 tendl21 = pd.read_csv('TENDL21_MT16_XS_features_zeroed.csv')
-jeff33 = pd.read_csv('JEFF33_features_arange_zeroed.csv')
-cendl32 = pd.read_csv('CENDL32_features_arange_zeroed.csv')
+jeff33 = pd.read_csv('JEFF33_all_features.csv')
+cendl32 = pd.read_csv('CENDL32_all_features.csv')
 
 all_libraries = pd.concat([endfb8, jendl5])
 
@@ -29,15 +29,16 @@ all_libraries.index = range(len(all_libraries))
 # 					   [39,92],[39,93],[39,94],
 # 					   [39,95]]
 
-# validation_nuclides = []
+validation_nuclides = [[76,186], [44,104], [82,208],
+					   [74,182], [60,150], [71,175]]
 
-validation_nuclides = [[40,85], [40,86], [40,87],
-					   [40,88], [40,89], [40,93],
-					   [40,94], [40,95], [40,96],
-					   [40,97], [40,98], [40,99],
-					   [40,100], [40,101], [40,102]]
+# validation_nuclides = [[40,85], [40,86], [40,87],
+# 					   [40,88], [40,89], [40,93],
+# 					   [40,94], [40,95], [40,96],
+# 					   [40,97], [40,98], [40,99],
+# 					   [40,100], [40,101], [40,102]]
 
-validation_set_size = 30 # number of nuclides hidden from training
+validation_set_size = 25 # number of nuclides hidden from training
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(nucs) # randomly select nuclide from list of all nuclides
@@ -73,7 +74,7 @@ print("Training complete")
 predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
 for pred in predictions:
-	if pred >= 0.001:
+	if pred >= 0.003:
 		predictions_ReLU.append(pred)
 	else:
 		predictions_ReLU.append(0)
