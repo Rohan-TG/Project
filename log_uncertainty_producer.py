@@ -30,7 +30,7 @@ df.index = range(len(df))
 
 
 df_test = anomaly_remover(dfa = df_test)
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=0, ua=60, df=df)
 
 
 log_reduction_var = 0.00001
@@ -44,7 +44,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 
 	validation_nuclides = [target_nuclide]
-	validation_set_size = 20  # number of nuclides hidden from training
+	validation_set_size = 10  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
 		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
@@ -54,7 +54,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	time1 = time.time()
 
-	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,
+	X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=60,
 									  log_reduction_variable=log_reduction_var) # make training matrix
 
 	X_test, y_test = log_make_test(validation_nuclides, df=df_test,
@@ -64,12 +64,12 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
-	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.01,
+	model = xg.XGBRegressor(n_estimators=500,
+							learning_rate=0.007,
 							max_depth=8,
-							subsample=0.18236,
+							subsample=0.2,
 							max_leaves=0,
-							seed=model_seed,)
+							seed=model_seed, )
 
 
 	model.fit(X_train, y_train)
@@ -166,27 +166,27 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=0, ua=60)
 tendl_energy, tendl_xs = General_plotter(df=TENDL, nuclides=[target_nuclide])
 time.sleep(2)
 
 
 JEFF33 = pd.read_csv('JEFF33_features_arange_zeroed.csv')
 JEFF33.index = range(len(JEFF33))
-JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=210)
+JEFF_nuclides = range_setter(df=JEFF33, la=0, ua=60)
 JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[target_nuclide])
 time.sleep(2)
 
 JENDL5 = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL5.index = range(len(JENDL5))
 JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[target_nuclide])
-JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=210)
+JENDL_nuclides = range_setter(df=JENDL5, la=0, ua=60)
 time.sleep(2)
 
 CENDL32 = pd.read_csv('CENDL32_features_arange_zeroed.csv')
 CENDL32.index = range(len(CENDL32))
 CENDL32_energy, CENDL33_XS = General_plotter(df=CENDL32, nuclides=[target_nuclide])
-CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
+CENDL_nuclides = range_setter(df=CENDL32, la=0, ua=60)
 time.sleep(2)
 
 f_predictions = scipy.interpolate.interp1d(x=E_plot, y=datapoint_means, fill_value='extrapolate')
@@ -243,6 +243,44 @@ title_string = title_string_latex+title_string_nuclide
 
 endfb_erg, endfb_xs = General_plotter(df=df, nuclides=[validation_nuclides[0]])
 
+
+
+
+
+
+
+arnoldxs = [4.80000E+00,
+4.60000E+00,
+7.30000E+00,
+1.37000E+01,
+1.49000E+01,
+2.13000E+01,
+1.93000E+01]
+arnoldxs = [i/1000 for i in arnoldxs]
+
+arnoldxsd = [8.00000E-01,
+7.00000E-01,
+1.20000E+00,
+2.60000E+00,
+2.00000E+00,
+2.90000E+00,
+3.10000E+00]
+arnoldxsd = [i/1000 for i in arnoldxsd]
+
+arnolde = [1.64100E+01,
+1.66700E+01,
+1.68300E+01,
+1.70300E+01,
+1.73400E+01,
+1.76400E+01,
+1.79200E+01]
+
+braune = [1.46900E+01]
+
+braunxs = [0.008]
+
+braunxsd = [0.00200000E+00 ]
+
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(endfb_erg, endfb_xs, label = 'ENDF/B-VIII', linewidth=2)
@@ -251,6 +289,12 @@ plt.plot(JEFF_energy, JEFF_XS, label='JEFF3.3', color='mediumvioletred')
 plt.plot(JENDL5_energy, JENDL5_XS, '--', label='JENDL5', color='green')
 plt.plot(CENDL32_energy, CENDL33_XS, '--', label = 'CENDL3.3', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
+
+plt.errorbar(braune, braunxs, yerr=braunxsd, fmt='x',
+			 capsize=2, label='Braun, 1968', color='orangered')
+plt.errorbar(arnolde, arnoldxs, yerr=arnoldxsd, fmt='x',
+			 capsize=2, label='Arnold, 1965', color='violet')
+
 plt.grid()
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
 plt.xlabel("Energy / MeV")
