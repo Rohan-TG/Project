@@ -38,7 +38,7 @@ df.index = range(len(df))
 al = range_setter(la=30, ua=210, df=df)
 
 
-validation_nuclides = []
+validation_nuclides = [[64,160]]
 validation_set_size = 25
 
 while len(validation_nuclides) < validation_set_size:
@@ -108,7 +108,8 @@ for nuclide in validation_nuclides:
 	P_plotmatrix.append(dummy_predictions)
 
 for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
-
+	all_preds = []
+	all_libs = []
 	current_nuclide = validation_nuclides[i]
 
 	jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[current_nuclide])
@@ -140,6 +141,9 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
 	pred_endfb_r2 = r2_score(y_true=true_xs, y_pred=pred_xs)
+	for x, y in zip(pred_xs, true_xs):
+		all_libs.append(y)
+		all_preds.append(x)
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
 
 	if current_nuclide in CENDL_nuclides:
@@ -149,6 +153,9 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 		pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
 		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
+		for x, y in zip(pred_cendl, cendl_xs):
+			all_libs.append(y)
+			all_preds.append(x)
 		print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
 	if current_nuclide in JENDL_nuclides:
@@ -159,6 +166,9 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
 		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
+		for x, y in zip(pred_jendl, jendl_xs):
+			all_libs.append(y)
+			all_preds.append(x)
 
 	if current_nuclide in JEFF_nuclides:
 		jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF)
@@ -167,6 +177,9 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 		pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
 		pred_jeff_r2 = r2_score(y_true=jeff_xs, y_pred=pred_jeff)
+		for x, y in zip(pred_jeff, jeff_xs):
+			all_libs.append(y)
+			all_preds.append(x)
 		print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
 
 	if current_nuclide in TENDL_nuclides:
@@ -176,10 +189,16 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
+		for x, y in zip(pred_tendl, tendl_xs):
+			all_libs.append(y)
+			all_preds.append(x)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
+
+	print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
 
 	print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
 	print(f"Mean gradient: {sum(abs(np.gradient(pred_xs)))/(len(pred_xs)):0.5f}")
+
 
 
 
@@ -197,7 +216,7 @@ model.get_booster().feature_names = ['Z',
 									 'N',
 									 'b-def',
 									 'Sn da',
-									 'Sp d',
+									 # 'Sp d',
 									 'S2n d',
 									 'Radius',
 									 'n_g_erg',
@@ -282,7 +301,7 @@ explainer = shap.Explainer(model.predict, X_train,
 									 'N',
 									 'b-def',
 									 'Sn da',
-									 'Sp d',
+									 # 'Sp d',
 									 'S2n d',
 									 'Radius',
 									 'n_g_erg',
@@ -338,7 +357,7 @@ explainer = shap.Explainer(model.predict, X_train,
 									 'Asym',
 									 # 'Asym_c',
 									 'Asym_d',
-										   # 'AM'
+									 # 'AM'
 									 ]) # SHAP feature importance analysis
 shap_values = explainer(X_test)
 
