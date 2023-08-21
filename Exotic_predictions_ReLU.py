@@ -31,25 +31,25 @@ print("Data loaded")
 # 					   [39,92],[39,93],[39,94],
 # 					   [39,95]]
 
-validation_nuclides = [[40,86], [40,87],
-					   [40,92],[40,88], [40,89],
-					   [40,94], [40,95],
-					   [40,96],[40,97], [40,98],
-					   [40,99],[40,100], [40,101],
-					   [40,102]]
+# validation_nuclides = [[40,86], [40,87],
+# 					   [40,92],[40,88], [40,89],
+# 					   [40,94], [40,95],
+# 					   [40,96],[40,97], [40,98],
+# 					   [40,99],[40,100], [40,101],
+# 					   [40,102]]
 
 
 exotic_nuclides = []
 for x in TENDL_nuclides:
-	if x not in al and x[1] < 60:
+	if x not in al:
 		exotic_nuclides.append(x)
 
 # validation_nuclides = [[77,190],[74,175], [60,151], [78,188],
 # 					   [49,110], [58,150], [49,119],
 # 					   [55,127], [67,155], [71,172]]
-# validation_nuclides = []
+validation_nuclides = []
 
-validation_set_size = 5
+validation_set_size = 25
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(exotic_nuclides) # randomly select nuclide from list of all nuclides
