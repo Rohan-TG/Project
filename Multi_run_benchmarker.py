@@ -105,7 +105,7 @@ while len(nuclides_used) < len(al):
 	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
 	for pred in predictions:
-		if pred >= 0.001:
+		if pred >= 0.003:
 			predictions_ReLU.append(pred)
 		else:
 			predictions_ReLU.append(0)
