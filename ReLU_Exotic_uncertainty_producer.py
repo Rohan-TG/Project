@@ -30,7 +30,7 @@ TENDL_nuclides = range_setter(df=TENDL21, la=30, ua=215)
 al = range_setter(la=30, ua=215, df=df)
 
 
-n_evaluations = 40
+n_evaluations = 50
 datapoint_matrix = []
 target_nuclide = [40,89]
 
