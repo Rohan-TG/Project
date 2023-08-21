@@ -203,7 +203,7 @@ while len(nuclides_used) < len(al):
 		if r2 > 0.95:
 			tally += 1
 		# r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
-		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+		# print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
 		mse = mean_squared_error(true_xs, pred_xs)
 
