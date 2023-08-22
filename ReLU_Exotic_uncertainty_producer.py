@@ -32,28 +32,33 @@ al = range_setter(la=30, ua=215, df=df)
 
 n_evaluations = 50
 datapoint_matrix = []
-target_nuclide = [40,89]
+target_nuclide = [45,107]
 
+validation_nuclides = [target_nuclide]
+validation_set_size = 1  # number of nuclides hidden from training
+
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215, )  # make training matrix
+
+X_test, y_test = make_test(validation_nuclides, df=TENDL21, )
+print("\nTest nuclide selection complete")
+print("Data prep done")
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
 
 
-	validation_nuclides = [target_nuclide]
-	validation_set_size = 1  # number of nuclides hidden from training
 
-	while len(validation_nuclides) < validation_set_size:
-		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
-		if choice not in validation_nuclides:
-			validation_nuclides.append(choice)
-	print("\nTest nuclide selection complete")
+
+	# while len(validation_nuclides) < validation_set_size:
+	# 	choice = random.choice(al)  # randomly select nuclide from list of all nuclides
+	# 	if choice not in validation_nuclides:
+	# 		validation_nuclides.append(choice)
+
 
 	time1 = time.time()
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,) # make training matrix
 
-	X_test, y_test = make_test(validation_nuclides, df=TENDL21,)
 
-	print("Data prep done")
+
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
