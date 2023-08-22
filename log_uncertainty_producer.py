@@ -22,8 +22,6 @@ runtime = time.time()
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-df_test = df_test[df_test.Z != 11]
-df = df[df.Z != 11]
 
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
@@ -37,7 +35,7 @@ log_reduction_var = 0.00001
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [20,40]
+target_nuclide = [11,23]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
@@ -290,10 +288,10 @@ plt.plot(JENDL5_energy, JENDL5_XS, '--', label='JENDL5', color='green')
 plt.plot(CENDL32_energy, CENDL33_XS, '--', label = 'CENDL3.3', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 
-plt.errorbar(braune, braunxs, yerr=braunxsd, fmt='x',
-			 capsize=2, label='Braun, 1968', color='orangered')
-plt.errorbar(arnolde, arnoldxs, yerr=arnoldxsd, fmt='x',
-			 capsize=2, label='Arnold, 1965', color='violet')
+# plt.errorbar(braune, braunxs, yerr=braunxsd, fmt='x',
+# 			 capsize=2, label='Braun, 1968', color='orangered')
+# plt.errorbar(arnolde, arnoldxs, yerr=arnoldxsd, fmt='x',
+# 			 capsize=2, label='Arnold, 1965', color='violet')
 
 plt.grid()
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
