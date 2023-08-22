@@ -37,8 +37,8 @@ CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=210, ua=260)
 
-validation_nuclides = [[95,244]]
-validation_set_size = 1 # number of nuclides hidden from training
+validation_nuclides = []
+validation_set_size = 10 # number of nuclides hidden from training
 
 # random.seed(a=42)
 
