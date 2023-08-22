@@ -50,8 +50,8 @@ X_train, y_train = make_train_low(df=df, validation_nuclides=validation_nuclides
 X_test, y_test = make_test_low(validation_nuclides, df=df_test)
 print("Data prep done")
 
-model = xg.XGBRegressor(n_estimators=900,
-						learning_rate=0.01,
+model = xg.XGBRegressor(n_estimators=500,
+						learning_rate=0.007,
 						max_depth=8,
 						subsample=0.18236,
 						max_leaves=0,
