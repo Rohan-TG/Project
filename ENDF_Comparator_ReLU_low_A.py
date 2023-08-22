@@ -51,7 +51,7 @@ X_test, y_test = make_test_low(validation_nuclides, df=df_test)
 print("Data prep done")
 
 model = xg.XGBRegressor(n_estimators=500,
-						learning_rate=0.007,
+						learning_rate=0.01,
 						max_depth=8,
 						subsample=0.18236,
 						max_leaves=0,

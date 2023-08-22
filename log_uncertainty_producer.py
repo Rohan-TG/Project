@@ -35,7 +35,7 @@ log_reduction_var = 0.00001
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [11,23]
+target_nuclide = [9,19]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
@@ -63,7 +63,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
 	model = xg.XGBRegressor(n_estimators=500,
-							learning_rate=0.007,
+							learning_rate=0.01,
 							max_depth=8,
 							subsample=0.2,
 							max_leaves=0,
