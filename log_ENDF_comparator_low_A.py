@@ -40,8 +40,8 @@ CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=60)
 
 
-validation_nuclides = [[20,40]]
-validation_set_size = 15 # number of nuclides hidden from training
+validation_nuclides = [[11,23]]
+validation_set_size = 10 # number of nuclides hidden from training
 
 # random.seed(a=42)
 
