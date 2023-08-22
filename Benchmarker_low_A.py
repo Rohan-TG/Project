@@ -74,10 +74,10 @@ while len(nuclides_used) < len(al):
 	print("Train/val matrices generated")
 
 
-	model = xg.XGBRegressor(n_estimators=600,
-							learning_rate=0.01,
+	model = xg.XGBRegressor(n_estimators=500,
+							learning_rate=0.007,
 							max_depth=8,
-							subsample=0.18236,
+							subsample=0.2,
 							max_leaves=0,
 							seed=42,)
 
