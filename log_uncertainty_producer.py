@@ -196,9 +196,8 @@ if target_nuclide in CENDL_nuclides:
 
 	f_cendl32 = scipy.interpolate.interp1d(x=cendl_erg, y=cendl_xs)
 	cendl_interp_xs = f_cendl32(x_interpolate_cendl)
-	pred_cendl_mse = mean_squared_error(predictions_interpolated_cendl, cendl_interp_xs)
-	pred_cendl_r2 = r2_score(y_true=cendl_interp_xs, y_pred=predictions_interpolated_cendl)
-	print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
+	pred_cendl_r2 = r2_score(y_true=cendl_interp_xs[1:], y_pred=predictions_interpolated_cendl[1:])
+	print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f}")
 
 if target_nuclide in JENDL_nuclides:
 	jendl_erg, jendl_xs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
@@ -207,9 +206,8 @@ if target_nuclide in JENDL_nuclides:
 
 	f_jendl5 = scipy.interpolate.interp1d(x=jendl_erg, y=jendl_xs)
 	jendl_interp_xs = f_jendl5(x_interpolate_jendl)
-	pred_jendl_mse = mean_squared_error(predictions_interpolated_jendl, jendl_interp_xs)
-	pred_jendl_r2 = r2_score(y_true=jendl_interp_xs, y_pred=predictions_interpolated_jendl)
-	print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
+	pred_jendl_r2 = r2_score(y_true=jendl_interp_xs[1:], y_pred=predictions_interpolated_jendl[1:])
+	print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
 
 if target_nuclide in JEFF_nuclides:
 	jeff_erg, jeff_xs = General_plotter(df=JEFF33, nuclides=[target_nuclide])
@@ -218,9 +216,8 @@ if target_nuclide in JEFF_nuclides:
 
 	f_jeff33 = scipy.interpolate.interp1d(x=jeff_erg, y=jeff_xs)
 	jeff_interp_xs = f_jeff33(x_interpolate_jeff)
-	pred_jeff_mse = mean_squared_error(predictions_interpolated_jeff, jeff_interp_xs)
-	pred_jeff_r2 = r2_score(y_true=jeff_interp_xs, y_pred=predictions_interpolated_jeff)
-	print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
+	pred_jeff_r2 = r2_score(y_true=jeff_interp_xs[1:], y_pred=predictions_interpolated_jeff[1:])
+	print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f}")
 
 if target_nuclide in TENDL_nuclides:
 	tendl_erg, tendl_xs = General_plotter(df=TENDL, nuclides=[target_nuclide])
