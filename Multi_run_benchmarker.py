@@ -15,23 +15,23 @@ from matrix_functions import make_train, make_test, range_setter, General_plotte
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-al = range_setter(df=df, la=30, ua=210)
+al = range_setter(df=df, la=0, ua=60)
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=0, ua=260)
 
 JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
+JEFF_nuclides = range_setter(df=JEFF, la=0, ua=260)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
+JENDL_nuclides = range_setter(df=JENDL, la=0, ua=260)
 
 CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
+CENDL_nuclides = range_setter(df=CENDL, la=0, ua=260)
 
 
 
@@ -49,6 +49,8 @@ all_predictions = []
 
 low_mass_r2 = []
 
+outlier_tally = 0
+
 tally = 0
 while len(nuclides_used) < len(al):
 
@@ -57,24 +59,25 @@ while len(nuclides_used) < len(al):
 
 	validation_nuclides = []  # list of nuclides used for validation
 	# test_nuclides = []
-	validation_set_size = 25  # number of nuclides hidden from training
+	validation_set_size = 10  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
 
 		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
-		if choice not in validation_nuclides and choice not in nuclides_used:
+		if choice not in validation_nuclides and choice not in nuclides_used and choice[1] <= 60:
 			validation_nuclides.append(choice)
 			nuclides_used.append(choice)
 		if len(nuclides_used) == len(al):
 			break
 
+	print(validation_nuclides)
 
 	print("Test nuclide selection complete")
 	print(f"{len(nuclides_used)}/{len(al)} selections")
 	# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=260) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -193,8 +196,12 @@ while len(nuclides_used) < len(al):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
 			evaluation_r2s.append(pred_tendl_r2)
-			# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
+			# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}"
 
+		for z in evaluation_r2s:
+			if z > 0.97:
+				outlier_tally +=1
+				break
 
 		r2 = np.mean(evaluation_r2s)
 		if nuc[1] <= 60:
@@ -226,7 +233,7 @@ while len(nuclides_used) < len(al):
 
 
 print()
-
+print(f"At least one library in strong agreement: {outlier_tally}/{len(al)}")
 
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
