@@ -103,7 +103,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
     target_exotic_nuclide = exotic_TENDL_nuclides[i]  # exotic nuclide
 
     r2 = r2_score(y_true=true_xs, y_pred=pred_xs)
-    if r2 > 0.85:
+    if r2 < 0.85 and r2 > -0.5:
         r2count.append(r2)
 
     match_element = []
