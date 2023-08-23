@@ -36,7 +36,7 @@ al = range_setter(la=210, ua=260, df=df)
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [95,244]
+target_nuclide = [92,238]
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
@@ -61,10 +61,10 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
-	model = xg.XGBRegressor(n_estimators=900,
-							learning_rate=0.008,
+	model = xg.XGBRegressor(n_estimators=500,
+							learning_rate=0.01,
 							max_depth=8,
-							subsample=0.18236,
+							subsample=0.2,
 							max_leaves=0,
 							seed=model_seed,)
 
