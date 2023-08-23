@@ -33,7 +33,8 @@ CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=260)
 
-
+outliers = 0
+outliers90 = 0
 
 nuclides_used = []
 nuclide_mse = []
@@ -86,12 +87,13 @@ while len(nuclides_used) < len(al):
 
 	print("Train/val matrices generated")
 
+	modelseed= random.randint(a=1, b=1000)
 	model = xg.XGBRegressor(n_estimators=900,
 							learning_rate=0.008,
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
-							seed=42,)
+							seed=modelseed,)
 
 	# model = xg.XGBRegressor(n_estimators=600,
 	# 						reg_lambda=1.959,
@@ -139,6 +141,9 @@ while len(nuclides_used) < len(al):
 		current_nuclide = nuc
 
 		evaluation_r2s = []
+
+		endfb_r2 = r2_score(true_xs, pred_xs)
+		evaluation_r2s.append(endfb_r2)
 
 		for libxs, p in zip(true_xs, pred_xs):
 			all_library_evaluations.append(libxs)
@@ -198,12 +203,20 @@ while len(nuclides_used) < len(al):
 			evaluation_r2s.append(pred_tendl_r2)
 			# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}"
 
+
+		r2 = r2_score(all_library_evaluations,all_predictions)
+		if r2 > 0.97 and endfb_r2 < 0.9:
+			outliers += 1
+
+		if r2 > 0.95 and endfb_r2 <= 0.9:
+			outliers90 += 1
+
 		for z in evaluation_r2s:
 			if z > 0.97:
-				outlier_tally +=1
+				outlier_tally += 1
 				break
 
-		r2 = np.mean(evaluation_r2s)
+
 		if nuc[1] <= 60:
 			low_mass_r2.append(r2)
 
@@ -231,15 +244,15 @@ while len(nuclides_used) < len(al):
 	print(f'completed in {time_taken:0.1f} s.\n')
 
 
-
+print(f"no. outliers estimate: {outliers}/{len(al)}")
 print()
 print(f"At least one library in strong agreement: {outlier_tally}/{len(al)}")
-
+print(f"Estimate of outliers, threshold 0.9: {outliers90}/{len(al)}")
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
-all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
+# all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
 all_libraries_r2 = r2_score(y_true=all_library_evaluations, y_pred= all_predictions)
-print(f"MSE: {all_libraries_mse:0.5f}")
+# print(f"MSE: {all_libraries_mse:0.5f}")
 print(f"R2: {all_libraries_r2:0.5f}")
 
 # print(f"Good predictions {tally}/{len(al)}")
