@@ -15,7 +15,7 @@ from matrix_functions import make_train, make_test, range_setter, General_plotte
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-al = range_setter(df=df, la=0, ua=60)
+al = range_setter(df=df, la=30, ua=210)
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
@@ -59,12 +59,12 @@ while len(nuclides_used) < len(al):
 
 	validation_nuclides = []  # list of nuclides used for validation
 	# test_nuclides = []
-	validation_set_size = 10  # number of nuclides hidden from training
+	validation_set_size = 25  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
 
 		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
-		if choice not in validation_nuclides and choice not in nuclides_used and choice[1] <= 60:
+		if choice not in validation_nuclides and choice not in nuclides_used:
 			validation_nuclides.append(choice)
 			nuclides_used.append(choice)
 		if len(nuclides_used) == len(al):
@@ -77,7 +77,7 @@ while len(nuclides_used) < len(al):
 	# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=260) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -242,7 +242,7 @@ all_libraries_r2 = r2_score(y_true=all_library_evaluations, y_pred= all_predicti
 print(f"MSE: {all_libraries_mse:0.5f}")
 print(f"R2: {all_libraries_r2:0.5f}")
 
-print(f"Good predictions {tally}/{len(al)}")
+# print(f"Good predictions {tally}/{len(al)}")
 
 A_plots = [i[1] for i in nuclide_r2]
 Z_plots = [i[0] for i in nuclide_r2]
@@ -271,11 +271,11 @@ plt.title("Performance - Z")
 plt.grid()
 plt.show()
 
-tally2 = 0
-for x in low_mass_r2:
-	if x < 0.95:
-		tally2 += 1
+# tally2 = 0
+# for x in low_mass_r2:
+# 	if x < 0.95:
+# 		tally2 += 1
 
 
-lowmass = range_setter(df=df, la=30, ua=60)
-print(f"{tally2}/{len(lowmass)}")
+# lowmass = range_setter(df=df, la=30, ua=60)
+# print(f"{tally2}/{len(lowmass)}")
