@@ -63,6 +63,7 @@ model = xg.XGBRegressor(n_estimators=900,
 						max_depth=8,
 						subsample=0.18236,
 						max_leaves=0,
+						reg_lambda = 0.02,
 						seed=42,)
 
 time1 = time.time()
