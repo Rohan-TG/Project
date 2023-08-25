@@ -20,12 +20,21 @@ print("Libraries loaded")
 ENDFB_nuclides = range_setter(df=ENDFBVIII, la=30, ua=210)
 TENDL21_nuclides = range_setter(df=TENDL21, la=30, ua=210)
 
+all_neutron_deficients = []
+all_proton_deficients = []
+
 exotic_TENDL_nuclides = []
 for tendl_nuclide in TENDL21_nuclides:
     if tendl_nuclide not in ENDFB_nuclides:
         exotic_TENDL_nuclides.append(tendl_nuclide)
 
 nuclides_used = []
+
+
+good_nuclides = []
+
+neutron_excess = 0
+proton_excess = 0
 
 mass_difference_with_r2 = []
 
@@ -97,9 +106,21 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
         nuc_differences.append(difference)
 
     if len(nuc_differences) > 0:
-        min_difference = min(nuc_differences)
+        if nuc_differences[0] > 0:
+            min_difference = min(nuc_differences)
+            proton_excess += 1
+            all_neutron_deficients.append(r2)
+        elif nuc_differences[0] < 0:
+            min_difference = max(nuc_differences)
+            neutron_excess += 1
+
+            all_proton_deficients.append(r2)
+
 
         mass_difference_with_r2.append([r2, min_difference])
+
+    if min_difference > 20:
+        print(target_exotic_nuclide)
 
 
 log_r2_plots = [abs(np.log(abs(i[0]))) for i in mass_difference_with_r2]
@@ -111,9 +132,26 @@ plt.xlabel('Mass differences')
 plt.ylabel("$|\ln(|r^2|)|$")
 plt.show()
 
+print(neutron_excess)
+print(proton_excess)
+
 time2 = time.time()
 
 timediff = time2 - time1
 
 print(f"Good prediction count: {len(r2count)}/{len(exotic_TENDL_nuclides)}")
 print(f"Time taken: {str(datetime.timedelta(seconds=timediff))}")
+
+
+tallyp = 0
+for k in all_proton_deficients:
+    if k > 0.85:
+        tallyp += 1
+
+tallyn = 0
+for j in all_neutron_deficients:
+    if j > 0.85:
+        tallyn += 1
+
+print(f"Good neutron-rich: {tallyp}/{len(all_proton_deficients)}")
+print(f"Good proton-rich: {tallyn}/{len(all_neutron_deficients)}")
