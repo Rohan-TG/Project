@@ -38,7 +38,7 @@ df.index = range(len(df))
 al = range_setter(la=30, ua=210, df=df)
 
 
-validation_nuclides = [[64,160]]
+validation_nuclides = []
 validation_set_size = 25
 
 while len(validation_nuclides) < validation_set_size:

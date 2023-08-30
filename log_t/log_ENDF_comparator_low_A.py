@@ -26,7 +26,7 @@ TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=0, ua=60)
 
-JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
+JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
 JEFF_nuclides = range_setter(df=JEFF, la=0, ua=60)
 
@@ -34,7 +34,7 @@ JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=0, ua=60)
 
-CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
+CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=60)
 
