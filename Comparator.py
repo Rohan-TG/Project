@@ -5,12 +5,12 @@ import periodictable
 import scipy
 from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE
 import random
-import shap
+# import shap
 import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 
-TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
+TENDL = pd.read_csv("NEW_TENDL21_ZEROED_1_FUND_ONLY.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
@@ -286,82 +286,82 @@ plt.title("Splits-based FI")
 xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
 plt.show()
 
-explainer = shap.Explainer(model.predict, X_train,
-						   feature_names= ['Z',
-									 'A',
-									 'S2n',
-									 'S2p',
-									 'E',
-									 'Sp',
-									 'Sn',
-									 'BEA',
-									 # 'P',
-									 'Snc',
-									 'g-def',
-									 'N',
-									 'b-def',
-									 'Sn da',
-									 # 'Sp d',
-									 'S2n d',
-									 'Radius',
-									 'n_g_erg',
-									 'n_c_erg',
-									 'n_rms_r',
-									 # 'oct_def',
-									 # 'D_c',
-									 'BEA_d',
-									 'BEA_c',
-									 # 'Pair_d',
-									 # 'Par_d',
-									 # 'S2n_c',
-									 'S2p_c',
-									 'ME',
-									 # 'Z_even',
-									 # 'A_even',
-									 # 'N_even',
-									 'Shell',
-									 # 'Parity',
-									 # 'Spin',
-									 'Decay',
-									 # 'Deform',
-									 'p_g_e',
-									 'p_c_e',
-									 # 'p_rms_r',
-									 # 'rms_r',
-									 # 'Sp_c',
-									 # 'Sn_c',
-									 'Shell_c',
-									 # 'S2p-d',
-									 # 'Shell-d',
-									 'Spin-c',
-									 # 'Rad-c',
-									 'Def-c',
-									 # 'ME-c',
-									 'BEA-A-c',
-									 'Decay-d',
-									 # 'ME-d',
-									 # 'Rad-d',
-									 # 'Pair-c',
-									 # 'Par-c',
-									 'BEA-A-d',
-									 # 'Spin-d',
-									 'Def-d',
-									 # 'mag_p',
-									 # 'mag-n',
-									 # 'mag-d',
-									 'Nlow',
-									 # 'Ulow',
-									 # 'Ntop',
-									 'Utop',
-									 # 'ainf',
-									 'Asym',
-									 # 'Asym_c',
-									 'Asym_d',
-									 # 'AM'
-									 ]) # SHAP feature importance analysis
-shap_values = explainer(X_test)
-
-
-
-shap.plots.bar(shap_values, max_display = 70) # display SHAP results
-shap.plots.waterfall(shap_values[0], max_display=70)
+# explainer = shap.Explainer(model.predict, X_train,
+# 						   feature_names= ['Z',
+# 									 'A',
+# 									 'S2n',
+# 									 'S2p',
+# 									 'E',
+# 									 'Sp',
+# 									 'Sn',
+# 									 'BEA',
+# 									 # 'P',
+# 									 'Snc',
+# 									 'g-def',
+# 									 'N',
+# 									 'b-def',
+# 									 'Sn da',
+# 									 # 'Sp d',
+# 									 'S2n d',
+# 									 'Radius',
+# 									 'n_g_erg',
+# 									 'n_c_erg',
+# 									 'n_rms_r',
+# 									 # 'oct_def',
+# 									 # 'D_c',
+# 									 'BEA_d',
+# 									 'BEA_c',
+# 									 # 'Pair_d',
+# 									 # 'Par_d',
+# 									 # 'S2n_c',
+# 									 'S2p_c',
+# 									 'ME',
+# 									 # 'Z_even',
+# 									 # 'A_even',
+# 									 # 'N_even',
+# 									 'Shell',
+# 									 # 'Parity',
+# 									 # 'Spin',
+# 									 'Decay',
+# 									 # 'Deform',
+# 									 'p_g_e',
+# 									 'p_c_e',
+# 									 # 'p_rms_r',
+# 									 # 'rms_r',
+# 									 # 'Sp_c',
+# 									 # 'Sn_c',
+# 									 'Shell_c',
+# 									 # 'S2p-d',
+# 									 # 'Shell-d',
+# 									 'Spin-c',
+# 									 # 'Rad-c',
+# 									 'Def-c',
+# 									 # 'ME-c',
+# 									 'BEA-A-c',
+# 									 'Decay-d',
+# 									 # 'ME-d',
+# 									 # 'Rad-d',
+# 									 # 'Pair-c',
+# 									 # 'Par-c',
+# 									 'BEA-A-d',
+# 									 # 'Spin-d',
+# 									 'Def-d',
+# 									 # 'mag_p',
+# 									 # 'mag-n',
+# 									 # 'mag-d',
+# 									 'Nlow',
+# 									 # 'Ulow',
+# 									 # 'Ntop',
+# 									 'Utop',
+# 									 # 'ainf',
+# 									 'Asym',
+# 									 # 'Asym_c',
+# 									 'Asym_d',
+# 									 # 'AM'
+# 									 ]) # SHAP feature importance analysis
+# shap_values = explainer(X_test)
+#
+#
+#
+# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+# shap.plots.waterfall(shap_values[0], max_display=70)
