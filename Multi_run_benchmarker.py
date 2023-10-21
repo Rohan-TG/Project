@@ -9,9 +9,7 @@ import xgboost as xg
 import time
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
-import periodictable
-import scipy
-from matrix_functions import make_train, make_test, range_setter, General_plotter
+from matrix_functions import make_train, make_test, range_setter, r2_standardiser
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
@@ -142,7 +140,11 @@ while len(nuclides_used) < len(al):
 
 		evaluation_r2s = []
 
-		endfb_r2 = r2_score(true_xs, pred_xs)
+		pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
+																		   library_xs=true_xs)
+		for libxs, p in zip(truncated_endfb, pred_endfb_gated):
+			all_library_evaluations.append(libxs)
+			all_predictions.append(p)
 		evaluation_r2s.append(endfb_r2)
 
 		for libxs, p in zip(true_xs, pred_xs):
@@ -155,9 +157,8 @@ while len(nuclides_used) < len(al):
 			pred_cendl = model.predict(cendl_test)
 
 			pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
-			pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
-
-			for libxs, p in zip(cendl_xs, pred_cendl):
+			pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl, library_xs=cendl_xs)
+			for libxs, p in zip(truncated_cendl, pred_cendl_gated):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
 			evaluation_r2s.append(pred_cendl_r2)
@@ -168,10 +169,8 @@ while len(nuclides_used) < len(al):
 			pred_jendl = model.predict(jendl_test)
 
 			pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-			pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
-
-
-			for libxs, p in zip(jendl_xs, pred_jendl):
+			pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
+			for libxs, p in zip(truncated_jendl, pred_jendl_gated):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
 			evaluation_r2s.append(pred_jendl_r2)
@@ -183,9 +182,8 @@ while len(nuclides_used) < len(al):
 			pred_jeff = model.predict(jeff_test)
 
 			pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-			pred_jeff_r2 = r2_score(y_true=jeff_xs, y_pred=pred_jeff)
-
-			for libxs, p in zip(jeff_xs, pred_jeff):
+			pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
+			for libxs, p in zip(truncated_jeff, pred_jeff_gated):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
 			evaluation_r2s.append(pred_jeff_r2)
@@ -196,8 +194,8 @@ while len(nuclides_used) < len(al):
 			pred_tendl = model.predict(tendl_test)
 
 			pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-			pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
-			for libxs, p in zip(tendl_xs, pred_tendl):
+			pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl, library_xs=tendl_xs)
+			for libxs, p in zip(truncated_tendl, pred_tendl_gated):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
 			evaluation_r2s.append(pred_tendl_r2)
