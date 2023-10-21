@@ -3,10 +3,10 @@ from matrix_functions import range_setter
 import numpy as np
 
 
-library = pd.read_csv('XS_NOUNCERT_JENDL5_ERG.csv')
+library = pd.read_csv('NEW_TENDL21_A_Z_ERG_XS_ZEROED.csv')
 print(library['ERG'])
 
-library['ERG'] = library['ERG'] / (1e6)
+library['ERG'] = library['ERG']
 print(library['ERG'])
 
 nuclide_feature_df = pd.read_csv('1_fund.csv')
@@ -22,7 +22,7 @@ print(len(library_nuclides))
 columns = list(nuclide_feature_df.columns)
 
 library = library[library.ERG < 20.0]
-library = library[library.LISO == 0]
+# library = library[library.LISO == 0]
 library.index = range(len(library))
 
 
@@ -51,5 +51,5 @@ def feature_engineer(df):
 
 
 library_with_features = feature_engineer(df=library)
-library_with_features.to_csv("JENDL5_main_branch_features_unzeroed.csv")
+library_with_features.to_csv("NEW_TENDL21_correctly_featured_1_fund_only.csv")
 print(library_with_features.shape)
