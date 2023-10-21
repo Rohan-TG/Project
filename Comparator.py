@@ -167,10 +167,11 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
 		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
-		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
+
 		for x, y in zip(pred_jendl_gated, truncated_jendl):
 			all_libs.append(y)
 			all_preds.append(x)
+		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 	if current_nuclide in JEFF_nuclides:
 		jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF)
