@@ -8,7 +8,7 @@ import xgboost as xg
 import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import make_test, make_train, anomaly_remover, range_setter, General_plotter, dsigma_dE
+from matrix_functions import make_test, make_train, r2_standardiser, range_setter, General_plotter, dsigma_dE
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
@@ -17,7 +17,7 @@ df.index = range(len(df))
 al = range_setter(la=30, ua=215, df=df)
 
 
-TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
+TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
@@ -130,7 +130,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jendl = model.predict(jendl_test)
 
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
+		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
 
 	if nuc in TENDL_nuclides:
@@ -139,7 +139,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
+		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl, library_xs=tendl_xs)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f}")
 
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
