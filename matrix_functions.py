@@ -3,7 +3,29 @@ from numba.core.errors import NumbaDeprecationWarning
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 import pandas as pd
 import numpy as np
+from sklearn.metrics import r2_score
 
+
+def r2_standardiser(raw_predictions, library_xs):
+	"""Both arguments must be lists.
+	Function returns the r2 calculated from the threshold onwards"""
+	gated_predictions = []
+	for xs_raw in raw_predictions:
+		if xs_raw >= 0.003: # arbitrary threshold
+			gated_predictions.append(xs_raw)
+		else:
+			gated_predictions.append(0)
+
+	threshold_gated_predictions = []
+	truncated_library_xs = []
+	for i, XS in gated_predictions:
+		if XS > 0.0:
+			threshold_gated_predictions.append(XS)
+			truncated_library_xs.append(library_xs[i])
+
+	standardised_r2 = r2_score(truncated_library_xs, threshold_gated_predictions)
+
+	return(gated_predictions, standardised_r2)
 
 def General_plotter(df, nuclides):
 	"""df: dataframe source of XSs
