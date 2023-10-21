@@ -18,14 +18,14 @@ def r2_standardiser(raw_predictions, library_xs):
 
 	threshold_gated_predictions = []
 	truncated_library_xs = []
-	for i, XS in gated_predictions:
+	for i, XS in enumerate(gated_predictions):
 		if XS > 0.0:
 			threshold_gated_predictions.append(XS)
 			truncated_library_xs.append(library_xs[i])
 
 	standardised_r2 = r2_score(truncated_library_xs, threshold_gated_predictions)
 
-	return(gated_predictions, standardised_r2)
+	return(threshold_gated_predictions, truncated_library_xs, standardised_r2)
 
 def General_plotter(df, nuclides):
 	"""df: dataframe source of XSs

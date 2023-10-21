@@ -3,14 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import periodictable
 import scipy
-from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE
+from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE, r2_standardiser
 import random
 # import shap
 import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 
-TENDL = pd.read_csv("NEW_TENDL21_ZEROED_1_FUND_ONLY.csv")
+TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
@@ -140,8 +140,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	time.sleep(0.8)
 
 	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
-	pred_endfb_r2 = r2_score(y_true=true_xs, y_pred=pred_xs)
-	for x, y in zip(pred_xs, true_xs):
+	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(raw_predictions=pred_xs, library_xs=true_xs)
+	for x, y in zip(pred_endfb_gated, truncated_endfb):
 		all_libs.append(y)
 		all_preds.append(x)
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
@@ -152,9 +152,10 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
 		pred_cendl = model.predict(cendl_test)
 
+		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl, library_xs=cendl_xs)
+
 		pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
-		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
-		for x, y in zip(pred_cendl, cendl_xs):
+		for x, y in zip(pred_cendl_gated, truncated_cendl):
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
@@ -165,9 +166,9 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jendl = model.predict(jendl_test)
 
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
+		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
-		for x, y in zip(pred_jendl, jendl_xs):
+		for x, y in zip(pred_jendl_gated, truncated_jendl):
 			all_libs.append(y)
 			all_preds.append(x)
 
@@ -177,8 +178,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jeff = model.predict(jeff_test)
 
 		pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-		pred_jeff_r2 = r2_score(y_true=jeff_xs, y_pred=pred_jeff)
-		for x, y in zip(pred_jeff, jeff_xs):
+		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
+		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
@@ -189,8 +190,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
-		for x, y in zip(pred_tendl, tendl_xs):
+		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl, library_xs=tendl_xs)
+		for x, y in zip(pred_tendl_gated, truncated_tendl):
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
