@@ -204,7 +204,7 @@ while len(nuclides_used) < len(al):
 			# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}"
 
 
-		r2 = r2_score(all_library_evaluations,all_predictions)
+		r2 = r2_score(all_library_evaluations,all_predictions) # various comparisons
 		if r2 > 0.97 and endfb_r2 < 0.9:
 			outliers += 1
 

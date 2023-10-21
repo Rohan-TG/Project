@@ -22,19 +22,17 @@ runtime = time.time()
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-df_test = df_test[df_test.Z != 11]
-df = df[df.Z != 11]
 
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
 
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=30, ua=210, df=df)
 
 
 
 
-n_evaluations = 40
+n_evaluations = 100
 
 o_nucs = [[31,69], [63,156], [14,32],
 		  [72,174], [48,114], [30,65],
@@ -42,8 +40,7 @@ o_nucs = [[31,69], [63,156], [14,32],
 		  [18,38], [34,82], [24,54],
 		  [72,178], [52,128], [58,144],
 		  [46,109], [55,137], [40,95],
-		  [71,176], [20,46], [48,113],
-		  []]
+		  [71,176], [20,46], [48,113],]
 for x in o_nucs:
 	datapoint_matrix = []
 	target_nuclide = x
@@ -52,7 +49,7 @@ for x in o_nucs:
 
 
 		validation_nuclides = [target_nuclide]
-		validation_set_size = 20  # number of nuclides hidden from training
+		validation_set_size = 25  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
@@ -62,7 +59,7 @@ for x in o_nucs:
 
 		time1 = time.time()
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df_test,)
 
@@ -92,14 +89,14 @@ for x in o_nucs:
 
 		predictions = predictions_ReLU
 
-		if i == 0:
+		if i == 0: # first iteration - need to initialise matrix size
 			for k, pred in enumerate(predictions):
 				if [X_test[k,0], X_test[k,1]] == validation_nuclides[0]:
 					datapoint_matrix.append([pred])
 		else:
 			valid_predictions = []
 			for k, pred in enumerate(predictions):
-				if [X_test[k, 0], X_test[k, 1]] == validation_nuclides[0]:
+				if [X_test[k, 0], X_test[k, 1]] == validation_nuclides[0]: # check if nuclide match
 					valid_predictions.append(pred)
 			for m, prediction in zip(datapoint_matrix, valid_predictions):
 				m.append(prediction)
@@ -122,7 +119,6 @@ for x in o_nucs:
 			E_plotmatrix.append(dummy_test_E)
 			P_plotmatrix.append(dummy_predictions)
 
-		# plot predictions against data
 		# note: python lists allow elements to be lists of varying lengths. This would not work using numpy arrays; the for
 		# loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
 		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):

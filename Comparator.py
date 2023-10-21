@@ -30,30 +30,29 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-df_test = df_test[df_test.Z != 11]
-df = df[df.Z != 11]
+
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=210, df=df)
 
 
-validation_nuclides = [[64,160]]
+validation_nuclides = []
 validation_set_size = 25
 
-while len(validation_nuclides) < validation_set_size:
-	choice = random.choice(al) # randomly select nuclide from list of all nuclides
+while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
+	choice = random.choice(al) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 	if choice not in validation_nuclides:
 		validation_nuclides.append(choice)
 print("Test nuclide selection complete")
 
 
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,)
-X_test, y_test = make_test(validation_nuclides, df=df_test,)
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,) # create training matrix
+X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
 print("Data prep done")
 
-model = xg.XGBRegressor(n_estimators=900,
+model = xg.XGBRegressor(n_estimators=900, # define regressor
 						learning_rate=0.008,
 						max_depth=8,
 						subsample=0.18236,
@@ -81,7 +80,8 @@ model.fit(X_train, y_train)
 print("Training complete")
 predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
-for pred in predictions:
+
+for pred in predictions: # prediction gate
 	if pred >= 0.003:
 		predictions_ReLU.append(pred)
 	else:
@@ -146,6 +146,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		all_preds.append(x)
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MSE: {pred_endfb_mse:0.6f}")
 
+	# Find r2 w.r.t. other libraries
 	if current_nuclide in CENDL_nuclides:
 
 		cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
@@ -201,7 +202,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 
 
-
+# FIA
 model.get_booster().feature_names = ['Z',
 									 'A',
 									 'S2n',

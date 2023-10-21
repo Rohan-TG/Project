@@ -7,7 +7,10 @@ import numpy as np
 
 def General_plotter(df, nuclides):
 	"""df: dataframe source of XSs
-	nuclides: must be array of 1x2 arrays [z,a]"""
+	nuclides: must be array of 1x2 arrays [z,a]
+
+	Returns XS and ERG values. Designed for plotting graphs and doing r2 comparisons without running make_test
+	which is much more demanding"""
 
 	ztest = [nuclide[0] for nuclide in nuclides]  # first element is the Z-value of the given test nuclide
 	atest = [nuclide[1] for nuclide in nuclides]
@@ -95,6 +98,8 @@ def anomaly_remover(dfa):
 	return dfa
 
 def range_setter(df, la, ua):
+	"""takes dataframe as input, with lower and upper bounds of A for nuclides desired. Returns a single array,
+	containing 1x2 arrays which contain nuclides in the format [Z,A]."""
 	nucs = []
 
 	for i, j, in zip(df['A'], df['Z']):  # i is A, j is Z
@@ -154,6 +159,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
 	df: dataframe to use
+	validation_nuclides are explicitly omitted from the training matrix
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
 
 	# MT = df['MT']
@@ -322,7 +328,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 
 	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
-			continue # prevents loop from adding test isotope to training data
+			continue # prevents loop from adding test isotope data to training data
 		if Energy[idx] >= 30: # training on data less than 30 MeV
 			continue
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
@@ -820,6 +826,7 @@ def log_make_train(df, validation_nuclides, log_reduction_variable, la=0, ua=260
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
+	lrv is the small arbitrary constant that prevents ln(0)
 	df: dataframe to use
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
 
@@ -3543,7 +3550,7 @@ def make_test_hidden(nuclides, df):
 	return xtest, y_test
 
 
-
+# abandoned functions
 def make_train_low(df, validation_nuclides, la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A

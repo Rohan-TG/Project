@@ -18,7 +18,7 @@ df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = anomaly_remover(dfa = df_test)
 
 
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=0, ua=60, df=df)
 
 # random.seed(a=2, version=2)
 nuclides_used = []
@@ -42,7 +42,7 @@ if __name__ == "__main__":
 		time1 = time.time()
 		validation_nuclides = []  # list of nuclides used for validation
 		# test_nuclides = []
-		validation_set_size = 20  # number of nuclides hidden from training
+		validation_set_size = 10  # number of nuclides hidden from training
 
 		while len(validation_nuclides) < validation_set_size:
 
@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
 
 		X_train, y_train = log_make_train(df=df, validation_nuclides=validation_nuclides,
-										  la=30, ua=215, log_reduction_variable=log_reduction_var) # make training matrix
+										  la=0, ua=60, log_reduction_variable=log_reduction_var) # make training matrix
 
 		X_test, y_test = log_make_test(validation_nuclides, df=df_test,
 									   log_reduction_variable=log_reduction_var)
@@ -71,11 +71,12 @@ if __name__ == "__main__":
 		print("Train/val matrices generated")
 
 
-		model = xg.XGBRegressor(n_estimators=900,
-								learning_rate=0.015,
+		model = xg.XGBRegressor(n_estimators=500,
+								learning_rate=0.01,
 								max_depth=8,
-								subsample=0.18236,
+								subsample=0.2,
 								max_leaves=0,
+								reg_lambda = 0.02
 								seed=42,)
 
 

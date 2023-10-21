@@ -35,7 +35,7 @@ datapoint_matrix = []
 target_nuclide = [45,107]
 
 validation_nuclides = [target_nuclide]
-validation_set_size = 1  # number of nuclides hidden from training
+validation_set_size = 1  # train on all ENDF/B-VIII
 
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215, )  # make training matrix
 
@@ -56,10 +56,6 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	time1 = time.time()
 
-
-
-
-
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
 	model = xg.XGBRegressor(n_estimators=900,
@@ -76,7 +72,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
 	for pred in predictions:
-		if pred >= 0.003:
+		if pred >= 0.003: # gate
 			predictions_ReLU.append(pred)
 		else:
 			predictions_ReLU.append(0)
@@ -141,20 +137,20 @@ tendl_energy, tendl_xs = General_plotter(df=TENDL21, nuclides=[target_nuclide])
 
 JEFF33 = pd.read_csv('JEFF33_all_features.csv')
 JEFF33.index = range(len(JEFF33))
-JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=215)
+JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=210)
 JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[target_nuclide])
 
 
 JENDL5 = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL5.index = range(len(JENDL5))
-JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=215)
+JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=210)
 JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 
 
-CENDL33 = pd.read_csv('CENDL32_all_features.csv')
-CENDL33.index = range(len(CENDL33))
-CENDL_nuclides = range_setter(df=CENDL33, la=30, ua=215)
-CENDL33_energy, CENDL33_XS = General_plotter(df=CENDL33, nuclides=[target_nuclide])
+CENDL32 = pd.read_csv('CENDL32_all_features.csv')
+CENDL32.index = range(len(CENDL32))
+CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
+CENDL32_energy, CENDL32_XS = General_plotter(df=CENDL32, nuclides=[target_nuclide])
 
 
 
@@ -169,7 +165,7 @@ if target_nuclide in JEFF_nuclides:
 if target_nuclide in JENDL_nuclides:
 	plt.plot(JENDL5_energy, JENDL5_XS, '--', label='JENDL5', color='green')
 if target_nuclide in CENDL_nuclides:
-	plt.plot(CENDL33_energy, CENDL33_XS, '--', label = 'CENDL3.3', color='gold')
+	plt.plot(CENDL32_energy, CENDL32_XS, '--', label = 'CENDL3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 plt.grid()
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}")
