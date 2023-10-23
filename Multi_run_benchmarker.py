@@ -1,4 +1,6 @@
 import warnings
+
+import periodictable
 from numba.core.errors import NumbaDeprecationWarning
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 import pandas as pd
@@ -13,7 +15,7 @@ from matrix_functions import make_train, make_test, range_setter, r2_standardise
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-al = range_setter(df=df, la=30, ua=210)
+al = range_setter(df=df, la=0, ua=270)
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
@@ -69,14 +71,13 @@ while len(nuclides_used) < len(al):
 		if len(nuclides_used) == len(al):
 			break
 
-	print(validation_nuclides)
 
 	print("Test nuclide selection complete")
 	print(f"{len(nuclides_used)}/{len(al)} selections")
 	# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=270) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -139,6 +140,9 @@ while len(nuclides_used) < len(al):
 		current_nuclide = nuc
 
 		evaluation_r2s = []
+
+		all_library_evaluations = []
+		all_predictions = []
 
 		pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
 																		   library_xs=true_xs)
@@ -203,6 +207,8 @@ while len(nuclides_used) < len(al):
 
 
 		r2 = r2_score(all_library_evaluations,all_predictions) # various comparisons
+		print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
+
 		if r2 > 0.97 and endfb_r2 < 0.9:
 			outliers += 1
 
@@ -263,11 +269,14 @@ Z_plots = [i[0] for i in nuclide_r2]
 log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 
+r2plot = [i[-1] for i in nuclide_r2]
+
 # heavy_performance = [abs(np.log(abs(i[-1]))) for i in nuclide_r2 if i[1] < 50]
 # print(f"Heavy performance: {heavy_performance}, mean: {np.mean(heavy_performance)}")
 
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
+# plt.plot(A_plots, r2plot, 'x')
 plt.xlabel("A")
 plt.ylabel("$|\ln(|r^2|)|$")
 plt.title("Performance - A")
@@ -279,6 +288,19 @@ plt.plot(Z_plots, log_plots_Z, 'x')
 plt.xlabel('Z')
 plt.ylabel("$|\ln(|r^2|)|$")
 plt.title("Performance - Z")
+plt.grid()
+plt.show()
+
+# plt.figure()
+# plt.hist(x=log_plots, bins=50)
+# plt.grid()
+# plt.show()
+
+plt.figure()
+plt.hist2d(x=A_plots, y=r2plot, bins=20)
+plt.xlabel("A")
+plt.ylabel("$|\ln(|r^2|)|$")
+plt.colorbar()
 plt.grid()
 plt.show()
 
