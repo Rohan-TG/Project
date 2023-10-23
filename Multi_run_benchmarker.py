@@ -297,7 +297,7 @@ plt.show()
 # plt.show()
 
 plt.figure()
-plt.hist2d(x=A_plots, y=r2plot, bins=20)
+plt.hist2d(x=A_plots, y=log_plots, bins=20)
 plt.xlabel("A")
 plt.ylabel("$|\ln(|r^2|)|$")
 plt.colorbar()
