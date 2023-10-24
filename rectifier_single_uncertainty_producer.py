@@ -52,9 +52,9 @@ CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 
 
-n_evaluations = 30
+n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [26,56]
+target_nuclide = [71,175]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -645,21 +645,319 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 # csxs = [0.86]
 # csxsd = [0.129]
 #
+#    E(MeV)
 
+
+
+
+
+
+
+
+
+# filae = [1.34900E+01,
+# 1.38900E+01,
+# 1.40500E+01,
+# 1.42600E+01,
+# 1.44400E+01,
+# 1.46400E+01,
+# 1.48100E+01,
+# 1.48400E+01]
+# filasexs = [1.36100,
+# 1.48400,
+# 1.25600,
+# 1.55400,
+# 1.36300,
+# 1.50600,
+# 1.73400,
+# 1.49100]
+# filasexsd = [1.63320E+02,
+# 1.78080E+02,
+# 1.72072E+02,
+# 1.80264E+02,
+# 1.96272E+02,
+# 1.88250E+02,
+# 2.32356E+02,
+# 2.78817E+02]
+#
+# filasexsd = [i/1000 for i in filasexsd]
+#
+#
+# frehaute = [9.93000E+00,
+# 1.04200E+01,
+# 1.09100E+01,
+# 1.14000E+01,
+# 1.18800E+01,
+# 1.23600E+01,
+# 1.28500E+01,
+# 1.33300E+01,
+# 1.38000E+01,
+# 1.42800E+01,
+# 1.47600E+01]
+#
+# frehautdxs = [6.00000E+00,
+# 1.70000E+01,
+# 2.70000E+01,
+# 3.70000E+01,
+# 4.50000E+01,
+# 6.90000E+01,
+# 7.40000E+01,
+# 8.10000E+01,
+# 8.10000E+01,
+# 7.90000E+01,
+# 8.10000E+01]
+# frehautdxs = [i/1000 for i in frehautdxs]
+#
+# frehautxs = [1.00000E+02,
+# 2.97000E+02,
+# 4.75000E+02,
+# 6.30000E+02,
+# 7.38000E+02,
+# 8.90000E+02,
+# 9.72000E+02,
+# 1.08800E+03,
+# 1.08700E+03,
+# 1.08800E+03,
+# 1.13300E+03]
+# frehautxs=[i/1000 for i in frehautxs]
+
+
+
+
+
+
+
+
+
+nxs = [1.65700,
+1.82700,
+1.79400,
+1.74800,
+1.67600,
+1.81200,
+1.67700,
+1.79300]
+ne = [1.38000E+01,
+1.38400E+01,
+1.40100E+01,
+1.40400E+01,
+1.41000E+01,
+1.42100E+01,
+1.43900E+01,
+1.44200E+01]
+ndxs = [1.12676E+01,
+1.24236E+01,
+1.21992E+01,
+1.18864E+01,
+1.70000E+02,
+1.23216E+01,
+1.14036E+01,
+1.21924E+01]
+ndxs = [i/1000 for i in ndxs]
+
+
+
+
+
+fe = [8.44000E+00,
+8.94000E+00,
+9.44000E+00,
+9.93000E+00,
+1.04200E+01,
+1.09100E+01,
+1.14000E+01,
+1.18800E+01,
+1.23600E+01,
+1.28500E+01,
+1.33300E+01,
+1.38000E+01,
+1.42800E+01,
+1.47600E+01]
+fxs = [2.03000E+02,
+6.59000E+02,
+1.16200E+03,
+1.40400E+03,
+1.56000E+03,
+1.72000E+03,
+1.69600E+03,
+1.81300E+03,
+1.91900E+03,
+1.99600E+03,
+2.03600E+03,
+2.07600E+03,
+2.11300E+03,
+2.09400E+03]
+fxs = [i/1000 for i in fxs]
+fdxs = [3.30000E+01,
+5.00000E+01,
+1.12000E+02,
+8.60000E+01,
+9.50000E+01,
+1.24000E+02,
+1.07000E+02,
+1.10000E+02,
+1.21000E+02,
+1.25000E+02,
+1.26000E+02,
+1.23000E+02,
+1.55000E+02,
+1.57000E+02]
+fdxs = [i/1000 for i in fdxs]
+
+
+
+
+
+
+
+ce = [1.34000E+01,
+1.37000E+01,
+1.41000E+01,
+1.44500E+01,
+1.46500E+01,
+1.48000E+01]
+cdxs = [8.00000E+01,
+7.90000E+01,
+8.20000E+01,
+8.10000E+01,
+8.00000E+01,
+7.80000E+01]
+cdxs=[i/1000 for i in cdxs]
+cxs = [1.9950,
+1.9870,
+2.0390,
+2.0210,
+1.9090,
+1.9600]
+
+
+
+de = [1.35000E+01,
+1.42000E+01,
+1.46000E+01]
+ddxs = [2.50000E+02,
+2.19000E+02,
+1.90000E+02]
+ddxs = [i/1000 for i in ddxs]
+dxs = [1.89600,
+1.47300,
+1.86000]
+
+
+
+
+
+
+
+ve = [1.47000E+01,
+1.60000E+01,
+1.70000E+01,
+1.80000E+01,
+1.90000E+01,
+2.00000E+01,
+2.10000E+01,
+2.20000E+01,
+2.30000E+01,
+2.40000E+01]
+vxs = [1.98400E+03,
+1.99200E+03,
+1.78700E+03,
+1.32000E+03,
+9.57000E+02,
+7.70000E+02,
+7.22000E+02,
+5.35000E+02,
+5.62000E+02,
+5.24000E+02]
+vxs = [i/1000 for i in vxs]
+vdxs = [1.15000E+02,
+1.05000E+02,
+8.50000E+01,
+8.80000E+01,
+6.40000E+01,
+1.04000E+02,
+6.80000E+01,
+7.90000E+01,
+9.80000E+01,
+1.54000E+02]
+vdxs = [i/1000 for i in vdxs]
+
+
+
+
+
+ze = [1.41000E+01,
+1.45000E+01,
+1.47000E+01]
+zdxs = [6.50000E+01,
+7.10000E+01,
+6.80000E+01]
+zdxs=[i/1000 for i in zdxs]
+zxs = [2.0040,
+2.0730,
+1.9770]
+
+
+
+be = [8.51000E+00,
+9.27000E+00,
+1.41000E+01,
+1.49200E+01,
+1.71900E+01,
+1.81900E+01,
+1.99400E+01,
+2.12100E+01,
+2.19400E+01,
+2.33200E+01,
+2.44600E+01]
+bdxs = [1.50000E+01,
+3.50000E+01,
+7.60000E+01,
+7.10000E+01,
+0.00000E+00,
+0.00000E+00,
+0.00000E+00,
+1.42410E+01,
+1.57320E+01,
+1.42065E+01,
+1.32102E+01]
+bdxs = [i/1000 for i in bdxs]
+bxs = [3.23000E+02,
+8.16000E+02,
+1.78900E+03,
+1.66800E+03,
+1.33700E+03,
+9.65000E+02,
+5.74000E+02,
+3.03000E+02,
+3.42000E+02,
+2.87000E+02,
+2.46000E+02]
+bxs=[i/1000 for i in bxs]
 
 print(f"Turning points: {dsigma_dE(XS=datapoint_means)}")
 
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
-plt.plot(tendlerg, tendl_xs, label = 'TENDL21', color='dimgrey')
+plt.plot(tendlerg, tendl_xs, label = 'TENDL-2021', color='dimgrey')
 if target_nuclide in JEFF_nuclides:
-	plt.plot(jefferg, jeffxs, '--', label='JEFF3.3', color='mediumvioletred')
+	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
 if target_nuclide in JENDL_nuclides:
-	plt.plot(jendlerg, jendlxs, label='JENDL5', color='green')
+	plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
 if target_nuclide in CENDL_nuclides:
-	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL3.2', color='gold')
+	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
+
+plt.errorbar(ne, nxs, yerr=ndxs, fmt='x', color='orangered', capsize=2, label='Nethaway, 1972')
+plt.errorbar(fe, fxs, yerr=fdxs, fmt='x', color='magenta', capsize=2, label='Frehaut, 1980')
+plt.errorbar(ce, cxs, yerr=cdxs, fmt='x', color='gold', capsize=2, label='Chuanxin, 2011')
+plt.errorbar(de, dxs, yerr=ddxs, fmt='x', color='dodgerblue', capsize=2, label='Dzysiuk, 2010')
+plt.errorbar(ve, vxs, yerr=vdxs, fmt='x', color='firebrick', capsize=2, label='Veeser, 1977')
+plt.errorbar(ze, zxs, yerr=zdxs, fmt='x', color='aquamarine', capsize=2, label='Zhengwei, 2018')
+plt.errorbar(be, bxs, yerr=bdxs, fmt='x', color='purple', capsize=2, label = 'Bayhurst, 1975')
+# plt.errorbar(frehaute, frehautxs, yerr=frehautdxs, fmt='x', color='violet', capsize=2, label = 'Frehaut, 1980')
+# plt.errorbar(filae, filasexs, yerr=filasexsd, fmt='x', color='indigo', capsize=2, label = 'Filatenkov, 2016')
 # plt.errorbar(cse, csxs, yerr=csxsd, fmt='x', color='violet',capsize=2, label='Csikai, 1967')
 # plt.errorbar(tiwarie, tiwarixs, yerr=tiwarixsd,
 # 			 fmt='x', color='indigo',capsize=2, label='Tiwari, 1968')
