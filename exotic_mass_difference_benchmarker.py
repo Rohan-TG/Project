@@ -2,7 +2,7 @@ import random
 
 import pandas as pd
 import numpy as np
-from matrix_functions import make_test, make_train, range_setter
+from matrix_functions import make_test, make_train, range_setter, r2_standardiser
 from sklearn.metrics import r2_score, mean_squared_error
 import xgboost as xg
 import time
@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 time1 = time.time()
 
 ENDFBVIII = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-TENDL21 = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
+TENDL21 = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 JENDL5 = pd.read_csv("JENDL5_arange_all_features.csv")
 
 print("Libraries loaded")
