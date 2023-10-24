@@ -35,6 +35,8 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=260)
 
 outliers = 0
 outliers90 = 0
+outliers85 = 0
+outliers9090 = 0
 
 nuclides_used = []
 nuclide_mse = []
@@ -211,6 +213,12 @@ while len(nuclides_used) < len(al):
 		if r2 > 0.95 and endfb_r2 <= 0.9:
 			outliers90 += 1
 
+		if r2 > 0.85 and endfb_r2 <0.8:
+			outliers85 += 1
+
+		if r2 >0.9 and endfb_r2 <0.9:
+			outliers9090+=1
+
 		for z in evaluation_r2s:
 			if z > 0.97:
 				outlier_tally += 1
@@ -248,6 +256,8 @@ print(f"no. outliers estimate: {outliers}/{len(al)}")
 print()
 print(f"At least one library in strong agreement: {outlier_tally}/{len(al)}")
 print(f"Estimate of outliers, threshold 0.9: {outliers90}/{len(al)}")
+print(f"outliers 90/90: {outliers9090}/{len(al)}")
+print(f"outliers 85/80: {outliers85}/{len(al)}")
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
 # all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
