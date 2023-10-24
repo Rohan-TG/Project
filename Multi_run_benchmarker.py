@@ -17,7 +17,7 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 al = range_setter(df=df, la=30, ua=210)
 
-TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
+TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=0, ua=260)
 
