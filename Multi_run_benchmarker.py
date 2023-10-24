@@ -38,10 +38,18 @@ outliers90 = 0
 outliers85 = 0
 outliers9090 = 0
 
+low_masses = []
+
 nuclides_used = []
 nuclide_mse = []
 nuclide_r2 = []
+tally90 = 0
 
+other = []
+
+bad_nuclides = []
+
+at_least_one_agreeing_90 = 0
 
 every_prediction_list = []
 every_true_value_list = []
@@ -225,11 +233,32 @@ while len(nuclides_used) < len(al):
 				break
 
 
+		for z in evaluation_r2s:
+			if z > 0.9:
+				at_least_one_agreeing_90 += 1
+				break
+
+		l_temp = 0
+		for l in evaluation_r2s:
+			if l < 0.9:
+				l_temp += 1
+			if int(l_temp) == len(evaluation_r2s):
+				bad_nuclides.append(current_nuclide)
+
 		if nuc[1] <= 60:
 			low_mass_r2.append(r2)
 
+		if nuc[1] > 60:
+			other.append(r2)
+
 		if r2 > 0.95:
 			tally += 1
+
+		if r2 >= 0.9:
+			tally90 += 1
+
+		if current_nuclide[1] <= 60:
+			low_masses.append(r2)
 		# r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
 		# print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
@@ -252,18 +281,55 @@ while len(nuclides_used) < len(al):
 	print(f'completed in {time_taken:0.1f} s.\n')
 
 
+lownucs = range_setter(df=df, la=0, ua=60)
+othernucs = range_setter(df=df, la=61, ua=210)
+oncount = 0
+oncount90=0
+for q in other:
+	if q < 0.8:
+		oncount+=1
+	if q < 0.9:
+		oncount90+=1
+
+print(f"{oncount}/{len(othernucs)} of mid nucs have r2 below 0.8")
+print(f"{oncount90}/{len(othernucs)} of mid nucs have r2 below 0.9")
+
+lncount = 0
+lncount90 = 0
+for u in low_masses:
+	if u < 0.8:
+		lncount+=1
+	if u < 0.9:
+		lncount90+=1
+print(f"{lncount}/{len(lownucs)} of A<=60 nuclides have r2 below 0.8")
+print(f"{lncount90}/{len(lownucs)} of A<=60 nuclides have r2 below 0.9")
+plt.figure()
+plt.hist(x=low_masses)
+plt.show()
+
+low_a_badp = 0
+for a in bad_nuclides:
+	if a[1] <=60:
+		low_a_badp+=1
+print(f"{low_a_badp}/{len(bad_nuclides)} have A <= 60 and are bad performers")
+
 print(f"no. outliers estimate: {outliers}/{len(al)}")
 print()
 print(f"At least one library in strong agreement: {outlier_tally}/{len(al)}")
 print(f"Estimate of outliers, threshold 0.9: {outliers90}/{len(al)}")
 print(f"outliers 90/90: {outliers9090}/{len(al)}")
 print(f"outliers 85/80: {outliers85}/{len(al)}")
+print(f"Tally of consensus r2 > 0.95: {tally}/{len(al)}")
+print(f"Tally of consensus r2 > 0.90: {tally90}/{len(al)}")
+print(f"At least one library r2 > 0.90: {at_least_one_agreeing_90}/{len(al)}")
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
 # all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
 all_libraries_r2 = r2_score(y_true=all_library_evaluations, y_pred= all_predictions)
 # print(f"MSE: {all_libraries_mse:0.5f}")
 print(f"R2: {all_libraries_r2:0.5f}")
+
+print(f"Bad nuclides: {bad_nuclides}")
 
 # print(f"Good predictions {tally}/{len(al)}")
 
