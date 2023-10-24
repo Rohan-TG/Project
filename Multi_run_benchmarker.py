@@ -220,7 +220,7 @@ while len(nuclides_used) < len(al):
 			outliers9090+=1
 
 		for z in evaluation_r2s:
-			if z > 0.97:
+			if z > 0.95:
 				outlier_tally += 1
 				break
 
