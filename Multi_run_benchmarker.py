@@ -15,7 +15,7 @@ from matrix_functions import make_train, make_test, range_setter, r2_standardise
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-al = range_setter(df=df, la=0, ua=270)
+al = range_setter(df=df, la=30, ua=210)
 
 TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
 TENDL.index = range(len(TENDL))
@@ -77,7 +77,7 @@ while len(nuclides_used) < len(al):
 	# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=270) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -150,10 +150,6 @@ while len(nuclides_used) < len(al):
 			all_library_evaluations.append(libxs)
 			all_predictions.append(p)
 		evaluation_r2s.append(endfb_r2)
-
-		for libxs, p in zip(true_xs, pred_xs):
-			all_library_evaluations.append(libxs)
-			all_predictions.append(p)
 
 		if current_nuclide in CENDL_nuclides:
 
