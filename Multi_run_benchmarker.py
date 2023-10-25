@@ -213,7 +213,7 @@ while len(nuclides_used) < len(al):
 
 
 		r2 = r2_score(all_library_evaluations,all_predictions) # various comparisons
-		print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
+		# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
 
 		if r2 > 0.97 and endfb_r2 < 0.9:
 			outliers += 1
