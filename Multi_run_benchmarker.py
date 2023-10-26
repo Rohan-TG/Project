@@ -15,7 +15,7 @@ from matrix_functions import make_train, make_test, range_setter, r2_standardise
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-al = range_setter(df=df, la=30, ua=210)
+al = range_setter(df=df, la=0, ua=270)
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
@@ -87,7 +87,7 @@ while len(nuclides_used) < len(al):
 	# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=270) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -153,9 +153,11 @@ while len(nuclides_used) < len(al):
 
 		all_library_evaluations = []
 		all_predictions = []
-
-		pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
-																		   library_xs=true_xs)
+		try:
+			pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
+																			   library_xs=true_xs)
+		except:
+			print(current_nuclide)
 		for libxs, p in zip(truncated_endfb, pred_endfb_gated):
 			all_library_evaluations.append(libxs)
 			all_predictions.append(p)
