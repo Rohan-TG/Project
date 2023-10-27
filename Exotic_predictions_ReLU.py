@@ -119,6 +119,9 @@ for nuclide in validation_nuclides:
 # loop below loops through the lists ..._plotmatrix, where each element is a list corresponding to nuclide nuc[i].
 for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 
+	all_libs = []
+	all_preds = []
+
 	nuc = validation_nuclides[i] # validation nuclide
 
 	jendl_erg, jendl_xs = General_plotter(df=JENDL, nuclides=[nuc])
@@ -131,6 +134,10 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
 		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
+
+		for p, xs in zip(pred_jendl_gated, truncated_jendl):
+			all_libs.append(xs)
+			all_preds.append(p)
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
 
 	if nuc in TENDL_nuclides:
@@ -140,6 +147,10 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl, library_xs=tendl_xs)
+
+		for p, xs in zip(pred_tendl_gated, truncated_tendl):
+			all_libs.append(xs)
+			all_preds.append(p)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f}")
 
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
