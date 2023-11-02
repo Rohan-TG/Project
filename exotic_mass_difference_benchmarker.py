@@ -130,6 +130,7 @@ plt.plot(mass_differences, log_r2_plots, 'x')
 plt.grid()
 plt.xlabel('Mass differences')
 plt.ylabel("$|\ln(|r^2|)|$")
+plt.title("Exotic nuclide mass differences")
 plt.show()
 
 print(neutron_excess)
