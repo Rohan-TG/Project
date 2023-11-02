@@ -199,7 +199,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
 
 	print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
-	print(f"Mean gradient: {sum(abs(np.gradient(pred_xs)))/(len(pred_xs)):0.5f}")
+	# print(f"Mean gradient: {sum(abs(np.gradient(pred_xs)))/(len(pred_xs)):0.5f}")
 
 
 
