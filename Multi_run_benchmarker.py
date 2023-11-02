@@ -15,7 +15,7 @@ from matrix_functions import make_train, make_test, range_setter, r2_standardise
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-al = range_setter(df=df, la=0, ua=270)
+al = range_setter(df=df, la=30, ua=210)
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
@@ -46,6 +46,7 @@ nuclide_r2 = []
 tally90 = 0
 
 other = []
+gewd_97 = 0
 
 bad_nuclides = []
 
@@ -87,7 +88,7 @@ while len(nuclides_used) < len(al):
 	# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=270) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -259,6 +260,8 @@ while len(nuclides_used) < len(al):
 		if r2 >= 0.9:
 			tally90 += 1
 
+		if r2 >= 0.97:
+			gewd_97 +=1
 		if current_nuclide[1] <= 60:
 			low_masses.append(r2)
 		# r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
@@ -295,6 +298,7 @@ for q in other:
 
 print(f"{oncount}/{len(othernucs)} of mid nucs have r2 below 0.8")
 print(f"{oncount90}/{len(othernucs)} of mid nucs have r2 below 0.9")
+print(f">= 97 consensus: {gewd_97}/{len(al)}")
 
 lncount = 0
 lncount90 = 0
@@ -317,13 +321,13 @@ print(f"{low_a_badp}/{len(bad_nuclides)} have A <= 60 and are bad performers")
 
 print(f"no. outliers estimate: {outliers}/{len(al)}")
 print()
-print(f"At least one library in strong agreement: {outlier_tally}/{len(al)}")
+print(f"At least one library >= 0.95: {outlier_tally}/{len(al)}")
 print(f"Estimate of outliers, threshold 0.9: {outliers90}/{len(al)}")
 print(f"outliers 90/90: {outliers9090}/{len(al)}")
 print(f"outliers 85/80: {outliers85}/{len(al)}")
 print(f"Tally of consensus r2 > 0.95: {tally}/{len(al)}")
 print(f"Tally of consensus r2 > 0.90: {tally90}/{len(al)}")
-print(f"At least one library r2 > 0.90: {at_least_one_agreeing_90}/{len(al)}")
+# print(f"At least one library r2 > 0.90: {at_least_one_agreeing_90}/{len(al)}")
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
 # all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
