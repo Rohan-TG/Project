@@ -135,8 +135,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.show()
 
 	mse = mean_squared_error(y_true=true_xs, y_pred=pred_xs)
-	r2 = r2_score(true_xs, pred_xs)  # R^2 score for this specific nuclide
-	print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}, MSE: {mse:0.5f}")
+	print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 	time.sleep(0.8)
 
 	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
