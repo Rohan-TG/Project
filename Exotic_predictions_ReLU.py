@@ -31,13 +31,21 @@ print("Data loaded")
 # 					   [39,92],[39,93],[39,94],
 # 					   [39,95]]
 
-validation_nuclides = [[40,86],[40,87],
-					   # [40,88],[40,89],[40,94],
-					   # [40,95],[40,96],[40,97],
-					   # [40,98],[40,99],[40,100],
-					   [40,101],[40,102],[78,188],
-					   [49,119],]
+# validation_nuclides = [[40,86],[40,87],
+# 					   # [40,88],[40,89],[40,94],
+# 					   # [40,95],[40,96],[40,97],
+# 					   # [40,98],[40,99],[40,100],
+# 					   [40,101],[40,102],[78,188],
+# 					   [49,119],]
 
+validation_nuclides = []
+
+proton_excess = 0
+neutron_excess = 0
+
+all_neutron_deficients = []
+all_proton_deficients = []
+mass_difference_with_r2 = []
 
 exotic_nuclides = []
 for x in TENDL_nuclides:
@@ -151,7 +159,30 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		for p, xs in zip(pred_tendl_gated, truncated_tendl):
 			all_libs.append(xs)
 			all_preds.append(p)
-		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f}")
+		print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {pred_tendl_r2:0.5f}")
+
+	match_element = []
+	for nuclide in al:
+		if nuclide[0] == nuc[0]:
+			match_element.append(nuclide)
+	nuc_differences = []
+	for match_nuclide in match_element:
+		difference = match_nuclide[1] - nuc[1]
+		nuc_differences.append(difference)
+
+	if len(nuc_differences) > 0:
+		if nuc_differences[0] > 0:
+			min_difference = min(nuc_differences)
+			proton_excess += 1
+			all_neutron_deficients.append(pred_tendl_r2)
+		elif nuc_differences[0] < 0:
+			min_difference = max(nuc_differences)
+			neutron_excess += 1
+
+			all_proton_deficients.append(pred_tendl_r2)
+
+		mass_difference_with_r2.append([pred_tendl_r2, min_difference])
+		print(f"Mass difference: {min_difference:0.0f}\n")
 
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
 	plt.plot(tendl_erg, tendl_xs, label = "TENDL21", color='dimgrey')
@@ -166,11 +197,11 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.xlabel('Energy / MeV')
 	plt.show()
 
-	r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
-	print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+	# r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
+
 	time.sleep(0.5)
 
-	print(f"Turning points: {dsigma_dE(XS=pred_xs)}\n")
+	# print(f"Turning points: {dsigma_dE(XS=pred_xs)}\n")
 
 print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 print(f"R2: {r2_score(y_test, predictions)}") # Total R^2 for all predictions in this training campaign
