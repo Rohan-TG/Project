@@ -1,5 +1,41 @@
 import numpy as np
+from sklearn.metrics import r2_score
 
+
+def General_plotter(df, nuclides):
+	"""df: dataframe source of XSs
+	nuclides: must be array of 1x2 arrays [z,a]
+
+	Returns XS and ERG values. Designed for plotting graphs and doing r2 comparisons without running make_test
+	which is much more demanding"""
+
+	ztest = [nuclide[0] for nuclide in nuclides]  # first element is the Z-value of the given test nuclide
+	atest = [nuclide[1] for nuclide in nuclides]
+
+	Z = df['Z']
+	A = df['A']
+
+	Energy = df['ERG']
+	XS = df['XS']
+
+	Z_test = []
+	A_test = []
+	Energy_test = []
+	XS_test = []
+
+	for nuc_test_z, nuc_test_a in zip(ztest, atest):
+		for j, (zval, aval) in enumerate(zip(Z, A)):
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20 and Energy[j] >= 8.0:
+				Z_test.append(Z[j])
+				A_test.append(A[j])
+				Energy_test.append(Energy[j])
+				XS_test.append(XS[j])
+
+	energies = np.array(Energy_test)
+
+	xs = XS_test
+
+	return energies, xs
 
 def make_train(df, validation_nuclides, la, ua):
 	"""la: lower bound for A
@@ -658,7 +694,7 @@ def make_test(nuclides, df):
 
 	return xtest, y_test
 
-def range_setter(df, la, ua):
+def range_setter(df, la=0, ua=260):
 	"""takes dataframe as input, with lower and upper bounds of A for nuclides desired. Returns a single array,
 	containing 1x2 arrays which contain nuclides in the format [Z,A]."""
 	nucs = []
@@ -669,3 +705,25 @@ def range_setter(df, la, ua):
 		else:
 			nucs.append([j, i])  # format is [Z, A]
 	return nucs
+
+
+def r2_standardiser(raw_predictions, library_xs):
+	"""Both arguments must be lists.
+	Function returns the r2 calculated from the threshold onwards"""
+	gated_predictions = []
+	for xs_raw in raw_predictions:
+		if xs_raw >= 0.003: # arbitrary threshold
+			gated_predictions.append(xs_raw)
+		else:
+			gated_predictions.append(0)
+
+	threshold_gated_predictions = []
+	truncated_library_xs = []
+	for i, XS in enumerate(gated_predictions):
+		if XS > 0.0:
+			threshold_gated_predictions.append(XS)
+			truncated_library_xs.append(library_xs[i])
+
+	standardised_r2 = r2_score(truncated_library_xs, threshold_gated_predictions)
+
+	return(threshold_gated_predictions, truncated_library_xs, standardised_r2)
