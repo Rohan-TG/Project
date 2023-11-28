@@ -174,7 +174,9 @@ def make_train(df, validation_nuclides, la, ua):
 	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope data to training data
-		if Energy[idx] >= 21: # training on data less than 30 MeV
+		if Energy[idx] > 20: # training on data less than 30 MeV
+			continue
+		if Energy[idx] < 8.0:
 			continue
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
 			Z_train.append(Z[idx])
@@ -499,6 +501,8 @@ def make_test(nuclides, df):
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
+			if Energy[j] < 8.0:
+				continue
 			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
