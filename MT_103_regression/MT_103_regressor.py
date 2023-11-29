@@ -36,7 +36,7 @@ print("Test nuclide selection complete")
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100)
 X_test, y_test = make_test(validation_nuclides, df=df)
 
-model = xgboost.XGBRegressor(n_estimators = 500,
+model = xgboost.XGBRegressor(n_estimators = 600,
 							 learning_rate = 0.008,
 							 max_depth = 8,
 							 subsample = 0.3,
