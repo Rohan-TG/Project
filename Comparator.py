@@ -12,19 +12,19 @@ import time
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
 
 JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
+JEFF_nuclides = range_setter(df=JEFF, la=0, ua=210)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
+JENDL_nuclides = range_setter(df=JENDL, la=0, ua=210)
 
 CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
+CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
@@ -34,11 +34,12 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
-al = range_setter(la=30, ua=210, df=df)
+al = range_setter(la=00, ua=60, df=df)
 
+random.seed(a=10)
 
 validation_nuclides = []
-validation_set_size = 25
+validation_set_size = 10
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -48,7 +49,7 @@ print("Test nuclide selection complete")
 
 
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,) # create training matrix
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100,) # create training matrix
 X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
 print("Data prep done")
 
