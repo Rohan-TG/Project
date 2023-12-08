@@ -862,6 +862,7 @@ def mtmake_train(df, validation_nuclides, la=0, ua=260):
 	# MT = df['MT']
 	MT103XS = df['MT103XS']
 	MT107XS = df['MT107XS']
+	MT91XS = df['MT91XS']
 	ME = df['ME']
 	Z = df['Z']
 	A = df['A']
@@ -944,6 +945,7 @@ def mtmake_train(df, validation_nuclides, la=0, ua=260):
 
 	MT107_train = []
 	MT103_train = []
+	MT91_train = []
 	Z_train = []
 	A_train = []
 	S2n_train = []
@@ -1108,6 +1110,7 @@ def mtmake_train(df, validation_nuclides, la=0, ua=260):
 
 			MT107_train.append(MT107XS[idx])
 			MT103_train.append(MT103XS[idx])
+			MT91_train.append(MT91XS[idx])
 
 	X = np.array([Z_train,
 				  A_train,
@@ -1184,7 +1187,8 @@ def mtmake_train(df, validation_nuclides, la=0, ua=260):
 				  Asymmetry_daughter_train,
 				  # AM_train,
 				  MT103_train,
-				  MT107_train
+				  MT107_train,
+				  MT91_train,
 				  ])
 	y = np.array(XS_train) # cross sections
 
@@ -1207,6 +1211,7 @@ def mtmake_test(nuclides, df):
 	# MT = df['MT']
 	# AM = df['AM']
 	MT103XS = df['MT103XS']
+	MT91XS = df['MT91XS']
 	MT107XS = df['MT107XS']
 	ME = df['ME']
 	Z = df['Z']
@@ -1288,6 +1293,7 @@ def mtmake_test(nuclides, df):
 
 	MT103_test = []
 	MT107_test = []
+	MT91_test = []
 
 	# AM_test = []
 	Z_test = []
@@ -1451,6 +1457,7 @@ def mtmake_test(nuclides, df):
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 				MT103_test.append(MT103XS[j])
 				MT107_test.append(MT107XS[j])
+				MT91_test.append(MT91XS[j])
 
 
 	xtest = np.array([Z_test,
@@ -1527,7 +1534,8 @@ def mtmake_test(nuclides, df):
 	Asymmetry_daughter_test,
 	# AM_test,
 	MT103_test,
-	MT107_test
+	MT107_test,
+	MT91_test,
 	])
 
 	xtest = np.transpose(xtest)
