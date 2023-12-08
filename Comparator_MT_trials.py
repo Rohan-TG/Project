@@ -29,17 +29,19 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 
 
-df = pd.read_csv('ENDFBVIII_MT16_MT103_MT107_fund_features.csv')
-df_test = pd.read_csv('ENDFBVIII_MT16_MT103_MT107_fund_features.csv')
+df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
+df_test = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
 
 
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
-al = range_setter(la=0, ua=60, df=df)
+al = range_setter(la=0, ua=100, df=df)
 
-validation_nuclides = []
+validation_nuclides = [[30,64]]
 validation_set_size = 15
+
+# random.seed(a=10)
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -52,12 +54,14 @@ X_train, y_train = mtmake_train(df=df, validation_nuclides=validation_nuclides, 
 X_test, y_test = mtmake_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
 print("Data prep done")
 
-model = xg.XGBRegressor(n_estimators=800, # define regressor
-						learning_rate=0.009,
+model = xg.XGBRegressor(n_estimators=900, # define regressor
+						learning_rate=0.008,
 						max_depth=8,
-						subsample=0.7,
+						subsample=0.25,
 						max_leaves=0,
-						seed=42, )
+						seed=42,
+						reg_lambda = 6,
+						)
 
 model.fit(X_train, y_train)
 print("Training complete")
@@ -204,7 +208,8 @@ model.get_booster().feature_names = ['Z',
 									 'Asym_d',
 									 # 'AM',
 									 'MT103_XS',
-									 'MT107_XS'
+									 'MT107_XS',
+									 'MT91_XS'
 									 ]
 
 # Gain-based feature importance plot
@@ -291,7 +296,8 @@ explainer = shap.Explainer(model.predict, X_train,
 									 'Asym_d',
 									 # 'AM',
 									 'MT103XS',
-									 'MT107XS'
+									 'MT107XS',
+									 'MT_91XS',
 									 ]) # SHAP feature importance analysis
 shap_values = explainer(X_test)
 
