@@ -27,7 +27,7 @@ def r2_standardiser(raw_predictions, library_xs):
 
 	return(threshold_gated_predictions, truncated_library_xs, standardised_r2)
 
-def General_plotter(df, nuclides):
+def General_plotter(df, nuclides, MT=16):
 	"""df: dataframe source of XSs
 	nuclides: must be array of 1x2 arrays [z,a]
 
@@ -41,7 +41,14 @@ def General_plotter(df, nuclides):
 	A = df['A']
 
 	Energy = df['ERG']
-	XS = df['XS']
+	if MT == 16:
+		XS = df['XS']
+	elif MT == 91:
+		XS = df['MT91XS']
+	elif MT == 103:
+		XS = df['MT103XS']
+	elif MT == 107:
+		XS = df['MT107XS']
 
 	Z_test = []
 	A_test = []
