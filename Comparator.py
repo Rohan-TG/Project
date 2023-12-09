@@ -34,12 +34,12 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
-al = range_setter(la=0, ua=100, df=df)
+al = range_setter(la=30, ua=210, df=df)
 
-random.seed(a=10)
+# random.seed(a=10)
 
-validation_nuclides = [[30,64]]
-validation_set_size = 15
+validation_nuclides = [[36,79]]
+validation_set_size = 10
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -49,7 +49,7 @@ print("Test nuclide selection complete")
 
 
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100,) # create training matrix
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,) # create training matrix
 X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
 print("Data prep done")
 
