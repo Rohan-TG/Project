@@ -38,8 +38,8 @@ al = range_setter(la=30, ua=210, df=df)
 
 random.seed(a=100)
 
-validation_nuclides = [[30,64]]
-validation_set_size = 10
+validation_nuclides = [[54,136], [54, 135]]
+validation_set_size = 1
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -49,7 +49,7 @@ print("Test nuclide selection complete")
 
 
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,) # create training matrix
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=126, ua=140,) # create training matrix
 X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
 print("Data prep done")
 
