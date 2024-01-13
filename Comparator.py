@@ -38,7 +38,7 @@ al = range_setter(la=30, ua=210, df=df)
 
 # random.seed(a=10)
 
-validation_nuclides = [[54,136]]
+validation_nuclides = []
 validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
