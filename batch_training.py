@@ -36,9 +36,12 @@ df.index = range(len(df))
 al = range_setter(la=30, ua=210, df=df)
 
 
-random.seed(a=100)
+# random.seed(a=100)
 
-validation_nuclides = [[54,136], [54, 135]]
+# [58,142], [51,126], [62,149],
+# 					   [56,131], [58,141], [84,210], [18,39]
+
+validation_nuclides = [[50,125]]
 validation_set_size = 1
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
@@ -49,7 +52,7 @@ print("Test nuclide selection complete")
 
 
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=126, ua=140,) # create training matrix
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=124, ua=126,) # create training matrix
 X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
 print("Data prep done")
 
@@ -90,6 +93,8 @@ for nuclide in validation_nuclides:
 	XS_plotmatrix.append(dummy_test_XS)
 	E_plotmatrix.append(dummy_test_E)
 	P_plotmatrix.append(dummy_predictions)
+
+time.sleep(1)
 
 for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 	all_preds = []
