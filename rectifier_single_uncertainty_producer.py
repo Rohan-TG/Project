@@ -79,7 +79,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	time1 = time.time()
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215,) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides,
+								  exclusions=[[]],
+								  la=30, ua=215,) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test,)
 
