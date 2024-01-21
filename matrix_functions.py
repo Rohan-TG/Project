@@ -183,7 +183,7 @@ def interpolate_pandas(df, inter_col):
 	df_inter.index = range(len(df_inter)) # re-index dataframe
 	return df_inter
 
-def make_train(df, validation_nuclides, la=0, ua=260):
+def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -358,6 +358,8 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope data to training data
+		if [Z[idx], A[idx]] in exclusions:
+			continue
 		if Energy[idx] > 20: # training on data less than 30 MeV
 			continue
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
