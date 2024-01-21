@@ -1,8 +1,6 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import periodictable
-import scipy
 from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE, r2_standardiser
 import random
 import shap
