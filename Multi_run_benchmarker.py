@@ -54,7 +54,7 @@ at_least_one_agreeing_90 = 0
 
 every_prediction_list = []
 every_true_value_list = []
-
+potential_outliers = []
 
 all_library_evaluations = []
 all_predictions = []
@@ -152,8 +152,14 @@ while len(nuclides_used) < len(al):
 
 		evaluation_r2s = []
 
+		truncated_library_r2 = []
+
 		all_library_evaluations = []
 		all_predictions = []
+
+		limited_evaluations = []
+		limited_predictions = []
+
 		try:
 			pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
 																			   library_xs=true_xs)
@@ -174,7 +180,11 @@ while len(nuclides_used) < len(al):
 			for libxs, p in zip(truncated_cendl, pred_cendl_gated):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
+
+				limited_evaluations.append(libxs)
+				limited_predictions.append(p)
 			evaluation_r2s.append(pred_cendl_r2)
+			truncated_library_r2.append(pred_cendl_r2)
 			# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
 		if current_nuclide in JENDL_nuclides:
@@ -186,7 +196,11 @@ while len(nuclides_used) < len(al):
 			for libxs, p in zip(truncated_jendl, pred_jendl_gated):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
+
+				limited_evaluations.append(libxs)
+				limited_predictions.append(p)
 			evaluation_r2s.append(pred_jendl_r2)
+			truncated_library_r2.append(pred_jendl_r2)
 			# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 		if current_nuclide in JEFF_nuclides:
@@ -199,7 +213,12 @@ while len(nuclides_used) < len(al):
 			for libxs, p in zip(truncated_jeff, pred_jeff_gated):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
+
+				limited_evaluations.append(libxs)
+				limited_predictions.append(p)
+
 			evaluation_r2s.append(pred_jeff_r2)
+			truncated_library_r2.append(pred_jeff_r2)
 			# print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
 
 		if current_nuclide in TENDL_nuclides:
@@ -211,11 +230,18 @@ while len(nuclides_used) < len(al):
 			for libxs, p in zip(truncated_tendl, pred_tendl_gated):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
+
+				limited_evaluations.append(libxs)
+				limited_predictions.append(p)
+
 			evaluation_r2s.append(pred_tendl_r2)
+			truncated_library_r2.append(pred_tendl_r2)
 			# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}"
 
 
 		r2 = r2_score(all_library_evaluations,all_predictions) # various comparisons
+
+		limited_r2 = r2_score(limited_evaluations,limited_predictions)
 		# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
 
 		if r2 > 0.97 and endfb_r2 < 0.9:
@@ -235,6 +261,9 @@ while len(nuclides_used) < len(al):
 				outlier_tally += 1
 				break
 
+
+		if limited_r2 - endfb_r2 > 0.02:
+			potential_outliers.append(current_nuclide)
 
 		for z in evaluation_r2s:
 			if z > 0.9:
@@ -390,3 +419,5 @@ plt.show()
 
 # lowmass = range_setter(df=df, la=30, ua=60)
 # print(f"{tally2}/{len(lowmass)}")
+
+print(potential_outliers)
