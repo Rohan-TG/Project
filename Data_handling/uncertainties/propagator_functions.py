@@ -1,7 +1,7 @@
 import random
 import numpy as np
 
-def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties, exclusions = []):
+def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exclusions = []):
 	""""""
 
 	ME = df['ME']
@@ -248,17 +248,18 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties, exclusi
 			Asymmetry_train.append(Asymmetry[idx])
 			Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
+			Sn_train.append(Sep_n[idx])
 			# AM_train.append(AM[idx])
 
 		### UNCERTAINTIES
-			uncertainty_value = Sn_uncertainties[idx]
-			gaussian = random.gauss(mu=Sep_n[idx], sigma=uncertainty_value)
-			if gaussian < 0:
-				return_gaussian = 0
-			else:
-				return_gaussian = gaussian * 1
-
-			Sn_train.append(return_gaussian)
+			# uncertainty_value = Sn_uncertainties[idx]
+			# gaussian = random.gauss(mu=Sep_n[idx], sigma=uncertainty_value)
+			# if gaussian < 0:
+			# 	return_gaussian = 0
+			# else:
+			# 	return_gaussian = gaussian * 1
+			#
+			# Sn_train.append(return_gaussian)
 
 
 	X = np.array([Z_train,
@@ -435,6 +436,9 @@ def make_test(nuclides, df):
 	Decay_daughter = df['Decay_daughter']
 	Asymmetry_daughter = df['Asymmetry_daughter']
 
+	### UNCERTAINTIES
+	Sn_uncertainties = df['unc_sn']
+
 	# AM_test = []
 	Z_test = []
 	A_test = []
@@ -526,7 +530,7 @@ def make_test(nuclides, df):
 				Energy_test.append(Energy[j])
 				XS_test.append(XS[j])
 				Sp_test.append(S_p[j])
-				Sn_test.append(S_n[j])
+				# Sn_test.append(S_n[j])
 				BEA_test.append(BEA[j])
 				# Pairing_test.append(Pairing[j])
 				Sn_c_test.append(Sn_compound[j])
@@ -595,6 +599,17 @@ def make_test(nuclides, df):
 				Asymmetry_test.append(Asymmetry[j])
 				Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
+
+				uncertainty_value = Sn_uncertainties[j]
+				if type(uncertainty_value) == float or (type(uncertainty_value) ==int):
+					gaussian = random.gauss(mu=S_n[j], sigma=uncertainty_value)
+					if gaussian < 0:
+						return_gaussian = 0
+					else:
+						return_gaussian = gaussian * 1
+					Sn_test.append(return_gaussian)
+				else:
+					Sn_test.append(S_n[j])
 
 
 	xtest = np.array([Z_test,
