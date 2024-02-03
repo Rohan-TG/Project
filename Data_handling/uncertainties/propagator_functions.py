@@ -601,16 +601,20 @@ def make_test(nuclides, df):
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 
 				uncertainty_value = Sn_uncertainties[j]
-				if type(uncertainty_value) == float or (type(uncertainty_value) ==int):
-					gaussian = random.gauss(mu=S_n[j], sigma=uncertainty_value)
-					if gaussian < 0:
-						return_gaussian = 0
-					else:
-						return_gaussian = gaussian * 1
-					Sn_test.append(return_gaussian)
-				else:
-					Sn_test.append(S_n[j])
-
+				# print(type(uncertainty_value))
+				# if type(uncertainty_value) == float or type(uncertainty_value) ==int:
+				gaussian = random.gauss(mu=S_n[j], sigma=uncertainty_value)
+				# if gaussian < 0:
+				# 	return_gaussian = 0
+				# else:
+				# 	return_gaussian = gaussian * 1
+				# print(return_gaussian)
+				# Sn_test.append(return_gaussian)
+				# else:
+				# 	Sn_test.append(S_n[j])
+				# print(Sn_test)
+	Sn_test = [gaussian for q in Z_test]
+	print(Sn_test)
 
 	xtest = np.array([Z_test,
 	A_test,
