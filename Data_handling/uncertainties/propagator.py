@@ -1,10 +1,14 @@
 import pandas as pd
 import xgboost as xg
 import matplotlib.pyplot as plt
-from matrix_functions import range_setter
+import numpy as np
+import scipy
+from matrix_functions import range_setter, r2_standardiser
 from propagator_functions import training_sampler, make_test
 from sklearn.metrics import r2_score, mean_squared_error
 import time
+
+time1 = time.time()
 
 ENDFBVIII = pd.read_csv('ENDFBVIII_MT16_uncertainties.csv')
 ENDFB_nuclides = range_setter(df=ENDFBVIII, la=0, ua= 210)
@@ -28,7 +32,10 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 
 target_nuclides = [[71,175]]
+target_nuclide = target_nuclides[0]
 n_evaluations = 3
+
+runs_r2_array = []
 
 datapoint_matrix = []
 
@@ -97,7 +104,7 @@ for i in range(n_evaluations):
 
 	if target_nuclide in CENDL_nuclides:
 
-		cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL32)
+		cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL)
 		pred_cendl = model.predict(cendl_test)
 
 		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
@@ -108,7 +115,7 @@ for i in range(n_evaluations):
 
 	if target_nuclide in JENDL_nuclides:
 
-		jendl_test, jendl_xs = make_test(nuclides=[target_nuclide], df=JENDL5)
+		jendl_test, jendl_xs = make_test(nuclides=[target_nuclide], df=JENDL)
 		pred_jendl = model.predict(jendl_test)
 
 		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
@@ -118,7 +125,7 @@ for i in range(n_evaluations):
 			all_preds.append(x)
 
 	if target_nuclide in JEFF_nuclides:
-		jeff_test, jeff_xs = make_test(nuclides=[target_nuclide], df=JEFF33)
+		jeff_test, jeff_xs = make_test(nuclides=[target_nuclide], df=JEFF)
 
 		pred_jeff = model.predict(jeff_test)
 
