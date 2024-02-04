@@ -36,33 +36,34 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 target_nuclides = [[71,175]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 50
+n_evaluations = 100
 
 runs_r2_array = []
 
 datapoint_matrix = []
+
+X_train, y_train = training_sampler(df=ENDFBVIII, LA=30, UA=210, sampled_uncertainties= ['unc_sn'], target_nuclides=target_nuclides)
+print("Training matrix formed")
+
+model = xg.XGBRegressor(n_estimators=900,  # define regressor
+						learning_rate=0.008,
+						max_depth=8,
+						subsample=0.18236,
+						max_leaves=0,
+						seed=42, )
+
+model.fit(X_train, y_train)
+print("Training complete")
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i + 1}/{n_evaluations}")
 
 	time1 = time.time()
 
-	X_train, y_train = training_sampler(df=ENDFBVIII, LA=30, UA=210, sampled_uncertainties= ['unc_sn'], target_nuclides=target_nuclides)
+
 	X_test, y_test = make_test(nuclides=target_nuclides, df=ENDFBVIII)
 
-	print('Data prep complete')
-
-	model = xg.XGBRegressor(n_estimators=900,  # define regressor
-							learning_rate=0.008,
-							max_depth=8,
-							subsample=0.18236,
-							max_leaves=0,
-							seed=42, )
-
-	model.fit(X_train, y_train)
-	print("Training complete")
-
-
+	print('Test data generation complete')
 
 
 	predictions = model.predict(X_test) # XS predictions
