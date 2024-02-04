@@ -438,6 +438,9 @@ def make_test(nuclides, df):
 
 	### UNCERTAINTIES
 	Sn_uncertainties = df['unc_sn']
+	Sp_uncertainties = df['unc_sp']
+	ME_uncertainties = df['unc_me']
+	BEA_uncertainties = df['unc_ba']
 
 	# AM_test = []
 	Z_test = []
@@ -529,9 +532,9 @@ def make_test(nuclides, df):
 				S2p_test.append(S_2p[j])
 				Energy_test.append(Energy[j])
 				XS_test.append(XS[j])
-				Sp_test.append(S_p[j])
+				# Sp_test.append(S_p[j])
 				# Sn_test.append(S_n[j])
-				BEA_test.append(BEA[j])
+				# BEA_test.append(BEA[j])
 				# Pairing_test.append(Pairing[j])
 				Sn_c_test.append(Sn_compound[j])
 				gd_test.append(gamma_deformation[j])
@@ -600,10 +603,17 @@ def make_test(nuclides, df):
 				Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 
-				uncertainty_value = Sn_uncertainties[j]
+				uncertainty_value_sn = Sn_uncertainties[j]
+				uncertainty_value_sp = Sp_uncertainties[j]
+				uncertainty_value_me = ME_uncertainties[j]
+				uncertainty_value_bea =  BEA_uncertainties[j]
 				# print(type(uncertainty_value))
 				# if type(uncertainty_value) == float or type(uncertainty_value) ==int:
-				gaussian = random.gauss(mu=S_n[j], sigma=uncertainty_value)
+				gaussian_sn = random.gauss(mu=S_n[j], sigma=uncertainty_value_sn)
+				gaussian_sp = random.gauss(mu=S_p[j], sigma=uncertainty_value_sp)
+				gaussian_me = random.gauss(mu=ME[j], sigma=uncertainty_value_me)
+				gaussian_ba = random.gauss(mu=BEA[j], sigma=uncertainty_value_bea)
+
 				# if gaussian < 0:
 				# 	return_gaussian = 0
 				# else:
@@ -613,8 +623,14 @@ def make_test(nuclides, df):
 				# else:
 				# 	Sn_test.append(S_n[j])
 				# print(Sn_test)
-	Sn_test = [gaussian for q in Z_test]
+	Sn_test = [gaussian_sn for q in Z_test]
+	Sp_test = [gaussian_sp for q in Z_test]
+	ME_test = [gaussian_me for q in Z_test]
+	BEA_test = [gaussian_ba for q in Z_test]
 	print(Sn_test)
+	print(Sp_test)
+	print(ME_test)
+	print(BEA_test)
 
 	xtest = np.array([Z_test,
 	A_test,
