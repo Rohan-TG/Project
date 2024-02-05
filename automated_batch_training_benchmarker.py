@@ -47,7 +47,7 @@ every_true_value_list = []
 lower_bound = 4
 upper_bound = 4
 
-
+#
 
 while len(nuclides_used) < len(al):
 	time1 = time.time()
