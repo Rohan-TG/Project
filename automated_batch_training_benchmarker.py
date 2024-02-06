@@ -33,10 +33,6 @@ df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 al = range_setter(la=30, ua=210, df=df)
 
-upper_training_limit = 35
-
-lower_training_limit = 30
-
 validation_set_size = 1
 
 nuclides_used = []
