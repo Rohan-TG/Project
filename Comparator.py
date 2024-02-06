@@ -96,7 +96,7 @@ print("Test nuclide selection complete")
 
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,) # create training matrix
 X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
-print("Data prep done")
+print("Data prep complete")
 
 model = xg.XGBRegressor(n_estimators=900, # define regressor
 						learning_rate=0.008,
