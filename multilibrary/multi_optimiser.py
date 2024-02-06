@@ -107,15 +107,9 @@ def optimiser(space):
 
 		nuc = validation_nuclides[i]  # validation nuclide
 
-		mse = mean_squared_error(y_true=true_xs, y_pred=pred_xs)
-		print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-		time.sleep(0.8)
-
-		pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
 		pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
 																		   library_xs=true_xs)
 
-		endfbmape = mean_absolute_percentage_error(truncated_endfb, pred_endfb_gated)
 		for x, y in zip(pred_endfb_gated, truncated_endfb):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -130,7 +124,6 @@ def optimiser(space):
 			pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl,
 																			   library_xs=cendl_xs)
 
-			pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
 			for x, y in zip(pred_cendl_gated, truncated_cendl):
 				all_libs.append(y)
 				all_preds.append(x)
@@ -141,7 +134,6 @@ def optimiser(space):
 			jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL)
 			pred_jendl = model.predict(jendl_test)
 
-			pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
 			pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl,
 																			   library_xs=jendl_xs)
 
@@ -155,7 +147,6 @@ def optimiser(space):
 
 			pred_jeff = model.predict(jeff_test)
 
-			pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
 			pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff,
 																			library_xs=jeff_xs)
 			for x, y in zip(pred_jeff_gated, truncated_jeff):
@@ -168,7 +159,6 @@ def optimiser(space):
 			tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL)
 			pred_tendl = model.predict(tendl_test)
 
-			pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 			pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl,
 																			   library_xs=tendl_xs)
 			for x, y in zip(pred_tendl_gated, truncated_tendl):
