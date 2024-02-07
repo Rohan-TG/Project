@@ -26,8 +26,19 @@ for i, row in enumerate(lines):
 
 		if '*' in temps2nu:
 			S2nu = np.nan
+		else:
+			for x in temps2nu:
+				if x != '#':
+					S2nu += x
+			S2nu_return = float(S2nu)
+
 		if '*' in temps2pu:
 			S2pu = np.nan
+		else:
+			for x in temps2pu:
+				if x != '#':
+					S2pu += x
+			S2pu_return = float(S2pu)
 
 		print(temps2nu)
 
