@@ -39,10 +39,10 @@ X_train, y_train = make_train(df=all_libraries, validation_nuclides=validation_n
 X_test, y_test = make_test(validation_nuclides, df=ENDFB,) # create test matrix using validation nuclides
 print("Data preparation complete. Training...")
 
-model = xg.XGBRegressor(n_estimators=800, # define regressor
-						learning_rate=0.005,
-						max_depth=8,
-						subsample=0.18236,
+model = xg.XGBRegressor(n_estimators=1200, # define regressor
+						learning_rate=0.0034,
+						max_depth=11,
+						subsample=0.1556,
 						max_leaves=0,
 						seed=42, )
 
