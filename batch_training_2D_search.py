@@ -38,11 +38,11 @@ validation_set_size = 1
 
 
 search_space = []
-search_square = 5
+search_square = 3
 
 for p in range(1, search_square + 1):
 	for q in range(1, search_square + 1):
-		search_space.append([p*10, q*10])
+		search_space.append([p, q])
 
 record_list = []
 for space in search_space:
@@ -71,7 +71,7 @@ for space in search_space:
 
 		X_test, y_test = make_test(nuclides=[validation_nuclide], df=df)
 
-		print("Train/val matrices generated")
+		# print("Train/val matrices generated")
 
 		modelseed = random.randint(a=1, b=1000)
 		model = xg.XGBRegressor(n_estimators=900,
@@ -83,7 +83,7 @@ for space in search_space:
 
 
 		model.fit(X_train, y_train)
-		print("Training complete")
+		# print("Training complete")
 
 		predictions = model.predict(X_test)
 		predictions_ReLU = []
@@ -142,7 +142,6 @@ for space in search_space:
 				cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
 				pred_cendl = model.predict(cendl_test)
 
-				pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
 				pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl,
 																				   library_xs=cendl_xs)
 				for libxs, p in zip(truncated_cendl, pred_cendl_gated):
@@ -159,7 +158,6 @@ for space in search_space:
 				jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL)
 				pred_jendl = model.predict(jendl_test)
 
-				pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
 				pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl,
 																				   library_xs=jendl_xs)
 				for libxs, p in zip(truncated_jendl, pred_jendl_gated):
@@ -177,7 +175,6 @@ for space in search_space:
 
 				pred_jeff = model.predict(jeff_test)
 
-				pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
 				pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff,
 																				library_xs=jeff_xs)
 				for libxs, p in zip(truncated_jeff, pred_jeff_gated):
@@ -195,7 +192,6 @@ for space in search_space:
 				tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL)
 				pred_tendl = model.predict(tendl_test)
 
-				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl,
 																				   library_xs=tendl_xs)
 				for libxs, p in zip(truncated_tendl, pred_tendl_gated):
@@ -210,7 +206,7 @@ for space in search_space:
 
 			r2 = r2_score(all_library_evaluations, all_predictions)  # various comparisons
 
-			limited_r2 = r2_score(limited_evaluations, limited_predictions)
+			# limited_r2 = r2_score(limited_evaluations, limited_predictions)
 
 			nuclide_r2.append([nuc[0], nuc[1], r2])
 
@@ -247,6 +243,7 @@ r2plots = [i[1] for i in record_list]
 fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 plt.plot_surface(lower_plots, upper_plots, r2plots, cmap= cm.coolwarm,
 				 linewidth=0, antialiased=False)
+plt.show()
 
 
 # plt.figure()
