@@ -11,6 +11,8 @@ from sklearn.metrics import r2_score, mean_squared_error
 from matplotlib import cm
 import time
 
+%matplotlib qt
+
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
@@ -32,13 +34,13 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
-al = range_setter(la=30, ua=210, df=df)
+al = range_setter(la=165, ua=185, df=df)
 
 validation_set_size = 1
 
 
 search_space = []
-search_square = 3
+search_square = 4
 
 for p in range(1, search_square + 1):
 	for q in range(1, search_square + 1):
@@ -222,6 +224,7 @@ for space in search_space:
 	all_libraries_r2 = r2_score(y_true=all_library_evaluations, y_pred= all_predictions)
 
 	record_list.append([space, all_libraries_r2])
+	print(f"Search params: {space, all_libraries_r2}")
 	print(f"R2: {all_libraries_r2:0.5f}")
 
 
@@ -232,17 +235,24 @@ Z_plots = [i[0] for i in nuclide_r2]
 log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 
-r2plot = [i[-1] for i in nuclide_r2]
+# r2plot = [i[-1] for i in nuclide_r2]
 
 
-lower_plots = [i[0][0] for i in record_list]
-upper_plots = [i[0][1] for i in record_list]
+
+lower_plots = [i+1 for i in range(search_square)]
+upper_plots = [i+1 for i in range(search_square)]
+lower_plots, upper_plots = np.meshgrid(lower_plots, upper_plots)
+
+
 r2plots = [i[1] for i in record_list]
+r2plots = np.array(r2plots)
+r2plots_matrix = r2plots.reshape(search_square, search_square)
 
 
 fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-plt.plot_surface(lower_plots, upper_plots, r2plots, cmap= cm.coolwarm,
+surf = ax.plot_surface(lower_plots, upper_plots, r2plots_matrix, cmap= cm.coolwarm,
 				 linewidth=0, antialiased=False)
+fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 
 
