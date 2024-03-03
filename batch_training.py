@@ -41,7 +41,9 @@ al = range_setter(la=30, ua=210, df=df)
 # [58,142], [51,126], [62,149],
 # 					   [56,131], [58,141], [84,210], [18,39]
 
-validation_nuclides = [[50,125]]
+validation_nuclides = [[30,64],
+					   # [16,32],
+					   ]
 validation_set_size = 1
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
@@ -52,7 +54,7 @@ print("Test nuclide selection complete")
 
 
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, exclusions= [[54,135]],la=30, ua=210,) # create training matrix
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, exclusions= [[54,135]],la=52, ua=63,) # create training matrix
 X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
 print("Data prep done")
 
