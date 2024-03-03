@@ -163,7 +163,6 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.xlabel('Energy / MeV')
 	plt.show()
 
-	mse = mean_squared_error(y_true=true_xs, y_pred=pred_xs)
 	print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
 	time.sleep(0.8)
 
