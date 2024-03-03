@@ -159,3 +159,5 @@ for i in nucs:
     if abs((endfmean - auxmean)) > auxstd:
         print(f"Outlier: {current_nuclide} - ({periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]})")
 
+    print()
+
