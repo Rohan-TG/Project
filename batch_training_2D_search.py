@@ -11,7 +11,6 @@ from sklearn.metrics import r2_score, mean_squared_error
 from matplotlib import cm
 import time
 
-%matplotlib qt
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
