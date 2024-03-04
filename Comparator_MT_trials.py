@@ -50,7 +50,7 @@ while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 print("Test nuclide selection complete")
 
 
-X_train, y_train = mtmake_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100,) # create training matrix
+X_train, y_train = mtmake_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100, exclusions=[]) # create training matrix
 X_test, y_test = mtmake_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
 print("Data prep done")
 
@@ -209,7 +209,7 @@ model.get_booster().feature_names = ['Z',
 									 # 'AM',
 									 'MT103_XS',
 									 'MT107_XS',
-									 'MT91_XS'
+									 # 'MT91_XS'
 									 ]
 
 # Gain-based feature importance plot
@@ -297,7 +297,7 @@ explainer = shap.Explainer(model.predict, X_train,
 									 # 'AM',
 									 'MT103XS',
 									 'MT107XS',
-									 'MT_91XS',
+									 # 'MT_91XS',
 									 ]) # SHAP feature importance analysis
 shap_values = explainer(X_test)
 
