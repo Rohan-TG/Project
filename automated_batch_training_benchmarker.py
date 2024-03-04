@@ -125,6 +125,9 @@ while len(nuclides_used) < len(al):
 		for libxs, p in zip(truncated_endfb, pred_endfb_gated):
 			all_library_evaluations.append(libxs)
 			all_predictions.append(p)
+
+			every_true_value_list.append(libxs)
+			every_prediction_list.append(p)
 		evaluation_r2s.append(endfb_r2)
 
 		if current_nuclide in CENDL_nuclides:
@@ -141,6 +144,9 @@ while len(nuclides_used) < len(al):
 
 				limited_evaluations.append(libxs)
 				limited_predictions.append(p)
+
+				every_true_value_list.append(libxs)
+				every_prediction_list.append(p)
 			evaluation_r2s.append(pred_cendl_r2)
 			truncated_library_r2.append(pred_cendl_r2)
 		# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
@@ -158,6 +164,9 @@ while len(nuclides_used) < len(al):
 
 				limited_evaluations.append(libxs)
 				limited_predictions.append(p)
+
+				every_true_value_list.append(libxs)
+				every_prediction_list.append(p)
 			evaluation_r2s.append(pred_jendl_r2)
 			truncated_library_r2.append(pred_jendl_r2)
 		# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
@@ -177,6 +186,9 @@ while len(nuclides_used) < len(al):
 				limited_evaluations.append(libxs)
 				limited_predictions.append(p)
 
+				every_true_value_list.append(libxs)
+				every_prediction_list.append(p)
+
 			evaluation_r2s.append(pred_jeff_r2)
 			truncated_library_r2.append(pred_jeff_r2)
 		# print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
@@ -195,6 +207,9 @@ while len(nuclides_used) < len(al):
 				limited_evaluations.append(libxs)
 				limited_predictions.append(p)
 
+				every_true_value_list.append(libxs)
+				every_prediction_list.append(p)
+
 			evaluation_r2s.append(pred_tendl_r2)
 			truncated_library_r2.append(pred_tendl_r2)
 
@@ -204,11 +219,6 @@ while len(nuclides_used) < len(al):
 
 		nuclide_r2.append([nuc[0], nuc[1], r2])
 
-	for pred in predictions:
-		every_prediction_list.append(pred)
-
-	for val in y_test:
-		every_true_value_list.append(val)
 	time_taken = time.time() - time1
 	print(f'completed in {time_taken:0.1f} s.\n')
 
