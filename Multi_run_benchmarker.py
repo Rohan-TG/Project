@@ -64,14 +64,14 @@ low_mass_r2 = []
 outlier_tally = 0
 
 tally = 0
-while len(nuclides_used) < len(al):
 
+validation_set_size = 25  # number of nuclides hidden from training
+while len(nuclides_used) < len(al):
 
 	# print(f"{len(nuclides_used) // len(al)} Epochs left")
 
 	validation_nuclides = []  # list of nuclides used for validation
-	# test_nuclides = []
-	validation_set_size = 25  # number of nuclides hidden from training
+
 
 	while len(validation_nuclides) < validation_set_size:
 

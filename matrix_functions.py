@@ -853,7 +853,7 @@ def make_test(nuclides, df):
 	return xtest, y_test
 
 
-def mtmake_train(df, validation_nuclides, la=0, ua=260):
+def mtmake_train(df, validation_nuclides, exclusions, la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -864,7 +864,7 @@ def mtmake_train(df, validation_nuclides, la=0, ua=260):
 	# MT = df['MT']
 	MT103XS = df['MT103XS']
 	MT107XS = df['MT107XS']
-	MT91XS = df['MT91XS']
+	# MT91XS = df['MT91XS']
 	ME = df['ME']
 	Z = df['Z']
 	A = df['A']
@@ -947,7 +947,7 @@ def mtmake_train(df, validation_nuclides, la=0, ua=260):
 
 	MT107_train = []
 	MT103_train = []
-	MT91_train = []
+	# MT91_train = []
 	Z_train = []
 	A_train = []
 	S2n_train = []
@@ -1034,6 +1034,8 @@ def mtmake_train(df, validation_nuclides, la=0, ua=260):
 	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope data to training data
+		if [Z[idx], A[idx]] in exclusions:
+			continue
 		if Energy[idx] > 20: # training on data less than 30 MeV
 			continue
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
@@ -1112,7 +1114,7 @@ def mtmake_train(df, validation_nuclides, la=0, ua=260):
 
 			MT107_train.append(MT107XS[idx])
 			MT103_train.append(MT103XS[idx])
-			MT91_train.append(MT91XS[idx])
+			# MT91_train.append(MT91XS[idx])
 
 	X = np.array([Z_train,
 				  A_train,
@@ -1190,7 +1192,7 @@ def mtmake_train(df, validation_nuclides, la=0, ua=260):
 				  # AM_train,
 				  MT103_train,
 				  MT107_train,
-				  MT91_train,
+				  # MT91_train,
 				  ])
 	y = np.array(XS_train) # cross sections
 
@@ -1213,7 +1215,7 @@ def mtmake_test(nuclides, df):
 	# MT = df['MT']
 	# AM = df['AM']
 	MT103XS = df['MT103XS']
-	MT91XS = df['MT91XS']
+	# MT91XS = df['MT91XS']
 	MT107XS = df['MT107XS']
 	ME = df['ME']
 	Z = df['Z']
@@ -1459,7 +1461,7 @@ def mtmake_test(nuclides, df):
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 				MT103_test.append(MT103XS[j])
 				MT107_test.append(MT107XS[j])
-				MT91_test.append(MT91XS[j])
+				# MT91_test.append(MT91XS[j])
 
 
 	xtest = np.array([Z_test,
@@ -1537,7 +1539,7 @@ def mtmake_test(nuclides, df):
 	# AM_test,
 	MT103_test,
 	MT107_test,
-	MT91_test,
+	# MT91_test,
 	])
 
 	xtest = np.transpose(xtest)
