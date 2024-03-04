@@ -262,7 +262,7 @@ while len(nuclides_used) < len(al):
 				break
 
 
-		if limited_r2 - endfb_r2 > 0.02:
+		if limited_r2 - endfb_r2 > 0.03:
 			potential_outliers.append(current_nuclide)
 
 		for z in evaluation_r2s:
