@@ -15,7 +15,14 @@ from matrix_functions import make_train, make_test, range_setter, r2_standardise
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-al = range_setter(df=df, la=30, ua=210)
+
+df = df[df.Z != 6]
+df_test = df_test[df_test.Z != 6]
+
+
+df_test.index = range(len(df_test)) # re-label indices
+df.index = range(len(df))
+al = range_setter(df=df, la=0, ua=100)
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
@@ -56,17 +63,30 @@ every_prediction_list = []
 every_true_value_list = []
 potential_outliers = []
 
-all_library_evaluations = []
-all_predictions = []
+benchmark_total_library_evaluations = []
+benchmark_total_predictions = []
 
 low_mass_r2 = []
+
+
+
+banned_nuclides = [[3, 7],
+[4, 9],
+[1, 2],
+[1, 3],
+[7, 14]]
+
+newal = []
+for i in al:
+	if i not in banned_nuclides:
+		newal.append(i)
 
 outlier_tally = 0
 
 tally = 0
 
-validation_set_size = 25  # number of nuclides hidden from training
-while len(nuclides_used) < len(al):
+validation_set_size = 10  # number of nuclides hidden from training
+while len(nuclides_used) < len(newal):
 
 	# print(f"{len(nuclides_used) // len(al)} Epochs left")
 
@@ -75,20 +95,20 @@ while len(nuclides_used) < len(al):
 
 	while len(validation_nuclides) < validation_set_size:
 
-		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
+		choice = random.choice(newal)  # randomly select nuclide from list of all nuclides
 		if choice not in validation_nuclides and choice not in nuclides_used:
 			validation_nuclides.append(choice)
 			nuclides_used.append(choice)
-		if len(nuclides_used) == len(al):
+		if len(nuclides_used) == len(newal):
 			break
 
 
 	print("Test nuclide selection complete")
-	print(f"{len(nuclides_used)}/{len(al)} selections")
+	print(f"{len(nuclides_used)}/{len(newal)} selections")
 	# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test)
 
@@ -168,6 +188,10 @@ while len(nuclides_used) < len(al):
 		for libxs, p in zip(truncated_endfb, pred_endfb_gated):
 			all_library_evaluations.append(libxs)
 			all_predictions.append(p)
+
+			benchmark_total_library_evaluations.append(libxs)
+			benchmark_total_predictions.append(p)
+
 		evaluation_r2s.append(endfb_r2)
 
 		if current_nuclide in CENDL_nuclides:
@@ -183,6 +207,10 @@ while len(nuclides_used) < len(al):
 
 				limited_evaluations.append(libxs)
 				limited_predictions.append(p)
+
+				benchmark_total_library_evaluations.append(libxs)
+				benchmark_total_predictions.append(p)
+
 			evaluation_r2s.append(pred_cendl_r2)
 			truncated_library_r2.append(pred_cendl_r2)
 			# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
@@ -199,6 +227,9 @@ while len(nuclides_used) < len(al):
 
 				limited_evaluations.append(libxs)
 				limited_predictions.append(p)
+
+				benchmark_total_library_evaluations.append(libxs)
+				benchmark_total_predictions.append(p)
 			evaluation_r2s.append(pred_jendl_r2)
 			truncated_library_r2.append(pred_jendl_r2)
 			# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
@@ -217,6 +248,9 @@ while len(nuclides_used) < len(al):
 				limited_evaluations.append(libxs)
 				limited_predictions.append(p)
 
+				benchmark_total_library_evaluations.append(libxs)
+				benchmark_total_predictions.append(p)
+
 			evaluation_r2s.append(pred_jeff_r2)
 			truncated_library_r2.append(pred_jeff_r2)
 			# print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
@@ -233,6 +267,9 @@ while len(nuclides_used) < len(al):
 
 				limited_evaluations.append(libxs)
 				limited_predictions.append(p)
+
+				benchmark_total_library_evaluations.append(libxs)
+				benchmark_total_predictions.append(p)
 
 			evaluation_r2s.append(pred_tendl_r2)
 			truncated_library_r2.append(pred_tendl_r2)
@@ -360,9 +397,9 @@ print(f"Tally of consensus r2 > 0.90: {tally90}/{len(al)}")
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
 # all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
-all_libraries_r2 = r2_score(y_true=all_library_evaluations, y_pred= all_predictions)
+benchmark_r2 = r2_score(y_true=benchmark_total_library_evaluations, y_pred= benchmark_total_predictions)
 # print(f"MSE: {all_libraries_mse:0.5f}")
-print(f"R2: {all_libraries_r2:0.5f}")
+print(f"R2: {benchmark_r2:0.5f}")
 
 print(f"Bad nuclides: {bad_nuclides}")
 
