@@ -55,9 +55,9 @@ for i in al:
 	if i not in banned_nuclides:
 		newal.append(i)
 
-outlier_tally = 0
 
-tally = 0
+
+
 
 validation_set_size = 10  # number of nuclides hidden from training
 
@@ -73,6 +73,8 @@ for i in range(num_runs+1):
 	outliers90 = 0
 	outliers85 = 0
 	outliers9090 = 0
+	outlier_tally = 0
+	tally = 0
 
 	low_masses = []
 
