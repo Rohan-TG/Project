@@ -49,12 +49,14 @@ al = range_setter(la=0, ua=100, df=df)
 
 
 validation_set_size = 10
-num_runs = 7
+num_runs = 10
 run_r2 = []
+tally_95 = []
 for i in range(num_runs+1):
 	nuclides_used = []
 	every_prediction_list = []
 	every_true_value_list = []
+	outlier_tally = 0
 	while len(nuclides_used) < len(al):
 		time1 = time.time()
 
@@ -234,12 +236,20 @@ for i in range(num_runs+1):
 		for val in y_test:
 			every_true_value_list.append(val)
 
+		for z in evaluation_r2s:
+			if z > 0.95:
+				outlier_tally += 1
+				break
+
 		time_taken = time.time() - time1
 		print(f'completed in {time_taken:0.1f} s.\n')
 
 	benchmark_r2 = r2_score(every_true_value_list, every_prediction_list)
 	run_r2.append(benchmark_r2)
 	print(f"R2: {benchmark_r2:0.5f}")
+
+	print(f"At least one library >= 0.95: {outlier_tally}/{len(al)}")
+	tally_95.append(outlier_tally)
 
 	print(f"Total time elapsed: {datetime.timedelta(seconds=(time.time() - scriptrun1))}")
 
