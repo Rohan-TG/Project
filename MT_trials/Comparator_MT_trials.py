@@ -11,19 +11,19 @@ from sklearn.metrics import r2_score, mean_squared_error
 import time
 import shap
 
-TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
+TENDL = pd.read_csv("TENDL_2021_MT16_with_ENDFB_MT103_107.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
 
-JEFF = pd.read_csv('JEFF33_all_features.csv')
+JEFF = pd.read_csv('JEFF33_all_features_MT16_103_107.csv.csv')
 JEFF.index = range(len(JEFF))
 JEFF_nuclides = range_setter(df=JEFF, la=0, ua=210)
 
-JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
+JENDL = pd.read_csv('JENDL5_with_MT16_and_ENDFB_MT103_107.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=0, ua=210)
 
-CENDL = pd.read_csv('CENDL32_all_features.csv')
+CENDL = pd.read_csv('CENDL32_MT16_with_ENDFB_MT103_107.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
