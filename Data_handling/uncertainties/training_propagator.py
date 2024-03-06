@@ -34,9 +34,9 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 
 
-target_nuclides = [[40,90]]
+target_nuclides = [[71,175]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 10
+n_evaluations = 100
 
 runs_r2_array = []
 
@@ -50,7 +50,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 
 	time1 = time.time()
-	X_train, y_train = training_sampler(df=ENDFBVIII, LA=80, UA=100, sampled_uncertainties= ['unc_sn'],
+	X_train, y_train = training_sampler(df=ENDFBVIII, LA=30, UA=210, sampled_uncertainties= ['unc_sn'],
 										target_nuclides=target_nuclides)
 	print("Training matrix formed")
 
