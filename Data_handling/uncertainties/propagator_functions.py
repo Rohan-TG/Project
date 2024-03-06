@@ -714,7 +714,7 @@ def make_test(nuclides, df):
 	return xtest, y_test
 
 
-def training_uncertainty_propagator(df, target_nuclides, LA, UA):
+def training_uncertainty_propagator(df, target_nuclides, LA, UA, exclusions):
 	ME = df['ME']
 	Z = df['Z']
 	A = df['A']
