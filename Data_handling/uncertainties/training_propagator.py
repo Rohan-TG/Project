@@ -36,7 +36,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 target_nuclides = [[71,175]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 100
+n_evaluations = 50
 
 runs_r2_array = []
 

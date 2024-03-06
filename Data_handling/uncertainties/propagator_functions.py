@@ -272,7 +272,7 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 			#
 			# Sn_train.append(return_gaussian)
 
-	print(Sn_train)
+	# print(Sn_train)
 	X = np.array([Z_train,
 				  A_train,
 				  S2n_train,
