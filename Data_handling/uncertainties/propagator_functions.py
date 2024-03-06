@@ -3,6 +3,7 @@ import numpy as np
 
 def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exclusions = []):
 	""""""
+	nuclide_set = []
 
 	ME = df['ME']
 	Z = df['Z']
@@ -84,7 +85,11 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 
 
 	### UNCERTAINTY DATA
+	### UNCERTAINTIES
 	Sn_uncertainties = df['unc_sn']
+	Sp_uncertainties = df['unc_sp']
+	ME_uncertainties = df['unc_me']
+	BEA_uncertainties = df['unc_ba']
 
 
 	Z_train = []
@@ -169,7 +174,7 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 	Asymmetry_compound_train = []
 
 
-	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
+	for idx in range(len(Z)):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in target_nuclides:
 			continue # prevents loop from adding test isotope data to training data
 		if [Z[idx], A[idx]] in exclusions:
@@ -177,6 +182,12 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 		if Energy[idx] > 20: # training on data less than 30 MeV
 			continue
 		if A[idx] <= UA and A[idx] >= LA: # checks that nuclide is within bounds for A
+			if [Z[idx], A[idx]] != nuclide_set:
+				nuclide_set = [Z[idx],A[idx]]
+				current_sn = Sep_n[idx]
+				current_sn_unc = Sn_uncertainties[idx]
+				sampled_sn = random.gauss(mu=current_sn, sigma=current_sn*0.2)
+
 			Z_train.append(Z[idx])
 			A_train.append(A[idx])
 			S2n_train.append(Sep_2n[idx])
@@ -248,7 +259,7 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 			Asymmetry_train.append(Asymmetry[idx])
 			Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
-			Sn_train.append(Sep_n[idx])
+			Sn_train.append(sampled_sn)
 			# AM_train.append(AM[idx])
 
 		### UNCERTAINTIES
@@ -261,7 +272,7 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 			#
 			# Sn_train.append(return_gaussian)
 
-
+	print(Sn_train)
 	X = np.array([Z_train,
 				  A_train,
 				  S2n_train,
