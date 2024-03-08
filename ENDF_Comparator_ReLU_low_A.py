@@ -10,11 +10,11 @@ import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 
-TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
+TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=0, ua=60)
 
-JEFF = pd.read_csv('JEFF33_features_arange_zeroed.csv')
+JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
 JEFF_nuclides = range_setter(df=JEFF, la=0, ua=60)
 
@@ -22,7 +22,7 @@ JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=0, ua=60)
 
-CENDL = pd.read_csv('CENDL32_features_arange_zeroed.csv')
+CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=60)
 
@@ -35,8 +35,8 @@ df.index = range(len(df))
 al = range_setter(la=0, ua=60, df=df)
 
 
-validation_nuclides = [[20,40]]
-validation_set_size = 10
+validation_nuclides = [[16,32]]
+validation_set_size = 5
 
 while len(validation_nuclides) < validation_set_size:
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides
@@ -62,7 +62,7 @@ print("Training complete")
 predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
 for pred in predictions:
-	if pred >= 0.001:
+	if pred >= 0.003:
 		predictions_ReLU.append(pred)
 	else:
 		predictions_ReLU.append(0)
