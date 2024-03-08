@@ -52,9 +52,9 @@ CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 
 
-n_evaluations = 50
+n_evaluations = 3
 datapoint_matrix = []
-target_nuclide = [38,85]
+target_nuclide = [30,64]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -69,7 +69,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 
 	validation_nuclides = [target_nuclide]
-	validation_set_size = 20  # number of nuclides hidden from training
+	validation_set_size = 1  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
 		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
@@ -81,7 +81,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides,
 								  exclusions=[[]],
-								  la=84, ua=86,) # make training matrix
+								  la=52, ua=63,) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test,)
 
