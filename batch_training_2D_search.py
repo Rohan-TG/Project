@@ -10,6 +10,7 @@ import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error
 from matplotlib import cm
 import time
+import tqdm
 
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
@@ -31,29 +32,48 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
+df = df[df.Z != 6]
+df_test = df_test[df_test.Z != 6]
+
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
-al = range_setter(la=165, ua=185, df=df)
+
+
+
+tempal = range_setter(la=0, ua=100, df=df)
+
+
+banned_nuclides = [[3, 7],
+[4, 9],
+[1, 2],
+[1, 3],
+[7, 14]]
+
+al = []
+for i in tempal:
+	if i not in banned_nuclides:
+		al.append(i)
 
 validation_set_size = 1
 
 
 search_space = []
-search_square = 4
+search_square = 5
 
 for p in range(1, search_square + 1):
 	for q in range(1, search_square + 1):
-		search_space.append([p, q])
+		search_space.append([p*5, q*5])
 
 record_list = []
-for space in search_space:
+for space in tqdm.tqdm(search_space):
 	nuclides_used = []
 	nuclide_r2 = []
-	every_prediction_list = []
-	every_true_value_list = []
+
 
 	lower_bound = space[0]
 	upper_bound = space[1]
+	benchmark_libxs = []
+	benchmark_predictions = []
 
 
 	while len(nuclides_used) < len(al):
@@ -122,11 +142,12 @@ for space in search_space:
 
 			truncated_library_r2 = []
 
-			all_library_evaluations = []
-			all_predictions = []
 
 			limited_evaluations = []
 			limited_predictions = []
+
+			every_prediction_list_single_nuclide = []
+			every_true_value_list_single_nuclide = []
 
 			try:
 				pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
@@ -134,8 +155,11 @@ for space in search_space:
 			except:
 				print(current_nuclide)
 			for libxs, p in zip(truncated_endfb, pred_endfb_gated):
-				all_library_evaluations.append(libxs)
-				all_predictions.append(p)
+				benchmark_libxs.append(libxs)
+				benchmark_predictions.append(p)
+
+				every_true_value_list_single_nuclide.append(libxs)
+				every_prediction_list_single_nuclide.append(p)
 			evaluation_r2s.append(endfb_r2)
 
 			if current_nuclide in CENDL_nuclides:
@@ -146,11 +170,14 @@ for space in search_space:
 				pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl,
 																				   library_xs=cendl_xs)
 				for libxs, p in zip(truncated_cendl, pred_cendl_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+					benchmark_libxs.append(libxs)
+					benchmark_predictions.append(p)
 
 					limited_evaluations.append(libxs)
 					limited_predictions.append(p)
+
+					every_true_value_list_single_nuclide.append(libxs)
+					every_prediction_list_single_nuclide.append(p)
 				evaluation_r2s.append(pred_cendl_r2)
 				truncated_library_r2.append(pred_cendl_r2)
 			# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
@@ -162,11 +189,14 @@ for space in search_space:
 				pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl,
 																				   library_xs=jendl_xs)
 				for libxs, p in zip(truncated_jendl, pred_jendl_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+					benchmark_libxs.append(libxs)
+					benchmark_predictions.append(p)
 
 					limited_evaluations.append(libxs)
 					limited_predictions.append(p)
+
+					every_true_value_list_single_nuclide.append(libxs)
+					every_prediction_list_single_nuclide.append(p)
 				evaluation_r2s.append(pred_jendl_r2)
 				truncated_library_r2.append(pred_jendl_r2)
 			# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
@@ -179,11 +209,14 @@ for space in search_space:
 				pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff,
 																				library_xs=jeff_xs)
 				for libxs, p in zip(truncated_jeff, pred_jeff_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+					benchmark_libxs.append(libxs)
+					benchmark_predictions.append(p)
 
 					limited_evaluations.append(libxs)
 					limited_predictions.append(p)
+
+					every_true_value_list_single_nuclide.append(libxs)
+					every_prediction_list_single_nuclide.append(p)
 
 				evaluation_r2s.append(pred_jeff_r2)
 				truncated_library_r2.append(pred_jeff_r2)
@@ -196,35 +229,34 @@ for space in search_space:
 				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl,
 																				   library_xs=tendl_xs)
 				for libxs, p in zip(truncated_tendl, pred_tendl_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+					benchmark_libxs.append(libxs)
+					benchmark_predictions.append(p)
 
 					limited_evaluations.append(libxs)
 					limited_predictions.append(p)
 
+					every_true_value_list_single_nuclide.append(libxs)
+					every_prediction_list_single_nuclide.append(p)
+
 				evaluation_r2s.append(pred_tendl_r2)
 				truncated_library_r2.append(pred_tendl_r2)
 
-			r2 = r2_score(all_library_evaluations, all_predictions)  # various comparisons
+			r2 = r2_score(every_true_value_list_single_nuclide,every_prediction_list_single_nuclide)  # various comparisons
 
 			# limited_r2 = r2_score(limited_evaluations, limited_predictions)
 
 			nuclide_r2.append([nuc[0], nuc[1], r2])
 
-		for pred in predictions:
-			every_prediction_list.append(pred)
 
-		for val in y_test:
-			every_true_value_list.append(val)
 		time_taken = time.time() - time1
 		print(f'completed in {time_taken:0.1f} s.\n')
 
 
-	all_libraries_r2 = r2_score(y_true=all_library_evaluations, y_pred= all_predictions)
+	all_libraries_r2 = r2_score(y_true=benchmark_libxs, y_pred= benchmark_predictions)
 
 	record_list.append([space, all_libraries_r2])
 	print(f"Search params: {space, all_libraries_r2}")
-	print(f"R2: {all_libraries_r2:0.5f}")
+	print(f"R2: {all_libraries_r2:0.5f} \n")
 
 
 
