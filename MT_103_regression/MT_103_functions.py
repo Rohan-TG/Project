@@ -49,7 +49,7 @@ def make_train(df, validation_nuclides, la, ua):
 	ME = df['ME']
 	Z = df['Z']
 	A = df['A']
-	Sep_2n = df['S2n']
+	# Sep_2n = df['S2n']
 	Sep_2p = df['S2p']
 	Energy = df['ERG']
 	XS = df['XS']
@@ -127,7 +127,7 @@ def make_train(df, validation_nuclides, la, ua):
 
 	Z_train = []
 	A_train = []
-	S2n_train = []
+	# S2n_train = []
 	S2p_train = []
 	Energy_train = []
 	XS_train = []
@@ -217,7 +217,7 @@ def make_train(df, validation_nuclides, la, ua):
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
 			Z_train.append(Z[idx])
 			A_train.append(A[idx])
-			S2n_train.append(Sep_2n[idx])
+			# S2n_train.append(Sep_2n[idx])
 			S2p_train.append(Sep_2p[idx])
 			Energy_train.append(Energy[idx])
 			XS_train.append(XS[idx])
@@ -289,7 +289,7 @@ def make_train(df, validation_nuclides, la, ua):
 
 	X = np.array([Z_train,
 				  A_train,
-				  S2n_train,
+				  # S2n_train,
 				  S2p_train,
 				  Energy_train,
 				  Sp_train,
@@ -384,7 +384,7 @@ def make_test(nuclides, df):
 	ME = df['ME']
 	Z = df['Z']
 	A = df['A']
-	S_2n = df['S2n']
+	# S_2n = df['S2n']
 	S_2p = df['S2p']
 	Energy = df['ERG']
 	XS = df['XS']
@@ -458,7 +458,7 @@ def make_test(nuclides, df):
 	# AM_test = []
 	Z_test = []
 	A_test = []
-	S2n_test = []
+	# S2n_test = []
 	S2p_test = []
 	Energy_test = []
 	XS_test = []
@@ -542,7 +542,7 @@ def make_test(nuclides, df):
 			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
-				S2n_test.append(S_2n[j])
+				# S2n_test.append(S_2n[j])
 				S2p_test.append(S_2p[j])
 				Energy_test.append(Energy[j])
 				XS_test.append(XS[j])
@@ -619,7 +619,7 @@ def make_test(nuclides, df):
 
 	xtest = np.array([Z_test,
 	A_test,
-	S2n_test,
+	# S2n_test,
 	S2p_test,
 	Energy_test,
 	Sp_test,

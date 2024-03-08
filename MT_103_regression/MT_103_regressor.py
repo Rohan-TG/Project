@@ -1,4 +1,7 @@
 import pandas as pd
+import warnings
+from numba.core.errors import NumbaDeprecationWarning
+warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 from MT_103_functions import make_train, make_test, range_setter, r2_standardiser, General_plotter
 import matplotlib.pyplot as plt
 import xgboost
@@ -21,7 +24,7 @@ JENDL_nuclides = range_setter(df=JENDL_5)
 TENDL_2021 = pd.read_csv('TENDL-2021_MT103_fund_only.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021)
 
-ENDFB_nuclides = range_setter(df=df, la=0, ua=260)
+ENDFB_nuclides = range_setter(df=df, la=0, ua=210)
 print("Data loaded")
 
 validation_nuclides = []
@@ -33,11 +36,11 @@ while len(validation_nuclides) < validation_set_size:
 		validation_nuclides.append(nuclide_choice)
 print("Test nuclide selection complete")
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100)
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=210)
 X_test, y_test = make_test(validation_nuclides, df=df)
 
 model = xgboost.XGBRegressor(n_estimators = 600,
-							 learning_rate = 0.008,
+							 learning_rate = 0.01,
 							 max_depth = 8,
 							 subsample = 0.3,
 							 reg_lambda = 1
@@ -58,7 +61,7 @@ for nuclide in validation_nuclides:
 	for i, row in enumerate(X_test):
 		if [row[0], row[1]] == nuclide:
 			dummy_test_XS.append(y_test[i])
-			dummy_test_E.append(row[4])  # Energy values are in 5th row
+			dummy_test_E.append(row[3])  # Energy values are in 5th row
 			dummy_predictions.append(predictions[i])
 
 	XS_plotmatrix.append(dummy_test_XS)
@@ -150,7 +153,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 explainer = shap.Explainer(model.predict, X_train,
 						   feature_names= ['Z',
 									 'A',
-									 'S2n',
+									 # 'S2n',
 									 'S2p',
 									 'E',
 									 'Sp',
