@@ -15,7 +15,7 @@ TENDL = pd.read_csv("TENDL_2021_MT16_with_ENDFB_MT103_107.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
 
-JEFF = pd.read_csv('JEFF33_all_features_MT16_103_107.csv.csv')
+JEFF = pd.read_csv('JEFF33_all_features_MT16_103_107.csv')
 JEFF.index = range(len(JEFF))
 JEFF_nuclides = range_setter(df=JEFF, la=0, ua=210)
 
