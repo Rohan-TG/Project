@@ -9,6 +9,7 @@ import numpy as np
 import random
 import xgboost as xg
 import time
+import tqdm
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
 from matrix_functions import make_train, make_test, range_setter, r2_standardiser
@@ -64,7 +65,7 @@ validation_set_size = 20  # number of nuclides hidden from training
 num_runs = 10
 run_r2 = []
 
-for i in range(num_runs+1):
+for i in tqdm.tqdm(range(num_runs+1)):
 	nuclides_used = []
 	every_prediction_list = []
 	every_true_value_list = []
