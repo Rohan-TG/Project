@@ -22,7 +22,7 @@ df_test = df_test[df_test.Z != 6]
 
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
-al = range_setter(df=df, la=0, ua=100)
+al = range_setter(df=df, la=30, ua=210)
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
@@ -59,7 +59,7 @@ for i in al:
 
 
 
-validation_set_size = 10  # number of nuclides hidden from training
+validation_set_size = 20  # number of nuclides hidden from training
 
 num_runs = 10
 run_r2 = []
@@ -119,7 +119,7 @@ for i in range(num_runs+1):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df_test)
 
