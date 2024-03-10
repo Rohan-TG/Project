@@ -413,6 +413,7 @@ for i in tqdm.tqdm(range(num_runs+1)):
 	benchmark_r2 = r2_score(y_true=benchmark_total_library_evaluations, y_pred= benchmark_total_predictions)
 # print(f"MSE: {all_libraries_mse:0.5f}")
 	print(f"R2: {benchmark_r2:0.5f}")
+	run_r2.append(benchmark_r2)
 
 	print(f"Bad nuclides: {bad_nuclides}")
 
