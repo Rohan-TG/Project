@@ -444,6 +444,8 @@ for i in tqdm.tqdm(range(num_runs+1)):
 # print(f"Good predictions {tally}/{len(al)}")
 
 # A_plots = [i[1] for i in nuclide_r2]
+print(np.mean(run_r2))
+print(np.std(run_r2))
 # Z_plots = [i[0] for i in nuclide_r2]
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
 # mse_plots = [i[-1] for i in nuclide_mse]
