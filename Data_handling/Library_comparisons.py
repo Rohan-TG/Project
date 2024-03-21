@@ -180,7 +180,7 @@ for i in nucs:
         if abs((endfmean - auxmean)) > 0.02:
             print(f"Outlier: {current_nuclide} - ({periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]})")
             outliers.append(current_nuclide)
-    elif abs((endfmean - auxmean)) > 6 * auxstd and len(auxilliary_library_comparisons) > 1 and endfmean < auxmean and endfmean < 0.99:
+    elif abs((endfmean - auxmean)) > 10 * auxstd and len(auxilliary_library_comparisons) > 1 and endfmean < auxmean and endfmean < 0.99:
         print(f"Outlier: {current_nuclide} - ({periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]})")
         outliers.append(current_nuclide)
 
