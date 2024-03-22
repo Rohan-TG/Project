@@ -212,8 +212,7 @@ for i in tqdm.tqdm(range(num_runs+1)):
 			all_library_evaluations = []
 			all_predictions = []
 
-			limited_evaluations = []
-			limited_predictions = []
+
 
 			try:
 				pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
@@ -240,8 +239,6 @@ for i in tqdm.tqdm(range(num_runs+1)):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
 
-					limited_evaluations.append(libxs)
-					limited_predictions.append(p)
 
 					benchmark_total_library_evaluations.append(libxs)
 					benchmark_total_predictions.append(p)
@@ -260,9 +257,6 @@ for i in tqdm.tqdm(range(num_runs+1)):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
 
-					limited_evaluations.append(libxs)
-					limited_predictions.append(p)
-
 					benchmark_total_library_evaluations.append(libxs)
 					benchmark_total_predictions.append(p)
 				evaluation_r2s.append(pred_jendl_r2)
@@ -280,8 +274,6 @@ for i in tqdm.tqdm(range(num_runs+1)):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
 
-					limited_evaluations.append(libxs)
-					limited_predictions.append(p)
 
 					benchmark_total_library_evaluations.append(libxs)
 					benchmark_total_predictions.append(p)
@@ -300,8 +292,6 @@ for i in tqdm.tqdm(range(num_runs+1)):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
 
-					limited_evaluations.append(libxs)
-					limited_predictions.append(p)
 
 					benchmark_total_library_evaluations.append(libxs)
 					benchmark_total_predictions.append(p)
@@ -313,7 +303,6 @@ for i in tqdm.tqdm(range(num_runs+1)):
 
 			r2 = r2_score(all_library_evaluations,all_predictions) # various comparisons
 
-			limited_r2 = r2_score(limited_evaluations,limited_predictions)
 			# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
 
 			if r2 > 0.97 and endfb_r2 < 0.9:
@@ -334,8 +323,7 @@ for i in tqdm.tqdm(range(num_runs+1)):
 					break
 
 
-			if limited_r2 - endfb_r2 > 0.03:
-				potential_outliers.append(current_nuclide)
+
 
 			for z in evaluation_r2s:
 				if z > 0.9:
