@@ -176,7 +176,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	Sep_n = df['Sn']
 	BEA = df['BEA']
 	# Pairing = df['Pairing']
-	gamma_deformation = df['gamma_deformation']
+	# gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	# octupole_deformation = df['octopole_deformation']
 	# Z_even = df['Z_even']
@@ -229,7 +229,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# Daughter nucleus properties
 	Sn_daughter = df['Sn_daughter']
 	S2n_daughter = df['S2n_daughter']
-	Sp_daughter = df['Sp_daughter']
+	# Sp_daughter = df['Sp_daughter']
 	# Pairing_daughter = df['Pairing_daughter']
 	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
@@ -255,7 +255,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	Sn_train = []
 	BEA_train = []
 	# Pairing_train = []
-	gd_train = []
+	# gd_train = []
 	N_train = [] # neutron number
 	bd_train = []
 	Radius_train = []
@@ -293,7 +293,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 
 	# Daughter nucleus properties
 	Sn_d_train = []
-	Sp_d_train = []
+	# Sp_d_train = []
 	S2n_d_train = []
 	# Pairing_daughter_train = []
 	# Parity_daughter_train = []
@@ -347,11 +347,11 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			BEA_train.append(BEA[idx])
 			# Pairing_train.append(Pairing[idx])
 			Sn_c_train.append(Sn_compound[idx])
-			gd_train.append(gamma_deformation[idx])
+			# gd_train.append(gamma_deformation[idx])
 			N_train.append(N[idx])
 			bd_train.append(beta_deformation[idx])
 			Sn_d_train.append(Sn_daughter[idx])
-			Sp_d_train.append(Sp_daughter[idx])
+			# Sp_d_train.append(Sp_daughter[idx])
 			S2n_d_train.append(S2n_daughter[idx])
 			Radius_train.append(Radius[idx])
 			n_gap_erg_train.append(n_gap_erg[idx])
@@ -419,7 +419,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				  BEA_train,
 				  # Pairing_train,
 				  Sn_c_train,
-				  gd_train,
+				  # gd_train,
 				  N_train,
 				  bd_train,
 				  Sn_d_train,
@@ -515,7 +515,7 @@ def make_test(nuclides, df):
 	S_n = df['Sn']
 	BEA = df['BEA']
 	# Pairing = df['Pairing']
-	gamma_deformation = df['gamma_deformation']
+	# gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	# octupole_deformation = df['octopole_deformation']
 	# Z_even = df['Z_even']
@@ -568,7 +568,7 @@ def make_test(nuclides, df):
 	# Daughter nucleus properties
 	Sn_daughter = df['Sn_daughter']
 	S2n_daughter = df['S2n_daughter']
-	Sp_daughter = df['Sp_daughter']
+	# Sp_daughter = df['Sp_daughter']
 	# Pairing_daughter = df['Pairing_daughter']
 	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
@@ -594,7 +594,7 @@ def make_test(nuclides, df):
 	BEA_test = []
 	# Pairing_test = []
 	Sn_c_test = []
-	gd_test = [] # gamma deformation
+	# gd_test = [] # gamma deformation
 	N_test = []
 	bd_test = []
 	Radius_test = []
@@ -627,7 +627,7 @@ def make_test(nuclides, df):
 
 	# Daughter features
 	Sn_d_test = []
-	Sp_d_test = []
+	# Sp_d_test = []
 	S2n_d_test = []
 	n_rms_radius_test = []
 	Decay_compound_test = []
@@ -677,7 +677,7 @@ def make_test(nuclides, df):
 				BEA_test.append(BEA[j])
 				# Pairing_test.append(Pairing[j])
 				Sn_c_test.append(Sn_compound[j])
-				gd_test.append(gamma_deformation[j])
+				# gd_test.append(gamma_deformation[j])
 				N_test.append(N[j])
 				bd_test.append(beta_deformation[j])
 				Sn_d_test.append(Sn_daughter[j])
@@ -754,7 +754,7 @@ def make_test(nuclides, df):
 	BEA_test,
 	# Pairing_train,
 	Sn_c_test,
-	gd_test,
+	# gd_test,
 	N_test,
 	bd_test,
 	Sn_d_test,
