@@ -99,33 +99,6 @@ def feature_fetcher(feature, df, z, a):
 
 
 
-
-def anomaly_remover(dfa):
-	anomalies = [[14, 28], [14, 29], [14, 30], [15, 31], [20, 40], [20, 42], [20, 43], [20, 44], [20, 46],
-				 [20, 48], [24, 50], [24, 52], [24, 53], [24, 54], [28, 58], [28, 60], [28, 61], [28, 62], [28, 64],
-				 [29, 63], [29, 65], [41, 93], [80, 196], [80, 198], [80, 199], [80, 200], [80, 201], [80, 202],
-				 [80, 204], [82, 206], [82, 207]]
-	"""list of nuclides with cutoff value @ 20 MeV - format is [Z,A]"""
-
-	anomaly_indices = []
-	for set in anomalies:
-		z = set[0]
-		a = set[1]
-
-		remover = dfa[dfa.A == a]
-		remove = remover[remover.Z == z]
-
-		last_row_index = remove.index[-1]
-		anomaly_indices.append(last_row_index)
-
-
-	for i in anomaly_indices:
-		dfa = dfa.drop(index=i)
-
-	dfa.index = range(len(dfa))
-
-	return dfa
-
 def range_setter(df, la, ua):
 	"""takes dataframe as input, with lower and upper bounds of A for nuclides desired. Returns a single array,
 	containing 1x2 arrays which contain nuclides in the format [Z,A]."""
@@ -266,7 +239,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	ME_daughter = df['ME_daughter']
 	BEA_A_daughter = df['BEA_A_daughter']
 	# Spin_daughter = df['Spin_daughter']
-	Deform_daughter = df['Deform_daughter']
+	# Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
 	Asymmetry_daughter = df['Asymmetry_daughter']
 
@@ -332,7 +305,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# Radius_daughter_train = []
 	BEA_A_daughter_train = []
 	# Spin_daughter_train = []
-	Deform_daughter_train = []
+	# Deform_daughter_train = []
 	Asymmetry_daughter_train = []
 
 	# Compound nucleus properties
@@ -423,7 +396,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			# Parity_compound_train.append(Parity_compound[idx])
 			BEA_A_daughter_train.append(BEA_A_daughter[idx])
 			# Spin_daughter_train.append(Spin_daughter[idx])
-			Deform_daughter_train.append(Deform_daughter[idx])
+			# Deform_daughter_train.append(Deform_daughter[idx])
 			Nlow_train.append(Nlow[idx])
 			Ulow_train.append(Ulow[idx])
 			# Ntop_train.append(Ntop[idx])
@@ -495,7 +468,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				  # Parity_compound_train,
 				  BEA_A_daughter_train,
 				  # Spin_daughter_train,
-				  Deform_daughter_train,
+				  # Deform_daughter_train,
 				  # cat_proton_train,
 				  # cat_neutron_train,
 				  # cat_double_train,
@@ -605,7 +578,7 @@ def make_test(nuclides, df):
 	ME_daughter = df['ME_daughter']
 	BEA_A_daughter = df['BEA_A_daughter']
 	# Spin_daughter = df['Spin_daughter']
-	Deform_daughter = df['Deform_daughter']
+	# Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
 	Asymmetry_daughter = df['Asymmetry_daughter']
 
@@ -666,7 +639,7 @@ def make_test(nuclides, df):
 	# Radius_daughter_test = []
 	BEA_A_daughter_test = []
 	# Spin_daughter_test = []
-	Deform_daughter_test = []
+	# Deform_daughter_test = []
 	# Pairing_daughter_test = []
 	# Parity_daughter_test = []
 	Asymmetry_daughter_test = []
@@ -758,7 +731,7 @@ def make_test(nuclides, df):
 				# Parity_compound_test.append(Parity_compound[j])
 				BEA_A_daughter_test.append(BEA_A_daughter[j])
 				# Spin_daughter_test.append(Spin_daughter[j])
-				Deform_daughter_test.append(Deform_daughter[j])
+				# Deform_daughter_test.append(Deform_daughter[j])
 				Nlow_test.append(Nlow[j])
 				Ulow_test.append(Ulow[j])
 				# Ntop_test.append(Ntop[j])
@@ -830,7 +803,7 @@ def make_test(nuclides, df):
 	# Parity_compound_train,
 	BEA_A_daughter_test,
 	# Spin_daughter_train,
-	Deform_daughter_test,
+	# Deform_daughter_test,
 	# cat_proton_train,
 	# cat_neutron_train,
 	# cat_double_train,
