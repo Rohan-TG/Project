@@ -192,7 +192,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	Deform = df['Deform']
 	n_gap_erg = df['n_gap_erg']
 	n_chem_erg = df['n_chem_erg']
-	p_gap_erg = df['p_gap_erg']
+	# p_gap_erg = df['p_gap_erg']
 	p_chem_erg = df['p_chem_erg']
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
@@ -276,7 +276,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	Spin_train = []
 	Decay_Const_train = []
 	Deform_train = []
-	p_gap_erg_train = []
+	# p_gap_erg_train = []
 	p_chem_erg_train = []
 	p_rms_radius_train = []
 	# rms_radius_train = []
@@ -375,7 +375,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			Spin_train.append(Spin[idx])
 			Decay_Const_train.append(Decay_Const[idx])
 			Deform_train.append(Deform[idx])
-			p_gap_erg_train.append(p_gap_erg[idx])
+			# p_gap_erg_train.append(p_gap_erg[idx])
 			p_chem_erg_train.append(p_chem_erg[idx])
 			p_rms_radius_train.append(p_rms_radius[idx])
 			# rms_radius_train.append(rms_radius[idx])
@@ -447,7 +447,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				  # Spin_train,
 				  Decay_Const_train,
 				  # Deform_train,
-				  p_gap_erg_train,
+				  # p_gap_erg_train,
 				  p_chem_erg_train,
 				  # p_rms_radius_train,
 				  # rms_radius_train,
@@ -531,7 +531,7 @@ def make_test(nuclides, df):
 	Deform = df['Deform']
 	n_gap_erg = df['n_gap_erg']
 	n_chem_erg = df['n_chem_erg']
-	p_gap_erg = df['p_gap_erg']
+	# p_gap_erg = df['p_gap_erg']
 	p_chem_erg = df['p_chem_erg']
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
@@ -609,7 +609,7 @@ def make_test(nuclides, df):
 	Spin_test = []
 	Decay_Const_test = []
 	Deform_test = []
-	p_gap_erg_test = []
+	# p_gap_erg_test = []
 	p_chem_erg_test = []
 	p_rms_radius_test = []
 	# rms_radius_test = []
@@ -709,7 +709,7 @@ def make_test(nuclides, df):
 				Spin_test.append(Spin[j])
 				Decay_Const_test.append(Decay_Const[j])
 				Deform_test.append(Deform[j])
-				p_gap_erg_test.append(p_gap_erg[j])
+				# p_gap_erg_test.append(p_gap_erg[j])
 				p_chem_erg_test.append(p_chem_erg[j])
 				p_rms_radius_test.append(p_rms_radius[j])
 				# rms_radius_test.append(rms_radius[j])
@@ -782,7 +782,7 @@ def make_test(nuclides, df):
 	# Spin_test,
 	Decay_Const_test,
 	# Deform_train,
-	p_gap_erg_test,
+	# p_gap_erg_test,
 	p_chem_erg_test,
 	# p_rms_radius_train,
 	# rms_radius_train,
