@@ -190,7 +190,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
-	n_gap_erg = df['n_gap_erg']
+	# n_gap_erg = df['n_gap_erg']
 	n_chem_erg = df['n_chem_erg']
 	# p_gap_erg = df['p_gap_erg']
 	# p_chem_erg = df['p_chem_erg']
@@ -259,7 +259,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	N_train = [] # neutron number
 	bd_train = []
 	Radius_train = []
-	n_gap_erg_train = []
+	# n_gap_erg_train = []
 	n_chem_erg_train = []
 	# xs_max_train = []
 	n_rms_radius_train = []
@@ -354,7 +354,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			# Sp_d_train.append(Sp_daughter[idx])
 			S2n_d_train.append(S2n_daughter[idx])
 			Radius_train.append(Radius[idx])
-			n_gap_erg_train.append(n_gap_erg[idx])
+			# n_gap_erg_train.append(n_gap_erg[idx])
 			n_chem_erg_train.append(n_chem_erg[idx])
 			# Pairing_daughter_train.append(Pairing_daughter[idx])
 			# Parity_daughter_train.append(Parity_daughter[idx])
@@ -426,7 +426,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				  # Sp_d_train,
 				  S2n_d_train,
 				  Radius_train,
-				  n_gap_erg_train,
+				  # n_gap_erg_train,
 				  n_chem_erg_train,
 				  # xs_max_train,
 				  n_rms_radius_train,
@@ -529,7 +529,7 @@ def make_test(nuclides, df):
 	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
-	n_gap_erg = df['n_gap_erg']
+	# n_gap_erg = df['n_gap_erg']
 	n_chem_erg = df['n_chem_erg']
 	# p_gap_erg = df['p_gap_erg']
 	# p_chem_erg = df['p_chem_erg']
@@ -598,7 +598,7 @@ def make_test(nuclides, df):
 	N_test = []
 	bd_test = []
 	Radius_test = []
-	n_gap_erg_test = []
+	# n_gap_erg_test = []
 	n_chem_erg_test = []
 	ME_test = []
 	# Z_even_test = []
@@ -684,7 +684,7 @@ def make_test(nuclides, df):
 				# Sp_d_test.append(Sp_daughter[j])
 				S2n_d_test.append(S2n_daughter[j])
 				Radius_test.append(Radius[j])
-				n_gap_erg_test.append(n_gap_erg[j])
+				# n_gap_erg_test.append(n_gap_erg[j])
 				n_chem_erg_test.append(n_chem_erg[j])
 				# Pairing_daughter_test.append(Pairing_daughter[j])
 				# xs_max_test.append(np.nan) # cheat feature - nan
@@ -761,7 +761,7 @@ def make_test(nuclides, df):
 	# Sp_d_train,
 	S2n_d_test,
 	Radius_test,
-	n_gap_erg_test,
+	# n_gap_erg_test,
 	n_chem_erg_test,
 	# xs_max_train,
 	n_rms_radius_test,
