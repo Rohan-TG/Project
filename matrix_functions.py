@@ -200,7 +200,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# magic_p = df['cat_magic_proton']
 	# magic_n = df['cat_magic_neutron']
 	# magic_d = df['cat_magic_double']
-	Nlow = df['Nlow']
+	# Nlow = df['Nlow']
 	Ulow = df['Ulow']
 	# Ntop = df['Ntop']
 	Utop = df['Utop']
@@ -280,7 +280,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# p_chem_erg_train = []
 	p_rms_radius_train = []
 	# rms_radius_train = []
-	Nlow_train = []
+	# Nlow_train = []
 	Ulow_train = []
 	# Ntop_train = []
 	Utop_train = []
@@ -397,7 +397,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			BEA_A_daughter_train.append(BEA_A_daughter[idx])
 			# Spin_daughter_train.append(Spin_daughter[idx])
 			# Deform_daughter_train.append(Deform_daughter[idx])
-			Nlow_train.append(Nlow[idx])
+			# Nlow_train.append(Nlow[idx])
 			Ulow_train.append(Ulow[idx])
 			# Ntop_train.append(Ntop[idx])
 			Utop_train.append(Utop[idx])
@@ -472,7 +472,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				  # cat_proton_train,
 				  # cat_neutron_train,
 				  # cat_double_train,
-				  Nlow_train,
+				  # Nlow_train,
 				  # Ulow_train,
 				  # Ntop_train,
 				  Utop_train,
@@ -539,7 +539,7 @@ def make_test(nuclides, df):
 	# magic_p = df['cat_magic_proton']
 	# magic_n = df['cat_magic_neutron']
 	# magic_d = df['cat_magic_double']
-	Nlow = df['Nlow']
+	# Nlow = df['Nlow']
 	Ulow = df['Ulow']
 	# Ntop = df['Ntop']
 	Utop = df['Utop']
@@ -615,7 +615,7 @@ def make_test(nuclides, df):
 	# rms_radius_test = []
 	# xs_max_test = []
 	# octupole_deformation_test = []
-	Nlow_test = []
+	# Nlow_test = []
 	Ulow_test = []
 	# Ntop_test = []
 	Utop_test = []
@@ -732,7 +732,7 @@ def make_test(nuclides, df):
 				BEA_A_daughter_test.append(BEA_A_daughter[j])
 				# Spin_daughter_test.append(Spin_daughter[j])
 				# Deform_daughter_test.append(Deform_daughter[j])
-				Nlow_test.append(Nlow[j])
+				# Nlow_test.append(Nlow[j])
 				Ulow_test.append(Ulow[j])
 				# Ntop_test.append(Ntop[j])
 				Utop_test.append(Utop[j])
@@ -807,7 +807,7 @@ def make_test(nuclides, df):
 	# cat_proton_train,
 	# cat_neutron_train,
 	# cat_double_train,
-	Nlow_test,
+	# Nlow_test,
 	  # Ulow_train,
 	# Ntop_train,
 	Utop_test,
