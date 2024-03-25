@@ -24,8 +24,8 @@ JENDL_nuclides = range_setter(df=JENDL_5)
 TENDL_2021 = pd.read_csv('TENDL-2021_MT103_fund_only.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021)
 
-ENDFB_nuclides = range_setter(df=df, la=0, ua=210)
-print("Data loaded")
+ENDFB_nuclides = range_setter(df=df, la=30, ua=210)
+print("Data loaded...")
 
 validation_nuclides = []
 validation_set_size = 20
@@ -34,7 +34,7 @@ while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 	if nuclide_choice not in validation_nuclides:
 		validation_nuclides.append(nuclide_choice)
-print("Test nuclide selection complete")
+print("Test nuclides selected...")
 
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=210)
 X_test, y_test = make_test(validation_nuclides, df=df)
