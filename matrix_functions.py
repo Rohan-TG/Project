@@ -203,7 +203,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# Nlow = df['Nlow']
 	Ulow = df['Ulow']
 	# Ntop = df['Ntop']
-	Utop = df['Utop']
+	# Utop = df['Utop']
 	ainf = df['ainf']
 	# XSlow = df['XSlow']
 	# XSupp = df['XSupp']
@@ -283,7 +283,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# Nlow_train = []
 	Ulow_train = []
 	# Ntop_train = []
-	Utop_train = []
+	# Utop_train = []
 	ainf_train = []
 	# XSlow_train = []
 	# XSupp_train = []
@@ -400,7 +400,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			# Nlow_train.append(Nlow[idx])
 			Ulow_train.append(Ulow[idx])
 			# Ntop_train.append(Ntop[idx])
-			Utop_train.append(Utop[idx])
+			# Utop_train.append(Utop[idx])
 			ainf_train.append(ainf[idx])
 			# XSlow_train.append(XSlow[idx])
 			# XSupp_train.append(XSupp[idx])
@@ -475,7 +475,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				  # Nlow_train,
 				  # Ulow_train,
 				  # Ntop_train,
-				  Utop_train,
+				  # Utop_train,
 				  # ainf_train,
 				  # XSlow_train,
 				  # XSupp_train,
@@ -542,7 +542,7 @@ def make_test(nuclides, df):
 	# Nlow = df['Nlow']
 	Ulow = df['Ulow']
 	# Ntop = df['Ntop']
-	Utop = df['Utop']
+	# Utop = df['Utop']
 	# ainf = df['ainf']
 	# XSlow = df['XSlow']
 	# XSupp = df['XSupp']
@@ -618,7 +618,7 @@ def make_test(nuclides, df):
 	# Nlow_test = []
 	Ulow_test = []
 	# Ntop_test = []
-	Utop_test = []
+	# Utop_test = []
 	# ainf_test = []
 	# XSlow_test = []
 	# XSupp_test = []
@@ -735,7 +735,7 @@ def make_test(nuclides, df):
 				# Nlow_test.append(Nlow[j])
 				Ulow_test.append(Ulow[j])
 				# Ntop_test.append(Ntop[j])
-				Utop_test.append(Utop[j])
+				# Utop_test.append(Utop[j])
 				# ainf_test.append(ainf[j])
 				# XSlow_test.append(XSlow[j])
 				# XSupp_test.append(XSupp[j])
@@ -810,7 +810,7 @@ def make_test(nuclides, df):
 	# Nlow_test,
 	  # Ulow_train,
 	# Ntop_train,
-	Utop_test,
+	# Utop_test,
 	# ainf_train,
 	# XSlow_train,
 	Asymmetry_test,
