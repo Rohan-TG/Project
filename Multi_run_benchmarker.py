@@ -88,7 +88,7 @@ validation_set_size = 20  # number of nuclides hidden from training
 num_runs = 10
 run_r2 = []
 
-for i in tqdm.tqdm(range(num_runs+1)):
+for q in tqdm.tqdm(range(num_runs+1)):
 	nuclides_used = []
 	every_prediction_list = []
 	every_true_value_list = []
