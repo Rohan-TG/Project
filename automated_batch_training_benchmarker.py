@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import periodictable
 import scipy
+import tqdm
+
 from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE, r2_standardiser
 import random
 import shap
@@ -74,7 +76,7 @@ run_r2 = []
 
 #
 
-for i in range(n_runs+1):
+for i in tqdm.tqdm(range(n_runs+1)):
 	every_prediction_list = []
 	every_true_value_list = []
 	nuclides_used = []
@@ -83,8 +85,13 @@ for i in range(n_runs+1):
 	while len(nuclides_used) < len(al):
 		time1 = time.time()
 
+
 		validation_nuclide = random.choice(al)
-		validation_nuclides = [validation_nuclide]
+		if validation_nuclide not in nuclides_used:
+			validation_nuclides = [validation_nuclide]
+		else:
+			print('New it')
+			continue
 		nuclides_used.append(validation_nuclide)
 		LA = validation_nuclide[1] - lower_bound
 		UA = validation_nuclide[1] + upper_bound
