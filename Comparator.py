@@ -43,7 +43,8 @@ exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
 	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
 	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
 	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
-	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35]]
+	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
+	   [18,38]]
 
 
 
@@ -119,13 +120,13 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	nuc = validation_nuclides[i]  # validation nuclide
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
 	plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
-	plt.plot(tendlerg, tendlxs, label="TENDL21", color='dimgrey', linewidth=2)
+	plt.plot(tendlerg, tendlxs, label="TENDL-2021", color='dimgrey', linewidth=2)
 	if nuc in JEFF_nuclides:
-		plt.plot(jefferg, jeffxs, '--', label='JEFF3.3', color='mediumvioletred')
+		plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
 	if nuc in JENDL_nuclides:
-		plt.plot(jendlerg, jendlxs, label='JENDL5', color='green')
+		plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
 	if nuc in CENDL_nuclides:
-		plt.plot(cendlerg, cendlxs, '--', label='CENDL3.2', color='gold')
+		plt.plot(cendlerg, cendlxs, '--', label='CENDL-3.2', color='gold')
 	plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 	plt.legend()
 	plt.grid()
@@ -228,7 +229,7 @@ if fia == 1:
 										 # 'oct_def',
 										 # 'D_c',
 										 'BEA_d',
-										 'BEA_c',
+										 # 'BEA_c',
 										 # 'Pair_d',
 										 # 'Par_d',
 										 # 'S2n_c',
@@ -313,7 +314,7 @@ if fia == 1:
 										 # 'oct_def',
 										 # 'D_c',
 										 'BEA_d',
-										 'BEA_c',
+										 # 'BEA_c',
 										 # 'Pair_d',
 										 # 'Par_d',
 										 # 'S2n_c',

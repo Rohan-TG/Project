@@ -215,7 +215,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	S2n_compound = df['S2n_compound']
 	S2p_compound = df['S2p_compound']
 	Decay_compound = df['Decay_compound']
-	BEA_compound = df['BEA_compound']
+	# BEA_compound = df['BEA_compound']
 	BEA_A_compound = df['BEA_A_compound']
 	Radius_compound = df['Radius_compound']
 	# ME_compound = df['ME_compound']
@@ -311,7 +311,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# Compound nucleus properties
 	Sn_c_train = []  # Sn compound
 	Sp_compound_train = []
-	BEA_compound_train = []
+	# BEA_compound_train = []
 	S2n_compound_train = []
 	S2p_compound_train = []
 	Decay_compound_train = []
@@ -363,7 +363,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			# octupole_deformation_train.append(octupole_deformation[idx])
 			Decay_compound_train.append(Decay_compound[idx])
 			BEA_daughter_train.append(BEA_daughter[idx])
-			BEA_compound_train.append(BEA_compound[idx])
+			# BEA_compound_train.append(BEA_compound[idx])
 			S2n_compound_train.append(S2n_compound[idx])
 			S2p_compound_train.append(S2p_compound[idx])
 			ME_train.append(ME[idx])
@@ -433,7 +433,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				  # octupole_deformation_train,
 				  # Decay_compound_train,
 				  BEA_daughter_train,
-				  BEA_compound_train,
+				  # BEA_compound_train,
 				  # Pairing_daughter_train,
 				  # Parity_daughter_train,
 				  # S2n_compound_train,
@@ -554,7 +554,7 @@ def make_test(nuclides, df):
 	S2n_compound = df['S2n_compound']
 	S2p_compound = df['S2p_compound']
 	Decay_compound = df['Decay_compound']
-	BEA_compound = df['BEA_compound']
+	# BEA_compound = df['BEA_compound']
 	BEA_A_compound = df['BEA_A_compound']
 	Radius_compound = df['Radius_compound']
 	# ME_compound = df['ME_compound']
@@ -654,7 +654,7 @@ def make_test(nuclides, df):
 	BEA_A_compound_test = []
 	# Pairing_compound_test = []
 	# Parity_compound_test = []
-	BEA_compound_test = []
+	# BEA_compound_test = []
 	S2n_compound_test = []
 	S2p_compound_test = []
 	Asymmetry_compound_test = []
@@ -695,7 +695,7 @@ def make_test(nuclides, df):
 				Decay_compound_test.append(Decay_compound[j]) # D_c
 				BEA_daughter_test.append(BEA_daughter[j])
 
-				BEA_compound_test.append(BEA_compound[j])
+				# BEA_compound_test.append(BEA_compound[j])
 
 				S2n_compound_test.append(S2n_compound[j])
 				S2p_compound_test.append(S2p_compound[j])
@@ -768,7 +768,7 @@ def make_test(nuclides, df):
 	# octupole_deformation_train,
 	# Decay_compound_train,
 	BEA_daughter_test,
-	  BEA_compound_test,
+	  # BEA_compound_test,
 	# Pairing_daughter_train,
 	# Parity_daughter_train,
 	# S2n_compound_train,
