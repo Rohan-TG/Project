@@ -57,7 +57,7 @@ exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
 	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
 	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
 	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38]] # 10 sigma with handpicked additions
+	   [18,38], [44,99]] # 10 sigma with handpicked additions
 
 
 al = []
@@ -103,7 +103,7 @@ for i in tqdm.tqdm(range(n_runs+1)):
 
 		X_test, y_test = make_test(nuclides=[validation_nuclide], df=df)
 
-		print("Train/val matrices generated")
+		# print("Train/val matrices generated")
 
 		modelseed = random.randint(a=1, b=1000)
 		model = xg.XGBRegressor(n_estimators=900,
