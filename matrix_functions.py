@@ -185,7 +185,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	N = df['N']
 	# xs_max = df['xs_max']
 	Radius = df['Radius']
-	Shell = df['Shell']
+	# Shell = df['Shell']
 	Parity = df['Parity']
 	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
@@ -271,7 +271,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# Z_even_train = []
 	# A_even_train = []
 	# N_even_train = []
-	Shell_train = []
+	# Shell_train = []
 	Parity_train = []
 	Spin_train = []
 	Decay_Const_train = []
@@ -370,7 +370,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			# Z_even_train.append(Z_even[idx])
 			# A_even_train.append(A_even[idx])
 			# N_even_train.append(N_even[idx])
-			Shell_train.append(Shell[idx])
+			# Shell_train.append(Shell[idx])
 			Parity_train.append(Parity[idx])
 			Spin_train.append(Spin[idx])
 			Decay_Const_train.append(Decay_Const[idx])
@@ -442,7 +442,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				  # Z_even_train,
 				  # A_even_train,
 				  # N_even_train,
-				  Shell_train,
+				  # Shell_train,
 				  # Parity_train,
 				  # Spin_train,
 				  Decay_Const_train,
@@ -524,7 +524,7 @@ def make_test(nuclides, df):
 	N = df['N']
 	# xs_max = df['xs_max']
 	Radius = df['Radius']
-	Shell = df['Shell']
+	# Shell = df['Shell']
 	Parity = df['Parity']
 	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
@@ -604,7 +604,7 @@ def make_test(nuclides, df):
 	# Z_even_test = []
 	# A_even_test = []
 	# N_even_test = []
-	Shell_test = []
+	# Shell_test = []
 	Parity_test = []
 	Spin_test = []
 	Decay_Const_test = []
@@ -704,7 +704,7 @@ def make_test(nuclides, df):
 				# Z_even_test.append(Z_even[j])
 				# A_even_test.append(A_even[j])
 				# N_even_test.append(N_even[j])
-				Shell_test.append(Shell[j])
+				# Shell_test.append(Shell[j])
 				Parity_test.append(Parity[j])
 				Spin_test.append(Spin[j])
 				Decay_Const_test.append(Decay_Const[j])
@@ -777,7 +777,7 @@ def make_test(nuclides, df):
 	# Z_even_train,
 	# A_even_train,
 	# N_even_train,
-	Shell_test,
+	# Shell_test,
 	# Parity_test,
 	# Spin_test,
 	Decay_Const_test,
