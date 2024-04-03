@@ -35,6 +35,7 @@ df = df[df.Z != 6]
 df_test = df_test[df_test.Z != 6]
 
 df_test.index = range(len(df_test)) # re-label indices
+df = df[df.A <= 210]
 df.index = range(len(df))
 kx = range_setter(la=30, ua=210, df=df)
 
@@ -69,9 +70,9 @@ validation_set_size = 15
 
 
 
-n_runs = 2
+n_runs = 10
 lower_bound = 30
-upper_bound = 69
+upper_bound = 79
 run_r2 = []
 
 #
@@ -103,7 +104,7 @@ for i in tqdm.tqdm(range(n_runs+1)):
 					break
 
 				validation_nuclide = random.choice(nuclide_subset)
-				if validation_nuclide not in benchmark_nuclides_used:
+				if validation_nuclide not in benchmark_nuclides_used and validation_nuclide not in validation_nuclides:
 					validation_nuclides.append(validation_nuclide)
 					group_nuclides_used.append(validation_nuclide)
 					benchmark_nuclides_used.append(validation_nuclide)
@@ -268,8 +269,8 @@ for i in tqdm.tqdm(range(n_runs+1)):
 
 			time.sleep(1)
 		time_taken = time.time() - time1
-		LA += 40
-		UA += 40 #
+		LA += 50
+		UA += 50 #
 		print(f'completed in {time_taken:0.1f} s.\n')
 		print(LA, UA)
 
