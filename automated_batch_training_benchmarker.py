@@ -263,13 +263,14 @@ for i in tqdm.tqdm(range(n_runs+1)):
 
 				nuclide_r2.append([nuc[0], nuc[1], r2])
 
-			time_taken = time.time() - time1
 
-			print(f'completed in {time_taken:0.1f} s.\n')
+
+
 			time.sleep(1)
-
+		time_taken = time.time() - time1
 		LA += 40
 		UA += 40 #
+		print(f'completed in {time_taken:0.1f} s.\n')
 		print(LA, UA)
 
 
