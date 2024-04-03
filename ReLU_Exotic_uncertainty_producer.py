@@ -32,9 +32,9 @@ TENDL_nuclides = range_setter(df=TENDL21, la=30, ua=215)
 al = range_setter(la=30, ua=215, df=df)
 
 
-n_evaluations = 100
+n_evaluations = 5
 datapoint_matrix = []
-target_nuclide = [45,107]
+target_nuclide = [40,88]
 
 
 JEFF33 = pd.read_csv('JEFF33_all_features.csv')
@@ -59,7 +59,20 @@ CENDL32_energy, CENDL32_XS = General_plotter(df=CENDL32, nuclides=[target_nuclid
 validation_nuclides = [target_nuclide]
 validation_set_size = 1  # train on all ENDF/B-VIII
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=215, )  # make training matrix
+exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
+	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
+	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
+	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
+	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
+	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
+	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
+	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
+	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
+	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
+	   [18,38]] # 10 sigma with handpicked additions
+
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=70, ua= 95,
+							  exclusions=exc)  # make training matrix
 
 X_test, y_test = make_test(validation_nuclides, df=TENDL21, )
 print("\nTest nuclide selection complete")
@@ -68,14 +81,6 @@ print("Data prep done")
 runs_r2_array = []
 for i in tqdm.tqdm(range(n_evaluations)):
 	print(f"\nRun {i+1}/{n_evaluations}")
-
-
-
-
-	# while len(validation_nuclides) < validation_set_size:
-	# 	choice = random.choice(al)  # randomly select nuclide from list of all nuclides
-	# 	if choice not in validation_nuclides:
-	# 		validation_nuclides.append(choice)
 
 
 	time1 = time.time()
@@ -227,7 +232,7 @@ if target_nuclide in al:
 	plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 plt.plot(tendl_energy, tendl_xs, label = 'TENDL-2021', color='dimgrey', linewidth=2)
 if target_nuclide in JEFF_nuclides:
-	plt.plot(JEFF_energy, JEFF_XS, label='JEFF-3.3', color='mediumvioletred')
+	plt.plot(JEFF_energy, JEFF_XS, '--', label='JEFF-3.3', color='mediumvioletred')
 if target_nuclide in JENDL_nuclides:
 	plt.plot(JENDL5_energy, JENDL5_XS, '--', label='JENDL-5', color='green')
 if target_nuclide in CENDL_nuclides:
