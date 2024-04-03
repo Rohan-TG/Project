@@ -57,7 +57,7 @@ exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
 	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
 	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
 	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38], [44,99]] # 10 sigma with handpicked additions
+	   [18,38]] # 10 sigma with handpicked additions
 
 
 al = []
@@ -65,204 +65,214 @@ for i in kx:
 	if i not in banned_nuclides:
 		al.append(i)
 
-validation_set_size = 1
+validation_set_size = 15
 
 
 
-n_runs = 10
-lower_bound = 50
-upper_bound = 50
+n_runs = 2
+lower_bound = 30
+upper_bound = 69
 run_r2 = []
 
 #
 
 for i in tqdm.tqdm(range(n_runs+1)):
+	LA = lower_bound
+	UA = upper_bound
 	every_prediction_list = []
 	every_true_value_list = []
-	nuclides_used = []
+	benchmark_nuclides_used = []
 	nuclide_r2 = []
 
-	while len(nuclides_used) < len(al):
+	while len(benchmark_nuclides_used) < len(al):
 		time1 = time.time()
 
 
-		validation_nuclide = random.choice(al)
-		if validation_nuclide not in nuclides_used:
-			validation_nuclides = [validation_nuclide]
-		else:
-			print('New it')
-			continue
-		nuclides_used.append(validation_nuclide)
-		LA = validation_nuclide[1] - lower_bound
-		UA = validation_nuclide[1] + upper_bound
 
 
-		print(f"{len(nuclides_used)}/{len(al)} selections")
 
-		X_train, y_train = make_train(df=df, validation_nuclides=[validation_nuclide], ua=UA, la=LA, exclusions=exc)
-
-		X_test, y_test = make_test(nuclides=[validation_nuclide], df=df)
-
-		# print("Train/val matrices generated")
-
-		modelseed = random.randint(a=1, b=1000)
-		model = xg.XGBRegressor(n_estimators=900,
-								learning_rate=0.008,
-								max_depth=8,
-								subsample=0.18236,
-								max_leaves=0,
-								seed=modelseed, )
+		nuclide_subset = range_setter(df=df, la=LA, ua=UA) # generate new subset for stratum
+		group_nuclides_used = []
 
 
-		model.fit(X_train, y_train)
-		print("Training complete")
+		while len(group_nuclides_used) < len(nuclide_subset):
+			validation_nuclides = []
+			while len(validation_nuclides) < validation_set_size:
 
-		predictions = model.predict(X_test)
-		predictions_ReLU = []
-		for pred in predictions:
-			if pred >= 0.003:
-				predictions_ReLU.append(pred)
-			else:
-				predictions_ReLU.append(0)
+				if len(group_nuclides_used) == len(nuclide_subset):
+					break
 
-		predictions = predictions_ReLU
+				validation_nuclide = random.choice(nuclide_subset)
+				if validation_nuclide not in benchmark_nuclides_used:
+					validation_nuclides.append(validation_nuclide)
+					group_nuclides_used.append(validation_nuclide)
+					benchmark_nuclides_used.append(validation_nuclide)
+				else:
+					# print(validation_nuclides)
+					continue
 
-		# Form arrays for plots below
-		XS_plotmatrix = []
-		E_plotmatrix = []
-		P_plotmatrix = []
-		for nuclide in validation_nuclides:
-			dummy_test_XS = []
-			dummy_test_E = []
-			dummy_predictions = []
-			for i, row in enumerate(X_test):
-				if [row[0], row[1]] == nuclide:
-					dummy_test_XS.append(y_test[i])
-					dummy_test_E.append(row[4])  # Energy values are in 5th row
-					dummy_predictions.append(predictions[i])
+			print(validation_nuclides)
 
-			XS_plotmatrix.append(dummy_test_XS)
-			E_plotmatrix.append(dummy_test_E)
-			P_plotmatrix.append(dummy_predictions)
+			print(f"{len(benchmark_nuclides_used)}/{len(al)} total selections")
+			print(f"{len(group_nuclides_used)}/{len(nuclide_subset)} group selections")
 
-		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
-			nuc = validation_nuclides[i]
-			current_nuclide = nuc
+			X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, ua=UA, la=LA, exclusions=exc)
 
-			evaluation_r2s = []
+			X_test, y_test = make_test(nuclides=validation_nuclides, df=df)
 
-			truncated_library_r2 = []
+			print("Train/val matrices generated")
 
-			all_library_evaluations = []
-			all_predictions = []
+			modelseed = random.randint(a=1, b=1000)
+			model = xg.XGBRegressor(n_estimators=900,
+									learning_rate=0.008,
+									max_depth=8,
+									subsample=0.18236,
+									max_leaves=0,
+									seed=modelseed, )
 
-			limited_evaluations = []
-			limited_predictions = []
 
-			try:
-				pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
-																			  library_xs=true_xs)
-			except:
-				print(current_nuclide)
-			for libxs, p in zip(truncated_endfb, pred_endfb_gated):
-				all_library_evaluations.append(libxs)
-				all_predictions.append(p)
+			model.fit(X_train, y_train)
+			print("Training complete")
 
-				every_true_value_list.append(libxs)
-				every_prediction_list.append(p)
-			evaluation_r2s.append(endfb_r2)
+			predictions = model.predict(X_test)
+			predictions_ReLU = []
+			for pred in predictions:
+				if pred >= 0.003:
+					predictions_ReLU.append(pred)
+				else:
+					predictions_ReLU.append(0)
 
-			if current_nuclide in CENDL_nuclides:
+			predictions = predictions_ReLU
 
-				cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
-				pred_cendl = model.predict(cendl_test)
+			# Form arrays for plots below
+			XS_plotmatrix = []
+			E_plotmatrix = []
+			P_plotmatrix = []
+			for nuclide in validation_nuclides:
+				dummy_test_XS = []
+				dummy_test_E = []
+				dummy_predictions = []
+				for i, row in enumerate(X_test):
+					if [row[0], row[1]] == nuclide:
+						dummy_test_XS.append(y_test[i])
+						dummy_test_E.append(row[4])  # Energy values are in 5th row
+						dummy_predictions.append(predictions[i])
 
-				pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
-				pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl,
-																				   library_xs=cendl_xs)
-				for libxs, p in zip(truncated_cendl, pred_cendl_gated):
+				XS_plotmatrix.append(dummy_test_XS)
+				E_plotmatrix.append(dummy_test_E)
+				P_plotmatrix.append(dummy_predictions)
+
+			for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+				nuc = validation_nuclides[i]
+				current_nuclide = nuc
+
+				evaluation_r2s = []
+
+				truncated_library_r2 = []
+
+				all_library_evaluations = []
+				all_predictions = []
+
+
+
+				try:
+					pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
+																				  library_xs=true_xs)
+				except:
+					print(current_nuclide)
+				for libxs, p in zip(truncated_endfb, pred_endfb_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
 
-					limited_evaluations.append(libxs)
-					limited_predictions.append(p)
-
 					every_true_value_list.append(libxs)
 					every_prediction_list.append(p)
-				evaluation_r2s.append(pred_cendl_r2)
-				truncated_library_r2.append(pred_cendl_r2)
-			# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
+				evaluation_r2s.append(endfb_r2)
 
-			if current_nuclide in JENDL_nuclides:
-				jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL)
-				pred_jendl = model.predict(jendl_test)
+				if current_nuclide in CENDL_nuclides:
 
-				pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-				pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl,
-																				   library_xs=jendl_xs)
-				for libxs, p in zip(truncated_jendl, pred_jendl_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+					cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
+					pred_cendl = model.predict(cendl_test)
 
-					limited_evaluations.append(libxs)
-					limited_predictions.append(p)
+					pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
+					pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl,
+																					   library_xs=cendl_xs)
+					for libxs, p in zip(truncated_cendl, pred_cendl_gated):
+						all_library_evaluations.append(libxs)
+						all_predictions.append(p)
 
-					every_true_value_list.append(libxs)
-					every_prediction_list.append(p)
-				evaluation_r2s.append(pred_jendl_r2)
-				truncated_library_r2.append(pred_jendl_r2)
-			# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
+						every_true_value_list.append(libxs)
+						every_prediction_list.append(p)
+					evaluation_r2s.append(pred_cendl_r2)
+					truncated_library_r2.append(pred_cendl_r2)
+				# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
-			if current_nuclide in JEFF_nuclides:
-				jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF)
+				if current_nuclide in JENDL_nuclides:
+					jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL)
+					pred_jendl = model.predict(jendl_test)
 
-				pred_jeff = model.predict(jeff_test)
+					pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
+					pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl,
+																					   library_xs=jendl_xs)
+					for libxs, p in zip(truncated_jendl, pred_jendl_gated):
+						all_library_evaluations.append(libxs)
+						all_predictions.append(p)
 
-				pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-				pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff,
-																				library_xs=jeff_xs)
-				for libxs, p in zip(truncated_jeff, pred_jeff_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+						every_true_value_list.append(libxs)
+						every_prediction_list.append(p)
+					evaluation_r2s.append(pred_jendl_r2)
+					truncated_library_r2.append(pred_jendl_r2)
+				# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
-					limited_evaluations.append(libxs)
-					limited_predictions.append(p)
+				if current_nuclide in JEFF_nuclides:
+					jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF)
 
-					every_true_value_list.append(libxs)
-					every_prediction_list.append(p)
+					pred_jeff = model.predict(jeff_test)
 
-				evaluation_r2s.append(pred_jeff_r2)
-				truncated_library_r2.append(pred_jeff_r2)
-			# print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
+					pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
+					pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff,
+																					library_xs=jeff_xs)
+					for libxs, p in zip(truncated_jeff, pred_jeff_gated):
+						all_library_evaluations.append(libxs)
+						all_predictions.append(p)
 
-			if current_nuclide in TENDL_nuclides:
-				tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL)
-				pred_tendl = model.predict(tendl_test)
+						every_true_value_list.append(libxs)
+						every_prediction_list.append(p)
 
-				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl,
-																				   library_xs=tendl_xs)
-				for libxs, p in zip(truncated_tendl, pred_tendl_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+					evaluation_r2s.append(pred_jeff_r2)
+					truncated_library_r2.append(pred_jeff_r2)
+				# print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
 
-					limited_evaluations.append(libxs)
-					limited_predictions.append(p)
+				if current_nuclide in TENDL_nuclides:
+					tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL)
+					pred_tendl = model.predict(tendl_test)
 
-					every_true_value_list.append(libxs)
-					every_prediction_list.append(p)
+					pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
+					pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl,
+																					   library_xs=tendl_xs)
+					for libxs, p in zip(truncated_tendl, pred_tendl_gated):
+						all_library_evaluations.append(libxs)
+						all_predictions.append(p)
 
-				evaluation_r2s.append(pred_tendl_r2)
-				truncated_library_r2.append(pred_tendl_r2)
+						every_true_value_list.append(libxs)
+						every_prediction_list.append(p)
 
-			r2 = r2_score(all_library_evaluations, all_predictions)  # various comparisons
+					evaluation_r2s.append(pred_tendl_r2)
+					truncated_library_r2.append(pred_tendl_r2)
 
-			limited_r2 = r2_score(limited_evaluations, limited_predictions)
+				r2 = r2_score(all_library_evaluations, all_predictions)  # various comparisons
 
-			nuclide_r2.append([nuc[0], nuc[1], r2])
+				nuclide_r2.append([nuc[0], nuc[1], r2])
 
-		time_taken = time.time() - time1
-		print(f'completed in {time_taken:0.1f} s.\n')
+			time_taken = time.time() - time1
+
+			print(f'completed in {time_taken:0.1f} s.\n')
+			time.sleep(1)
+
+		LA += 40
+		UA += 40 #
+		print(LA, UA)
+
+
 
 
 	all_libraries_r2 = r2_score(y_true=every_true_value_list, y_pred=every_prediction_list)
