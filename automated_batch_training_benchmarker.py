@@ -285,33 +285,33 @@ for i in tqdm.tqdm(range(n_runs+1)):
 
 print('Complete')
 print(np.mean(run_r2), np.std(run_r2))
-# A_plots = [i[1] for i in nuclide_r2]
-# Z_plots = [i[0] for i in nuclide_r2]
-#
-# log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
-# log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
-#
-# r2plot = [i[-1] for i in nuclide_r2]
-#
-#
-# plt.figure()
-# plt.plot(A_plots, log_plots, 'x')
-# plt.xlabel("A")
-# plt.ylabel("$|\ln(|r^2|)|$")
-# plt.title("Performance - A")
-# plt.grid()
-# plt.show()
+A_plots = [i[1] for i in nuclide_r2]
+Z_plots = [i[0] for i in nuclide_r2]
 
-# plt.figure()
-# plt.plot(Z_plots, log_plots_Z, 'x')
-# plt.xlabel('Z')
-# plt.ylabel("$|\ln(|r^2|)|$")
-# plt.title("Performance - Z")
-# plt.grid()
-# plt.show()
-#
-#
-#
+log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
+log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
+
+r2plot = [i[-1] for i in nuclide_r2]
+
+
+plt.figure()
+plt.plot(A_plots, log_plots, 'x')
+plt.xlabel("A")
+plt.ylabel("$|\ln(|r^2|)|$")
+plt.title("Performance - A")
+plt.grid()
+plt.show()
+
+plt.figure()
+plt.plot(Z_plots, log_plots_Z, 'x')
+plt.xlabel('Z')
+plt.ylabel("$|\ln(|r^2|)|$")
+plt.title("Performance - Z")
+plt.grid()
+plt.show()
+
+
+
 # plt.figure()
 # plt.hist2d(x=A_plots, y=log_plots, bins=20)
 # plt.xlabel("A")
