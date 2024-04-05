@@ -186,14 +186,21 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 				nuclide_set = [Z[idx],A[idx]]
 				current_sn = Sep_n[idx]
 				current_sn_unc = Sn_uncertainties[idx]
-				sampled_sn = random.gauss(mu=current_sn, sigma=current_sn*0.2)
+				sampled_sn = random.gauss(mu=current_sn, sigma=current_sn_unc)
 
 			Z_train.append(Z[idx])
 			A_train.append(A[idx])
 			S2n_train.append(Sep_2n[idx])
 			S2p_train.append(Sep_2p[idx])
 			Energy_train.append(Energy[idx])
-			XS_train.append(XS[idx])
+
+			# Sampling cross section uncertainties
+			XS_train_mean = XS[idx]
+			XS_train_std = 0.05 * XS[idx]
+			XS_pointwise_sample = random.gauss(mu=XS_train_mean, sigma=XS_train_std)
+			XS_train.append(XS_pointwise_sample)
+
+
 			Sp_train.append(Sep_p[idx])
 
 			BEA_train.append(BEA[idx])
