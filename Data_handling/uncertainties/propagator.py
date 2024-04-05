@@ -32,7 +32,17 @@ CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
-
+exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
+	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
+	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
+	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
+	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
+	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
+	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
+	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
+	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
+	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
+	   [18,38]] # 10 sigma with handpicked additions
 
 target_nuclides = [[71,175]]
 target_nuclide = target_nuclides[0]
@@ -42,7 +52,8 @@ runs_r2_array = []
 
 datapoint_matrix = []
 
-X_train, y_train = training_sampler(df=ENDFBVIII, LA=30, UA=210, sampled_uncertainties= ['unc_sn'], target_nuclides=target_nuclides)
+X_train, y_train = training_sampler(df=ENDFBVIII, LA=30, UA=210, sampled_uncertainties= ['unc_sn'],
+									target_nuclides=target_nuclides, exclusions=exc)
 print("Training matrix formed")
 
 model = xg.XGBRegressor(n_estimators=900,  # define regressor
