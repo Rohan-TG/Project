@@ -8,7 +8,7 @@ import time
 import shap
 import periodictable
 
-time1 = time.time()
+
 
 ENDFB = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv')
 TENDL = pd.read_csv('TENDL_2021_MT16_XS_features.csv')
@@ -25,7 +25,21 @@ JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
 all_libraries = pd.read_csv('MT16_all_libraries_mk1.csv')
 all_libraries.index = range(len(all_libraries))
 
-validation_nuclides = [[58,143]]
+exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
+	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
+	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
+	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
+	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
+	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
+	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
+	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
+	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
+	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
+	   [18,38], [44,99], [50,126]] # 10 sigma with handpicked additions
+
+
+
+validation_nuclides = [[71,175], [30,64]]
 validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
@@ -35,24 +49,26 @@ while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 print("Test nuclide selection complete")
 
 
-X_train, y_train = make_train(df=all_libraries, validation_nuclides=validation_nuclides, la=30, ua=210,) # create training matrix
+X_train, y_train = make_train(df=all_libraries, validation_nuclides=validation_nuclides, la=30, ua=210,
+							  exclusions=exc) # create training matrix
 X_test, y_test = make_test(validation_nuclides, df=ENDFB,) # create test matrix using validation nuclides
 print("Data preparation complete. Training...")
 
 model = xg.XGBRegressor(n_estimators=1200, # define regressor
-						learning_rate=0.0034,
+						learning_rate=0.0035,
 						max_depth=11,
 						subsample=0.1556,
 						max_leaves=0,
 						seed=42, )
-
+time1 = time.time()
 model.fit(X_train, y_train)
+print(f"Training time: {(time.time() - time1)} seconds")
 print("Training complete. Processing/Plotting...")
 predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
 
 for pred in predictions: # prediction gate
-	if pred >= 0.003:
+	if pred >= 0.004:
 		predictions_ReLU.append(pred)
 	else:
 		predictions_ReLU.append(0)
@@ -91,13 +107,13 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	nuc = validation_nuclides[i]  # validation nuclide
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
 	plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
-	plt.plot(tendlerg, tendlxs, label="TENDL21", color='dimgrey', linewidth=2)
+	plt.plot(tendlerg, tendlxs, label="TENDL-2021", color='dimgrey', linewidth=2)
 	if nuc in JEFF_nuclides:
-		plt.plot(jefferg, jeffxs, '--', label='JEFF3.3', color='mediumvioletred')
+		plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
 	if nuc in JENDL_nuclides:
-		plt.plot(jendlerg, jendlxs, label='JENDL5', color='green')
+		plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
 	if nuc in CENDL_nuclides:
-		plt.plot(cendlerg, cendlxs, '--', label='CENDL3.2', color='gold')
+		plt.plot(cendlerg, cendlxs, '--', label='CENDL-3.2', color='gold')
 	plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 	plt.legend()
 	plt.grid()
