@@ -61,7 +61,7 @@ model = xg.XGBRegressor(n_estimators=1200, # define regressor
 						max_leaves=0,
 						seed=42, )
 time1 = time.time()
-model.fit(X_train, y_train)
+model.fit(X_train, y_train, verbose= True, early_stopping_rounds=100, eval_set = [(X_test, y_test)])
 print(f"Training time: {(time.time() - time1)} seconds")
 print("Training complete. Processing/Plotting...")
 predictions = model.predict(X_test)  # XS predictions
