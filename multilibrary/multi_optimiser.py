@@ -25,15 +25,25 @@ TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
 CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
-
+exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
+	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
+	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
+	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
+	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
+	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
+	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
+	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
+	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
+	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
+	   [18,38], [44,99], [50,126]] # 10 sigma with handpicked additions
 all_libraries = pd.read_csv('MT16_all_libraries_mk1.csv')
 all_libraries.index = range(len(all_libraries))
 
-space = {'n_estimators': hp.choice('n_estimators', [500, 600, 650, 700, 750, 800, 850, 900, 1000, 1100, 1200, ]),
+space = {'n_estimators': hp.choice('n_estimators', [800, 900, 1000, 1100, 1200, 1300, 1400, 1800, 1900, 2000, 2200]),
 		 'subsample': hp.loguniform('subsample', np.log(0.05), np.log(1.0)),
 		 'max_leaves': 0,
 		 'max_depth': scope.int(hp.quniform("max_depth", 6, 12, 1)),
-		 'learning_rate': hp.loguniform('learning_rate', np.log(0.001), np.log(0.03))}
+		 'learning_rate': hp.loguniform('learning_rate', np.log(0.0001), np.log(0.08))}
 
 
 benchmark_number = 1
@@ -57,7 +67,8 @@ def optimiser(space):
 			nuclides_used.append(choice)
 	print("Nuclide selection complete. Forming matrices...")
 
-	X_train, y_train = make_train(df=all_libraries, la=30, ua=210, validation_nuclides=validation_nuclides)
+	X_train, y_train = make_train(df=all_libraries, la=30, ua=210, validation_nuclides=validation_nuclides,
+								  exclusions=exc)
 
 	X_test, y_test = make_test(nuclides=validation_nuclides, df=ENDFB)
 	print("Data preparation complete. Training...")
