@@ -44,7 +44,7 @@ exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
 	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
 	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
 	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38], [44,99]]
+	   [18,38], [44,99], [50,126]]
 
 
 
@@ -69,14 +69,14 @@ X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la
 X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
 print("Data prep complete")
 
-model = xg.XGBRegressor(n_estimators=900, # define regressor
+model = xg.XGBRegressor(n_estimators=950, # define regressor
 						learning_rate=0.008,
 						max_depth=8,
 						subsample=0.18236,
 						max_leaves=0,
 						seed=42, )
 
-model.fit(X_train, y_train, verbose=True, early_stopping_rounds=50, eval_set = [(X_test, y_test)])
+model.fit(X_train, y_train, verbose=True, early_stopping_rounds=100, eval_set = [(X_test, y_test)])
 print("Training complete")
 predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []

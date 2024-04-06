@@ -50,7 +50,17 @@ CENDL32 = pd.read_csv('CENDL32_all_features.csv')
 CENDL32.index = range(len(CENDL32))
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
-
+exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
+	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
+	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
+	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
+	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
+	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
+	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
+	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
+	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
+	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
+	   [18,38], [44,99], [50,126]]
 
 n_evaluations = 8
 datapoint_matrix = []
@@ -80,7 +90,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	time1 = time.time()
 
 	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides,
-								  exclusions=[[]],
+								  exclusions=exc,
 								  la=30, ua=210,) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test,)
