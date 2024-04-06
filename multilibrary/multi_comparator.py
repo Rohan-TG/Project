@@ -55,14 +55,14 @@ X_test, y_test = make_test(validation_nuclides, df=ENDFB,) # create test matrix 
 print("Data preparation complete. Training...")
 
 model = xg.XGBRegressor(n_estimators=1200, # define regressor
-						learning_rate=0.0025,
+						learning_rate=0.003,
 						max_depth=11,
 						subsample=0.1556,
 						max_leaves=0,
-						gamma = 2,
+						gamma = 3,
 						seed=42, )
 time1 = time.time()
-model.fit(X_train, y_train, verbose= True, early_stopping_rounds=10, eval_set = [(X_test, y_test), (X_train, y_train)])
+model.fit(X_train, y_train, verbose= True, early_stopping_rounds=10, eval_set = [(X_test, y_test)])
 print(f"Training time: {(time.time() - time1)} seconds")
 print("Training complete. Processing/Plotting...")
 predictions = model.predict(X_test)  # XS predictions
