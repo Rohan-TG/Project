@@ -39,7 +39,7 @@ exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
 
 
 
-validation_nuclides = [[71,175], [30,64]]
+validation_nuclides = []
 validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
@@ -55,13 +55,14 @@ X_test, y_test = make_test(validation_nuclides, df=ENDFB,) # create test matrix 
 print("Data preparation complete. Training...")
 
 model = xg.XGBRegressor(n_estimators=1200, # define regressor
-						learning_rate=0.0035,
+						learning_rate=0.0025,
 						max_depth=11,
 						subsample=0.1556,
 						max_leaves=0,
+						gamma = 2,
 						seed=42, )
 time1 = time.time()
-model.fit(X_train, y_train, verbose= True, early_stopping_rounds=50, eval_set = [(X_test, y_test)])
+model.fit(X_train, y_train, verbose= True, early_stopping_rounds=10, eval_set = [(X_test, y_test), (X_train, y_train)])
 print(f"Training time: {(time.time() - time1)} seconds")
 print("Training complete. Processing/Plotting...")
 predictions = model.predict(X_test)  # XS predictions
