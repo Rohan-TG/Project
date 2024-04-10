@@ -19,7 +19,7 @@ def df_interpolator(df, energy_grid=grid):
 	dataframe with all the original features included in one go."""
 
 	columns = df.columns
-	df_nuclides = range_setter(df=df, la=0, ua=260)
+	df_nuclides = range_setter(df=df, la=30, ua=38)
 
 	full_df = pd.DataFrame(columns=columns)
 
@@ -29,10 +29,11 @@ def df_interpolator(df, energy_grid=grid):
 		i_function = scipy.interpolate.interp1d(x=nuclide_energy, y=nuclide_xs, fill_value='extrapolate')
 
 		new_xs = i_function(energy_grid)
+		new_xs[0] = 0
 		nuc_zlist = [nuclide[0] for idx in energy_grid]
 		nuc_alist = [nuclide[1] for idx in energy_grid]
 
-		temp_maindf = pd.DataFrame({'Z': nuc_zlist, 'A': nuc_alist, 'ERG': energy_grid, 'XS': new_xs}) # define temporary new dataframe with new grid
+		temp_maindf = pd.DataFrame({'Z': nuc_zlist[:-1], 'A': nuc_alist[:-1], 'ERG': energy_grid[:-1], 'XS': new_xs[:-1]}) # define temporary new dataframe with new grid
 
 		for i2, feature_row in df.iterrows():
 			if [feature_row['Z'], feature_row['A']] == nuclide:
