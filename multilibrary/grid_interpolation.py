@@ -19,7 +19,7 @@ def df_interpolator(df, energy_grid=grid):
 	dataframe with all the original features included in one go."""
 
 	columns = df.columns
-	df_nuclides = range_setter(df=df, la=30, ua=38)
+	df_nuclides = range_setter(df=df, la=0, ua=260)
 
 	full_df = pd.DataFrame(columns=columns)
 
