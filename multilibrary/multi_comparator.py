@@ -10,11 +10,11 @@ import periodictable
 
 
 
-ENDFB = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv')
-TENDL = pd.read_csv('TENDL_2021_MT16_XS_features.csv')
-JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
-JEFF = pd.read_csv('JEFF33_all_features.csv')
-CENDL = pd.read_csv('CENDL32_all_features.csv')
+ENDFB = pd.read_csv('ENDFBVIII_multilibrary_grid.csv')
+TENDL = pd.read_csv('TENDL_2021_multilibrary_grid.csv')
+JENDL = pd.read_csv('JENDL5_multilibrary_grid.csv')
+JEFF = pd.read_csv('JEFF33_multilibrary_grid.csv')
+CENDL = pd.read_csv('CENDL32_multilibrary_grid.csv')
 
 ENDFB_nuclides = range_setter(df=ENDFB, la=30, ua=210)
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
@@ -22,7 +22,7 @@ JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
 CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
 
-all_libraries = pd.read_csv('MT16_all_libraries_mk1.csv')
+all_libraries = pd.read_csv('MT16_all_lib_mk2_grid.csv')
 all_libraries.index = range(len(all_libraries))
 
 exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
@@ -62,7 +62,9 @@ model = xg.XGBRegressor(n_estimators=800, # define regressor
 						# gamma = 3,
 						seed=42, )
 time1 = time.time()
-model.fit(X_train, y_train, verbose= True, early_stopping_rounds=10, eval_set = [(X_test, y_test)])
+model.fit(X_train, y_train,
+		  # verbose= True, early_stopping_rounds=10, eval_set = [(X_test, y_test)],
+		  )
 print(f"Training time: {(time.time() - time1)} seconds")
 print("Training complete. Processing/Plotting...")
 predictions = model.predict(X_test)  # XS predictions
