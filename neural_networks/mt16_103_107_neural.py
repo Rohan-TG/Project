@@ -23,10 +23,10 @@ JEFF = pd.read_csv('JEFF33_all_features_MT16_103_107.csv')
 JEFF_nuclides = range_setter(df=JEFF, la=0, ua = 210)
 
 df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
-ENDFB_nuclides = range_setter(df=df, la=0, ua=210)
+ENDFB_nuclides = range_setter(df=df, la=0, ua=100)
 
 validation_nuclides = []
-validation_set_size = 5
+validation_set_size = 10
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -35,7 +35,7 @@ while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 print("Test nuclide selection complete")
 
 
-X_train, y_train = make_train(df=df, validation_nuclides= validation_nuclides, la=30, ua=210)
+X_train, y_train = make_train(df=df, validation_nuclides= validation_nuclides, la=0, ua=100)
 
 X_test, y_test = make_test(nuclides=validation_nuclides, df=df)
 
@@ -44,7 +44,7 @@ print("Matrices formed")
 
 callback = keras.callbacks.EarlyStopping(monitor='val_loss',
 										 min_delta=0.005,
-										 patience=10,
+										 patience=100,
 										 mode='min',
 										 start_from_epoch=20)
 
@@ -52,8 +52,10 @@ model = keras.Sequential()
 model.add(keras.layers.Dense(100, input_shape=(17,), kernel_initializer='normal', activation='relu',
 							 ))
 model.add(keras.layers.Dense(400, activation='relu'))
-model.add(keras.layers.Dense(1022, activation='relu'))
+model.add(keras.layers.Dense(800, activation='relu'))
 model.add(keras.layers.Dropout(0.1))
+model.add(keras.layers.Dense(1022, activation='relu'))
+model.add(keras.layers.Dropout(0.2))
 model.add(keras.layers.Dense(400, activation='relu'))
 model.add(keras.layers.Dense(1, activation='linear',))
 
