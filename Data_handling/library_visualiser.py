@@ -9,10 +9,10 @@ import scipy
 import random
 import matplotlib.pyplot as plt
 
-tendl = pd.read_csv('TENDL21_MT16_XS_features_zeroed.csv')
+tendl = pd.read_csv('TENDL_2021_MT16_XS_features.csv')
 endfb = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-cendl = pd.read_csv("CENDL32_features_arange_zeroed.csv")
-jeff = pd.read_csv("JEFF33_features_arange_zeroed.csv")
+cendl = pd.read_csv("CENDL32_all_features.csv")
+jeff = pd.read_csv("JEFF33_all_features.csv")
 jendl = pd.read_csv("JENDL5_arange_all_features.csv")
 
 tendl=tendl[tendl.Z != 6]
@@ -27,11 +27,11 @@ cendl.index = range(len(cendl))
 jeff.index = range(len(jeff))
 jendl.index = range(len(jendl))
 
-endfb_nuclides = range_setter(df=endfb, la=0, ua=60)
-cendl_nuclides = range_setter(df=cendl, la=0, ua=60)
-tendl_nuclides = range_setter(df=tendl, la=0, ua=60)
-jeff_nuclides = range_setter(df=jeff, la=0, ua=60)
-jendl_nuclides = range_setter(df=jendl, la=0, ua=60)
+endfb_nuclides = range_setter(df=endfb, la=0, ua=260)
+cendl_nuclides = range_setter(df=cendl, la=0, ua=260)
+tendl_nuclides = range_setter(df=tendl, la=0, ua=260)
+jeff_nuclides = range_setter(df=jeff, la=0, ua=260)
+jendl_nuclides = range_setter(df=jendl, la=0, ua=260)
 
 
 
@@ -48,7 +48,7 @@ for i in endfb_nuclides:
 
     nuclide_r2_array = []
 
-    current_nuclide = i
+    current_nuclide = [95,242]
     print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
 
     endfb_erg, endfb_xs = General_plotter(df=endfb, nuclides=[current_nuclide])
@@ -126,20 +126,21 @@ for i in endfb_nuclides:
 
     print(np.mean(nuclide_r2_array))
 
-    # if current_nuclide in jeff_nuclides:
-    #     plt.plot(jefferg, jeffxs, '--', label='JEFF3.3', color='mediumvioletred')
-    # if current_nuclide in jendl_nuclides:
-    #     plt.plot(jendlerg, jendlxs, label='JENDL5', color='green')
-    # if current_nuclide in cendl_nuclides:
-    #     plt.plot(cendlerg, cendlxs, '--', label='CENDL3.2', color='gold')
-    # plt.plot(tendlerg, tendlxs, label="TENDL21", color='dimgrey', linewidth=2)
-    # plt.plot(endfb_erg,  endfb_xs, label = 'ENDF/B-VIII', linewidth=2)
-    # plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
-    # plt.legend()
-    # plt.grid()
-    # plt.ylabel('$\sigma_{n,2n}$ / b')
-    # plt.xlabel('Energy / MeV')
-    # plt.show()
+    if current_nuclide in jeff_nuclides:
+        plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
+    if current_nuclide in jendl_nuclides:
+        plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
+    if current_nuclide in cendl_nuclides:
+        plt.plot(cendlerg, cendlxs, '--', label='CENDL-3.2', color='gold')
+    plt.plot(tendlerg, tendlxs, label="TENDL-2021", color='dimgrey', linewidth=2)
+    plt.plot(endfb_erg,  endfb_xs, label = 'ENDF/B-VIII', linewidth=2)
+    plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
+    plt.legend()
+    plt.grid()
+    plt.ylabel('$\sigma_{n,2n}$ / b')
+    plt.xlabel('Energy / MeV')
+    plt.show()
+    break
 
     all_r2s.append(nuclide_r2_array)
     print(all_r2s)
