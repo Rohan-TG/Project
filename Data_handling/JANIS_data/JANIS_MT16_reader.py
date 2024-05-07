@@ -2,8 +2,11 @@ import pandas as pd
 import periodictable
 import numpy as np
 import matplotlib.pyplot as plt
-from matrix_functions import General_plotter
+from matrix_functions import General_plotter, range_setter, error_fetcher
 import tqdm
+import scipy.interpolate
+
+ENDFBVIII = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv')
 
 df = pd.read_csv('MT16_error_data.csv',
 				 # header=2,
@@ -106,7 +109,8 @@ for i, row in tqdm.tqdm(df2.iterrows(), total=df2.shape[0]):
 temp = pd.DataFrame({'Z': Z,
 					 'A': A,
 					 'ERG': ERG,
-					 'XS': XS})
+					 'XS': XS,
+					 'dXS': dXS})
 
 temptarget = [62,151]
 erg, xs = General_plotter(df=temp, nuclides=[temptarget])
@@ -120,3 +124,84 @@ plt.ylabel('b')
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[temptarget[0]]}-{temptarget[1]}")
 plt.grid()
 plt.show()
+
+
+error_nuclides = range_setter(df=temp, la=0, ua=290)
+
+
+coarse_temp = pd.DataFrame(columns=temp.columns)
+
+for idx, nuclide in enumerate(error_nuclides):
+	print(f"{idx}/{len(error_nuclides)}")
+	erg, xs, dxs = error_fetcher(df=temp, nuclide=nuclide)
+	coarseerg, coarsexs = General_plotter(df=ENDFBVIII, nuclides=[nuclide])
+
+	func = scipy.interpolate.interp1d(x=erg, y=xs, fill_value='extrapolate')
+	dxsfunc = scipy.interpolate.interp1d(x=erg, y=dxs, fill_value='extrapolate')
+
+	reduced_xs = func(coarseerg)
+	reduced_dxs = dxsfunc(coarseerg)
+
+	zlist = [nuclide[0] for i in range(len(coarsexs))]
+	alist = [nuclide[1] for i in range(len(coarsexs))]
+
+	freduced_xs = []
+	for i, j in reduced_xs, coarsexs:
+		if j <=0:
+			freduced_xs.append(0)
+		else:
+			freduced_xs.append(i)
+
+	nucdf = pd.DataFrame({'Z': zlist,
+						  'A': alist,
+						  'XS': freduced_xs,
+						  'ERG': coarseerg,
+						  'dXS': reduced_dxs})
+
+	coarse_temp = pd.concat([coarse_temp,nucdf], ignore_index=True)
+
+
+
+
+
+
+
+
+def zero_maker(df):
+	"""input df: Dataframe to be zeroed
+
+	Function inserts 0 XS values for energies below reaction threshold.
+
+	Returns: New dataframe with the additional values."""
+
+	df_zeroed = pd.DataFrame(columns=df.columns)  # empty dataframe with column names only, to be appended to
+	current_nuclide = [] # iteration nuclide
+
+	for i, row in tqdm.tqdm(df.iterrows(), total=df.shape[0]):
+		if [row['Z'], row['A']] != current_nuclide: # for new nuclide in iteration, insert n number of 0 values
+
+			min_energy = row['ERG'] # Threshold energy
+			# energy_app_list = np.linspace(0, min_energy-0.1, 20) # 20 values, 0 to threshold MeV - 0.1
+			energy_app_list = np.arange(0.0, min_energy, 0.1)
+
+			dummy_row = row # to be copied
+			dummy_row['XS'] = 0.0 # set XS value to 0 for all energies below threshold
+
+			for erg in energy_app_list:
+				dummy_row['ERG'] = erg # set energy value
+				df_zeroed = df_zeroed._append(dummy_row, ignore_index=True) # append new row
+
+			current_nuclide = [row['Z'],row['A']] # once iteration complete, update the iteration nuclide
+		else:
+			df_zeroed = df_zeroed._append(row, ignore_index=True) # if below-threshold values have already been added, append normal row
+
+		# print(current_nuclide) # tracker
+
+	df_zeroed.index = range(len(df_zeroed)) # reindex dataframe
+
+	return df_zeroed
+
+
+
+# df_zero = zero_maker(df=temp)
+# print(df_zero.head())
