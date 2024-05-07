@@ -70,7 +70,15 @@ def General_plotter(df, nuclides, MT=16):
 	return energies, xs
 
 
+def error_fetcher(df, nuclide):
+	rdf = df[df.Z == nuclide[0]]
+	rdf = rdf[rdf.A == nuclide[1]]
 
+	energies = np.array(rdf['ERG'])
+	xs = np.array(rdf['XS'])
+	dxs = np.array(rdf['dXS'])
+
+	return(energies, xs, dxs)
 
 def dsigma_dE(XS):
     dsigma = [x - y for x, y in zip(XS[1:], XS[:-1])]
