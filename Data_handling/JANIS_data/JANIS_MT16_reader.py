@@ -3,6 +3,7 @@ import periodictable
 import numpy as np
 import matplotlib.pyplot as plt
 from matrix_functions import General_plotter
+import tqdm
 
 df = pd.read_csv('MT16_error_data.csv',
 				 # header=2,
@@ -57,8 +58,8 @@ Z = []
 A = []
 XS = []
 dXS = []
-for i, row in df2.iterrows():
-	print(f"{i}/{len(df2)}")
+for i, row in tqdm.tqdm(df2.iterrows(), total=df2.shape[0]):
+	# print(f"{i}/{len(df2)}")
 	if i > 1:
 
 		parity_bits = [1]
