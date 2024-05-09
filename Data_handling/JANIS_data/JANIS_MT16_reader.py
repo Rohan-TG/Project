@@ -129,38 +129,6 @@ plt.show()
 error_nuclides = range_setter(df=temp, la=0, ua=290)
 
 
-coarse_temp = pd.DataFrame(columns=temp.columns)
-
-for idx, nuclide in enumerate(error_nuclides):
-	print(f"{idx}/{len(error_nuclides)}")
-	erg, xs, dxs = error_fetcher(df=temp, nuclide=nuclide)
-	coarseerg, coarsexs = General_plotter(df=ENDFBVIII, nuclides=[nuclide])
-
-	func = scipy.interpolate.interp1d(x=erg, y=xs, fill_value='extrapolate')
-	dxsfunc = scipy.interpolate.interp1d(x=erg, y=dxs, fill_value='extrapolate')
-
-	reduced_xs = func(coarseerg)
-	reduced_dxs = dxsfunc(coarseerg)
-
-	zlist = [nuclide[0] for i in range(len(coarsexs))]
-	alist = [nuclide[1] for i in range(len(coarsexs))]
-
-	freduced_xs = []
-	for i, j in reduced_xs, coarsexs:
-		if j <=0:
-			freduced_xs.append(0)
-		else:
-			freduced_xs.append(i)
-
-	nucdf = pd.DataFrame({'Z': zlist,
-						  'A': alist,
-						  'XS': freduced_xs,
-						  'ERG': coarseerg,
-						  'dXS': reduced_dxs})
-
-	coarse_temp = pd.concat([coarse_temp,nucdf], ignore_index=True)
-
-
 
 
 

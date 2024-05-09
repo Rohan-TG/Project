@@ -23,7 +23,7 @@ def General_plotter(df, nuclides):
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
-			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20:
+			if zval == nuc_test_z and aval == nuc_test_a:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
 				Energy_test.append(Energy[j])
