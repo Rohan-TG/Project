@@ -45,6 +45,7 @@ def feature_engineer(df):
 						dummy_row = feature_row
 						dummy_row['XS'] = row['XS']
 						dummy_row['ERG'] = row['ERG']
+						dummy_row['dXS'] = row['dXS']
 
 						df_r = df_r._append(dummy_row, ignore_index=True)
 
