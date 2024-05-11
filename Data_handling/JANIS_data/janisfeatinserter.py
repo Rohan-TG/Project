@@ -5,7 +5,7 @@ from matrix_functions import range_setter
 import numpy as np
 
 
-library = pd.read_csv('errorpart_zeroed.csv')
+library = pd.read_csv('part1zeroed.csv')
 print(library['ERG'])
 
 library['ERG'] = library['ERG']
@@ -37,7 +37,7 @@ def feature_engineer(df):
 	df_r = pd.DataFrame(columns=columns)
 
 	for lx, target_nuclide in enumerate(tqdm.tqdm(target_nuclides, total=len(target_nuclides))):
-		print(f"{lx+1}/{len(target_nuclides)}")
+		# print(f"{lx+1}/{len(target_nuclides)}")
 		for j, feature_row in nuclide_feature_df.iterrows():
 			if [feature_row['Z'], feature_row['A']] == target_nuclide:
 				for i, row in df.iterrows():
