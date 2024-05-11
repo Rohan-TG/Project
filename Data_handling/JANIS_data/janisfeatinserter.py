@@ -28,7 +28,10 @@ library = library[library.ERG < 20.0]
 library.index = range(len(library))
 
 
-target_nuclides = nuclides_for_extraction
+# target_nuclides = nuclides_for_extraction
+nuclides_for_extraction_part1_section1 = nuclides_for_extraction[:20]
+
+target_nuclides = nuclides_for_extraction_part1_section1
 
 nuclide_feature_df.index = range(len(nuclide_feature_df))
 
