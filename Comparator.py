@@ -8,6 +8,8 @@ import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
 import time
 
+print('Imports successful...')
+
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
@@ -25,14 +27,16 @@ CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+df_test = pd.read_csv("ENDFBVIII_JANIS_features_MT16.csv")
+df = pd.read_csv("ENDFBVIII_JANIS_features_MT16.csv")
 
 
 df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=210, df=df)
+
+print('Data loaded...')
 
 exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
 	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
@@ -60,24 +64,25 @@ while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 	if choice not in validation_nuclides:
 		validation_nuclides.append(choice)
-print("Test nuclide selection complete")
+print("Test nuclide selection complete...")
 
 
 
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,
 							  exclusions=exc) # create training matrix
 X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
-print("Data prep complete")
+print("Matrices formed. Training...")
 
 model = xg.XGBRegressor(n_estimators=950, # define regressor
 						learning_rate=0.008,
 						max_depth=8,
 						subsample=0.18236,
 						max_leaves=0,
-						seed=42, )
+						seed=42,
+						early_stopping_rounds=5)
 
-model.fit(X_train, y_train, verbose=True, early_stopping_rounds=100, eval_set = [(X_test, y_test)])
-print("Training complete")
+model.fit(X_train, y_train, verbose=True, eval_set = [(X_test, y_test)])
+print("Training complete. Evaluating...")
 predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
 

@@ -1,4 +1,6 @@
 import warnings
+
+import tqdm
 from numba.core.errors import NumbaDeprecationWarning
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 import pandas as pd
@@ -172,6 +174,8 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	validation_nuclides are explicitly omitted from the training matrix
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
 
+	print("Forming training matrix...")
+
 	# MT = df['MT']
 	ME = df['ME']
 	Z = df['Z']
@@ -209,10 +213,10 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# magic_n = df['cat_magic_neutron']
 	# magic_d = df['cat_magic_double']
 	# Nlow = df['Nlow']
-	Ulow = df['Ulow']
+	# Ulow = df['Ulow']
 	# Ntop = df['Ntop']
 	# Utop = df['Utop']
-	ainf = df['ainf']
+	# ainf = df['ainf']
 	# XSlow = df['XSlow']
 	# XSupp = df['XSupp']
 	Asymmetry = df['Asymmetry']
@@ -232,7 +236,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	# Spin_compound = df['Spin_compound']
 	# Parity_compound = df['Parity_compound']
 	Deform_compound = df['Deform_compound']
-	Asymmetry_compound = df['Asymmetry_compound']
+	# Asymmetry_compound = df['Asymmetry_compound']
 
 	# Daughter nucleus properties
 	Sn_daughter = df['Sn_daughter']
@@ -332,11 +336,11 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	BEA_A_compound_train = []
 	# Pairing_compound_train = []
 	# Parity_compound_train = []
-	Asymmetry_compound_train = []
+	# Asymmetry_compound_train = []
 
 	# AM_train = []
 
-	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
+	for idx, unused in tqdm.tqdm(enumerate(Z), total=len(Z)):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope data to training data
 		if [Z[idx], A[idx]] in exclusions:
@@ -406,14 +410,14 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			# Spin_daughter_train.append(Spin_daughter[idx])
 			# Deform_daughter_train.append(Deform_daughter[idx])
 			# Nlow_train.append(Nlow[idx])
-			Ulow_train.append(Ulow[idx])
+			# Ulow_train.append(Ulow[idx])
 			# Ntop_train.append(Ntop[idx])
 			# Utop_train.append(Utop[idx])
-			ainf_train.append(ainf[idx])
+			# ainf_train.append(ainf[idx])
 			# XSlow_train.append(XSlow[idx])
 			# XSupp_train.append(XSupp[idx])
 			Asymmetry_train.append(Asymmetry[idx])
-			Asymmetry_compound_train.append(Asymmetry_compound[idx])
+			# Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
 			# AM_train.append(AM[idx])
 
@@ -505,7 +509,7 @@ def make_test(nuclides, df):
 	Returns: xtest - matrix of values for the model to use for making predictions
 	ytest: cross sections
 	"""
-
+	print('Forming test matrix...')
 	ztest = [nuclide[0] for nuclide in nuclides] # first element is the Z-value of the given test nuclide
 	atest = [nuclide[1] for nuclide in nuclides]
 
@@ -548,7 +552,7 @@ def make_test(nuclides, df):
 	# magic_n = df['cat_magic_neutron']
 	# magic_d = df['cat_magic_double']
 	# Nlow = df['Nlow']
-	Ulow = df['Ulow']
+	# Ulow = df['Ulow']
 	# Ntop = df['Ntop']
 	# Utop = df['Utop']
 	# ainf = df['ainf']
@@ -571,7 +575,7 @@ def make_test(nuclides, df):
 	# Spin_compound = df['Spin_compound']
 	# Parity_compound = df['Parity_compound']
 	Deform_compound = df['Deform_compound']
-	Asymmetry_compound = df['Asymmetry_compound']
+	# Asymmetry_compound = df['Asymmetry_compound']
 
 	# Daughter nucleus properties
 	Sn_daughter = df['Sn_daughter']
@@ -665,13 +669,13 @@ def make_test(nuclides, df):
 	# BEA_compound_test = []
 	S2n_compound_test = []
 	S2p_compound_test = []
-	Asymmetry_compound_test = []
+	# Asymmetry_compound_test = []
 
 	# cat_proton_test = []
 	# cat_neutron_test = []
 	# cat_double_test = []
 
-	for nuc_test_z, nuc_test_a in zip(ztest, atest):
+	for nuc_test_z, nuc_test_a in tqdm.tqdm(zip(ztest, atest), total=len(ztest)):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
 			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20:
 				Z_test.append(Z[j])
@@ -741,14 +745,14 @@ def make_test(nuclides, df):
 				# Spin_daughter_test.append(Spin_daughter[j])
 				# Deform_daughter_test.append(Deform_daughter[j])
 				# Nlow_test.append(Nlow[j])
-				Ulow_test.append(Ulow[j])
+				# Ulow_test.append(Ulow[j])
 				# Ntop_test.append(Ntop[j])
 				# Utop_test.append(Utop[j])
 				# ainf_test.append(ainf[j])
 				# XSlow_test.append(XSlow[j])
 				# XSupp_test.append(XSupp[j])
 				Asymmetry_test.append(Asymmetry[j])
-				Asymmetry_compound_test.append(Asymmetry_compound[j])
+				# Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 
 
