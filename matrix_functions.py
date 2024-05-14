@@ -389,7 +389,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			Deform_train.append(Deform[idx])
 			# p_gap_erg_train.append(p_gap_erg[idx])
 			# p_chem_erg_train.append(p_chem_erg[idx])
-			p_rms_radius_train.append(p_rms_radius[idx])
+			# p_rms_radius_train.append(p_rms_radius[idx])
 			# rms_radius_train.append(rms_radius[idx])
 			Sp_compound_train.append(Sp_compound[idx])
 			# Sn_compound_train.append(Sn_compound[idx])

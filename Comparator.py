@@ -7,6 +7,7 @@ import shap
 import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
 import time
+import datetime
 
 print('Imports successful...')
 
@@ -27,11 +28,9 @@ CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 
-df_test = pd.read_csv("ENDFBVIII_JANIS_features_MT16.csv")
 df = pd.read_csv("ENDFBVIII_JANIS_features_MT16.csv")
 
 
-df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=210, df=df)
@@ -58,7 +57,7 @@ exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
 # random.seed(a=10)
 
 validation_nuclides = []
-validation_set_size = 20
+validation_set_size = 25
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -70,19 +69,21 @@ print("Test nuclide selection complete...")
 
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,
 							  exclusions=exc) # create training matrix
-X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
+X_test, y_test = make_test(validation_nuclides, df=df,) # create test matrix using validation nuclides
 print("Matrices formed. Training...")
 
-model = xg.XGBRegressor(n_estimators=950, # define regressor
-						learning_rate=0.008,
+training_time = time.time()
+
+model = xg.XGBRegressor(n_estimators=900, # define regressor
+						learning_rate=0.005,
 						max_depth=8,
-						subsample=0.18236,
+						subsample=0.1,
 						max_leaves=0,
 						seed=42,
 						early_stopping_rounds=5)
 
 model.fit(X_train, y_train, verbose=True, eval_set = [(X_test, y_test)])
-print("Training complete. Evaluating...")
+print(f"Training completed in {datetime.timedelta(seconds=(time.time()- training_time))}. \nEvaluating...")
 predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
 
@@ -132,7 +133,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
 	if nuc in CENDL_nuclides:
 		plt.plot(cendlerg, cendlxs, '--', label='CENDL-3.2', color='gold')
-	plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
+	plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]:0.0f}")
 	plt.legend()
 	plt.grid()
 	plt.ylabel('$\sigma_{n,2n}$ / b')
