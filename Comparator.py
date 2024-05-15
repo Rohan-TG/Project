@@ -75,12 +75,12 @@ print("Matrices formed. Training...")
 training_time = time.time()
 
 model = xg.XGBRegressor(n_estimators=900, # define regressor
-						learning_rate=0.005,
+						learning_rate=0.003,
 						max_depth=8,
-						subsample=0.1,
+						subsample=0.25,
 						max_leaves=0,
 						seed=42,
-						early_stopping_rounds=5)
+						early_stopping_rounds=10)
 
 model.fit(X_train, y_train, verbose=True, eval_set = [(X_test, y_test)])
 print(f"Training completed in {datetime.timedelta(seconds=(time.time()- training_time))}. \nEvaluating...")
