@@ -29,10 +29,7 @@ library.index = range(len(library))
 
 
 # target_nuclides = nuclides_for_extraction
-nuclides_for_extraction_part1_section1 = nuclides_for_extraction[50:70] # there are 157 in part 1
-
-target_nuclides = nuclides_for_extraction_part1_section1
-
+target_nuclides = nuclides_for_extraction
 nuclide_feature_df.index = range(len(nuclide_feature_df))
 
 def feature_engineer(df):
