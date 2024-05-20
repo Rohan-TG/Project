@@ -8,6 +8,17 @@ import numpy as np
 from sklearn.metrics import r2_score
 
 
+def parameter_retrieval(z, a, param, df):
+
+	tdf = df[df.Z == z]
+	tdf = tdf[tdf.A == a]
+
+	retrieval = tdf[param].values
+	return(retrieval[0])
+
+
+
+
 def r2_standardiser(raw_predictions, library_xs):
 	"""Both arguments must be lists.
 	Function returns the r2 calculated from the threshold onwards"""
