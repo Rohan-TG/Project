@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import periodictable
-from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE, r2_standardiser
+from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE, r2_standardiser, exclusion_func
 import random
 import shap
 import xgboost as xg
@@ -34,17 +34,7 @@ df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=210, df=df)
 
-exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
-	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
-	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
-	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
-	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
-	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
-	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
-	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
-	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
-	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38], [44,99], [50,126]]
+exc = exclusion_func()
 
 
 
