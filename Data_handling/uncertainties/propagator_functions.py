@@ -1,7 +1,9 @@
 import random
 import numpy as np
+import math
+import tqdm
 
-def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exclusions = []):
+def training_sampler(df, target_nuclides, LA, UA, exclusions = []):
 	""""""
 	nuclide_set = []
 
@@ -40,11 +42,11 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 	# magic_p = df['cat_magic_proton']
 	# magic_n = df['cat_magic_neutron']
 	# magic_d = df['cat_magic_double']
-	Nlow = df['Nlow']
-	Ulow = df['Ulow']
+	# Nlow = df['Nlow']
+	# Ulow = df['Ulow']
 	# Ntop = df['Ntop']
-	Utop = df['Utop']
-	ainf = df['ainf']
+	# Utop = df['Utop']
+	# ainf = df['ainf']
 	# XSlow = df['XSlow']
 	# XSupp = df['XSupp']
 	Asymmetry = df['Asymmetry']
@@ -86,10 +88,11 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 
 	### UNCERTAINTY DATA
 	### UNCERTAINTIES
-	Sn_uncertainties = df['unc_sn']
-	Sp_uncertainties = df['unc_sp']
-	ME_uncertainties = df['unc_me']
-	BEA_uncertainties = df['unc_ba']
+	# Sn_uncertainties = df['unc_sn']
+	# Sp_uncertainties = df['unc_sp']
+	# ME_uncertainties = df['unc_me']
+	# BEA_uncertainties = df['unc_ba']
+	dXS = df['dXS']
 
 
 	Z_train = []
@@ -99,7 +102,7 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 	Energy_train = []
 	XS_train = []
 	Sp_train = []
-	Sn_train = []
+	# Sn_train = []
 	BEA_train = []
 	# Pairing_train = []
 	gd_train = []
@@ -127,11 +130,11 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 	p_chem_erg_train = []
 	p_rms_radius_train = []
 	# rms_radius_train = []
-	Nlow_train = []
-	Ulow_train = []
+	# Nlow_train = []
+	# Ulow_train = []
 	# Ntop_train = []
-	Utop_train = []
-	ainf_train = []
+	# Utop_train = []
+	# ainf_train = []
 	# XSlow_train = []
 	# XSupp_train = []
 	Asymmetry_train = []
@@ -182,11 +185,11 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 		if Energy[idx] > 20: # training on data less than 30 MeV
 			continue
 		if A[idx] <= UA and A[idx] >= LA: # checks that nuclide is within bounds for A
-			if [Z[idx], A[idx]] != nuclide_set:
-				nuclide_set = [Z[idx],A[idx]]
-				current_sn = Sep_n[idx]
-				current_sn_unc = Sn_uncertainties[idx]
-				sampled_sn = random.gauss(mu=current_sn, sigma=current_sn_unc)
+			# if [Z[idx], A[idx]] != nuclide_set:
+			# 	nuclide_set = [Z[idx],A[idx]]
+			# 	# current_sn = Sep_n[idx]
+			# 	# current_sn_unc = Sn_uncertainties[idx]
+
 
 			Z_train.append(Z[idx])
 			A_train.append(A[idx])
@@ -195,10 +198,14 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 			Energy_train.append(Energy[idx])
 
 			# Sampling cross section uncertainties
-			XS_train_mean = XS[idx]
-			XS_train_std = 0.05 * XS[idx]
-			XS_pointwise_sample = random.gauss(mu=XS_train_mean, sigma=XS_train_std)
-			XS_train.append(XS_pointwise_sample)
+			if math.isnan(dXS[idx]):
+				sampled_xs = XS[idx]
+			else:
+				sampled_xs = random.gauss(mu=XS[idx],
+										  # sigma=0,
+										  sigma=dXS[idx],
+										  )
+			XS_train.append(sampled_xs)
 
 
 			Sp_train.append(Sep_p[idx])
@@ -256,17 +263,17 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 			BEA_A_daughter_train.append(BEA_A_daughter[idx])
 			# Spin_daughter_train.append(Spin_daughter[idx])
 			Deform_daughter_train.append(Deform_daughter[idx])
-			Nlow_train.append(Nlow[idx])
-			Ulow_train.append(Ulow[idx])
+			# Nlow_train.append(Nlow[idx])
+			# Ulow_train.append(Ulow[idx])
 			# Ntop_train.append(Ntop[idx])
-			Utop_train.append(Utop[idx])
-			ainf_train.append(ainf[idx])
+			# Utop_train.append(Utop[idx])
+			# ainf_train.append(ainf[idx])
 			# XSlow_train.append(XSlow[idx])
 			# XSupp_train.append(XSupp[idx])
 			Asymmetry_train.append(Asymmetry[idx])
 			Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
-			Sn_train.append(sampled_sn)
+			# Sn_train.append(sampled_sn)
 			# AM_train.append(AM[idx])
 
 		### UNCERTAINTIES
@@ -286,7 +293,7 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 				  S2p_train,
 				  Energy_train,
 				  Sp_train,
-				  Sn_train,
+				  # Sn_train,
 				  BEA_train,
 				  # Pairing_train,
 				  Sn_c_train,
@@ -343,10 +350,10 @@ def training_sampler(df, target_nuclides, LA, UA, sampled_uncertainties = 0, exc
 				  # cat_proton_train,
 				  # cat_neutron_train,
 				  # cat_double_train,
-				  Nlow_train,
+				  # Nlow_train,
 				  # Ulow_train,
 				  # Ntop_train,
-				  Utop_train,
+				  # Utop_train,
 				  # ainf_train,
 				  # XSlow_train,
 				  # XSupp_train,
@@ -411,10 +418,10 @@ def make_test(nuclides, df):
 	# magic_p = df['cat_magic_proton']
 	# magic_n = df['cat_magic_neutron']
 	# magic_d = df['cat_magic_double']
-	Nlow = df['Nlow']
-	Ulow = df['Ulow']
+	# Nlow = df['Nlow']
+	# Ulow = df['Ulow']
 	# Ntop = df['Ntop']
-	Utop = df['Utop']
+	# Utop = df['Utop']
 	# ainf = df['ainf']
 	# XSlow = df['XSlow']
 	# XSupp = df['XSupp']
@@ -493,10 +500,10 @@ def make_test(nuclides, df):
 	# rms_radius_test = []
 	# xs_max_test = []
 	# octupole_deformation_test = []
-	Nlow_test = []
-	Ulow_test = []
+	# Nlow_test = []
+	# Ulow_test = []
 	# Ntop_test = []
-	Utop_test = []
+	# Utop_test = []
 	# ainf_test = []
 	# XSlow_test = []
 	# XSupp_test = []
@@ -550,9 +557,9 @@ def make_test(nuclides, df):
 				S2p_test.append(S_2p[j])
 				Energy_test.append(Energy[j])
 				XS_test.append(XS[j])
-				# Sp_test.append(S_p[j])
+				Sp_test.append(S_p[j])
 				# Sn_test.append(S_n[j])
-				# BEA_test.append(BEA[j])
+				BEA_test.append(BEA[j])
 				# Pairing_test.append(Pairing[j])
 				Sn_c_test.append(Sn_compound[j])
 				gd_test.append(gamma_deformation[j])
@@ -610,10 +617,10 @@ def make_test(nuclides, df):
 				BEA_A_daughter_test.append(BEA_A_daughter[j])
 				# Spin_daughter_test.append(Spin_daughter[j])
 				Deform_daughter_test.append(Deform_daughter[j])
-				Nlow_test.append(Nlow[j])
-				Ulow_test.append(Ulow[j])
+				# Nlow_test.append(Nlow[j])
+				# Ulow_test.append(Ulow[j])
 				# Ntop_test.append(Ntop[j])
-				Utop_test.append(Utop[j])
+				# Utop_test.append(Utop[j])
 				# ainf_test.append(ainf[j])
 				# XSlow_test.append(XSlow[j])
 				# XSupp_test.append(XSupp[j])
@@ -627,10 +634,10 @@ def make_test(nuclides, df):
 				uncertainty_value_bea =  BEA_uncertainties[j]
 				# print(type(uncertainty_value))
 				# if type(uncertainty_value) == float or type(uncertainty_value) ==int:
-				gaussian_sn = random.gauss(mu=S_n[j], sigma=uncertainty_value_sn)
-				gaussian_sp = random.gauss(mu=S_p[j], sigma=uncertainty_value_sp)
-				gaussian_me = random.gauss(mu=ME[j], sigma=uncertainty_value_me)
-				gaussian_ba = random.gauss(mu=BEA[j], sigma=uncertainty_value_bea)
+				# gaussian_sn = random.gauss(mu=S_n[j], sigma=uncertainty_value_sn)
+				# gaussian_sp = random.gauss(mu=S_p[j], sigma=uncertainty_value_sp)
+				# gaussian_me = random.gauss(mu=ME[j], sigma=uncertainty_value_me)
+				# gaussian_ba = random.gauss(mu=BEA[j], sigma=uncertainty_value_bea)
 
 				# if gaussian < 0:
 				# 	return_gaussian = 0
@@ -641,14 +648,14 @@ def make_test(nuclides, df):
 				# else:
 				# 	Sn_test.append(S_n[j])
 				# print(Sn_test)
-	Sn_test = [gaussian_sn for q in Z_test]
-	Sp_test = [gaussian_sp for q in Z_test]
-	ME_test = [gaussian_me for q in Z_test]
-	BEA_test = [gaussian_ba for q in Z_test]
-	print(Sn_test)
-	print(Sp_test)
-	print(ME_test)
-	print(BEA_test)
+	# Sn_test = [gaussian_sn for q in Z_test]
+	# Sp_test = [gaussian_sp for q in Z_test]
+	# ME_test = [gaussian_me for q in Z_test]
+	# BEA_test = [gaussian_ba for q in Z_test]
+	# print(Sn_test)
+	# print(Sp_test)
+	# print(ME_test)
+	# print(BEA_test)
 
 	xtest = np.array([Z_test,
 	A_test,
@@ -656,7 +663,7 @@ def make_test(nuclides, df):
 	S2p_test,
 	Energy_test,
 	Sp_test,
-	Sn_test,
+	# Sn_test,
 	BEA_test,
 	# Pairing_train,
 	Sn_c_test,
@@ -713,10 +720,10 @@ def make_test(nuclides, df):
 	# cat_proton_train,
 	# cat_neutron_train,
 	# cat_double_train,
-	Nlow_test,
+	# Nlow_test,
 	  # Ulow_train,
 	# Ntop_train,
-	Utop_test,
+	# Utop_test,
 	# ainf_train,
 	# XSlow_train,
 	Asymmetry_test,
@@ -731,336 +738,3 @@ def make_test(nuclides, df):
 
 	return xtest, y_test
 
-
-def training_uncertainty_propagator(df, target_nuclides, LA, UA, exclusions):
-	ME = df['ME']
-	Z = df['Z']
-	A = df['A']
-	Sep_2n = df['S2n']
-	Sep_2p = df['S2p']
-	Energy = df['ERG']
-	XS = df['XS']
-	Sep_p = df['Sp']
-	Sep_n = df['Sn']
-	BEA = df['BEA']
-	# Pairing = df['Pairing']
-	gamma_deformation = df['gamma_deformation']
-	beta_deformation = df['beta_deformation']
-	# octupole_deformation = df['octopole_deformation']
-	# Z_even = df['Z_even']
-	# A_even = df['A_even']
-	# N_even = df['N_even']
-	N = df['N']
-	# xs_max = df['xs_max']
-	Radius = df['Radius']
-	Shell = df['Shell']
-	Parity = df['Parity']
-	Spin = df['Spin']
-	Decay_Const = df['Decay_Const']
-	Deform = df['Deform']
-	n_gap_erg = df['n_gap_erg']
-	n_chem_erg = df['n_chem_erg']
-	p_gap_erg = df['p_gap_erg']
-	p_chem_erg = df['p_chem_erg']
-	n_rms_radius = df['n_rms_radius']
-	p_rms_radius = df['p_rms_radius']
-	# rms_radius = df['rms_radius']
-	# magic_p = df['cat_magic_proton']
-	# magic_n = df['cat_magic_neutron']
-	# magic_d = df['cat_magic_double']
-	Nlow = df['Nlow']
-	Ulow = df['Ulow']
-	# Ntop = df['Ntop']
-	Utop = df['Utop']
-	ainf = df['ainf']
-	# XSlow = df['XSlow']
-	# XSupp = df['XSupp']
-	Asymmetry = df['Asymmetry']
-
-	# Compound nucleus properties
-	Sp_compound = df['Sp_compound']
-	Sn_compound = df['Sn_compound']
-	S2n_compound = df['S2n_compound']
-	S2p_compound = df['S2p_compound']
-	Decay_compound = df['Decay_compound']
-	BEA_compound = df['BEA_compound']
-	BEA_A_compound = df['BEA_A_compound']
-	Radius_compound = df['Radius_compound']
-	# ME_compound = df['ME_compound']
-	# Pairing_compound = df['Pairing_compound']
-	Shell_compound = df['Shell_compound']
-	Spin_compound = df['Spin_compound']
-	# Parity_compound = df['Parity_compound']
-	Deform_compound = df['Deform_compound']
-	Asymmetry_compound = df['Asymmetry_compound']
-
-	# Daughter nucleus properties
-	Sn_daughter = df['Sn_daughter']
-	S2n_daughter = df['S2n_daughter']
-	Sp_daughter = df['Sp_daughter']
-	# Pairing_daughter = df['Pairing_daughter']
-	# Parity_daughter = df['Parity_daughter']
-	BEA_daughter = df['BEA_daughter']
-	# Shell_daughter = df['Shell_daughter']
-	# S2p_daughter = df['S2p_daughter']
-	# Radius_daughter = df['Radius_daughter']
-	ME_daughter = df['ME_daughter']
-	BEA_A_daughter = df['BEA_A_daughter']
-	# Spin_daughter = df['Spin_daughter']
-	Deform_daughter = df['Deform_daughter']
-	Decay_daughter = df['Decay_daughter']
-	Asymmetry_daughter = df['Asymmetry_daughter']
-
-	### UNCERTAINTY DATA
-	Sn_uncertainties = df['unc_sn']
-
-	Z_train = []
-	A_train = []
-	S2n_train = []
-	S2p_train = []
-	Energy_train = []
-	XS_train = []
-	Sp_train = []
-	Sn_train = []
-	BEA_train = []
-	# Pairing_train = []
-	gd_train = []
-	N_train = []  # neutron number
-	bd_train = []
-	Radius_train = []
-	n_gap_erg_train = []
-	n_chem_erg_train = []
-	# xs_max_train = []
-	n_rms_radius_train = []
-	# octupole_deformation_train = []
-	# cat_proton_train = []
-	# cat_neutron_train = []
-	# cat_double_train = []
-	ME_train = []
-	# Z_even_train = []
-	# A_even_train = []
-	# N_even_train = []
-	Shell_train = []
-	Parity_train = []
-	Spin_train = []
-	Decay_Const_train = []
-	Deform_train = []
-	p_gap_erg_train = []
-	p_chem_erg_train = []
-	p_rms_radius_train = []
-	# rms_radius_train = []
-	Nlow_train = []
-	Ulow_train = []
-	# Ntop_train = []
-	Utop_train = []
-	ainf_train = []
-	# XSlow_train = []
-	# XSupp_train = []
-	Asymmetry_train = []
-
-	# Daughter nucleus properties
-	Sn_d_train = []
-	Sp_d_train = []
-	S2n_d_train = []
-	# Pairing_daughter_train = []
-	# Parity_daughter_train = []
-	BEA_daughter_train = []
-	# S2p_daughter_train = []
-	# Shell_daughter_train = []
-	Decay_daughter_train = []
-	ME_daughter_train = []
-	# Radius_daughter_train = []
-	BEA_A_daughter_train = []
-	# Spin_daughter_train = []
-	Deform_daughter_train = []
-	Asymmetry_daughter_train = []
-
-	# Compound nucleus properties
-	Sn_c_train = []  # Sn compound
-	Sp_compound_train = []
-	BEA_compound_train = []
-	S2n_compound_train = []
-	S2p_compound_train = []
-	Decay_compound_train = []
-	# Sn_compound_train = []
-	Shell_compound_train = []
-	Spin_compound_train = []
-	Radius_compound_train = []
-	Deform_compound_train = []
-	ME_compound_train = []
-	BEA_A_compound_train = []
-	# Pairing_compound_train = []
-	# Parity_compound_train = []
-	Asymmetry_compound_train = []
-
-	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
-		if [Z[idx], A[idx]] in target_nuclides:
-			continue  # prevents loop from adding test isotope data to training data
-		if [Z[idx], A[idx]] in exclusions:
-			continue
-		if Energy[idx] > 20:  # training on data less than 30 MeV
-			continue
-		if A[idx] <= UA and A[idx] >= LA:  # checks that nuclide is within bounds for A
-			Z_train.append(Z[idx])
-			A_train.append(A[idx])
-			S2n_train.append(Sep_2n[idx])
-			S2p_train.append(Sep_2p[idx])
-			Energy_train.append(Energy[idx])
-			XS_train.append(XS[idx])
-			Sp_train.append(Sep_p[idx])
-
-			BEA_train.append(BEA[idx])
-			# Pairing_train.append(Pairing[idx])
-			Sn_c_train.append(Sn_compound[idx])
-			gd_train.append(gamma_deformation[idx])
-			N_train.append(N[idx])
-			bd_train.append(beta_deformation[idx])
-			Sn_d_train.append(Sn_daughter[idx])
-			Sp_d_train.append(Sp_daughter[idx])
-			S2n_d_train.append(S2n_daughter[idx])
-			Radius_train.append(Radius[idx])
-			n_gap_erg_train.append(n_gap_erg[idx])
-			n_chem_erg_train.append(n_chem_erg[idx])
-			# Pairing_daughter_train.append(Pairing_daughter[idx])
-			# Parity_daughter_train.append(Parity_daughter[idx])
-			# xs_max_train.append(xs_max[idx])
-			n_rms_radius_train.append(n_rms_radius[idx])
-			# octupole_deformation_train.append(octupole_deformation[idx])
-			Decay_compound_train.append(Decay_compound[idx])
-			BEA_daughter_train.append(BEA_daughter[idx])
-			BEA_compound_train.append(BEA_compound[idx])
-			S2n_compound_train.append(S2n_compound[idx])
-			S2p_compound_train.append(S2p_compound[idx])
-			ME_train.append(ME[idx])
-			# Z_even_train.append(Z_even[idx])
-			# A_even_train.append(A_even[idx])
-			# N_even_train.append(N_even[idx])
-			Shell_train.append(Shell[idx])
-			Parity_train.append(Parity[idx])
-			Spin_train.append(Spin[idx])
-			Decay_Const_train.append(Decay_Const[idx])
-			Deform_train.append(Deform[idx])
-			p_gap_erg_train.append(p_gap_erg[idx])
-			p_chem_erg_train.append(p_chem_erg[idx])
-			p_rms_radius_train.append(p_rms_radius[idx])
-			# rms_radius_train.append(rms_radius[idx])
-			Sp_compound_train.append(Sp_compound[idx])
-			# Sn_compound_train.append(Sn_compound[idx])
-			Shell_compound_train.append(Shell_compound[idx])
-			# S2p_daughter_train.append(S2p_daughter[idx])
-			# Shell_daughter_train.append(Shell_daughter[idx])
-			Spin_compound_train.append(Spin_compound[idx])
-			Radius_compound_train.append(Radius_compound[idx])
-			Deform_compound_train.append(Deform_compound[idx])
-			# ME_compound_train.append(ME_compound[idx])
-			BEA_A_compound_train.append(BEA_A_compound[idx])
-			Decay_daughter_train.append(Decay_daughter[idx])
-			ME_daughter_train.append(ME_daughter[idx])
-			# Radius_daughter_train.append(Radius_daughter[idx])
-			# Pairing_compound_train.append(Pairing_compound[idx])
-			# Parity_compound_train.append(Parity_compound[idx])
-			BEA_A_daughter_train.append(BEA_A_daughter[idx])
-			# Spin_daughter_train.append(Spin_daughter[idx])
-			Deform_daughter_train.append(Deform_daughter[idx])
-			Nlow_train.append(Nlow[idx])
-			Ulow_train.append(Ulow[idx])
-			# Ntop_train.append(Ntop[idx])
-			Utop_train.append(Utop[idx])
-			ainf_train.append(ainf[idx])
-			# XSlow_train.append(XSlow[idx])
-			# XSupp_train.append(XSupp[idx])
-			Asymmetry_train.append(Asymmetry[idx])
-			Asymmetry_compound_train.append(Asymmetry_compound[idx])
-			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
-			Sn_train.append(Sep_n[idx])
-	# AM_train.append(AM[idx])
-
-	### UNCERTAINTIES
-	# uncertainty_value = Sn_uncertainties[idx]
-	# gaussian = random.gauss(mu=Sep_n[idx], sigma=uncertainty_value)
-	# if gaussian < 0:
-	# 	return_gaussian = 0
-	# else:
-	# 	return_gaussian = gaussian * 1
-	#
-	# Sn_train.append(return_gaussian)
-
-	X = np.array([Z_train,
-				  A_train,
-				  S2n_train,
-				  S2p_train,
-				  Energy_train,
-				  Sp_train,
-				  Sn_train,
-				  BEA_train,
-				  # Pairing_train,
-				  Sn_c_train,
-				  gd_train,
-				  N_train,
-				  bd_train,
-				  Sn_d_train,
-				  # Sp_d_train,
-				  S2n_d_train,
-				  Radius_train,
-				  n_gap_erg_train,
-				  n_chem_erg_train,
-				  # xs_max_train,
-				  n_rms_radius_train,
-				  # octupole_deformation_train,
-				  # Decay_compound_train,
-				  BEA_daughter_train,
-				  BEA_compound_train,
-				  # Pairing_daughter_train,
-				  # Parity_daughter_train,
-				  # S2n_compound_train,
-				  S2p_compound_train,
-				  ME_train,
-				  # Z_even_train,
-				  # A_even_train,
-				  # N_even_train,
-				  Shell_train,
-				  # Parity_train,
-				  # Spin_train,
-				  Decay_Const_train,
-				  # Deform_train,
-				  p_gap_erg_train,
-				  p_chem_erg_train,
-				  # p_rms_radius_train,
-				  # rms_radius_train,
-				  # Sp_compound_train,
-				  # Sn_compound_train,
-				  Shell_compound_train,
-				  # S2p_daughter_train,
-				  # Shell_daughter_train,
-				  Spin_compound_train,
-				  # Radius_compound_train,
-				  Deform_compound_train,
-				  # ME_compound_train,
-				  BEA_A_compound_train,
-				  Decay_daughter_train,
-				  # ME_daughter_train,
-				  # Radius_daughter_train,
-				  # Pairing_compound_train,
-				  # Parity_compound_train,
-				  BEA_A_daughter_train,
-				  # Spin_daughter_train,
-				  Deform_daughter_train,
-				  # cat_proton_train,
-				  # cat_neutron_train,
-				  # cat_double_train,
-				  Nlow_train,
-				  # Ulow_train,
-				  # Ntop_train,
-				  Utop_train,
-				  # ainf_train,
-				  # XSlow_train,
-				  # XSupp_train,
-				  Asymmetry_train,
-				  # Asymmetry_compound_train,
-				  Asymmetry_daughter_train,
-				  # AM_train,
-				  ])
-	y = np.array(XS_train)  # cross sections
-
-	X = np.transpose(X)  # forms matrix into correct shape (values, features)
-	return X, y
