@@ -12,15 +12,15 @@ import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import dsigma_dE, make_train, make_test,\
-	range_setter, General_plotter, r2_standardiser
+	range_setter, General_plotter, r2_standardiser, exclusion_func
 import scipy.stats
 from datetime import timedelta
 import tqdm
 
 runtime = time.time()
 
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+df_test = pd.read_csv("ENDFBVIII_MT16_100keV_data.csv")
+df = pd.read_csv("ENDFBVIII_MT16_100keV_data.csv")
 
 df_test = df_test[df_test.Z != 11]
 df = df[df.Z != 11]
@@ -50,17 +50,7 @@ CENDL32 = pd.read_csv('CENDL32_all_features.csv')
 CENDL32.index = range(len(CENDL32))
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
-exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
-	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
-	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
-	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
-	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
-	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
-	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
-	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
-	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
-	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38], [44,99], [50,126]]
+exc = exclusion_func()
 
 n_evaluations = 8
 datapoint_matrix = []
@@ -75,7 +65,7 @@ endfberg, endfbxs = General_plotter(df=df, nuclides=[target_nuclide])
 runs_r2_array = []
 
 for i in tqdm.tqdm(range(n_evaluations)):
-	print(f"\nRun {i+1}/{n_evaluations}")
+	# print(f"\nRun {i+1}/{n_evaluations}")
 
 
 	validation_nuclides = [target_nuclide]
