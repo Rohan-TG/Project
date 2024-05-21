@@ -3,7 +3,7 @@ import xgboost as xg
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-from matrix_functions import range_setter, r2_standardiser, General_plotter
+from matrix_functions import range_setter, r2_standardiser, General_plotter, exclusion_func
 from propagator_functions import training_sampler, make_test
 from sklearn.metrics import r2_score, mean_squared_error
 import time
@@ -13,7 +13,7 @@ import tqdm
 import random
 runtime = time.time()
 
-ENDFBVIII = pd.read_csv('ENDFBVIII_MT16_uncertainties.csv')
+ENDFBVIII = pd.read_csv('ENDFBVIII_MT16_100keV_data.csv')
 ENDFB_nuclides = range_setter(df=ENDFBVIII, la=0, ua= 210)
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
@@ -32,39 +32,45 @@ CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
-exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
-	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
-	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
-	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
-	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
-	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
-	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
-	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
-	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
-	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38], [44,99], [50,126]] # 10 sigma with handpicked additions
+exc = exclusion_func() # 10 sigma with handpicked additions
+
 
 target_nuclides = [[71,175]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 100
+n_evaluations = 5
+
+
+validation_set_size = 1
+
+
+
 
 runs_r2_array = []
 
 datapoint_matrix = []
+
+print('Data loaded...')
+
 X_test, y_test = make_test(nuclides=target_nuclides, df=ENDFBVIII)
-print('Test data generation complete')
+print('Test data generation complete...')
 
 for i in tqdm.tqdm(range(n_evaluations)):
-	print(f"\nRun {i + 1}/{n_evaluations}")
+	# print(f"\nRun {i + 1}/{n_evaluations}")
 	# model_seed = random.randint(a=1, b=10000)
+
+	while len(target_nuclides) < validation_set_size:  # up to 25 nuclides
+		choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
+		if choice not in target_nuclides:
+			target_nuclides.append(choice)
+	print("Test nuclide selection complete")
 
 
 	time1 = time.time()
-	X_train, y_train = training_sampler(df=ENDFBVIII, LA=30, UA=210, sampled_uncertainties= ['unc_sn'],
+	X_train, y_train = training_sampler(df=ENDFBVIII, LA=30, UA=210,
 										target_nuclides=target_nuclides, exclusions=exc)
 	print("Training matrix formed")
 
-	model = xg.XGBRegressor(n_estimators=900,  # define regressor
+	model = xg.XGBRegressor(n_estimators=950,  # define regressor
 							learning_rate=0.008,
 							max_depth=8,
 							subsample=0.18236,
