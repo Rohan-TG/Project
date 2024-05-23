@@ -7,6 +7,29 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import r2_score
 
+def r2_standardiser(library_xs, predicted_xs):
+	"""Both arguments must be lists.
+	Function returns the r2 calculated from the threshold onwards"""
+	gated_predictions = []
+
+
+	for p in predicted_xs:
+		if p >= (0.02 * max(predicted_xs)):
+			gated_predictions.append(p)
+		else:
+			gated_predictions.append(0.0)
+
+	threshold_gated_predictions = []
+	truncated_library_xs = []
+	for i, XS in enumerate(gated_predictions):
+		if XS > 0.0:
+			threshold_gated_predictions.append(XS)
+			truncated_library_xs.append(library_xs[i])
+
+	standardised_r2 = r2_score(truncated_library_xs, threshold_gated_predictions)
+
+	return(threshold_gated_predictions, truncated_library_xs, standardised_r2)
+
 
 def exclusion_func():
 	exclusionset = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
