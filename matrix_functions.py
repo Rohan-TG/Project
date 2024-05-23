@@ -538,7 +538,7 @@ def make_test(nuclides, df):
 	Returns: xtest - matrix of values for the model to use for making predictions
 	ytest: cross sections
 	"""
-	print('Forming test matrix...')
+
 	ztest = [nuclide[0] for nuclide in nuclides] # first element is the Z-value of the given test nuclide
 	atest = [nuclide[1] for nuclide in nuclides]
 
