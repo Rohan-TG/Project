@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import periodictable
-from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE, r2_standardiser, exclusion_func
+from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE, exclusion_func
 import random
 import shap
 import xgboost as xg
@@ -25,11 +25,9 @@ CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 
-df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=210, df=df)
@@ -37,14 +35,35 @@ al = range_setter(la=30, ua=210, df=df)
 exc = exclusion_func()
 
 
+def r2_standardiser(library_xs, predicted_xs):
+	"""Both arguments must be lists.
+	Function returns the r2 calculated from the threshold onwards"""
+	gated_predictions = []
 
+
+	for p in predicted_xs:
+		if p >= (0.02 * max(predicted_xs)):
+			gated_predictions.append(p)
+		else:
+			gated_predictions.append(0.0)
+
+	threshold_gated_predictions = []
+	truncated_library_xs = []
+	for i, XS in enumerate(gated_predictions):
+		if XS > 0.0:
+			threshold_gated_predictions.append(XS)
+			truncated_library_xs.append(library_xs[i])
+
+	standardised_r2 = r2_score(truncated_library_xs, threshold_gated_predictions)
+
+	return(threshold_gated_predictions, truncated_library_xs, standardised_r2)
 
 
 
 # random.seed(a=10)
 
 validation_nuclides = []
-validation_set_size = 20
+validation_set_size = 25
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -56,7 +75,7 @@ print("Test nuclide selection complete")
 
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,
 							  exclusions=exc) # create training matrix
-X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
+X_test, y_test = make_test(validation_nuclides, df=df,) # create test matrix using validation nuclides
 print("Data prep complete")
 
 model = xg.XGBRegressor(n_estimators=950, # define regressor
@@ -68,14 +87,26 @@ model = xg.XGBRegressor(n_estimators=950, # define regressor
 
 model.fit(X_train, y_train, verbose=True, early_stopping_rounds=100, eval_set = [(X_test, y_test)])
 print("Training complete")
-predictions = model.predict(X_test)  # XS predictions
+# initial_predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
 
-for pred in predictions: # prediction gate
-	if pred >= 0.003:
-		predictions_ReLU.append(pred)
-	else:
-		predictions_ReLU.append(0)
+
+for n in validation_nuclides:
+
+	temp_x, temp_y = make_test(nuclides=[n], df=df)
+	initial_predictions = model.predict(temp_x)
+
+	for p in initial_predictions:
+		if p >= (0.02 * max(initial_predictions)):
+			predictions_ReLU.append(p)
+		else:
+			predictions_ReLU.append(0.0)
+
+# for pred in initial_predictions: # prediction gate
+# 	if pred >= 0.003:
+# 		predictions_ReLU.append(pred)
+# 	else:
+# 		predictions_ReLU.append(0)
 
 predictions = predictions_ReLU
 
@@ -125,10 +156,10 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.show()
 
 	print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-	time.sleep(0.8)
+	time.sleep(2)
 
 	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
-	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(raw_predictions=pred_xs, library_xs=true_xs)
+	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(predicted_xs=pred_xs, library_xs=true_xs)
 
 	endfbmape = mean_absolute_percentage_error(truncated_endfb, pred_endfb_gated)
 	for x, y in zip(pred_endfb_gated, truncated_endfb):
@@ -142,7 +173,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
 		pred_cendl = model.predict(cendl_test)
 
-		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl, library_xs=cendl_xs)
+		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl, library_xs=cendl_xs)
 
 		pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
 		for x, y in zip(pred_cendl_gated, truncated_cendl):
@@ -156,7 +187,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jendl = model.predict(jendl_test)
 
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
+		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl, library_xs=jendl_xs)
 
 		for x, y in zip(pred_jendl_gated, truncated_jendl):
 			all_libs.append(y)
@@ -169,7 +200,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jeff = model.predict(jeff_test)
 
 		pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
+		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -181,7 +212,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl, library_xs=tendl_xs)
+		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl, library_xs=tendl_xs)
 		for x, y in zip(pred_tendl_gated, truncated_tendl):
 			all_libs.append(y)
 			all_preds.append(x)
