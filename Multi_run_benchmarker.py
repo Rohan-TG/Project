@@ -54,9 +54,9 @@ for i in al:
 
 exc = exclusion_func()
 
-validation_set_size = 20  # number of nuclides hidden from training
+validation_set_size = 200  # number of nuclides hidden from training
 
-num_runs = 10
+num_runs = 2
 run_r2 = []
 
 nuclide_r2 = []
@@ -415,14 +415,14 @@ for match in agg_n_r2:
 
 	alist.append([match[0], match[1], np.mean(r2values)])
 
-# A_plots = [i[1] for i in nuclide_r2]
+A_plots = [i[1] for i in alist]
 print(np.mean(run_r2))
 print(np.std(run_r2))
 # Z_plots = [i[0] for i in nuclide_r2]
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
 # mse_plots = [i[-1] for i in nuclide_mse]
 
-log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
+log_plots = [abs(np.log(abs(i[-1]))) for i in alist]
 # log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 #
 # r2plot = [i[-1] for i in nuclide_r2]
