@@ -12,16 +12,11 @@ import time
 import tqdm
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
-from matrix_functions import make_train, make_test, range_setter, r2_standardiser
+from matrix_functions import make_train, make_test, range_setter, r2_standardiser, exclusion_func
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
-
-df = df[df.Z != 6]
-df_test = df_test[df_test.Z != 6]
 
 
-df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 al = range_setter(df=df, la=30, ua=210)
 
@@ -56,46 +51,15 @@ for i in al:
 	if i not in banned_nuclides:
 		newal.append(i)
 
-# exc = [[22, 47], [65, 159], [52, 122], [17, 36], [66, 157], [38, 86], [38, 90], [61, 150],
-# 	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90], [64, 160], [38, 87], [39, 91],
-# 	   [63, 152], [52, 125], [41, 94], [69, 171], [68, 169], [19, 40], [56, 139], [34, 77],
-# 	   [52, 126], [71, 175], [34, 79], [70, 175], [50, 117], [23, 49], [63, 156],
-# 	   [57, 140], [52, 128], [59, 142], [50, 118], [50, 123], [65, 161], [52, 124], [50, 119],
-# 	   [38, 85], [51, 122], [19, 41], [54, 135], [32, 75], [81, 205], [71, 176], [72, 175],
-# 	   [50, 126], [50, 122], [51, 125], [53, 133], [34, 82], [70, 169], [41, 95], [46, 109],
-# 	   [84, 209], [56, 140], [20, 42], [64, 159], [54, 133], [68, 167], [16, 35]]
 
-exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
-	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
-	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
-	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
-	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
-	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
-	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
-	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
-	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
-	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38], [44,99], [50,126]] # 10 sigma with handpicked additions
-
-# exc = [[54, 133], [22, 47], [65, 159], [52, 122], [17, 36],
-# 	   [66, 157], [38, 86], [38, 90], [61, 150], [74, 185],
-# 	   [50, 125], [50, 124], [60, 149], [39, 90], [64, 160],
-# 	   [38, 87], [39, 91], [63, 152], [52, 125], [68, 169],
-# 	   [19, 40], [56, 139], [34, 77], [52, 126], [71, 175],
-# 	   [34, 79], [70, 175], [50, 117], [55, 136], [23, 49],
-# 	   [63, 156], [57, 140], [52, 128], [59, 142], [50, 118],
-# 	   [50, 123], [65, 161], [52, 124], [50, 119], [38, 85],
-# 	   [51, 122], [19, 41], [54, 135], [32, 75], [81, 205],
-# 	   [71, 176], [72, 175], [50, 126], [50, 122], [51, 125],
-# 	   [53, 133], [34, 82], [70, 169], [41, 95], [46, 109],
-# 	   [84, 209], [56, 140], [20, 42], [64, 159], [68, 167],
-# 	   [16, 35]]
-# 7 sigma
+exc = exclusion_func()
 
 validation_set_size = 20  # number of nuclides hidden from training
 
 num_runs = 10
 run_r2 = []
+
+nuclide_r2 = []
 
 for q in tqdm.tqdm(range(num_runs+1)):
 	nuclides_used = []
@@ -112,7 +76,7 @@ for q in tqdm.tqdm(range(num_runs+1)):
 	low_masses = []
 
 	nuclide_mse = []
-	nuclide_r2 = []
+
 	tally90 = 0
 
 	other = []
@@ -154,7 +118,7 @@ for q in tqdm.tqdm(range(num_runs+1)):
 
 		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210, exclusions=exc) # make training matrix
 
-		X_test, y_test = make_test(validation_nuclides, df=df_test)
+		X_test, y_test = make_test(validation_nuclides, df=df)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
@@ -224,7 +188,7 @@ for q in tqdm.tqdm(range(num_runs+1)):
 
 
 			try:
-				pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(raw_predictions=pred_xs,
+				pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(predicted_xs=pred_xs,
 																				   library_xs=true_xs)
 			except:
 				print(current_nuclide)
@@ -243,7 +207,7 @@ for q in tqdm.tqdm(range(num_runs+1)):
 				pred_cendl = model.predict(cendl_test)
 
 				pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
-				pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl, library_xs=cendl_xs)
+				pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl, library_xs=cendl_xs)
 				for libxs, p in zip(truncated_cendl, pred_cendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -261,7 +225,7 @@ for q in tqdm.tqdm(range(num_runs+1)):
 				pred_jendl = model.predict(jendl_test)
 
 				pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-				pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
+				pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl, library_xs=jendl_xs)
 				for libxs, p in zip(truncated_jendl, pred_jendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -278,7 +242,7 @@ for q in tqdm.tqdm(range(num_runs+1)):
 				pred_jeff = model.predict(jeff_test)
 
 				pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-				pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
+				pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
 				for libxs, p in zip(truncated_jeff, pred_jeff_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -296,7 +260,7 @@ for q in tqdm.tqdm(range(num_runs+1)):
 				pred_tendl = model.predict(tendl_test)
 
 				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl, library_xs=tendl_xs)
+				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl, library_xs=tendl_xs)
 				for libxs, p in zip(truncated_tendl, pred_tendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -440,6 +404,17 @@ for q in tqdm.tqdm(range(num_runs+1)):
 
 # print(f"Good predictions {tally}/{len(al)}")
 
+agg_n_r2 = range_setter(df=df, la=30,ua=210)
+
+alist = []
+for match in agg_n_r2:
+	r2values = []
+	for set in nuclide_r2:
+		if [set[0], set[1]] == match:
+			r2values.append(set[2])
+
+	alist.append([match[0], match[1], np.mean(r2values)])
+
 # A_plots = [i[1] for i in nuclide_r2]
 print(np.mean(run_r2))
 print(np.std(run_r2))
@@ -447,7 +422,7 @@ print(np.std(run_r2))
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
 # mse_plots = [i[-1] for i in nuclide_mse]
 
-# log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
+log_plots = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 # log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 #
 # r2plot = [i[-1] for i in nuclide_r2]
@@ -455,14 +430,14 @@ print(np.std(run_r2))
 # heavy_performance = [abs(np.log(abs(i[-1]))) for i in nuclide_r2 if i[1] < 50]
 # print(f"Heavy performance: {heavy_performance}, mean: {np.mean(heavy_performance)}")
 print(n_run_tally95)
-# plt.figure()
-# plt.plot(A_plots, log_plots, 'x')
-# # plt.plot(A_plots, r2plot, 'x')
-# plt.xlabel("A")
-# plt.ylabel("$|\ln(|r^2|)|$")
-# plt.title("Performance - A")
-# plt.grid()
-# plt.show()
+plt.figure()
+plt.plot(A_plots, log_plots, 'x')
+# plt.plot(A_plots, r2plot, 'x')
+plt.xlabel("A")
+plt.ylabel("$|\ln(|r^2|)|$")
+plt.title("Performance - A")
+plt.grid()
+plt.show()
 #
 # plt.figure()
 # plt.plot(Z_plots, log_plots_Z, 'x')
@@ -476,22 +451,3 @@ print(n_run_tally95)
 # plt.hist(x=log_plots, bins=50)
 # plt.grid()
 # plt.show()
-
-# plt.figure()
-# plt.hist2d(x=A_plots, y=log_plots, bins=20)
-# plt.xlabel("A")
-# plt.ylabel("$|\ln(|r^2|)|$")
-# plt.colorbar()
-# plt.grid()
-# plt.show()
-
-# tally2 = 0
-# for x in low_mass_r2:
-# 	if x < 0.95:
-# 		tally2 += 1
-
-
-# lowmass = range_setter(df=df, la=30, ua=60)
-# print(f"{tally2}/{len(lowmass)}")
-
-# print(potential_outliers)
