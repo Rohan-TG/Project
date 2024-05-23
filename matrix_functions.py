@@ -33,26 +33,7 @@ def parameter_retrieval(z, a, param, df):
 
 
 
-def r2_standardiser(raw_predictions, library_xs):
-	"""Both arguments must be lists.
-	Function returns the r2 calculated from the threshold onwards"""
-	gated_predictions = []
-	for xs_raw in raw_predictions:
-		if xs_raw >= 0.003: # arbitrary threshold
-			gated_predictions.append(xs_raw)
-		else:
-			gated_predictions.append(0)
 
-	threshold_gated_predictions = []
-	truncated_library_xs = []
-	for i, XS in enumerate(gated_predictions):
-		if XS > 0.0:
-			threshold_gated_predictions.append(XS)
-			truncated_library_xs.append(library_xs[i])
-
-	standardised_r2 = r2_score(truncated_library_xs, threshold_gated_predictions)
-
-	return(threshold_gated_predictions, truncated_library_xs, standardised_r2)
 
 def General_plotter(df, nuclides, MT=16):
 	"""df: dataframe source of XSs
@@ -700,7 +681,7 @@ def make_test(nuclides, df):
 	# cat_neutron_test = []
 	# cat_double_test = []
 
-	for nuc_test_z, nuc_test_a in tqdm.tqdm(zip(ztest, atest), total=len(ztest)):
+	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
 			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20:
 				Z_test.append(Z[j])
