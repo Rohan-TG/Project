@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 from matrix_functions import range_setter, r2_standardiser, General_plotter, exclusion_func
-from propagator_functions import training_sampler, make_test
+from propagator_functions import make_train_sampler, make_test
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 import periodictable
@@ -35,9 +35,9 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[54,135]]
+target_nuclides = [[71,175]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 5
+n_evaluations = 3
 
 
 validation_set_size = 1
@@ -66,9 +66,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 
 	time1 = time.time()
-	X_train, y_train = training_sampler(df=ENDFBVIII, LA=30, UA=210,
-										target_nuclides=target_nuclides, exclusions=exc)
-	print("Training matrix formed")
+	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
+										validation_nuclides=target_nuclides, exclusions=exc)
+	print("Training...")
 
 	model = xg.XGBRegressor(n_estimators=950,  # define regressor
 							learning_rate=0.008,
