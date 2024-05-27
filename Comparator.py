@@ -64,7 +64,9 @@ model = xg.XGBRegressor(n_estimators=950, # define regressor
 						max_leaves=0,
 						seed=42, )
 
-model.fit(X_train, y_train, verbose=True, early_stopping_rounds=100, eval_set = [(X_test, y_test)])
+model.fit(X_train, y_train, verbose=True,
+		  # early_stopping_rounds=100,
+		  eval_set = [(X_test, y_test)])
 print("Training complete")
 # initial_predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
