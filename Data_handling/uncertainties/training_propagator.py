@@ -35,12 +35,12 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[71,175]]
+target_nuclides = [[54,135]]
 target_nuclide = target_nuclides[0]
 n_evaluations = 3
 
 
-validation_set_size = 1
+validation_set_size = 20
 
 
 
