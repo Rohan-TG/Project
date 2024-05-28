@@ -14,7 +14,7 @@ import tqdm
 from sklearn.metrics import mean_squared_error, r2_score
 from matrix_functions import make_train, make_test, range_setter, r2_standardiser, exclusion_func
 
-df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
+df = pd.read_csv("ENDFBVIII_MT16_100keV_data.csv")
 
 
 df.index = range(len(df))
