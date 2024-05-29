@@ -369,7 +369,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 
 	# AM_train = []
 
-	for idx, unused in tqdm.tqdm(enumerate(Z), total=len(Z)):  # MT = 16 is (n,2n) (already extracted)
+	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope data to training data
 		if [Z[idx], A[idx]] in exclusions:
