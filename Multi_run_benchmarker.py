@@ -14,11 +14,11 @@ import tqdm
 from sklearn.metrics import mean_squared_error, r2_score
 from matrix_functions import make_train, make_test, range_setter, r2_standardiser, exclusion_func
 
-df = pd.read_csv("ENDFBVIII_MT16_100keV_data.csv")
+df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 
 df.index = range(len(df))
-al = range_setter(df=df, la=30, ua=210)
+al = range_setter(df=df, la=0, ua=260)
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
@@ -116,7 +116,7 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210, exclusions=exc) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=260, exclusions=exc) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df)
 
@@ -411,7 +411,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 # print(f"Good predictions {tally}/{len(al)}")
 
-agg_n_r2 = range_setter(df=df, la=30,ua=210)
+agg_n_r2 = range_setter(df=df, la=0,ua=260)
 
 alist = []
 for match in agg_n_r2:
