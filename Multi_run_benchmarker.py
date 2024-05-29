@@ -61,7 +61,7 @@ run_r2 = []
 
 nuclide_r2 = []
 
-for q in tqdm.tqdm(range(num_runs+1)):
+for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
 	every_true_value_list = []
@@ -126,7 +126,7 @@ for q in tqdm.tqdm(range(num_runs+1)):
 		print("Train/val matrices generated")
 
 		modelseed= random.randint(a=1, b=1000)
-		model = xg.XGBRegressor(n_estimators=900,
+		model = xg.XGBRegressor(n_estimators=950,
 								learning_rate=0.008,
 								max_depth=8,
 								subsample=0.18236,
@@ -145,13 +145,20 @@ for q in tqdm.tqdm(range(num_runs+1)):
 
 		print("Training complete")
 
-		predictions = model.predict(X_test) # XS predictions
 		predictions_ReLU = []
-		for pred in predictions:
-			if pred >= 0.003:
-				predictions_ReLU.append(pred)
-			else:
-				predictions_ReLU.append(0)
+
+		for testnuclide in validation_nuclides:
+			X_test_temp, y_test_temp = make_test(nuclides=[testnuclide], df=df)
+
+			temp_predictions = model.predict(X_test_temp)
+
+			for p in temp_predictions:
+				if p >= (0.02 * max(temp_predictions)):
+					predictions_ReLU.append(p)
+				else:
+					predictions_ReLU.append(0)
+
+
 
 		predictions = predictions_ReLU
 
