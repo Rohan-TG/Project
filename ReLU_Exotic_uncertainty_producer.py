@@ -11,7 +11,7 @@ import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import make_train, make_test,\
-	range_setter, General_plotter, r2_standardiser
+	range_setter, General_plotter, r2_standardiser, exclusion_func
 import scipy.stats
 from datetime import timedelta
 import tqdm
@@ -59,17 +59,7 @@ CENDL32_energy, CENDL32_XS = General_plotter(df=CENDL32, nuclides=[target_nuclid
 validation_nuclides = [target_nuclide]
 validation_set_size = 1  # train on all ENDF/B-VIII
 
-exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
-	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
-	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
-	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
-	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
-	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
-	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
-	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
-	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
-	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38], [44,99], [50,126]] # 10 sigma with handpicked additions
+exc = exclusion_func()
 
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua= 210,
 							  exclusions=exc)  # make training matrix
@@ -80,14 +70,13 @@ print("Data prep done")
 
 runs_r2_array = []
 for i in tqdm.tqdm(range(n_evaluations)):
-	print(f"\nRun {i+1}/{n_evaluations}")
 
 
 	time1 = time.time()
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
-	model = xg.XGBRegressor(n_estimators=900,
+	model = xg.XGBRegressor(n_estimators=950,
 							learning_rate=0.008,
 							max_depth=8,
 							subsample=0.18236,
