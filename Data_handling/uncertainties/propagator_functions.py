@@ -435,6 +435,7 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 
 	### UNCERTAINTIES
 	unc_sn = df['unc_sn']
+	unc_me = df['unc_me']
 
 	# AM = df['AM']
 
@@ -569,7 +570,10 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			# BEA_compound_train.append(BEA_compound[idx])
 			S2n_compound_train.append(S2n_compound[idx])
 			S2p_compound_train.append(S2p_compound[idx])
-			ME_train.append(ME[idx])
+
+			sampled_me = random.gauss(mu=ME[idx],
+									  sigma=unc_me[idx])
+			ME_train.append(sampled_me)
 			# Z_even_train.append(Z_even[idx])
 			# A_even_train.append(A_even[idx])
 			# N_even_train.append(N_even[idx])

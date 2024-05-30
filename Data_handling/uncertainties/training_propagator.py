@@ -35,12 +35,12 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[54,135]]
+target_nuclides = [[71,175]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 3
+n_evaluations = 15
 
 
-validation_set_size = 20
+validation_set_size = 1
 
 
 
@@ -56,7 +56,7 @@ print('Test data generation complete...')
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i + 1}/{n_evaluations}")
-	# model_seed = random.randint(a=1, b=10000)
+	model_seed = random.randint(a=1, b=10000)
 
 	while len(target_nuclides) < validation_set_size:  # up to 25 nuclides
 		choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -75,18 +75,22 @@ for i in tqdm.tqdm(range(n_evaluations)):
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
-							seed=42, )
+							seed=model_seed,)
 
 	model.fit(X_train, y_train)
 	print("Training complete")
 
-	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
-	for pred in predictions:
-		if pred >= 0.003:
-			predictions_ReLU.append(pred)
-		else:
-			predictions_ReLU.append(0)
+
+	for n in target_nuclides:
+		tempx, tempy = make_test(nuclides=[n], df=ENDFBVIII)
+		initial_predictions = model.predict(tempx)
+
+		for p in initial_predictions:
+			if p > (0.02 * max(initial_predictions)):
+				predictions_ReLU.append(p)
+			else:
+				predictions_ReLU.append(0.0)
 
 	predictions = predictions_ReLU
 
@@ -129,51 +133,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		all_preds.append(x)
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
 
-# if target_nuclide in CENDL_nuclides:
-#
-# 	cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL)
-# 	pred_cendl = model.predict(cendl_test)
-#
-# 	pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
-# 	for x, y in zip(pred_cendl, cendl_xs):
-# 		all_libs.append(y)
-# 		all_preds.append(x)
-# 	print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f}")
-#
-# if target_nuclide in JENDL_nuclides:
-#
-# 	jendl_test, jendl_xs = make_test(nuclides=[target_nuclide], df=JENDL)
-# 	pred_jendl = model.predict(jendl_test)
-#
-# 	pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
-# 	print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
-# 	for x, y in zip(pred_jendl, jendl_xs):
-# 		all_libs.append(y)
-# 		all_preds.append(x)
-#
-# if target_nuclide in JEFF_nuclides:
-# 	jeff_test, jeff_xs = make_test(nuclides=[target_nuclide], df=JEFF)
-#
-# 	pred_jeff = model.predict(jeff_test)
-#
-# 	pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff,
-# 																	library_xs=jeff_xs)
-# 	for x, y in zip(pred_jeff_gated, truncated_jeff):
-# 		all_libs.append(y)
-# 		all_preds.append(x)
-# 	print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f}")
-#
-# if target_nuclide in TENDL_nuclides:
-#
-# 	tendl_test, tendl_xs = make_test(nuclides=[target_nuclide], df=TENDL)
-# 	pred_tendl = model.predict(tendl_test)
-#
-# 	pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-# 	pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
-# 	for x, y in zip(pred_tendl, tendl_xs):
-# 		all_libs.append(y)
-# 		all_preds.append(x)
-# 	print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f}")
+
 consensus = r2_score(all_libs, all_preds)
 
 runs_r2_array.append(consensus)
