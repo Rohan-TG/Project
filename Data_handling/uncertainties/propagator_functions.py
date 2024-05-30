@@ -431,6 +431,11 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	Decay_daughter = df['Decay_daughter']
 	Asymmetry_daughter = df['Asymmetry_daughter']
 
+
+
+	### UNCERTAINTIES
+	unc_sn = df['unc_sn']
+
 	# AM = df['AM']
 
 	Z_train = []
@@ -538,7 +543,10 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				XS_train.append(sampled_xs)
 
 			Sp_train.append(Sep_p[idx])
-			Sn_train.append(Sep_n[idx])
+
+			sampled_sn = random.gauss(mu=Sep_n[idx],
+									  sigma=unc_sn[idx])
+			Sn_train.append(sampled_sn)
 			BEA_train.append(BEA[idx])
 			# Pairing_train.append(Pairing[idx])
 			Sn_c_train.append(Sn_compound[idx])
