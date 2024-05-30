@@ -437,6 +437,7 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	unc_sn = df['unc_sn']
 	unc_me = df['unc_me']
 	unc_sp = df['unc_sp']
+	unc_ba = df['unc_ba']
 	# AM = df['AM']
 
 	Z_train = []
@@ -555,7 +556,11 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			sampled_sn = random.gauss(mu=Sep_n[idx],
 									  sigma=unc_sn[idx])
 			Sn_train.append(sampled_sn)
-			BEA_train.append(BEA[idx])
+
+			sampled_binding_energy_per_nucleon = random.gauss(mu=BEA[idx],
+															  sigma=unc_ba)
+			BEA_train.append(sampled_binding_energy_per_nucleon)
+
 			# Pairing_train.append(Pairing[idx])
 			Sn_c_train.append(Sn_compound[idx])
 			# gd_train.append(gamma_deformation[idx])
