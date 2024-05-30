@@ -436,7 +436,7 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	### UNCERTAINTIES
 	unc_sn = df['unc_sn']
 	unc_me = df['unc_me']
-
+	unc_sp = df['unc_sp']
 	# AM = df['AM']
 
 	Z_train = []
@@ -543,7 +543,14 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 										  sigma=dXS[idx])
 				XS_train.append(sampled_xs)
 
-			Sp_train.append(Sep_p[idx])
+			if math.isnan(Sep_p[idx]):
+				Sp_train.append(Sep_p[idx])
+			elif math.isnan(Sep_p[idx]) == False and math.isnan(unc_sp[idx]):
+				Sp_train.append(Sep_p[idx])
+			else:
+				sampled_sp = random.gauss(mu=Sep_p[idx], sigma=unc_sp[idx])
+				Sp_train.append(sampled_sp)
+
 
 			sampled_sn = random.gauss(mu=Sep_n[idx],
 									  sigma=unc_sn[idx])
