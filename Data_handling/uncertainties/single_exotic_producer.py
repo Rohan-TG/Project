@@ -67,7 +67,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
-							seed=42, )
+							seed=model_seed, )
 
 	model.fit(X_train, y_train)
 	print("Training complete")
