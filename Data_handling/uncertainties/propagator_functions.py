@@ -98,6 +98,10 @@ def make_test(nuclides, df):
 	Decay_daughter = df['Decay_daughter']
 	Asymmetry_daughter = df['Asymmetry_daughter']
 
+
+	### UNCERTAINTIES
+	unc_radius = df['unc_r']
+
 	# AM_test = []
 	Z_test = []
 	A_test = []
@@ -199,7 +203,11 @@ def make_test(nuclides, df):
 				Sn_d_test.append(Sn_daughter[j])
 				# Sp_d_test.append(Sp_daughter[j])
 				S2n_d_test.append(S2n_daughter[j])
-				Radius_test.append(Radius[j])
+				if math.isnan(Radius[j]):
+					Radius_test.append(Radius[j])
+				else:
+					sampled_radius = random.gauss(mu=Radius[j], sigma=unc_radius[j])
+					Radius_test.append(sampled_radius)
 				# n_gap_erg_test.append(n_gap_erg[j])
 				n_chem_erg_test.append(n_chem_erg[j])
 				# Pairing_daughter_test.append(Pairing_daughter[j])
@@ -340,6 +348,20 @@ def make_test(nuclides, df):
 	y_test = XS_test
 
 	return xtest, y_test
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 	"""la: lower bound for A
