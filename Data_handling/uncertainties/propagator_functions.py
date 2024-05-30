@@ -438,6 +438,7 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	unc_me = df['unc_me']
 	unc_sp = df['unc_sp']
 	unc_ba = df['unc_ba']
+	unc_radius = df['unc_r']
 	# AM = df['AM']
 
 	Z_train = []
@@ -569,7 +570,13 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			Sn_d_train.append(Sn_daughter[idx])
 			# Sp_d_train.append(Sp_daughter[idx])
 			S2n_d_train.append(S2n_daughter[idx])
-			Radius_train.append(Radius[idx])
+
+			if math.isnan(Radius[idx]):
+				Radius_train.append(Radius[idx])
+			else:
+				sampled_radius = random.gauss(mu=Radius[idx], sigma = unc_radius[idx])
+				Radius_train.append(sampled_radius)
+
 			# n_gap_erg_train.append(n_gap_erg[idx])
 			n_chem_erg_train.append(n_chem_erg[idx])
 			# Pairing_daughter_train.append(Pairing_daughter[idx])
