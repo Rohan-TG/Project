@@ -1,15 +1,15 @@
 import pandas as pd
-
+import tqdm
 
 livechart_data = pd.read_csv('livechart_ground_state_data.csv')
-ENDFBVIII_file = pd.read_csv('ENDFBVIII_MT16_XS_feateng.csv')
-main_file = pd.read_csv('1_fund.csv')
+library_file = pd.read_csv('TENDL_2021_MT16_XS_features.csv')
+
+
+library_file = library_file.drop(columns=['Unnamed: 0'])
 
 
 
-
-
-main_columns = ['Unnamed: 0.2', 'Unnamed: 0.1', 'Unnamed: 0', 'Z', 'A', 'N', 'ME',
+main_columns = ['Z', 'A', 'N', 'ME',
        'BEA', 'BEA_A', 'AM', 'Sn', 'S2n', 'Sp', 'S2p', 'Radius', 'Pairing',
        'Shell', 'Spin', 'Parity', 'Deform', 'Decay_Const', 'Z_even', 'A_even',
        'N_even', 'beta_deformation', 'gamma_deformation',
@@ -29,7 +29,7 @@ main_columns = ['Unnamed: 0.2', 'Unnamed: 0.1', 'Unnamed: 0', 'Z', 'A', 'N', 'ME
 new_cols = ['unc_r', 'unc_hls', 'unc_sn', 'unc_sp', 'unc_ba', 'atomic_mass', 'unc_am', 'massexcess',
 			'unc_me']
 
-merged_columns = ['Unnamed: 0.2', 'Unnamed: 0.1', 'Unnamed: 0', 'Z', 'A', 'N', 'ME',
+merged_columns = ['Z', 'A', 'N', 'ME',
        'BEA', 'BEA_A', 'AM', 'Sn', 'S2n', 'Sp', 'S2p', 'Radius', 'Pairing',
        'Shell', 'Spin', 'Parity', 'Deform', 'Decay_Const', 'Z_even', 'A_even',
        'N_even', 'beta_deformation', 'gamma_deformation',
@@ -45,11 +45,10 @@ merged_columns = ['Unnamed: 0.2', 'Unnamed: 0.1', 'Unnamed: 0', 'Z', 'A', 'N', '
        'Nlow', 'Ulow', 'Ntop', 'Utop', 'ainf', 'XSupp', 'XSlow', 'Asymmetry',
        'Asymmetry_compound', 'Asymmetry_daughter',
 		'unc_r', 'unc_hls', 'unc_sn', 'unc_sp', 'unc_ba', 'atomic_mass', 'unc_am', 'massexcess',
-		'unc_me']
+		'unc_me', 'half_life_sec']
 
-ENDFBVIII_copy = pd.DataFrame(columns = merged_columns)
-for i, row in ENDFBVIII_file.iterrows():
-	print(f"Row {i}/{len(ENDFBVIII_file)}")
+library_copy = pd.DataFrame(columns = merged_columns)
+for i, row in tqdm.tqdm(library_file.iterrows(), total=library_file.shape[0]):
 	target_nuclide = [row['Z'], row['A']]
 	for j, data in livechart_data.iterrows():
 		a = data['n'] + data['z']
@@ -58,7 +57,7 @@ for i, row in ENDFBVIII_file.iterrows():
 			for idx, name in enumerate(new_cols):
 				copy_row[name] = data[name]
 
-			ENDFBVIII_copy = ENDFBVIII_copy._append(copy_row, ignore_index=True)
+			library_copy = library_copy._append(copy_row, ignore_index=True)
 
 
 
