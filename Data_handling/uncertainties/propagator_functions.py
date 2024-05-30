@@ -341,7 +341,7 @@ def make_test(nuclides, df):
 
 	return xtest, y_test
 
-def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
+def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -545,13 +545,9 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 										  sigma=dXS[idx])
 				XS_train.append(sampled_xs)
 
-			if math.isnan(Sep_p[idx]):
-				Sp_train.append(Sep_p[idx])
-			elif math.isnan(Sep_p[idx]) == False and math.isnan(unc_sp[idx]):
-				Sp_train.append(Sep_p[idx])
-			else:
-				sampled_sp = random.gauss(mu=Sep_p[idx], sigma=unc_sp[idx])
-				Sp_train.append(sampled_sp)
+
+			sampled_sp = random.gauss(mu=Sep_p[idx], sigma=unc_sp[idx])
+			Sp_train.append(sampled_sp)
 
 
 			sampled_sn = random.gauss(mu=Sep_n[idx],
@@ -559,7 +555,7 @@ def make_train_sampler(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			Sn_train.append(sampled_sn)
 
 			sampled_binding_energy_per_nucleon = random.gauss(mu=BEA[idx],
-															  sigma=unc_ba)
+															  sigma=unc_ba[idx])
 			BEA_train.append(sampled_binding_energy_per_nucleon)
 
 			# Pairing_train.append(Pairing[idx])
