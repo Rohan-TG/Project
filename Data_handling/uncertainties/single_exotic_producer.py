@@ -35,7 +35,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[54,135]]
+target_nuclides = [[40,88]]
 target_nuclide = target_nuclides[0]
 n_evaluations = 2
 
@@ -51,7 +51,7 @@ datapoint_matrix = []
 
 print('Data loaded...')
 
-X_test, y_test = make_test(nuclides=target_nuclides, df=ENDFBVIII)
+
 print('Test data generation complete...')
 
 for i in tqdm.tqdm(range(n_evaluations)):
@@ -60,6 +60,8 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	time1 = time.time()
 	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
 										validation_nuclides=target_nuclides, exclusions=exc)
+
+	X_test, y_test = make_test(nuclides=target_nuclides, df=TENDL)
 	print("Training...")
 
 	model = xg.XGBRegressor(n_estimators=950,  # define regressor
@@ -175,6 +177,18 @@ jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[target_nuclide])
 tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
 endfberg, endfbxs = General_plotter(df=ENDFBVIII, nuclides=[target_nuclide])
 
+
+interpolation_function = scipy.interpolate.interp1d(E_plot, y=datapoint_means)
+
+if target_nuclide in JENDL_nuclides:
+
+	jendlxs_interpolated = interpolation_function(jendlerg)
+
+	d1, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
+
+	print(f"R2 w.r.t. JENDL-5: {jendl_r2}")
+d3,d4, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=datapoint_means)
+print(f"R2 w.r.t. TENDL-2021: ")
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
