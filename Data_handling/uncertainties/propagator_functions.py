@@ -1,7 +1,6 @@
 import random
 import numpy as np
 import math
-import tqdm
 
 
 
@@ -63,7 +62,7 @@ def make_test(nuclides, df):
 	# XSlow = df['XSlow']
 	# XSupp = df['XSupp']
 	Asymmetry = df['Asymmetry']
-	half_life_seconds = df['half_life_sec']
+	# half_life_seconds = df['half_life_sec']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -144,7 +143,7 @@ def make_test(nuclides, df):
 	# XSlow_test = []
 	# XSupp_test = []
 	Asymmetry_test = []
-	hls_test = []
+	# hls_test = []
 
 
 	# Daughter features
@@ -268,7 +267,7 @@ def make_test(nuclides, df):
 				Asymmetry_test.append(Asymmetry[j])
 				# Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
-				hls_test.append(half_life_seconds[j])
+				# hls_test.append(half_life_seconds[j])
 
 
 	xtest = np.array([Z_test,
@@ -421,7 +420,7 @@ def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 	# XSlow = df['XSlow']
 	# XSupp = df['XSupp']
 	Asymmetry = df['Asymmetry']
-	half_life_seconds = df['half_life_sec']
+	# half_life_seconds = df['half_life_sec']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -666,13 +665,13 @@ def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 			Asymmetry_train.append(Asymmetry[idx])
 			# Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
-			if math.isnan(half_life_seconds[idx]):
-				hls_train.append(np.nan)
-			elif math.isnan(half_life_seconds_uncertainty[idx]):
-				hls_train.append(half_life_seconds[idx])
-			else:
-				hls_train.append(random.gauss(mu=half_life_seconds[idx],
-											  sigma=half_life_seconds_uncertainty[idx]))
+			# if math.isnan(half_life_seconds[idx]):
+			# 	hls_train.append(np.nan)
+			# elif math.isnan(half_life_seconds_uncertainty[idx]):
+			# 	hls_train.append(half_life_seconds[idx])
+			# else:
+			# 	hls_train.append(random.gauss(mu=half_life_seconds[idx],
+			# 								  sigma=half_life_seconds_uncertainty[idx]))
 
 			# AM_train.append(AM[idx])
 
@@ -750,7 +749,7 @@ def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 				  # Asymmetry_compound_train,
 				  Asymmetry_daughter_train,
 				  # AM_train,
-				  hls_train,
+				  # hls_train,
 				  ])
 	y = np.array(XS_train) # cross sections
 

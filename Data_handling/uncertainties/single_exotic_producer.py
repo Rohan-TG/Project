@@ -14,6 +14,7 @@ import random
 runtime = time.time()
 
 ENDFBVIII = pd.read_csv('ENDFBVIII_100keV_all_uncertainties.csv')
+ENDFBVIII.index = range(len(ENDFBVIII))
 ENDFB_nuclides = range_setter(df=ENDFBVIII, la=30, ua= 210)
 
 TENDL = pd.read_csv("TENDL_2021_MT_16_all_u.csv")
@@ -35,9 +36,9 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[40,88]]
+target_nuclides = [[40,87]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 2
+n_evaluations = 20
 
 
 validation_set_size = 1
@@ -69,7 +70,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 							max_depth=8,
 							subsample=0.18236,
 							max_leaves=0,
-							seed=model_seed, )
+							seed=42, )
 
 	model.fit(X_train, y_train)
 	print("Training complete")
@@ -121,7 +122,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	for x, y in zip(XS_plotmatrix[0], P_plotmatrix[0]):
 		all_libs.append(y)
 		all_preds.append(x)
-	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
+	print(f"Predictions - TENDL-2021 R2: {pred_endfb_r2:0.5f} ")
 
 
 consensus = r2_score(all_libs, all_preds)
@@ -178,7 +179,7 @@ tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
 endfberg, endfbxs = General_plotter(df=ENDFBVIII, nuclides=[target_nuclide])
 
 
-interpolation_function = scipy.interpolate.interp1d(E_plot, y=datapoint_means)
+interpolation_function = scipy.interpolate.interp1d(E_plot, y=datapoint_means, fill_value='extrapolate')
 
 if target_nuclide in JENDL_nuclides:
 
@@ -188,7 +189,7 @@ if target_nuclide in JENDL_nuclides:
 
 	print(f"R2 w.r.t. JENDL-5: {jendl_r2}")
 d3,d4, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=datapoint_means)
-print(f"R2 w.r.t. TENDL-2021: ")
+print(f"R2 w.r.t. TENDL-2021: {tendlr2}")
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
