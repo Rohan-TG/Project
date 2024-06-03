@@ -100,7 +100,13 @@ def make_test(nuclides, df):
 
 
 	### UNCERTAINTIES
+	unc_sn = df['unc_sn']
+	unc_me = df['unc_me']
+	unc_sp = df['unc_sp']
+	unc_ba = df['unc_ba']
 	unc_radius = df['unc_r']
+	unc_s2p = df['S2P_U']
+	unc_s2n = df['S2N_U']
 
 	# AM_test = []
 	Z_test = []
@@ -189,13 +195,28 @@ def make_test(nuclides, df):
 			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
-				S2n_test.append(S_2n[j])
-				S2p_test.append(S_2p[j])
+				if math.isnan(S_2n[j]):
+					S2n_test.append(S_2n[j])
+				else:
+					S2n_test.append(random.gauss(mu=S_2n[j], sigma=unc_s2n[j]))
+				if math.isnan(S_2p[j]):
+					S2p_test.append(S_2p[j])
+				else:
+					S2p_test.append(random.gauss(mu=S_2p[j], sigma=unc_s2p[j]))
 				Energy_test.append(Energy[j])
 				XS_test.append(XS[j])
-				Sp_test.append(S_p[j])
-				Sn_test.append(S_n[j])
-				BEA_test.append(BEA[j])
+
+				if math.isnan(S_p[j]):
+					Sp_test.append(S_p[j])
+				else:
+					Sp_test.append(random.gauss(mu=S_p[j], sigma=unc_sp[j]))
+
+				if math.isnan(S_n[j]):
+					Sn_test.append(S_n[j])
+				else:
+					Sn_test.append(random.gauss(mu=S_n[j], sigma=unc_sn[j]))
+
+				BEA_test.append(random.gauss(mu=BEA[j], sigma=unc_ba[j]))
 				# Pairing_test.append(Pairing[j])
 				Sn_c_test.append(Sn_compound[j])
 				# gd_test.append(gamma_deformation[j])
@@ -225,7 +246,7 @@ def make_test(nuclides, df):
 				S2n_compound_test.append(S2n_compound[j])
 				S2p_compound_test.append(S2p_compound[j])
 
-				ME_test.append(ME[j])
+				ME_test.append(random.gauss(mu=ME[j], sigma=unc_me[j]))
 				# Z_even_test.append(Z_even[j])
 				# A_even_test.append(A_even[j])
 				# N_even_test.append(N_even[j])

@@ -35,9 +35,9 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[71,175]]
+target_nuclides = [[54,135]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 15
+n_evaluations = 5
 
 
 validation_set_size = 1
@@ -51,8 +51,7 @@ datapoint_matrix = []
 
 print('Data loaded...')
 
-X_test, y_test = make_test(nuclides=target_nuclides, df=ENDFBVIII)
-print('Test data generation complete...')
+
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i + 1}/{n_evaluations}")
@@ -66,6 +65,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 
 	time1 = time.time()
+	X_test, y_test = make_test(nuclides=target_nuclides, df=ENDFBVIII)
+	print('Test data generation complete...')
+
 	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
 										validation_nuclides=target_nuclides, exclusions=exc)
 	print("Training...")
