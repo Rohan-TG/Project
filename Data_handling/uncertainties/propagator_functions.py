@@ -572,7 +572,7 @@ def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 			if math.isnan(Sep_2p[idx]):
 				S2p_train.append(Sep_2p[idx])
 			else:
-				S2p_train.append(random.gauss(mu=S2p_train[idx], sigma=unc_s2p[idx]))
+				S2p_train.append(random.gauss(mu=Sep_2p[idx], sigma=unc_s2p[idx]))
 			Energy_train.append(Energy[idx])
 
 			if math.isnan(dXS[idx]):
