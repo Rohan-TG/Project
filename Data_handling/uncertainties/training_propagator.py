@@ -40,7 +40,7 @@ exc = exclusion_func() # 10 sigma with handpicked additions
 
 target_nuclides = [[54,135]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 5
+n_evaluations = 2
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -139,12 +139,12 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
 
-		all_preds = []
-		all_libs = []
+	all_preds = []
+	all_libs = []
 
-	de, dee, pred_endfb_r2 = r2_standardiser(library_xs=XS_plotmatrix[0], predicted_xs=P_plotmatrix[0])
-	endfb_r2s.append(pred_endfb_r2)
-	for x, y in zip(XS_plotmatrix[0], P_plotmatrix[0]):
+	endfbgated, dee, pred_endfb_r2 = r2_standardiser(library_xs=XS_plotmatrix[0], predicted_xs=P_plotmatrix[0])
+	endfb_r2s.append(r2_score(endfbgated, dee))
+	for x, y in zip(dee, endfbgated):
 		all_libs.append(x)
 		all_preds.append(y)
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
@@ -158,7 +158,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
 		jendl_r2s.append(jendl_r2)
 
-		for x, y in zip(jendlxs, predjendlgated):
+		for x, y in zip(d2, predjendlgated):
 			all_libs.append(x)
 			all_preds.append(y)
 
@@ -166,11 +166,11 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	if target_nuclide in CENDL_nuclides:
 		cendlxs_interpolated = interpolation_function(cendlerg)
 
-		predcendlgated, d2, cendl_r2 = r2_standardiser(library_xs=cendlxs,
+		predcendlgated, truncatedcendl, cendl_r2 = r2_standardiser(library_xs=cendlxs,
 													   predicted_xs=cendlxs_interpolated)
 		cendl_r2s.append(cendl_r2)
 
-		for x, y in zip(cendlxs, predcendlgated):
+		for x, y in zip(truncatedcendl, predcendlgated):
 			all_libs.append(x)
 			all_preds.append(y)
 
@@ -181,15 +181,15 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		predjeffgated, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs,
 													 predicted_xs=jeffxs_interpolated)
 		jeff_r2s.append(jeff_r2)
-		for x, y in zip(jeffxs, predjeffgated):
+		for x, y in zip(d2, predjeffgated):
 			all_libs.append(x)
 			all_preds.append(y)
 
 
 	tendlxs_interpolated = interpolation_function(tendlerg)
-	predtendlgated, d2, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=tendlxs_interpolated)
+	predtendlgated, truncatedtendl, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=tendlxs_interpolated)
 	tendl_r2s.append(tendlr2)
-	for x, y in zip(tendlxs, predtendlgated):
+	for x, y in zip(truncatedtendl, predtendlgated):
 		all_libs.append(x)
 		all_preds.append(y)
 
