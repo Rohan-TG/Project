@@ -34,7 +34,7 @@ al = range_setter(la=30, ua=215, df=df)
 
 n_evaluations = 5
 datapoint_matrix = []
-target_nuclide = [40,88]
+target_nuclide = [40,86]
 
 
 JEFF33 = pd.read_csv('JEFF33_all_features.csv')
@@ -117,7 +117,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL32)
 		pred_cendl = model.predict(cendl_test)
 
-		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl,
+		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl,
 																		   library_xs=cendl_xs)
 
 		pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
@@ -132,7 +132,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_jendl = model.predict(jendl_test)
 
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl,
+		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl,
 																		   library_xs=jendl_xs)
 
 		for x, y in zip(pred_jendl_gated, truncated_jendl):
@@ -146,7 +146,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_jeff = model.predict(jeff_test)
 
 		pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
+		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -158,7 +158,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl,
+		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl,
 																		   library_xs=tendl_xs)
 		for x, y in zip(pred_tendl_gated, truncated_tendl):
 			all_libs.append(y)
