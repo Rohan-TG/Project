@@ -36,9 +36,9 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[40,87]]
+target_nuclides = [[63,163]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 20
+n_evaluations = 10
 
 
 validation_set_size = 1
@@ -192,7 +192,8 @@ d3,d4, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=datapoint_mean
 print(f"R2 w.r.t. TENDL-2021: {tendlr2}")
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
-plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
+if target_nuclide in ENDFB_nuclides:
+	plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 plt.plot(tendlerg, tendlxs, label = 'TENDL-2021', color='dimgrey')
 if target_nuclide in JEFF_nuclides:
 	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
