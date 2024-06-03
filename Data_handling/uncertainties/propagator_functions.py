@@ -465,8 +465,8 @@ def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 	unc_sp = df['unc_sp']
 	unc_ba = df['unc_ba']
 	unc_radius = df['unc_r']
-	unc_s2p = df['S2p_unc']
-	unc_s2n = df['S2n_unc']
+	unc_s2p = df['S2P_U']
+	unc_s2n = df['S2N_U']
 	half_life_seconds_uncertainty = df['unc_hls']
 	# AM = df['AM']
 
@@ -564,8 +564,15 @@ def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
 			Z_train.append(Z[idx])
 			A_train.append(A[idx])
-			S2n_train.append(Sep_2n[idx])
-			S2p_train.append(Sep_2p[idx])
+			if math.isnan(Sep_2n[idx]):
+				S2n_train.append(Sep_2n[idx])
+			else:
+				S2n_train.append(random.gauss(mu=Sep_2n[idx], sigma=unc_s2n[idx]))
+
+			if math.isnan(Sep_2p[idx]):
+				S2p_train.append(Sep_2p[idx])
+			else:
+				S2p_train.append(random.gauss(mu=S2p_train[idx], sigma=unc_s2p[idx]))
 			Energy_train.append(Energy[idx])
 
 			if math.isnan(dXS[idx]):
