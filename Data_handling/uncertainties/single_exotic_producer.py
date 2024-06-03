@@ -13,10 +13,10 @@ import tqdm
 import random
 runtime = time.time()
 
-ENDFBVIII = pd.read_csv('ENDFBVIII_MT16_100keV_data.csv')
+ENDFBVIII = pd.read_csv('ENDFBVIII_100keV_all_uncertainties.csv')
 ENDFB_nuclides = range_setter(df=ENDFBVIII, la=30, ua= 210)
 
-TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
+TENDL = pd.read_csv("TENDL_2021_MT_16_all_u.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
