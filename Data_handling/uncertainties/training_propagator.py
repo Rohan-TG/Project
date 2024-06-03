@@ -189,6 +189,38 @@ jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[target_nuclide])
 tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
 endfberg, endfbxs = General_plotter(df=ENDFBVIII, nuclides=[target_nuclide])
 
+interpolation_function = scipy.interpolate.interp1d(E_plot, y=datapoint_means,
+															  fill_value='extrapolate')
+
+if target_nuclide in JENDL_nuclides:
+
+
+	jendlxs_interpolated = interpolation_function(jendlerg)
+
+	d1, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
+
+	print(f"R2 w.r.t. JENDL-5: {jendl_r2}")
+
+if target_nuclide in CENDL_nuclides:
+
+	cendlxs_interpolated = interpolation_function(cendlerg)
+
+	d1, d2, cendl_r2 = r2_standardiser(library_xs=cendlxs, predicted_xs=cendlxs_interpolated)
+
+	print(f"R2 w.r.t. CENDL-3.2: {cendl_r2}")
+
+if target_nuclide in JEFF_nuclides:
+
+	jeffxs_interpolated = interpolation_function(jefferg)
+
+	d1, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs, predicted_xs=jeffxs_interpolated)
+
+	print(f"R2 w.r.t. JEFF-3.3: {jeff_r2}")
+
+tendlxs_interpolated = interpolation_function(tendlerg)
+d1,d2, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=tendlxs_interpolated)
+print(f"R2 w.r.t. TENDL-2021: {tendlr2}")
+
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
