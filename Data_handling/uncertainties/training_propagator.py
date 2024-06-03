@@ -32,12 +32,21 @@ CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
+
+
+
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
 target_nuclides = [[54,135]]
 target_nuclide = target_nuclides[0]
 n_evaluations = 5
+
+jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
+cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
+jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[target_nuclide])
+tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
+endfberg, endfbxs = General_plotter(df=ENDFBVIII, nuclides=[target_nuclide])
 
 
 validation_set_size = 1
@@ -51,7 +60,11 @@ datapoint_matrix = []
 
 print('Data loaded...')
 
-
+endfb_r2s = []
+cendl_r2s = []
+tendl_r2s = []
+jeff_r2s = []
+jendl_r2s = []
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i + 1}/{n_evaluations}")
@@ -129,17 +142,62 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		all_preds = []
 		all_libs = []
 
-	pred_endfb_r2 = r2_score(y_true=XS_plotmatrix[0], y_pred=P_plotmatrix[0])
+	de, dee, pred_endfb_r2 = r2_standardiser(library_xs=XS_plotmatrix[0], predicted_xs=P_plotmatrix[0])
+	endfb_r2s.append(pred_endfb_r2)
 	for x, y in zip(XS_plotmatrix[0], P_plotmatrix[0]):
-		all_libs.append(y)
-		all_preds.append(x)
+		all_libs.append(x)
+		all_preds.append(y)
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
 
+	interpolation_function = scipy.interpolate.interp1d(endfberg, y=P_plotmatrix[0],
+														fill_value='extrapolate')
 
-consensus = r2_score(all_libs, all_preds)
+	if target_nuclide in JENDL_nuclides:
+		jendlxs_interpolated = interpolation_function(jendlerg)
 
-runs_r2_array.append(consensus)
-print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
+		predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
+		jendl_r2s.append(jendl_r2)
+
+		for x, y in zip(jendlxs, predjendlgated):
+			all_libs.append(x)
+			all_preds.append(y)
+
+
+	if target_nuclide in CENDL_nuclides:
+		cendlxs_interpolated = interpolation_function(cendlerg)
+
+		predcendlgated, d2, cendl_r2 = r2_standardiser(library_xs=cendlxs,
+													   predicted_xs=cendlxs_interpolated)
+		cendl_r2s.append(cendl_r2)
+
+		for x, y in zip(cendlxs, predcendlgated):
+			all_libs.append(x)
+			all_preds.append(y)
+
+
+	if target_nuclide in JEFF_nuclides:
+		jeffxs_interpolated = interpolation_function(jefferg)
+
+		predjeffgated, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs,
+													 predicted_xs=jeffxs_interpolated)
+		jeff_r2s.append(jeff_r2)
+		for x, y in zip(jeffxs, predjeffgated):
+			all_libs.append(x)
+			all_preds.append(y)
+
+
+	tendlxs_interpolated = interpolation_function(tendlerg)
+	predtendlgated, d2, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=tendlxs_interpolated)
+	tendl_r2s.append(tendlr2)
+	for x, y in zip(tendlxs, predtendlgated):
+		all_libs.append(x)
+		all_preds.append(y)
+
+
+	consensus = r2_score(all_libs, all_preds)
+
+	runs_r2_array.append(consensus)
+
 
 exp_true_xs = [y for y in y_test]
 exp_pred_xs = [xs for xs in predictions]
@@ -152,7 +210,7 @@ E_plot = []
 for i, row in enumerate(X_test):
 	if [row[0], row[1]] == target_nuclide:
 		XS_plot.append(y_test[i])
-		E_plot.append(row[4]) # Energy values are in 5th row
+		E_plot.append(row[4]) # Energy values are in 5th column
 
 
 datapoint_means = []
@@ -181,56 +239,26 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 	lower_bound.append(point-low)
 	upper_bound.append(point+up)
 
-# print(f"Turning points: {dsigma_dE(XS=datapoint_means)}")
 
-jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
-cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
-jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[target_nuclide])
-tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
-endfberg, endfbxs = General_plotter(df=ENDFBVIII, nuclides=[target_nuclide])
-
-interpolation_function = scipy.interpolate.interp1d(E_plot, y=datapoint_means,
-															  fill_value='extrapolate')
-
-if target_nuclide in JENDL_nuclides:
+print()
+print(f"TENDL-2021: {np.mean(tendl_r2s)} +- {np.std(tendl_r2s)}")
 
 
-	jendlxs_interpolated = interpolation_function(jendlerg)
-
-	d1, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
-
-	print(f"R2 w.r.t. JENDL-5: {jendl_r2}")
-
-if target_nuclide in CENDL_nuclides:
-
-	cendlxs_interpolated = interpolation_function(cendlerg)
-
-	d1, d2, cendl_r2 = r2_standardiser(library_xs=cendlxs, predicted_xs=cendlxs_interpolated)
-
-	print(f"R2 w.r.t. CENDL-3.2: {cendl_r2}")
-
-if target_nuclide in JEFF_nuclides:
-
-	jeffxs_interpolated = interpolation_function(jefferg)
-
-	d1, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs, predicted_xs=jeffxs_interpolated)
-
-	print(f"R2 w.r.t. JEFF-3.3: {jeff_r2}")
-
-tendlxs_interpolated = interpolation_function(tendlerg)
-d1,d2, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=tendlxs_interpolated)
-print(f"R2 w.r.t. TENDL-2021: {tendlr2}")
 
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
+print(f"ENDF/B-VIII: {np.mean(endfb_r2s)} +- {np.std(endfb_r2s)}")
 plt.plot(tendlerg, tendlxs, label = 'TENDL-2021', color='dimgrey')
 if target_nuclide in JEFF_nuclides:
 	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
+	print(f"JEFF-3.3: {np.mean(jeff_r2s)} +- {np.std(jeff_r2s)}")
 if target_nuclide in JENDL_nuclides:
 	plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
+	print(f"JENDL-5: {np.mean(jendl_r2s)} +- {np.std(jendl_r2s)}")
 if target_nuclide in CENDL_nuclides:
 	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
+	print(f"CENDL-3.2: {np.mean(cendl_r2s)} +- {np.std(cendl_r2s)}")
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 plt.grid()
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}")
@@ -241,7 +269,7 @@ plt.show()
 
 final_runtime = time.time() - runtime
 
-
+print(f"Consensus R2: {np.mean(runs_r2_array):0.5f} +/- {np.std(runs_r2_array)}")
 
 print()
 print(f"Runtime: {timedelta(seconds=final_runtime)}")
