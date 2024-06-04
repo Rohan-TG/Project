@@ -40,7 +40,7 @@ exc = exclusion_func() # 10 sigma with handpicked additions
 
 target_nuclides = [[54,135]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 2
+n_evaluations = 10
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -70,11 +70,11 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i + 1}/{n_evaluations}")
 	model_seed = random.randint(a=1, b=10000)
 
-	while len(target_nuclides) < validation_set_size:  # up to 25 nuclides
-		choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
-		if choice not in target_nuclides:
-			target_nuclides.append(choice)
-	print("Test nuclide selection complete")
+	# while len(target_nuclides) < validation_set_size:  # up to 25 nuclides
+	# 	choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
+	# 	if choice not in target_nuclides:
+	# 		target_nuclides.append(choice)
+	# print("Test nuclide selection complete")
 
 
 	time1 = time.time()
@@ -246,6 +246,7 @@ print(f"TENDL-2021: {np.mean(tendl_r2s)} +- {np.std(tendl_r2s)}")
 
 
 #2sigma CF
+plt.figure()
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 print(f"ENDF/B-VIII: {np.mean(endfb_r2s)} +- {np.std(endfb_r2s)}")
