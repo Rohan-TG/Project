@@ -92,8 +92,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 							max_leaves=0,
 							seed=model_seed,)
 
-	model.fit(X_train, y_train, verbose=True,
-			  eval_set=[(X_test, y_test)])
+	model.fit(X_train, y_train)
 	print("Training complete")
 
 	predictions_ReLU = []
