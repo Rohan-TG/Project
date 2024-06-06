@@ -40,7 +40,7 @@ exc = exclusion_func() # 10 sigma with handpicked additions
 
 target_nuclides = [[54,135]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 10
+n_evaluations = 100
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -245,6 +245,32 @@ print(f"TENDL-2021: {np.mean(tendl_r2s)} +- {np.std(tendl_r2s)}")
 
 
 
+
+Bayhurst_energies = [8.51000E+00, 9.27000E+00, 1.41000E+01, 1.49200E+01, 1.71900E+01, 1.81900E+01, 1.99400E+01, 2.12100E+01, 2.19400E+01, 2.33200E+01, 2.44600E+01]
+Bayhurst_XS = [3.23000E-01, 8.16000E-01, 1.78900E+00, 1.66800E+00, 1.33700E+00, 9.65000E-01, 5.74000E-01, 3.03000E-01, 3.42000E-01, 2.87000E-01, 2.46000E-01]
+Bayhurst_delta_XS = [1.50000E-02, 3.50000E-02, 7.60000E-02, 7.10000E-02, 0.00000E+00, 0.00000E+00, 0.00000E+00, 1.42410E-02, 1.57320E-02, 1.42065E-02, 1.32102E-02]
+# Reference:
+
+
+
+
+
+Veeser_energies = [1.47000E+01, 1.60000E+01, 1.70000E+01, 1.80000E+01, 1.90000E+01, 2.00000E+01, 2.10000E+01, 2.20000E+01, 2.30000E+01, 2.40000E+01]
+Veeser_XS = [1.98400E+00, 1.99200E+00, 1.78700E+00, 1.32000E+00, 9.57000E-01, 7.70000E-01, 7.22000E-01, 5.35000E-01, 5.62000E-01, 5.24000E-01]
+Veeser_delta_XS = [1.15000E-01, 1.05000E-01, 8.50000E-02, 8.80000E-02, 6.40000E-02, 1.04000E-01, 6.80000E-02, 7.90000E-02, 9.80000E-02, 1.54000E-01]
+
+
+Dzysiuk_energies =[1.35000E+01, 1.42000E+01, 1.46000E+01]
+Dzysiuk_XS =[1.89600E+00, 1.47300E+00, 1.86000E+00]
+Dzysiuk_delta_XS = [2.50000E-01, 2.19000E-01, 1.90000E-01]
+
+
+
+Frehaut_E = [8.44000E+00, 8.94000E+00, 9.44000E+00, 9.93000E+00, 1.04200E+01, 1.09100E+01, 1.14000E+01, 1.18800E+01, 1.23600E+01, 1.28500E+01, 1.33300E+01, 1.38000E+01, 1.42800E+01, 1.47600E+01]
+Frehaut_XS = [2.03000E-01, 6.59000E-01, 1.16200E+00, 1.40400E+00, 1.56000E+00, 1.72000E+00, 1.69600E+00, 1.81300E+00, 1.91900E+00, 1.99600E+00, 2.03600E+00, 2.07600E+00, 2.11300E+00, 2.09400E+00]
+Frehaut_XS_d = [3.30000E-02, 5.00000E-02, 1.12000E-01, 8.60000E-02, 9.50000E-02, 1.24000E-01, 1.07000E-01, 1.10000E-01, 1.21000E-01, 1.25000E-01, 1.26000E-01, 1.23000E-01, 1.55000E-01, 1.57000E-01]
+
+
 #2sigma CF
 plt.figure()
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
@@ -261,6 +287,14 @@ if target_nuclide in CENDL_nuclides:
 	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
 	print(f"CENDL-3.2: {np.mean(cendl_r2s)} +- {np.std(cendl_r2s)}")
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
+# plt.errorbar(Bayhurst_energies, Bayhurst_XS, Bayhurst_delta_XS, fmt='x',
+# 			 capsize=2, label='Bayhurst, 1975', color='indigo')
+# plt.errorbar(Frehaut_E, Frehaut_XS, Frehaut_XS_d, fmt='x',
+# 			 capsize=2, label='Frehaut, 1980', color='violet')
+# plt.errorbar(Dzysiuk_energies, Dzysiuk_XS, Dzysiuk_delta_XS, fmt='x',
+# 			 capsize=2, label='Dzysiuk, 2010', color='blue')
+# plt.errorbar(Veeser_energies, Veeser_XS, Veeser_delta_XS, fmt='x',
+# 			 capsize=2, label='Veeser, 1977', color='orangered')
 plt.grid()
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}")
 plt.xlabel("Energy / MeV")
