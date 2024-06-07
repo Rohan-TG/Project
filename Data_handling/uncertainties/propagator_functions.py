@@ -596,7 +596,7 @@ def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 			Energy_train.append(Energy[idx])
 
 			if math.isnan(dXS[idx]):
-				XS_train.append(XS[idx])
+				XS_train.append(random.gauss(mu=XS[idx], sigma=0.1*XS[idx]))
 			else:
 				sampled_xs = random.gauss(mu=XS[idx],
 										  sigma=dXS[idx])
