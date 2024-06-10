@@ -39,8 +39,8 @@ exc = exclusion_func() # 10 sigma with handpicked additions
 
 
 
-target_nuclide = [50,118]
-n_evaluations = 100
+target_nuclide = [82,208]
+n_evaluations = 2
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -266,11 +266,14 @@ Dzysiuk_XS =[1.89600E+00, 1.47300E+00, 1.86000E+00]
 Dzysiuk_delta_XS = [2.50000E-01, 2.19000E-01, 1.90000E-01]
 
 
+#
+# Frehaut_E = [8.44000E+00, 8.94000E+00, 9.44000E+00, 9.93000E+00, 1.04200E+01, 1.09100E+01, 1.14000E+01, 1.18800E+01, 1.23600E+01, 1.28500E+01, 1.33300E+01, 1.38000E+01, 1.42800E+01, 1.47600E+01]
+# Frehaut_XS = [2.03000E-01, 6.59000E-01, 1.16200E+00, 1.40400E+00, 1.56000E+00, 1.72000E+00, 1.69600E+00, 1.81300E+00, 1.91900E+00, 1.99600E+00, 2.03600E+00, 2.07600E+00, 2.11300E+00, 2.09400E+00]
+# Frehaut_XS_d = [3.30000E-02, 5.00000E-02, 1.12000E-01, 8.60000E-02, 9.50000E-02, 1.24000E-01, 1.07000E-01, 1.10000E-01, 1.21000E-01, 1.25000E-01, 1.26000E-01, 1.23000E-01, 1.55000E-01, 1.57000E-01]
 
-Frehaut_E = [8.44000E+00, 8.94000E+00, 9.44000E+00, 9.93000E+00, 1.04200E+01, 1.09100E+01, 1.14000E+01, 1.18800E+01, 1.23600E+01, 1.28500E+01, 1.33300E+01, 1.38000E+01, 1.42800E+01, 1.47600E+01]
-Frehaut_XS = [2.03000E-01, 6.59000E-01, 1.16200E+00, 1.40400E+00, 1.56000E+00, 1.72000E+00, 1.69600E+00, 1.81300E+00, 1.91900E+00, 1.99600E+00, 2.03600E+00, 2.07600E+00, 2.11300E+00, 2.09400E+00]
-Frehaut_XS_d = [3.30000E-02, 5.00000E-02, 1.12000E-01, 8.60000E-02, 9.50000E-02, 1.24000E-01, 1.07000E-01, 1.10000E-01, 1.21000E-01, 1.25000E-01, 1.26000E-01, 1.23000E-01, 1.55000E-01, 1.57000E-01]
-
+Frehaut_E = [7.93000E+00, 8.18000E+00, 8.44000E+00, 8.94000E+00, 9.44000E+00, 9.93000E+00, 1.04200E+01, 1.09100E+01, 1.14000E+01, 1.18800E+01, 1.23600E+01, 1.28500E+01, 1.33300E+01, 1.38000E+01, 1.42800E+01, 1.47600E+01]
+Frehaut_XS = [8.30000E-02, 1.71000E-01, 3.14000E-01, 6.05000E-01, 9.41000E-01, 1.18400E+00, 1.43400E+00, 1.58000E+00, 1.71400E+00, 1.80400E+00, 1.81700E+00, 1.92100E+00, 1.97200E+00, 2.07100E+00, 2.01000E+00, 2.02800E+00]
+Frehaut_XS_d = [1.00000E-02, 1.40000E-02, 2.20000E-02, 4.00000E-02, 6.10000E-02, 7.50000E-02, 8.30000E-02, 9.70000E-02, 9.80000E-02, 1.05000E-01, 1.37000E-01, 1.43000E-01, 1.50000E-01, 1.60000E-01, 1.58000E-01, 1.63000E-01]
 
 #2sigma CF
 plt.figure()
@@ -290,8 +293,8 @@ if target_nuclide in CENDL_nuclides:
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 # plt.errorbar(Bayhurst_energies, Bayhurst_XS, Bayhurst_delta_XS, fmt='x',
 # 			 capsize=2, label='Bayhurst, 1975', color='indigo')
-# plt.errorbar(Frehaut_E, Frehaut_XS, Frehaut_XS_d, fmt='x',
-# 			 capsize=2, label='Frehaut, 1980', color='violet')
+plt.errorbar(Frehaut_E, Frehaut_XS, Frehaut_XS_d, fmt='x',
+			 capsize=2, label='Frehaut, 1980', color='violet')
 # plt.errorbar(Dzysiuk_energies, Dzysiuk_XS, Dzysiuk_delta_XS, fmt='x',
 # 			 capsize=2, label='Dzysiuk, 2010', color='blue')
 # plt.errorbar(Veeser_energies, Veeser_XS, Veeser_delta_XS, fmt='x',
