@@ -38,8 +38,8 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[50,118]]
-target_nuclide = target_nuclides[0]
+
+target_nuclide = [50,118]
 n_evaluations = 100
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
@@ -49,7 +49,7 @@ tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
 endfberg, endfbxs = General_plotter(df=ENDFBVIII, nuclides=[target_nuclide])
 
 
-validation_set_size = 1
+validation_set_size = 20
 
 
 
@@ -69,12 +69,13 @@ jendl_r2s = []
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i + 1}/{n_evaluations}")
 	model_seed = random.randint(a=1, b=10000)
+	target_nuclides = [target_nuclide]
 
-	# while len(target_nuclides) < validation_set_size:  # up to 25 nuclides
-	# 	choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
-	# 	if choice not in target_nuclides:
-	# 		target_nuclides.append(choice)
-	# print("Test nuclide selection complete")
+	while len(target_nuclides) < validation_set_size:  # up to 25 nuclides
+		choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
+		if choice not in target_nuclides:
+			target_nuclides.append(choice)
+	print("Test nuclide selection complete")
 
 
 	time1 = time.time()
