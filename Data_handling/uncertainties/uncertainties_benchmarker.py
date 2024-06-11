@@ -12,16 +12,17 @@ import time
 import tqdm
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
-from matrix_functions import range_setter, r2_standardiser, exclusion_func
+from matrix_functions import range_setter, r2_standardiser, exclusion_func, General_plotter
 from propagator_functions import make_train_sampler, make_test
+import scipy.interpolate
 
-df = pd.read_csv("ENDFBVIII_MT16_100keV_data.csv")
+df = pd.read_csv("ENDFBVIII_100keV_all_uncertainties.csv")
 
 
 df.index = range(len(df))
 al = range_setter(df=df, la=30, ua=210)
 
-TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
+TENDL = pd.read_csv("TENDL_2021_MT_16_all_u.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
@@ -41,10 +42,11 @@ n_run_tally95 = []
 
 exc = exclusion_func()
 
-validation_set_size = 20  # number of nuclides hidden from training
+validation_set_size = 220  # number of nuclides hidden from training
 
-num_runs = 10
+num_runs = 2
 run_r2 = []
+run_mse = []
 
 nuclide_r2 = []
 
@@ -52,6 +54,12 @@ for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
 	every_true_value_list = []
+
+	endfb_r2s = []
+	cendl_r2s = []
+	tendl_r2s = []
+	jeff_r2s = []
+	jendl_r2s = []
 
 	outliers = 0
 	outliers90 = 0
@@ -73,8 +81,6 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	at_least_one_agreeing_90 = 0
 
-	every_prediction_list = []
-	every_true_value_list = []
 	potential_outliers = []
 
 	benchmark_total_library_evaluations = []
@@ -132,13 +138,19 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		print("Training complete")
 
-		predictions = model.predict(X_test) # XS predictions
 		predictions_ReLU = []
-		for pred in predictions:
-			if pred >= 0.003:
-				predictions_ReLU.append(pred)
-			else:
-				predictions_ReLU.append(0)
+
+		for n in validation_nuclides:
+
+			temp_x, temp_y = make_test(nuclides=[n], df=df)
+			initial_predictions = model.predict(temp_x)
+
+			for p in initial_predictions:
+				if p >= (0.02 * max(initial_predictions)):
+					predictions_ReLU.append(p)
+				else:
+					predictions_ReLU.append(0.0)
+
 
 		predictions = predictions_ReLU
 
@@ -163,14 +175,23 @@ for q in tqdm.tqdm(range(num_runs)):
 		# plot predictions against data
 		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 			nuc = validation_nuclides[i]
+
+			jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[nuc])
+			cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[nuc])
+			jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[nuc])
+			tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[nuc])
+			endfberg, endfbxs = General_plotter(df=df, nuclides=[nuc])
+
+			interpolation_function = scipy.interpolate.interp1d(endfberg, y=pred_xs,
+																fill_value='extrapolate')
 			current_nuclide = nuc
 
 			evaluation_r2s = []
 
 			truncated_library_r2 = []
 
-			all_library_evaluations = []
-			all_predictions = []
+			nuc_all_library_evaluations = []
+			nuc_all_predictions = []
 
 
 
@@ -180,8 +201,8 @@ for q in tqdm.tqdm(range(num_runs)):
 			except:
 				print(current_nuclide)
 			for libxs, p in zip(truncated_endfb, pred_endfb_gated):
-				all_library_evaluations.append(libxs)
-				all_predictions.append(p)
+				nuc_all_library_evaluations.append(libxs)
+				nuc_all_predictions.append(p)
 
 				benchmark_total_library_evaluations.append(libxs)
 				benchmark_total_predictions.append(p)
@@ -190,57 +211,47 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			if current_nuclide in CENDL_nuclides:
 
-				cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
-				pred_cendl = model.predict(cendl_test)
+				cendlxs_interpolated = interpolation_function(cendlerg)
 
-				pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
-				pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl, library_xs=cendl_xs)
-				for libxs, p in zip(truncated_cendl, pred_cendl_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+				predcendlgated, truncatedcendl, cendl_r2 = r2_standardiser(library_xs=cendlxs,
+																		   predicted_xs=cendlxs_interpolated)
+				cendl_r2s.append(cendl_r2)
 
+				for x, y in zip(truncatedcendl, predcendlgated):
+					benchmark_total_library_evaluations.append(x)
+					benchmark_total_predictions.append(y)
 
-					benchmark_total_library_evaluations.append(libxs)
-					benchmark_total_predictions.append(p)
+					nuc_all_library_evaluations.append(x)
+					nuc_all_predictions.append(y)
 
-				evaluation_r2s.append(pred_cendl_r2)
-				truncated_library_r2.append(pred_cendl_r2)
 				# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
 			if current_nuclide in JENDL_nuclides:
-				jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL)
-				pred_jendl = model.predict(jendl_test)
+				jendlxs_interpolated = interpolation_function(jendlerg)
 
-				pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-				pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl, library_xs=jendl_xs)
-				for libxs, p in zip(truncated_jendl, pred_jendl_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+				predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
+				jendl_r2s.append(jendl_r2)
 
-					benchmark_total_library_evaluations.append(libxs)
-					benchmark_total_predictions.append(p)
-				evaluation_r2s.append(pred_jendl_r2)
-				truncated_library_r2.append(pred_jendl_r2)
+				for x, y in zip(d2, predjendlgated):
+					benchmark_total_library_evaluations.append(x)
+					benchmark_total_predictions.append(y)
+
+					nuc_all_library_evaluations.append(x)
+					nuc_all_predictions.append(y)
 				# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 			if current_nuclide in JEFF_nuclides:
-				jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF)
+				jeffxs_interpolated = interpolation_function(jefferg)
 
-				pred_jeff = model.predict(jeff_test)
+				predjeffgated, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs,
+															 predicted_xs=jeffxs_interpolated)
+				jeff_r2s.append(jeff_r2)
+				for x, y in zip(d2, predjeffgated):
+					benchmark_total_library_evaluations.append(x)
+					benchmark_total_predictions.append(y)
 
-				pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-				pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
-				for libxs, p in zip(truncated_jeff, pred_jeff_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
-
-
-					benchmark_total_library_evaluations.append(libxs)
-					benchmark_total_predictions.append(p)
-
-				evaluation_r2s.append(pred_jeff_r2)
-				truncated_library_r2.append(pred_jeff_r2)
-				# print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
+					nuc_all_library_evaluations.append(x)
+					nuc_all_predictions.append(y)
 
 			if current_nuclide in TENDL_nuclides:
 				tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL)
@@ -249,8 +260,8 @@ for q in tqdm.tqdm(range(num_runs)):
 				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl, library_xs=tendl_xs)
 				for libxs, p in zip(truncated_tendl, pred_tendl_gated):
-					all_library_evaluations.append(libxs)
-					all_predictions.append(p)
+					nuc_all_library_evaluations.append(x)
+					nuc_all_predictions.append(y)
 
 
 					benchmark_total_library_evaluations.append(libxs)
@@ -261,7 +272,7 @@ for q in tqdm.tqdm(range(num_runs)):
 				# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}"
 
 
-			r2 = r2_score(all_library_evaluations,all_predictions) # various comparisons
+			r2 = r2_score(nuc_all_library_evaluations,nuc_all_predictions) # consensus for the current nuclide
 
 			# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
 
@@ -383,9 +394,11 @@ for q in tqdm.tqdm(range(num_runs)):
 
 # all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
 	benchmark_r2 = r2_score(y_true=benchmark_total_library_evaluations, y_pred= benchmark_total_predictions)
+	benchmark_mse = mean_squared_error(y_true=benchmark_total_library_evaluations, y_pred=benchmark_total_predictions)
 # print(f"MSE: {all_libraries_mse:0.5f}")
 	print(f"R2: {benchmark_r2:0.5f}")
-	run_r2.append(benchmark_r2)
+	run_r2.append(benchmark_r2) # stores all the benchmark r2s
+	run_mse.append(benchmark_mse)
 
 	print(f"Bad nuclides: {bad_nuclides}")
 
@@ -432,6 +445,8 @@ plt.show()
 # plt.title("Performance - Z")
 # plt.grid()
 # plt.show()
+
+print(f'MSE: {np.mean(run_mse):0.3f} +/- {np.std(run_mse):0.3f}')
 
 # plt.figure()
 # plt.hist(x=log_plots, bins=50)
