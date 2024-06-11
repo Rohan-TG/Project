@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 from matrix_functions import range_setter, r2_standardiser, General_plotter, exclusion_func
-from propagator_functions import make_train_sampler, make_test
+from propagator_functions import make_train_sampler, make_test_sampler
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 import periodictable
@@ -79,7 +79,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 
 	time1 = time.time()
-	X_test, y_test = make_test(nuclides=target_nuclides, df=ENDFBVIII)
+	X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=ENDFBVIII)
 	print('Test data generation complete...')
 
 	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
@@ -99,7 +99,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	predictions_ReLU = []
 
 	for n in target_nuclides:
-		tempx, tempy = make_test(nuclides=[n], df=ENDFBVIII)
+		tempx, tempy = make_test_sampler(nuclides=[n], df=ENDFBVIII)
 		initial_predictions = model.predict(tempx)
 
 		for p in initial_predictions:

@@ -13,7 +13,7 @@ import tqdm
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
 from matrix_functions import range_setter, r2_standardiser, exclusion_func, General_plotter
-from propagator_functions import make_train_sampler, make_test
+from propagator_functions import make_train_sampler, make_test_sampler
 import scipy.interpolate
 
 df = pd.read_csv("ENDFBVIII_100keV_all_uncertainties.csv")
@@ -42,9 +42,9 @@ n_run_tally95 = []
 
 exc = exclusion_func()
 
-validation_set_size = 220  # number of nuclides hidden from training
+validation_set_size = 5  # number of nuclides hidden from training
 
-num_runs = 2
+num_runs = 10
 run_r2 = []
 run_mse = []
 
@@ -111,7 +111,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		X_train, y_train = make_train_sampler(df=df, validation_nuclides=validation_nuclides, la=30, ua=210, exclusions=exc) # make training matrix
 
-		X_test, y_test = make_test(validation_nuclides, df=df)
+		X_test, y_test = make_test_sampler(validation_nuclides, df=df)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
@@ -142,7 +142,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		for n in validation_nuclides:
 
-			temp_x, temp_y = make_test(nuclides=[n], df=df)
+			temp_x, temp_y = make_test_sampler(nuclides=[n], df=df)
 			initial_predictions = model.predict(temp_x)
 
 			for p in initial_predictions:
@@ -253,22 +253,16 @@ for q in tqdm.tqdm(range(num_runs)):
 					nuc_all_library_evaluations.append(x)
 					nuc_all_predictions.append(y)
 
-			if current_nuclide in TENDL_nuclides:
-				tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL)
-				pred_tendl = model.predict(tendl_test)
+			tendlxs_interpolated = interpolation_function(tendlerg)
+			predtendlgated, truncatedtendl, tendlr2 = r2_standardiser(library_xs=tendlxs,
+																	  predicted_xs=tendlxs_interpolated)
+			tendl_r2s.append(tendlr2)
+			for x, y in zip(truncatedtendl, predtendlgated):
+				nuc_all_library_evaluations.append(x)
+				nuc_all_predictions.append(y)
 
-				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl, library_xs=tendl_xs)
-				for libxs, p in zip(truncated_tendl, pred_tendl_gated):
-					nuc_all_library_evaluations.append(x)
-					nuc_all_predictions.append(y)
-
-
-					benchmark_total_library_evaluations.append(libxs)
-					benchmark_total_predictions.append(p)
-
-				evaluation_r2s.append(pred_tendl_r2)
-				truncated_library_r2.append(pred_tendl_r2)
+				benchmark_total_library_evaluations.append(x)
+				benchmark_total_predictions.append(y)
 				# print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}"
 
 
@@ -446,7 +440,7 @@ plt.show()
 # plt.grid()
 # plt.show()
 
-print(f'MSE: {np.mean(run_mse):0.3f} +/- {np.std(run_mse):0.3f}')
+print(f'MSE: {np.mean(run_mse):0.6f} +/- {np.std(run_mse):0.6f}')
 
 # plt.figure()
 # plt.hist(x=log_plots, bins=50)

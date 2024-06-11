@@ -4,7 +4,7 @@ import math
 
 
 
-def make_test(nuclides, df):
+def make_test_sampler(nuclides, df):
 	"""
 	nuclides: array of (1x2) arrays containing Z of nuclide at index 0, and A at index 1.
 	df: dataframe used for validation data
