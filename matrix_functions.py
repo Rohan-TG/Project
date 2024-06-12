@@ -203,7 +203,7 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	validation_nuclides are explicitly omitted from the training matrix
 	Returns X: X values matrix in shape (nsamples, nfeatures)"""
 
-	print("Forming training matrix...")
+	# print("Forming training matrix...")
 
 	# MT = df['MT']
 	ME = df['ME']
