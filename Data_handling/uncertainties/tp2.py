@@ -39,8 +39,8 @@ exc = exclusion_func() # 10 sigma with handpicked additions
 
 
 
-target_nuclide = [82,208]
-n_evaluations = 2
+target_nuclide = [53,135]
+n_evaluations = 4
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -293,8 +293,8 @@ if target_nuclide in CENDL_nuclides:
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 # plt.errorbar(Bayhurst_energies, Bayhurst_XS, Bayhurst_delta_XS, fmt='x',
 # 			 capsize=2, label='Bayhurst, 1975', color='indigo')
-plt.errorbar(Frehaut_E, Frehaut_XS, Frehaut_XS_d, fmt='x',
-			 capsize=2, label='Frehaut, 1980', color='violet')
+# plt.errorbar(Frehaut_E, Frehaut_XS, Frehaut_XS_d, fmt='x',
+# 			 capsize=2, label='Frehaut, 1980', color='violet')
 # plt.errorbar(Dzysiuk_energies, Dzysiuk_XS, Dzysiuk_delta_XS, fmt='x',
 # 			 capsize=2, label='Dzysiuk, 2010', color='blue')
 # plt.errorbar(Veeser_energies, Veeser_XS, Veeser_delta_XS, fmt='x',
