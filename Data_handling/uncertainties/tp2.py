@@ -324,6 +324,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	final_runtime = time.time() - runtime
 
 	print(f"Consensus R2: {np.mean(runs_r2_array):0.5f} +/- {np.std(runs_r2_array)}")
+	print(f"Consensus RMSE: {np.mean(runs_rmse_array):0.3f} +/- {np.std(runs_rmse_array):0.3f}")
 
 	print()
 	print(f"Runtime: {timedelta(seconds=final_runtime)}")
