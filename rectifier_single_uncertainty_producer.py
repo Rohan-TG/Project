@@ -52,9 +52,9 @@ CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 exc = exclusion_func()
 
-n_evaluations = 8
+n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [28,60]
+target_nuclide = [24,50]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -63,13 +63,14 @@ tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
 endfberg, endfbxs = General_plotter(df=df, nuclides=[target_nuclide])
 
 runs_r2_array = []
+runs_rmse_array = []
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i+1}/{n_evaluations}")
 
-
+	time.sleep(2)
 	validation_nuclides = [target_nuclide]
-	validation_set_size = 1  # number of nuclides hidden from training
+	validation_set_size = 20  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
 		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
@@ -85,11 +86,11 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	X_test, y_test = make_test(validation_nuclides, df=df_test,)
 
-	print("Data prep done")
+	print("Training...")
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
-	model = xg.XGBRegressor(n_estimators=900,
+	model = xg.XGBRegressor(n_estimators=950,
 							learning_rate=0.008,
 							max_depth=8,
 							subsample=0.18236,
@@ -100,13 +101,19 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	print("Training complete")
 
-	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
-	for pred in predictions:
-		if pred >= 0.003:
-			predictions_ReLU.append(pred)
-		else:
-			predictions_ReLU.append(0)
+
+	for n in validation_nuclides:
+
+		temp_x, temp_y = make_test(nuclides=[n], df=df)
+		initial_predictions = model.predict(temp_x)
+
+		for p in initial_predictions:
+			if p >= (0.02 * max(initial_predictions)):
+				predictions_ReLU.append(p)
+			else:
+				predictions_ReLU.append(0.0)
+
 
 	predictions = predictions_ReLU
 
@@ -159,7 +166,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		for x, y in zip(pred_cendl, cendl_xs):
 			all_libs.append(y)
 			all_preds.append(x)
-		print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f}")
+		print(f"Predictions - CENDL-3.2 R2: {pred_cendl_r2:0.5f}")
 
 	if target_nuclide in JENDL_nuclides:
 
@@ -174,14 +181,14 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	if target_nuclide in JEFF_nuclides:
 		jeff_test, jeff_xs = make_test(nuclides=[target_nuclide], df=JEFF33)
-
+		time.sleep(1)
 		pred_jeff = model.predict(jeff_test)
 
 		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
-		print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f}")
+		print(f"Predictions - JEFF-3.3 R2: {pred_jeff_r2:0.5f}")
 
 	if target_nuclide in TENDL_nuclides:
 
@@ -193,10 +200,12 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		for x, y in zip(pred_tendl, tendl_xs):
 			all_libs.append(y)
 			all_preds.append(x)
-		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f}")
+		print(f"Predictions - TENDL-2021 R2: {pred_tendl_r2:0.5f}")
 	consensus = r2_score(all_libs, all_preds)
-
+	consensus_rmse = mean_squared_error(all_libs, all_preds) ** 0.5
 	runs_r2_array.append(consensus)
+	runs_rmse_array.append(consensus_rmse)
+
 	print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
 
 	exp_true_xs = [y for y in y_test]
@@ -312,7 +321,7 @@ sigma_r2 = np.std(runs_r2_array)
 interval_low_r2, interval_high_r2 = scipy.stats.t.interval(0.95, loc=mu_r2, scale=sigma_r2, df=(len(runs_r2_array) - 1))
 print(f"\nConsensus: {mu_r2:0.5f} +/- {interval_high_r2-interval_low_r2:0.5f}")
 
-
+print(f'Consensus RMSE: {np.mean(consensus_rmse):0.3f} +/- {np.std(consensus_rmse):0.3f}')
 
 final_runtime = time.time() - runtime
 
