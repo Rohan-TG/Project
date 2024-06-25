@@ -49,6 +49,7 @@ run_r2 = []
 run_mse = []
 
 nuclide_r2 = []
+nuclide_thresholds = []
 
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
@@ -176,6 +177,12 @@ for q in tqdm.tqdm(range(num_runs)):
 		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 			nuc = validation_nuclides[i]
 
+			threshold_values = []
+			for xs, energy in zip(pred_xs):
+				if xs > 0:
+					predicted_threshold = xs
+					break
+
 			jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[nuc])
 			cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[nuc])
 			jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[nuc])
@@ -198,6 +205,7 @@ for q in tqdm.tqdm(range(num_runs)):
 			try:
 				pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(predicted_xs=pred_xs,
 																				   library_xs=true_xs)
+				threshold_values.append(truncated_endfb[0])
 			except:
 				print(current_nuclide)
 			for libxs, p in zip(truncated_endfb, pred_endfb_gated):
@@ -215,6 +223,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				predcendlgated, truncatedcendl, cendl_r2 = r2_standardiser(library_xs=cendlxs,
 																		   predicted_xs=cendlxs_interpolated)
+				threshold_values.append(truncatedcendl[0])
 				cendl_r2s.append(cendl_r2)
 
 				for x, y in zip(truncatedcendl, predcendlgated):
@@ -231,6 +240,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
 				jendl_r2s.append(jendl_r2)
+				threshold_values.append(d2[0])
 
 				for x, y in zip(d2, predjendlgated):
 					benchmark_total_library_evaluations.append(x)
@@ -245,6 +255,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				predjeffgated, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs,
 															 predicted_xs=jeffxs_interpolated)
+
+				threshold_values.append(d2[0])
 				jeff_r2s.append(jeff_r2)
 				for x, y in zip(d2, predjeffgated):
 					benchmark_total_library_evaluations.append(x)
@@ -256,6 +268,7 @@ for q in tqdm.tqdm(range(num_runs)):
 			tendlxs_interpolated = interpolation_function(tendlerg)
 			predtendlgated, truncatedtendl, tendlr2 = r2_standardiser(library_xs=tendlxs,
 																	  predicted_xs=tendlxs_interpolated)
+			threshold_values.append(truncatedtendl[0])
 			tendl_r2s.append(tendlr2)
 			for x, y in zip(truncatedtendl, predtendlgated):
 				nuc_all_library_evaluations.append(x)
@@ -269,6 +282,14 @@ for q in tqdm.tqdm(range(num_runs)):
 			r2 = r2_score(nuc_all_library_evaluations,nuc_all_predictions) # consensus for the current nuclide
 
 			# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
+
+			thr_diffs = []
+			for lib_thr in threshold_values:
+				difference = lib_thr - predicted_threshold
+				thr_diffs.append(difference)
+			mean_difference = np.mean(thr_diffs)
+
+			nuclide_thresholds.append([nuc[0], nuc[1], mean_difference])
 
 			if r2 > 0.97 and endfb_r2 < 0.9:
 				outliers += 1
@@ -446,3 +467,23 @@ print(f'MSE: {np.mean(run_mse):0.6f} +/- {np.std(run_mse):0.6f}')
 # plt.hist(x=log_plots, bins=50)
 # plt.grid()
 # plt.show()
+
+
+plots = []
+for nucleus in al:
+	iteration_difference = []
+
+	for set in threshold_values:
+		if [set[0], set[1]] == nucleus:
+			iteration_difference.append(set[-1])
+
+	mean_n_difference = np.mean(iteration_difference)
+
+	plots.append(nucleus[0], nucleus[1], mean_n_difference)
+
+plt.figure()
+plt.plot(plots[1], plots[-1], 'x')
+plt.grid()
+plt.ylabel('$\Delta$Threshold / MeV')
+plt.xlabel('A')
+plt.show()
