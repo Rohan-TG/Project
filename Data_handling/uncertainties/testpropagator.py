@@ -3,8 +3,8 @@ import xgboost as xg
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-from matrix_functions import range_setter, r2_standardiser, General_plotter
-from propagator_functions import training_sampler, make_test
+from matrix_functions import range_setter, r2_standardiser, General_plotter, make_train, exclusion_func
+from propagator_functions import fia_test_propagator
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 import periodictable
@@ -13,10 +13,10 @@ import tqdm
 
 runtime = time.time()
 
-ENDFBVIII = pd.read_csv('ENDFBVIII_MT16_uncertainties.csv')
+ENDFBVIII = pd.read_csv('ENDFBVIII_100keV_all_uncertainties.csv')
 ENDFB_nuclides = range_setter(df=ENDFBVIII, la=0, ua= 210)
 
-TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
+TENDL = pd.read_csv("TENDL_2021_MT_16_all_u.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
 
@@ -32,17 +32,7 @@ CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
-exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
-	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
-	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
-	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
-	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
-	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
-	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
-	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
-	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
-	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38]] # 10 sigma with handpicked additions
+exc = exclusion_func()# 10 sigma with handpicked additions
 
 target_nuclides = [[71,175]]
 target_nuclide = target_nuclides[0]
@@ -52,38 +42,44 @@ runs_r2_array = []
 
 datapoint_matrix = []
 
-X_train, y_train = training_sampler(df=ENDFBVIII, LA=30, UA=210, sampled_uncertainties= ['unc_sn'],
-									target_nuclides=target_nuclides, exclusions=exc)
-print("Training matrix formed")
+X_train, y_train = make_train(df=ENDFBVIII, exclusions=exc, validation_nuclides=target_nuclides,
+							  la=30, ua=210)
+print("Data matrix formed, training...")
 
-model = xg.XGBRegressor(n_estimators=900,  # define regressor
+model = xg.XGBRegressor(n_estimators=950,  # define regressor
 						learning_rate=0.008,
 						max_depth=8,
 						subsample=0.18236,
 						max_leaves=0,
 						seed=42, )
 
+
+time1 = time.time()
 model.fit(X_train, y_train)
-print("Training complete")
+print(f"Training completed in {time.time() - time1:0.1f} s.")
 
 for i in tqdm.tqdm(range(n_evaluations)):
-	print(f"\nRun {i + 1}/{n_evaluations}")
 
-	time1 = time.time()
+	endfb_r2s = []
+	cendl_r2s = []
+	tendl_r2s = []
+	jeff_r2s = []
+	jendl_r2s = []
 
 
-	X_test, y_test = make_test(nuclides=target_nuclides, df=ENDFBVIII)
 
-	print('Test data generation complete')
+
+	X_test, y_test = fia_test_propagator(nuclides=target_nuclides, df=ENDFBVIII)
+
 
 
 	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
-	for pred in predictions:
-		if pred >= 0.003:
-			predictions_ReLU.append(pred)
+	for p in predictions:
+		if p > (0.02 * max(predictions)):
+			predictions_ReLU.append(p)
 		else:
-			predictions_ReLU.append(0)
+			predictions_ReLU.append(0.0)
 
 	predictions = predictions_ReLU
 
@@ -124,62 +120,61 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	for x, y in zip(XS_plotmatrix[0], P_plotmatrix[0]):
 		all_libs.append(y)
 		all_preds.append(x)
-	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
 
-	if target_nuclide in CENDL_nuclides:
+	jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
+	cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
+	jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[target_nuclide])
+	tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
+	endfberg, endfbxs = General_plotter(df=ENDFBVIII, nuclides=[target_nuclide])
 
-		cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL)
-		pred_cendl = model.predict(cendl_test)
-
-		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
-		for x, y in zip(pred_cendl, cendl_xs):
-			all_libs.append(y)
-			all_preds.append(x)
-		print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f}")
+	interpolation_function = scipy.interpolate.interp1d(endfberg, y=P_plotmatrix[0],
+														fill_value='extrapolate')
 
 	if target_nuclide in JENDL_nuclides:
+		jendlxs_interpolated = interpolation_function(jendlerg)
 
-		jendl_test, jendl_xs = make_test(nuclides=[target_nuclide], df=JENDL)
-		pred_jendl = model.predict(jendl_test)
+		predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
+		jendl_r2s.append(jendl_r2)
 
-		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
-		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
-		for x, y in zip(pred_jendl, jendl_xs):
-			all_libs.append(y)
-			all_preds.append(x)
+		for x, y in zip(d2, predjendlgated):
+			all_libs.append(x)
+			all_preds.append(y)
+
+	if target_nuclide in CENDL_nuclides:
+		cendlxs_interpolated = interpolation_function(cendlerg)
+
+		predcendlgated, truncatedcendl, cendl_r2 = r2_standardiser(library_xs=cendlxs,
+																   predicted_xs=cendlxs_interpolated)
+		cendl_r2s.append(cendl_r2)
+
+		for x, y in zip(truncatedcendl, predcendlgated):
+			all_libs.append(x)
+			all_preds.append(y)
 
 	if target_nuclide in JEFF_nuclides:
-		jeff_test, jeff_xs = make_test(nuclides=[target_nuclide], df=JEFF)
+		jeffxs_interpolated = interpolation_function(jefferg)
 
-		pred_jeff = model.predict(jeff_test)
+		predjeffgated, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs,
+													 predicted_xs=jeffxs_interpolated)
+		jeff_r2s.append(jeff_r2)
+		for x, y in zip(d2, predjeffgated):
+			all_libs.append(x)
+			all_preds.append(y)
 
-		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff,
-																		library_xs=jeff_xs)
-		for x, y in zip(pred_jeff_gated, truncated_jeff):
-			all_libs.append(y)
-			all_preds.append(x)
-		print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f}")
+	tendlxs_interpolated = interpolation_function(tendlerg)
+	predtendlgated, truncatedtendl, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=tendlxs_interpolated)
+	tendl_r2s.append(tendlr2)
 
-	if target_nuclide in TENDL_nuclides:
-
-		tendl_test, tendl_xs = make_test(nuclides=[target_nuclide], df=TENDL)
-		pred_tendl = model.predict(tendl_test)
-
-		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
-		for x, y in zip(pred_tendl, tendl_xs):
-			all_libs.append(y)
-			all_preds.append(x)
-		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f}")
+	for x, y in zip(truncatedtendl, predtendlgated):
+		all_libs.append(x)
+		all_preds.append(y)
 	consensus = r2_score(all_libs, all_preds)
 
 	runs_r2_array.append(consensus)
-	print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
 
 	exp_true_xs = [y for y in y_test]
 	exp_pred_xs = [xs for xs in predictions]
 
-	print(f'completed in {time.time() - time1:0.1f} s')
 
 XS_plot = []
 E_plot = []
