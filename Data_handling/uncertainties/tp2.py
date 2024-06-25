@@ -259,38 +259,44 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	print()
 	print(f"TENDL-2021: {np.mean(tendl_r2s)} +- {np.std(tendl_r2s)}")
 
+	junhuaergs = [13.5, 14.1, 14.8]
+	junhuaxs = [1.773, 1.772, 1.802]
+	junhuadxs = [0.195, 0.218, 0.211]
 
+	filaergs = [13.56, 13.74, 13.96, 14.19, 14.42, 14.61, 14.78]
+	filaxs = [1.467, 1.524, 1.526, 1.505, 1.443, 1.544, 1.464]
+	filadxs = [0.0680688, 0.0722376, 0.0650076, 0.074046, 0.0656565, 0.0600616, 0.056364]
 
-
-	Bayhurst_energies = [8.51000E+00, 9.27000E+00, 1.41000E+01, 1.49200E+01, 1.71900E+01, 1.81900E+01, 1.99400E+01, 2.12100E+01, 2.19400E+01, 2.33200E+01, 2.44600E+01]
-	Bayhurst_XS = [3.23000E-01, 8.16000E-01, 1.78900E+00, 1.66800E+00, 1.33700E+00, 9.65000E-01, 5.74000E-01, 3.03000E-01, 3.42000E-01, 2.87000E-01, 2.46000E-01]
-	Bayhurst_delta_XS = [1.50000E-02, 3.50000E-02, 7.60000E-02, 7.10000E-02, 0.00000E+00, 0.00000E+00, 0.00000E+00, 1.42410E-02, 1.57320E-02, 1.42065E-02, 1.32102E-02]
-	# Reference:
-
-
-
-
-
-	Veeser_energies = [1.47000E+01, 1.60000E+01, 1.70000E+01, 1.80000E+01, 1.90000E+01, 2.00000E+01, 2.10000E+01, 2.20000E+01, 2.30000E+01, 2.40000E+01]
-	Veeser_XS = [1.98400E+00, 1.99200E+00, 1.78700E+00, 1.32000E+00, 9.57000E-01, 7.70000E-01, 7.22000E-01, 5.35000E-01, 5.62000E-01, 5.24000E-01]
-	Veeser_delta_XS = [1.15000E-01, 1.05000E-01, 8.50000E-02, 8.80000E-02, 6.40000E-02, 1.04000E-01, 6.80000E-02, 7.90000E-02, 9.80000E-02, 1.54000E-01]
-
-
-	Dzysiuk_energies =[1.35000E+01, 1.42000E+01, 1.46000E+01]
-	Dzysiuk_XS =[1.89600E+00, 1.47300E+00, 1.86000E+00]
-	Dzysiuk_delta_XS = [2.50000E-01, 2.19000E-01, 1.90000E-01]
-
-
-	#
-	# Frehaut_E = [8.44000E+00, 8.94000E+00, 9.44000E+00, 9.93000E+00, 1.04200E+01, 1.09100E+01, 1.14000E+01, 1.18800E+01, 1.23600E+01, 1.28500E+01, 1.33300E+01, 1.38000E+01, 1.42800E+01, 1.47600E+01]
-	# Frehaut_XS = [2.03000E-01, 6.59000E-01, 1.16200E+00, 1.40400E+00, 1.56000E+00, 1.72000E+00, 1.69600E+00, 1.81300E+00, 1.91900E+00, 1.99600E+00, 2.03600E+00, 2.07600E+00, 2.11300E+00, 2.09400E+00]
-	# Frehaut_XS_d = [3.30000E-02, 5.00000E-02, 1.12000E-01, 8.60000E-02, 9.50000E-02, 1.24000E-01, 1.07000E-01, 1.10000E-01, 1.21000E-01, 1.25000E-01, 1.26000E-01, 1.23000E-01, 1.55000E-01, 1.57000E-01]
-
-	Frehaut_E = [7.93000E+00, 8.18000E+00, 8.44000E+00, 8.94000E+00, 9.44000E+00, 9.93000E+00, 1.04200E+01, 1.09100E+01, 1.14000E+01, 1.18800E+01, 1.23600E+01, 1.28500E+01, 1.33300E+01, 1.38000E+01, 1.42800E+01, 1.47600E+01]
-	Frehaut_XS = [8.30000E-02, 1.71000E-01, 3.14000E-01, 6.05000E-01, 9.41000E-01, 1.18400E+00, 1.43400E+00, 1.58000E+00, 1.71400E+00, 1.80400E+00, 1.81700E+00, 1.92100E+00, 1.97200E+00, 2.07100E+00, 2.01000E+00, 2.02800E+00]
-	Frehaut_XS_d = [1.00000E-02, 1.40000E-02, 2.20000E-02, 4.00000E-02, 6.10000E-02, 7.50000E-02, 8.30000E-02, 9.70000E-02, 9.80000E-02, 1.05000E-01, 1.37000E-01, 1.43000E-01, 1.50000E-01, 1.60000E-01, 1.58000E-01, 1.63000E-01]
+	jun2erg = [13.5, 14.1, 14.8]
+	jun2xs = [1.464, 1.484, 1.533]
+	jun2dxs = [0.155, 0.182, 0.177]
 
 	#2sigma CF
+
+	qaime = [14.7]
+	qaimxs = [2.047]
+	qaimdxs = [0.171]
+
+	konnoe = [13.56, 13.98, 14.22, 14.66, 14.93]
+	konnoxs = [1.32, 1.29, 1.28, 1.30, 1.41]
+	konnodxs = [0.12, 0.12, 0.12, 0.13, 0.14]
+
+	lue = [14.77]
+	luxs = [1.56]
+	ludxs = [0.07]
+
+	ikedae = [14.10, 14.50, 14.80]
+	ikedaxs = [1.326, 1.533, 1.659]
+	ikedadxs = [0.075, 0.077, 0.083]
+
+	wange = [13.5, 13.7, 14.4, 14.6, 14.8]
+	wangxs = [1.469, 1.467, 1.502, 1.496, 1.596]
+	wangdxs = [0.117, 0.113, 0.118, 0.118, 0.118]
+
+	fila2e = [13.56, 13.74, 13.96, 14.19, 14.42, 14.61, 14.78]
+	fila2xs = [1.759, 1.811, 1.809, 1.791, 1.724, 1.819, 1.73]
+	fila2dxs = [0.079155, 0.0813139, 0.0750735, 0.0834606, 0.0755112, 0.0713048, 0.067643]
+
 	plt.figure()
 	plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 	plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
@@ -306,14 +312,22 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 		plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
 		print(f"CENDL-3.2: {np.mean(cendl_r2s)} +- {np.std(cendl_r2s)}")
 	plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
-	# plt.errorbar(Bayhurst_energies, Bayhurst_XS, Bayhurst_delta_XS, fmt='x',
-	# 			 capsize=2, label='Bayhurst, 1975', color='indigo')
-	# plt.errorbar(Frehaut_E, Frehaut_XS, Frehaut_XS_d, fmt='x',
-	# 			 capsize=2, label='Frehaut, 1980', color='violet')
-	# plt.errorbar(Dzysiuk_energies, Dzysiuk_XS, Dzysiuk_delta_XS, fmt='x',
-	# 			 capsize=2, label='Dzysiuk, 2010', color='blue')
-	# plt.errorbar(Veeser_energies, Veeser_XS, Veeser_delta_XS, fmt='x',
-	# 			 capsize=2, label='Veeser, 1977', color='orangered')
+	# plt.errorbar(junhuaergs, junhuaxs, junhuadxs, fmt='x',
+	# 			 capsize=2, label='Junhua, 2017', color='indigo')
+	# plt.errorbar(jun2erg, jun2xs, jun2dxs, fmt='x',
+	# 			 capsize=2, label='Junhua, 2017', color='violet')
+	# plt.errorbar(wange, wangxs, wangdxs, fmt='x',
+	# 			 capsize=2, label='Wang, 1992', color='blue')
+	# plt.errorbar(konnoe, konnoxs, konnodxs, fmt='x',
+	# 			 capsize=2, label='Konno, 1993', color='orangered')
+	# plt.errorbar(qaime, qaimxs, qaimdxs, fmt='x',
+	# 			 capsize=2, label='Qaim, 1974', color='lightgreen')
+	# plt.errorbar(lue, luxs, ludxs, fmt='x',
+	# 			 capsize=2, label='Lu, 1991', color='olive')
+	# plt.errorbar(filaergs, filaxs, filadxs, fmt='x',
+	# 			 capsize=2, label='Filatenkov, 2016', color='aqua')
+	# plt.errorbar(fila2e, fila2xs, fila2dxs, fmt='x',
+	# 			 capsize=2, label='Filatenkov, 2016', color='slategray')
 	plt.grid()
 	plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}")
 	plt.xlabel("Energy / MeV")
