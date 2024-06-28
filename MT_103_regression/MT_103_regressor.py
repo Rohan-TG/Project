@@ -27,7 +27,7 @@ TENDL_nuclides = range_setter(df=TENDL_2021)
 ENDFB_nuclides = range_setter(df=df, la=30, ua=210)
 print("Data loaded...")
 
-validation_nuclides = []
+validation_nuclides = [[68,167], [43,96]]
 validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size:
@@ -36,7 +36,7 @@ while len(validation_nuclides) < validation_set_size:
 		validation_nuclides.append(nuclide_choice)
 print("Test nuclides selected...")
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=210)
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210)
 X_test, y_test = make_test(validation_nuclides, df=df)
 
 model = xgboost.XGBRegressor(n_estimators = 600,
@@ -148,83 +148,86 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 			all_preds.append(x)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
+	print()
 	time.sleep(1.5)
+run = input('Run shap? (y): ')
+if run == 'y':
 
-explainer = shap.Explainer(model.predict, X_train,
-						   feature_names= ['Z',
-									 'A',
-									 # 'S2n',
-									 'S2p',
-									 'E',
-									 'Sp',
-									 'Sn',
-									 'BEA',
-									 'P',
-									 'Snc',
-									 'g-def',
-									 'N',
-									 'b-def',
-									 'Sn da',
-									 'Sp d',
-									 'S2n d',
-									 'Radius',
-									 'n_g_erg',
-									 'n_c_erg',
-									 'n_rms_r',
-									 'oct_def',
-									 'D_c',
-									 'BEA_d',
-									 'BEA_c',
-									 'Pair_d',
-									 'Par_d',
-									 'S2n_c',
-									 'S2p_c',
-									 'ME',
-									 'Z_even',
-									 'A_even',
-									 'N_even',
-									 'Shell',
-									 'Parity',
-									 'Spin',
-									 'Decay',
-									 'Deform',
-									 'p_g_e',
-									 'p_c_e',
-									 'p_rms_r',
-									 'rms_r',
-									 'Sp_c',
-									 'Sn_c',
-									 'Shell_c',
-									 'S2p-d',
-									 'Shell-d',
-									 'Spin-c',
-									 'Rad-c',
-									 'Def-c',
-									 'ME-c',
-									 'BEA-A-c',
-									 'Decay-d',
-									 'ME-d',
-									 'Rad-d',
-									 'Pair-c',
-									 'Par-c',
-									 'BEA-A-d',
-									 'Spin-d',
-									 'Def-d',
-									 # 'mag_p',
-									 # 'mag-n',
-									 # 'mag-d',
-									 # 'Nlow',
-									 # 'Ulow',
-									 # 'Ntop',
-									 # 'Utop',
-									 # 'ainf',
-									 # 'Asym',
-									 # 'Asym_c',
-									 # 'Asym_d',
-									 # 'AM'
-									 ]) # SHAP feature importance analysis
-shap_values = explainer(X_test)
+	explainer = shap.Explainer(model.predict, X_train,
+							   feature_names= ['Z',
+										 'A',
+										 # 'S2n',
+										 'S2p',
+										 'E',
+										 'Sp',
+										 'Sn',
+										 'BEA',
+										 'P',
+										 'Snc',
+										 'g-def',
+										 'N',
+										 'b-def',
+										 'Sn da',
+										 'Sp d',
+										 'S2n d',
+										 'Radius',
+										 'n_g_erg',
+										 'n_c_erg',
+										 'n_rms_r',
+										 'oct_def',
+										 'D_c',
+										 'BEA_d',
+										 'BEA_c',
+										 'Pair_d',
+										 'Par_d',
+										 'S2n_c',
+										 'S2p_c',
+										 'ME',
+										 'Z_even',
+										 'A_even',
+										 'N_even',
+										 'Shell',
+										 'Parity',
+										 'Spin',
+										 'Decay',
+										 'Deform',
+										 'p_g_e',
+										 'p_c_e',
+										 'p_rms_r',
+										 'rms_r',
+										 'Sp_c',
+										 'Sn_c',
+										 'Shell_c',
+										 'S2p-d',
+										 'Shell-d',
+										 'Spin-c',
+										 'Rad-c',
+										 'Def-c',
+										 'ME-c',
+										 'BEA-A-c',
+										 'Decay-d',
+										 'ME-d',
+										 'Rad-d',
+										 'Pair-c',
+										 'Par-c',
+										 'BEA-A-d',
+										 'Spin-d',
+										 'Def-d',
+										 # 'mag_p',
+										 # 'mag-n',
+										 # 'mag-d',
+										 # 'Nlow',
+										 # 'Ulow',
+										 # 'Ntop',
+										 # 'Utop',
+										 # 'ainf',
+										 # 'Asym',
+										 # 'Asym_c',
+										 # 'Asym_d',
+										 # 'AM'
+										 ]) # SHAP feature importance analysis
+	shap_values = explainer(X_test)
 
 
 
-shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
