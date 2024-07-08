@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 from matrix_functions import range_setter, r2_standardiser, General_plotter, exclusion_func
-from propagator_functions import make_train_sampler, make_test
+from propagator_functions import make_train_sampler, make_test_sampler
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 import periodictable
@@ -62,8 +62,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
 										validation_nuclides=target_nuclides, exclusions=exc)
 
-	X_test, y_test = make_test(nuclides=target_nuclides, df=TENDL)
-	print("Training...")
+	X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=TENDL)
 
 	model = xg.XGBRegressor(n_estimators=950,  # define regressor
 							learning_rate=0.008,
@@ -73,12 +72,11 @@ for i in tqdm.tqdm(range(n_evaluations)):
 							seed=42, )
 
 	model.fit(X_train, y_train)
-	print("Training complete")
 
 	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
 	for pred in predictions:
-		if pred > (0.02 * max(predictions)):
+		if pred > (0.05 * max(predictions)):
 			predictions_ReLU.append(pred)
 		else:
 			predictions_ReLU.append(0)
