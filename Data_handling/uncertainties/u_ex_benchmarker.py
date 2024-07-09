@@ -86,6 +86,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	benchmark_total_library_evaluations = []
 	benchmark_total_predictions = []
+	print('Forming data...')
 
 	X_train, y_train = make_train_sampler(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,
 										  exclusions=exc)  # make training matrix
@@ -108,7 +109,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	for n in validation_nuclides:
 
-		temp_x, temp_y = make_test_sampler(nuclides=[n], df=df)
+		temp_x, temp_y = make_test_sampler(nuclides=[n], df=TENDL)
 		initial_predictions = model.predict(temp_x)
 
 		for p in initial_predictions:
@@ -139,11 +140,16 @@ for q in tqdm.tqdm(range(num_runs)):
 	for i, (pred_xs, true_xs, erg) in tqdm.tqdm(enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)), total=len(P_plotmatrix)):
 		nuc = validation_nuclides[i]
 
+		evaluation_r2s = []
+
 		threshold_values = []
 		for xs, energy in zip(pred_xs, erg):
 			if xs > 0:
 				predicted_threshold = energy
 				break
+
+		nuc_all_library_evaluations = []
+		nuc_all_predictions = []
 
 		jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[nuc])
 		cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[nuc])
@@ -151,16 +157,26 @@ for q in tqdm.tqdm(range(num_runs)):
 		tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[nuc])
 		endfberg, endfbxs = General_plotter(df=df, nuclides=[nuc])
 
-		interpolation_function = scipy.interpolate.interp1d(endfberg, y=pred_xs,
+		interpolation_function = scipy.interpolate.interp1d(tendlerg, y=pred_xs,
 															fill_value='extrapolate')
+
+		pred_tendl_gated, truncated_tendl, tendl_r2 = r2_standardiser(library_xs=true_xs, predicted_xs=pred_xs)
+		for libxs, p in zip(truncated_tendl, pred_tendl_gated):
+			nuc_all_library_evaluations.append(libxs)
+			nuc_all_predictions.append(p)
+
+			benchmark_total_library_evaluations.append(libxs)
+			benchmark_total_predictions.append(p)
+
+		evaluation_r2s.append(tendl_r2)
+
 		current_nuclide = nuc
 
 		evaluation_r2s = []
 
 		truncated_library_r2 = []
 
-		nuc_all_library_evaluations = []
-		nuc_all_predictions = []
+
 
 		if current_nuclide in JENDL_nuclides:
 			jendlxs_interpolated = interpolation_function(jendlerg)
@@ -179,6 +195,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				nuc_all_library_evaluations.append(x)
 				nuc_all_predictions.append(y)
+
+			evaluation_r2s.append(jendl_r2)
 
 		r2 = r2_score(nuc_all_library_evaluations, nuc_all_predictions)
 
