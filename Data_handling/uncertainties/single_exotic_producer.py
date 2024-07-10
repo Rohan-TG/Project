@@ -43,7 +43,7 @@ n_evaluations = 10
 
 validation_set_size = 1
 
-
+gate = 0.05
 
 
 runs_r2_array = []
@@ -76,7 +76,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
 	for pred in predictions:
-		if pred > (0.05 * max(predictions)):
+		if pred > (gate * max(predictions)):
 			predictions_ReLU.append(pred)
 		else:
 			predictions_ReLU.append(0)
