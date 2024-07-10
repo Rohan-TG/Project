@@ -2,9 +2,10 @@ import random
 import numpy as np
 import math
 
+import tqdm
 
 
-def make_test_sampler(nuclides, df):
+def make_test_sampler(nuclides, df, use_tqdm=True):
 	"""
 	nuclides: array of (1x2) arrays containing Z of nuclide at index 0, and A at index 1.
 	df: dataframe used for validation data
@@ -189,8 +190,12 @@ def make_test_sampler(nuclides, df):
 	# cat_proton_test = []
 	# cat_neutron_test = []
 	# cat_double_test = []
+	if use_tqdm:
+		iterator = tqdm.tqdm(zip(ztest, atest), total=len(ztest))
+	else:
+		iterator = zip(ztest, atest)
 
-	for nuc_test_z, nuc_test_a in zip(ztest, atest):
+	for nuc_test_z, nuc_test_a in iterator:
 		for j, (zval, aval) in enumerate(zip(Z, A)):
 			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20:
 				Z_test.append(Z[j])
@@ -753,7 +758,7 @@ def fia_test_propagator(nuclides, df):
 
 
 
-def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
+def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260, use_tqdm=True):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -940,8 +945,12 @@ def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260):
 	# Asymmetry_compound_train = []
 
 	# AM_train = []
+	if use_tqdm:
+		z_iterator = tqdm.tqdm(enumerate(Z), total=len(Z))
+	else:
+		z_iterator = enumerate(Z)
 
-	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
+	for idx, unused in z_iterator:  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope data to training data
 		if [Z[idx], A[idx]] in exclusions:
