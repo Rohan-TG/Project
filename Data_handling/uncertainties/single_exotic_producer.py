@@ -36,9 +36,9 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[63,163]]
+target_nuclides = [[52,118]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 10
+n_evaluations = 100
 
 
 validation_set_size = 1
@@ -55,14 +55,16 @@ print('Data loaded...')
 
 print('Test data generation complete...')
 
+tendl_r2s = []
+
 for i in tqdm.tqdm(range(n_evaluations)):
 
 	model_seed = random.randint(a=1, b=10000)
 	time1 = time.time()
 	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
-										validation_nuclides=target_nuclides, exclusions=exc)
+										validation_nuclides=target_nuclides, exclusions=exc, use_tqdm=False)
 
-	X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=TENDL)
+	X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=TENDL, use_tqdm=False)
 
 	model = xg.XGBRegressor(n_estimators=950,  # define regressor
 							learning_rate=0.008,
@@ -116,11 +118,12 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		all_preds = []
 		all_libs = []
 
-	pred_endfb_r2 = r2_score(y_true=XS_plotmatrix[0], y_pred=P_plotmatrix[0])
+	pred_tendl_r2 = r2_score(y_true=XS_plotmatrix[0], y_pred=P_plotmatrix[0])
 	for x, y in zip(XS_plotmatrix[0], P_plotmatrix[0]):
 		all_libs.append(y)
 		all_preds.append(x)
-	print(f"Predictions - TENDL-2021 R2: {pred_endfb_r2:0.5f} ")
+	print(f"Predictions - TENDL-2021 R2: {pred_tendl_r2:0.5f} ")
+	tendl_r2s.append(pred_tendl_r2)
 
 
 consensus = r2_score(all_libs, all_preds)
