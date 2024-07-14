@@ -7,14 +7,14 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import r2_score
 
-def r2_standardiser(library_xs, predicted_xs):
+def r2_standardiser(library_xs, predicted_xs, gate=0.02):
 	"""Both arguments must be lists.
 	Function returns the r2 calculated from the threshold onwards"""
 	gated_predictions = []
 
 
 	for p in predicted_xs:
-		if p >= (0.02 * max(predicted_xs)):
+		if p >= (gate * max(predicted_xs)):
 			gated_predictions.append(p)
 		else:
 			gated_predictions.append(0.0)
