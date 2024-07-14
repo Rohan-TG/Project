@@ -36,22 +36,15 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[63,163]]
+target_nuclides = [[52,118]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 3
+n_evaluations = 100
 
 
 validation_set_size = 1
 
 gate = 0.05
 
-all_consensus_rmses = []
-
-jendl_r2s=[]
-jendl_rmses=[]
-
-tendl_rmses=[]
-tendl_r2s=[]
 
 runs_r2_array = []
 
@@ -62,22 +55,16 @@ print('Data loaded...')
 
 print('Test data generation complete...')
 
-
-tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
+tendl_r2s = []
 
 for i in tqdm.tqdm(range(n_evaluations)):
-
-	single_run_concat_libs = []
-	single_run_concat_preds = []
 
 	model_seed = random.randint(a=1, b=10000)
 	time1 = time.time()
 	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
-										validation_nuclides=target_nuclides, exclusions=exc,
-										use_tqdm=False)
+										validation_nuclides=target_nuclides, exclusions=exc, use_tqdm=False)
 
-	X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=TENDL,
-									   use_tqdm=False)
+	X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=TENDL, use_tqdm=False)
 
 	model = xg.XGBRegressor(n_estimators=950,  # define regressor
 							learning_rate=0.008,
@@ -128,48 +115,18 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
 
-	all_preds = []
-	all_libs = []
+		all_preds = []
+		all_libs = []
 
-	if target_nuclide in JENDL_nuclides:
-		jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
-		nativeerg, unused = General_plotter(df=TENDL, nuclides=[target_nuclide])
-		interpolation_function_loop = scipy.interpolate.interp1d(nativeerg, y=predictions, fill_value='extrapolate')
-
-		jendlxs_loop_interpolated = interpolation_function_loop(jendlerg)
-
-		d1, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_loop_interpolated)
-
-		jendl_loop_rmse = mean_squared_error(d1,d2) ** 0.5
-
-		jendl_r2s.append(jendl_r2)
-		jendl_rmses.append(jendl_loop_rmse)
-
-		for l, p in zip(jendlxs,jendlxs_loop_interpolated):
-			single_run_concat_libs.append(l)
-			single_run_concat_preds.append(p)
-
-			all_libs.append(l)
-			all_preds.append(p)
-
-	gated_predictions, gated_tendl, pred_tendl_r2 = r2_standardiser(library_xs=tendlxs, predicted_xs=predictions)
-	tendl_r2s.append(pred_tendl_r2)
-	rmsetendl = mean_squared_error(gated_predictions, gated_tendl) ** 0.5
-	tendl_rmses.append(rmsetendl)
-	for x, y in zip(gated_predictions, gated_tendl):
+	pred_tendl_r2 = r2_score(y_true=XS_plotmatrix[0], y_pred=P_plotmatrix[0])
+	for x, y in zip(XS_plotmatrix[0], P_plotmatrix[0]):
 		all_libs.append(y)
 		all_preds.append(x)
-
-		single_run_concat_libs.append(y)
-		single_run_concat_preds.append(x)
-
-	consensus_run_rmse = mean_squared_error(single_run_concat_libs, single_run_concat_preds) **0.5
-	all_consensus_rmses.append(consensus_run_rmse)
+	print(f"Predictions - TENDL-2021 R2: {pred_tendl_r2:0.5f} ")
+	tendl_r2s.append(pred_tendl_r2)
 
 
 consensus = r2_score(all_libs, all_preds)
-
-
 
 runs_r2_array.append(consensus)
 print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
@@ -216,9 +173,10 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 
 # print(f"Turning points: {dsigma_dE(XS=datapoint_means)}")
 
-
+jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
 jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[target_nuclide])
+tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
 endfberg, endfbxs = General_plotter(df=ENDFBVIII, nuclides=[target_nuclide])
 
 
@@ -242,7 +200,6 @@ if target_nuclide in JEFF_nuclides:
 	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
 if target_nuclide in JENDL_nuclides:
 	plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
-	print(f'JENDL-5 RMSE: {np.mean(jendl_rmses):0.3f} +/- {np.std(jendl_rmses):0.3f}')
 if target_nuclide in CENDL_nuclides:
 	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
@@ -255,9 +212,7 @@ plt.show()
 
 final_runtime = time.time() - runtime
 
-print(f'TENDL-2021 RMSE: {np.mean(tendl_rmses):0.3f} +/- {np.std(tendl_rmses):0.3f}')
 
-print(f'Consensus RMSE: {np.mean(all_consensus_rmses):0.3f} +/- {np.std(all_consensus_rmses):0.3f}')
 
 print()
 print(f"Runtime: {timedelta(seconds=final_runtime)}")
