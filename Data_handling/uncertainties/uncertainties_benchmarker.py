@@ -53,6 +53,12 @@ nuclide_thresholds = []
 
 min95_consensus = []
 
+
+nodd_peven = []
+nodd_podd = []
+neven_peven = []
+neven_podd = []
+
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
@@ -457,11 +463,17 @@ for q in tqdm.tqdm(range(num_runs)):
 agg_n_r2 = range_setter(df=df, la=30,ua=210)
 
 alist = []
+
+matrix95 = [[] for x in range(len(num_runs))]
 for match in agg_n_r2:
 	r2values = []
 	for set in nuclide_r2:
 		if [set[0], set[1]] == match:
 			r2values.append(set[2])
+
+	for j, run in enumerate(r2values):
+		matrix95[j].append(run)
+
 
 	alist.append([match[0], match[1], np.mean(r2values)])
 
@@ -469,10 +481,17 @@ A_plots = [i[1] for i in alist]
 print(np.mean(run_r2))
 print(np.std(run_r2))
 print()
-print(f'Min 95 consensus: {np.mean(min95_consensus)} $\pm$ {np.std(min95_consensus)}')
-# Z_plots = [i[0] for i in nuclide_r2]
-# mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
-# mse_plots = [i[-1] for i in nuclide_mse]
+
+
+
+
+
+
+
+
+
+
+
 
 log_plots = [abs(np.log(abs(i[-1]))) for i in alist]
 # log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
