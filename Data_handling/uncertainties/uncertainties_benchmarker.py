@@ -464,7 +464,7 @@ agg_n_r2 = range_setter(df=df, la=30,ua=210)
 
 alist = []
 
-matrix95 = [[] for x in range(len(num_runs))]
+matrix95 = [[] for x in range(num_runs)]
 for match in agg_n_r2:
 	r2values = []
 	for set in nuclide_r2:
