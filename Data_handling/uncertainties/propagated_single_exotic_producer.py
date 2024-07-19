@@ -41,6 +41,32 @@ target_nuclide = target_nuclides[0]
 n_evaluations = 2
 
 
+def diff(target):
+
+	match_element = []
+	for nuclide in ENDFB_nuclides:
+		if nuclide[0] == target[0]:
+			match_element.append(nuclide)
+	nuc_differences = []
+	for match_nuclide in match_element:
+		difference = match_nuclide[1] - target[1]
+		nuc_differences.append(difference)
+
+	if len(nuc_differences) > 0:
+		if nuc_differences[0] > 0:
+			min_difference = min(nuc_differences)
+		elif nuc_differences[0] < 0:
+			min_difference = max(nuc_differences)
+
+	return (-1 * min_difference)
+
+
+
+
+
+
+
+
 validation_set_size = 1
 
 gate = 0.05
@@ -255,6 +281,7 @@ plt.show()
 
 final_runtime = time.time() - runtime
 
+print(f"Mass difference: {diff(target_nuclide)}")
 print(f'TENDL-2021 RMSE: {np.mean(tendl_rmses):0.3f} +/- {np.std(tendl_rmses):0.3f}')
 if target_nuclide in JENDL_nuclides:
 	print(f'JENDL-5 RMSE: {np.mean(jendl_rmses):0.3f} +/- {np.std(jendl_rmses):0.3f}')
