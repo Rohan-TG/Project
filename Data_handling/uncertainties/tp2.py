@@ -86,18 +86,18 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 			choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 			if choice not in target_nuclides:
 				target_nuclides.append(choice)
-		print("Test nuclide selection complete")
+		# print("Test nuclide selection complete")
 
 
 		time1 = time.time()
 		X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=ENDFBVIII, use_tqdm=False)
-		print('Test data generation complete...')
+		# print('Test data generation complete...')
 
 		X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=208,
 											  validation_nuclides=target_nuclides,
 											  exclusions=exc,
 											  use_tqdm=False)
-		print("Training...")
+		# print("Training...")
 
 		model = xg.XGBRegressor(n_estimators=950,  # define regressor
 								learning_rate=0.008,
@@ -107,7 +107,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 								seed=model_seed,)
 
 		model.fit(X_train, y_train)
-		print("Training complete")
+		# print("Training complete")
 
 		predictions_ReLU = []
 
@@ -161,7 +161,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 		for x, y in zip(dee, endfbgated):
 			all_libs.append(x)
 			all_preds.append(y)
-		print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
+		# print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
 
 		interpolation_function = scipy.interpolate.interp1d(endfberg, y=P_plotmatrix[0],
 															fill_value='extrapolate')
