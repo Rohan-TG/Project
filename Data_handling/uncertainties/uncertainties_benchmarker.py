@@ -42,7 +42,7 @@ n_run_tally95 = []
 
 exc = exclusion_func()
 
-validation_set_size = 20  # number of nuclides hidden from training
+validation_set_size = 50  # number of nuclides hidden from training
 
 num_runs = 2
 run_r2 = []
@@ -298,7 +298,7 @@ for q in tqdm.tqdm(range(num_runs)):
 					threshold_values.append(o)
 					break
 			tendl_r2s.append(tendlr2)
-			evaluation_r2s.append(tendl_r2s)
+			evaluation_r2s.append(tendl_r2)
 			for x, y in zip(truncatedtendl, predtendlgated):
 				nuc_all_library_evaluations.append(x)
 				nuc_all_predictions.append(y)
