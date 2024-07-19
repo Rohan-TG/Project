@@ -14,7 +14,7 @@ import random
 runtime = time.time()
 
 ENDFBVIII = pd.read_csv('ENDFBVIII_100keV_all_uncertainties.csv')
-ENDFB_nuclides = range_setter(df=ENDFBVIII, la=0, ua= 210)
+ENDFB_nuclides = range_setter(df=ENDFBVIII, la=0, ua= 208)
 
 TENDL = pd.read_csv("TENDL_2021_MT_16_all_u.csv")
 TENDL.index = range(len(TENDL))
@@ -30,7 +30,7 @@ JENDL_nuclides = range_setter(df=JENDL, la=0, ua=210)
 
 CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
+CENDL_nuclides = range_setter(df=CENDL, la=0, ua=208)
 
 class Colours:
     BLUE = '\033[94m'
@@ -43,12 +43,12 @@ main_bar_format = '{l_bar}%s{bar}%s{r_bar}' % (Colours.BLUE, Colours.BLUE)
 
 exc = exclusion_func() # 10 sigma with handpicked additions
 
-nuclide_queue = [[24,50]]
+nuclide_queue = [[72,178]]
 
 for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_bar_format):
 
 	target_nuclide = q_num
-	n_evaluations = 2
+	n_evaluations = 100
 
 	jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 	cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -93,7 +93,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 		X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=ENDFBVIII)
 		print('Test data generation complete...')
 
-		X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
+		X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=208,
 											validation_nuclides=target_nuclides, exclusions=exc)
 		print("Training...")
 
