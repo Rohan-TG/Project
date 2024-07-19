@@ -75,6 +75,12 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	jeff_r2s = []
 	jendl_r2s = []
 
+	endfb_rmses = []
+	cendl_rmses = []
+	tendl_rmses = []
+	jeff_rmses = []
+	jendl_rmses = []
+
 	second_bar_format = '{l_bar}%s{bar}%s{r_bar}' % (Colours.RED, Colours.RED)
 
 	for i in tqdm.tqdm(range(n_evaluations), bar_format=second_bar_format):
@@ -169,10 +175,12 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 		if target_nuclide in JENDL_nuclides:
 			jendlxs_interpolated = interpolation_function(jendlerg)
 
-			predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
+			predjendlgated, gated_jendl_xs, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
 			jendl_r2s.append(jendl_r2)
+			jendl_rmse = mean_squared_error(predjendlgated, gated_jendl_xs) **0.5
+			jendl_rmses.append(jendl_rmse)
 
-			for x, y in zip(d2, predjendlgated):
+			for x, y in zip(gated_jendl_xs, predjendlgated):
 				all_libs.append(x)
 				all_preds.append(y)
 
@@ -183,6 +191,8 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 			predcendlgated, truncatedcendl, cendl_r2 = r2_standardiser(library_xs=cendlxs,
 														   predicted_xs=cendlxs_interpolated)
 			cendl_r2s.append(cendl_r2)
+			cendl_rmse = mean_squared_error(predcendlgated, truncatedcendl) ** 0.5
+			cendl_rmses.append(cendl_rmse)
 
 			for x, y in zip(truncatedcendl, predcendlgated):
 				all_libs.append(x)
@@ -195,6 +205,8 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 			predjeffgated, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs,
 														 predicted_xs=jeffxs_interpolated)
 			jeff_r2s.append(jeff_r2)
+			jeff_rmse = mean_squared_error(d2, predjeffgated) ** 0.5
+			jeff_rmses.append(jeff_rmse)
 			for x, y in zip(d2, predjeffgated):
 				all_libs.append(x)
 				all_preds.append(y)
@@ -203,6 +215,8 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 		tendlxs_interpolated = interpolation_function(tendlerg)
 		predtendlgated, truncatedtendl, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=tendlxs_interpolated)
 		tendl_r2s.append(tendlr2)
+		tendlrmse = mean_squared_error(truncatedtendl, predtendlgated)**0.5
+		tendl_rmses.append(tendlrmse)
 		for x, y in zip(truncatedtendl, predtendlgated):
 			all_libs.append(x)
 			all_preds.append(y)
@@ -259,7 +273,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 
 
 	print()
-	print(f"TENDL-2021: {np.mean(tendl_r2s)} +- {np.std(tendl_r2s)}")
+	print(f"TENDL-2021: {np.mean(tendl_r2s):0.3f} +- {np.std(tendl_r2s):0.3f}, RMSE {np.mean(tendl_rmses):0.3f} +- {np.std(tendl_rmses):0.3f}")
 
 	junhuaergs = [13.5, 14.1, 14.8]
 	junhuaxs = [1.773, 1.772, 1.802]
@@ -302,17 +316,18 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	plt.figure()
 	plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 	plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
-	print(f"ENDF/B-VIII: {np.mean(endfb_r2s)} +- {np.std(endfb_r2s)}")
+	print(f"ENDF/B-VIII: {np.mean(endfb_r2s)} +- {np.std(endfb_r2s)}, RMSE: {np.mean(endfb_rmses):0.3f} +- {np.std(endfb_rmses):0.3f}")
 	plt.plot(tendlerg, tendlxs, label = 'TENDL-2021', color='dimgrey')
 	if target_nuclide in JEFF_nuclides:
 		plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
-		print(f"JEFF-3.3: {np.mean(jeff_r2s)} +- {np.std(jeff_r2s)}")
+		print(f"JEFF-3.3: {np.mean(jeff_r2s):0.3f} +- {np.std(jeff_r2s):0.3f}")
+
 	if target_nuclide in JENDL_nuclides:
 		plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
-		print(f"JENDL-5: {np.mean(jendl_r2s)} +- {np.std(jendl_r2s)}")
+		print(f"JENDL-5: {np.mean(jendl_r2s):0.3f} +- {np.std(jendl_r2s):0.3f}, RMSE {np.mean(jendl_rmses):0.3f} +- {np.std(jendl_rmses):0.3f}")
 	if target_nuclide in CENDL_nuclides:
 		plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
-		print(f"CENDL-3.2: {np.mean(cendl_r2s)} +- {np.std(cendl_r2s)}")
+		print(f"CENDL-3.2: {np.mean(cendl_r2s):0.3f} +- {np.std(cendl_r2s):0.3f}, RMSE {np.mean(cendl_rmses):0.3f} +- {np.std(cendl_rmses):0.3f}")
 	plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 	# plt.errorbar(junhuaergs, junhuaxs, junhuadxs, fmt='x',
 	# 			 capsize=2, label='Junhua, 2017', color='indigo')
