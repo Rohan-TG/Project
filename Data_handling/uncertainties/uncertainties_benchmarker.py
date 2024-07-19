@@ -42,7 +42,7 @@ n_run_tally95 = []
 
 exc = exclusion_func()
 
-validation_set_size = 200  # number of nuclides hidden from training
+validation_set_size = 20  # number of nuclides hidden from training
 
 num_runs = 2
 run_r2 = []
@@ -72,7 +72,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	tally = 0
 
 
-	local_95 = 0
+
 
 	low_masses = []
 
@@ -95,6 +95,8 @@ for q in tqdm.tqdm(range(num_runs)):
 	low_mass_r2 = []
 	while len(nuclides_used) < len(al):
 
+		local_95 = 0
+
 		# print(f"{len(nuclides_used) // len(al)} Epochs left")
 
 		validation_nuclides = []  # list of nuclides used for validation
@@ -110,19 +112,20 @@ for q in tqdm.tqdm(range(num_runs)):
 				break
 
 
-		print("Test nuclide selection complete")
+		# print("Test nuclide selection complete")
 		print(f"{len(nuclides_used)}/{len(al)} selections")
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train_sampler(df=df, validation_nuclides=validation_nuclides, la=30, ua=208, exclusions=exc) # make training matrix
+		X_train, y_train = make_train_sampler(df=df, validation_nuclides=validation_nuclides, use_tqdm=False,
+											  la=30, ua=208, exclusions=exc) # make training matrix
 
-		X_test, y_test = make_test_sampler(validation_nuclides, df=df)
+		X_test, y_test = make_test_sampler(validation_nuclides, df=df, use_tqdm=False)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
 
-		print("Train/val matrices generated")
+		# print("Train/val matrices generated")
 
 		modelseed= random.randint(a=1, b=1000)
 		model = xg.XGBRegressor(n_estimators=950,
@@ -142,13 +145,13 @@ for q in tqdm.tqdm(range(num_runs)):
 		time1 = time.time()
 		model.fit(X_train, y_train)
 
-		print("Training complete")
+		# print("Training complete")
 
 		predictions_ReLU = []
 
 		for n in validation_nuclides:
 
-			temp_x, temp_y = make_test_sampler(nuclides=[n], df=df)
+			temp_x, temp_y = make_test_sampler(nuclides=[n], df=df, use_tqdm=False)
 			initial_predictions = model.predict(temp_x)
 
 			for p in initial_predictions:
@@ -389,7 +392,7 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
 		# print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
 		time_taken = time.time() - time1
-		print(f'completed in {time_taken:0.1f} s.\n')
+		# print(f'completed in {time_taken:0.1f} s.\n')
 
 
 	lownucs = range_setter(df=df, la=0, ua=60)
@@ -466,7 +469,7 @@ A_plots = [i[1] for i in alist]
 print(np.mean(run_r2))
 print(np.std(run_r2))
 print()
-print(f'Min 95 consensus: {np.mean(local_95)} $\pm$ {np.std(local_95)}')
+print(f'Min 95 consensus: {np.mean(min95_consensus)} $\pm$ {np.std(min95_consensus)}')
 # Z_plots = [i[0] for i in nuclide_r2]
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
 # mse_plots = [i[-1] for i in nuclide_mse]
