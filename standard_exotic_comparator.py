@@ -12,12 +12,12 @@ from matrix_functions import make_test, make_train, r2_standardiser, range_sette
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-al = range_setter(la=30, ua=210, df=df)
+al = range_setter(la=30, ua=208, df=df)
 
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=208)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
@@ -52,7 +52,7 @@ while len(validation_nuclides) < validation_set_size:
 print("Test nuclide selection complete")
 
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=208) # make training matrix
 
 X_test, y_test = make_test(validation_nuclides, df=TENDL)
 
