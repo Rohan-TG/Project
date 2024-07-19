@@ -36,9 +36,9 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[63,163]]
+target_nuclides = [[52,118]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 2
+n_evaluations = 5
 
 
 def diff(target):
@@ -86,7 +86,6 @@ datapoint_matrix = []
 print('Data loaded...')
 
 
-print('Test data generation complete...')
 
 
 tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
@@ -97,12 +96,13 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	single_run_concat_preds = []
 
 	model_seed = random.randint(a=1, b=10000)
-	time1 = time.time()
 	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
-										validation_nuclides=target_nuclides, exclusions=exc,
+										validation_nuclides=target_nuclides,
+										exclusions=exc,
 										use_tqdm=False)
 
-	X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=TENDL,
+	X_test, y_test = make_test_sampler(nuclides=target_nuclides,
+									   df=TENDL,
 									   use_tqdm=False)
 
 	model = xg.XGBRegressor(n_estimators=950,  # define regressor
@@ -203,7 +203,6 @@ print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
 exp_true_xs = [y for y in y_test]
 exp_pred_xs = [xs for xs in predictions]
 
-print(f'completed in {time.time() - time1:0.1f} s')
 
 XS_plot = []
 E_plot = []
