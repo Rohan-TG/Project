@@ -256,6 +256,8 @@ plt.show()
 final_runtime = time.time() - runtime
 
 print(f'TENDL-2021 RMSE: {np.mean(tendl_rmses):0.3f} +/- {np.std(tendl_rmses):0.3f}')
+if target_nuclide in JENDL_nuclides:
+	print(f'JENDL-5 RMSE: {np.mean(jendl_rmses):0.3f} +/- {np.std(jendl_rmses):0.3f}')
 
 print(f'Consensus RMSE: {np.mean(all_consensus_rmses):0.3f} +/- {np.std(all_consensus_rmses):0.3f}')
 
