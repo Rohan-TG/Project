@@ -42,9 +42,9 @@ n_run_tally95 = []
 
 exc = exclusion_func()
 
-validation_set_size = 50  # number of nuclides hidden from training
+validation_set_size = 20  # number of nuclides hidden from training
 
-num_runs = 2
+num_runs = 10
 run_r2 = []
 run_mse = []
 
@@ -60,6 +60,8 @@ neven_peven = []
 neven_podd = []
 
 atleast190 = []
+atleast193 = []
+atleast195 = []
 
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
@@ -94,6 +96,8 @@ for q in tqdm.tqdm(range(num_runs)):
 	bad_nuclides = []
 
 	at_least_one_agreeing_90 = 0
+	at_least_one_agreeing_93 = 0
+	at_least_one_agreeing_95 = 0
 
 	potential_outliers = []
 
@@ -347,6 +351,16 @@ for q in tqdm.tqdm(range(num_runs)):
 					at_least_one_agreeing_90 += 1
 					break
 
+			for z in evaluation_r2s:
+				if z >=0.93:
+					at_least_one_agreeing_93 += 1
+					break
+
+			for z in evaluation_r2s:
+				if z >= 0.95:
+					at_least_one_agreeing_95 += 1
+					break
+
 			l_temp = 0
 			for l in evaluation_r2s:
 				if l < 0.9:
@@ -413,6 +427,8 @@ for q in tqdm.tqdm(range(num_runs)):
 	print(f">= 97 consensus: {gewd_97}/{len(al)}")
 
 	atleast190.append(at_least_one_agreeing_90)
+	atleast193.append(at_least_one_agreeing_93)
+	atleast195.append(at_least_one_agreeing_95)
 
 	lncount = 0
 	lncount90 = 0
@@ -559,3 +575,5 @@ plt.show()
 
 
 print(f'At least one library r2 >=0.9: {np.mean(atleast190)} +- {np.std(atleast190)}')
+print(f'At least one library r2 >=0.93: {np.mean(atleast193)} +- {np.std(atleast193)}')
+print(f'At least one library r2 >=0.95: {np.mean(atleast195)} +- {np.std(atleast195)}')
