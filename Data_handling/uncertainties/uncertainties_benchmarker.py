@@ -42,14 +42,16 @@ n_run_tally95 = []
 
 exc = exclusion_func()
 
-validation_set_size = 20  # number of nuclides hidden from training
+validation_set_size = 200  # number of nuclides hidden from training
 
-num_runs = 10
+num_runs = 2
 run_r2 = []
 run_mse = []
 
 nuclide_r2 = []
 nuclide_thresholds = []
+
+min95_consensus = []
 
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
@@ -68,6 +70,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	outliers9090 = 0
 	outlier_tally = 0
 	tally = 0
+
+
+	local_95 = 0
 
 	low_masses = []
 
@@ -299,6 +304,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			r2 = r2_score(nuc_all_library_evaluations,nuc_all_predictions) # consensus for the current nuclide
 
+
+
 			# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
 
 			thr_diffs = []
@@ -367,6 +374,12 @@ for q in tqdm.tqdm(range(num_runs)):
 			# individual_r2_list.append(r2)
 
 		# overall_r2 = r2_score(y_test, predictions)
+
+		for n in nuclide_r2:
+			if n[-1] >=0.95:
+				local_95 += 1
+
+
 		for pred in predictions:
 			every_prediction_list.append(pred)
 
@@ -435,6 +448,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	print(f"Bad nuclides: {bad_nuclides}")
 
+	min95_consensus.append(local_95)
+
 
 agg_n_r2 = range_setter(df=df, la=30,ua=210)
 
@@ -450,6 +465,8 @@ for match in agg_n_r2:
 A_plots = [i[1] for i in alist]
 print(np.mean(run_r2))
 print(np.std(run_r2))
+print()
+print(f'Min 95 consensus: {np.mean(local_95)} $\pm$ {np.std(local_95)}')
 # Z_plots = [i[0] for i in nuclide_r2]
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
 # mse_plots = [i[-1] for i in nuclide_mse]
