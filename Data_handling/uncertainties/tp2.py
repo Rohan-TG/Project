@@ -112,7 +112,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 		predictions_ReLU = []
 
 		for n in target_nuclides:
-			tempx, tempy = make_test_sampler(nuclides=[n], df=ENDFBVIII)
+			tempx, tempy = make_test_sampler(nuclides=[n], df=ENDFBVIII, use_tqdm=False)
 			initial_predictions = model.predict(tempx)
 
 			for p in initial_predictions:

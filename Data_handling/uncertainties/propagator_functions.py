@@ -5,7 +5,7 @@ import math
 import tqdm
 
 
-def make_test_sampler(nuclides, df, use_tqdm=True):
+def make_test_sampler(nuclides, df, use_tqdm=False):
 	"""
 	nuclides: array of (1x2) arrays containing Z of nuclide at index 0, and A at index 1.
 	df: dataframe used for validation data
@@ -758,7 +758,7 @@ def fia_test_propagator(nuclides, df):
 
 
 
-def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260, use_tqdm=True):
+def make_train_sampler(df, validation_nuclides, exclusions, la=0, ua=260, use_tqdm=False):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
