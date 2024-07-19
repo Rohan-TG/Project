@@ -298,7 +298,7 @@ for q in tqdm.tqdm(range(num_runs)):
 					threshold_values.append(o)
 					break
 			tendl_r2s.append(tendlr2)
-			evaluation_r2s.append(tendl_r2)
+			evaluation_r2s.append(tendlr2)
 			for x, y in zip(truncatedtendl, predtendlgated):
 				nuc_all_library_evaluations.append(x)
 				nuc_all_predictions.append(y)
