@@ -59,6 +59,8 @@ nodd_podd = []
 neven_peven = []
 neven_podd = []
 
+atleast190 = []
+
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
@@ -128,10 +130,6 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		X_test, y_test = make_test_sampler(validation_nuclides, df=df, use_tqdm=False)
 
-		# X_train must be in the shape (n_samples, n_features)
-		# and y_train must be in the shape (n_samples) of the target
-
-		# print("Train/val matrices generated")
 
 		modelseed= random.randint(a=1, b=1000)
 		model = xg.XGBRegressor(n_estimators=950,
@@ -141,12 +139,7 @@ for q in tqdm.tqdm(range(num_runs)):
 								max_leaves=0,
 								seed=modelseed,)
 
-		# model = xg.XGBRegressor(n_estimators=600,
-		# 						reg_lambda=1.959,
-		# 						learning_rate=0.00856,
-		# 						max_depth=7,
-		# 						subsample=0.1895,
-		# 						seed=42)
+
 
 		time1 = time.time()
 		model.fit(X_train, y_train)
@@ -242,6 +235,7 @@ for q in tqdm.tqdm(range(num_runs)):
 																		   predicted_xs=cendlxs_interpolated)
 
 				cendl_r2s.append(cendl_r2)
+				evaluation_r2s.append(cendl_r2)
 
 				for o, p in zip(cendlerg, cendlxs):
 					if p > 0:
@@ -262,6 +256,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
 				jendl_r2s.append(jendl_r2)
+				evaluation_r2s.append(jendl_r2)
 
 				for o, p in zip(jendlerg, jendlxs):
 					if p > 0:
@@ -287,6 +282,7 @@ for q in tqdm.tqdm(range(num_runs)):
 						threshold_values.append(o)
 						break
 				jeff_r2s.append(jeff_r2)
+				evaluation_r2s.append(jeff_r2)
 				for x, y in zip(d2, predjeffgated):
 					benchmark_total_library_evaluations.append(x)
 					benchmark_total_predictions.append(y)
@@ -302,6 +298,7 @@ for q in tqdm.tqdm(range(num_runs)):
 					threshold_values.append(o)
 					break
 			tendl_r2s.append(tendlr2)
+			evaluation_r2s.append(tendl_r2s)
 			for x, y in zip(truncatedtendl, predtendlgated):
 				nuc_all_library_evaluations.append(x)
 				nuc_all_predictions.append(y)
@@ -346,7 +343,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 
 			for z in evaluation_r2s:
-				if z > 0.9:
+				if z >= 0.9:
 					at_least_one_agreeing_90 += 1
 					break
 
@@ -414,6 +411,8 @@ for q in tqdm.tqdm(range(num_runs)):
 	print(f"{oncount}/{len(othernucs)} of mid nucs have r2 below 0.8")
 	print(f"{oncount90}/{len(othernucs)} of mid nucs have r2 below 0.9")
 	print(f">= 97 consensus: {gewd_97}/{len(al)}")
+
+	atleast190.append(at_least_one_agreeing_90)
 
 	lncount = 0
 	lncount90 = 0
@@ -557,3 +556,6 @@ plt.xlabel('Threshold difference / MeV')
 plt.ylabel('Frequency')
 plt.title('Mean difference between predicted threshold and evaluated thresholds')
 plt.show()
+
+
+print(f'At least one library r2 >=0.9: {np.mean(atleast190)} +- {np.std(atleast190)}')
