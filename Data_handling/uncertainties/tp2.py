@@ -90,11 +90,13 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 
 
 		time1 = time.time()
-		X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=ENDFBVIII)
+		X_test, y_test = make_test_sampler(nuclides=target_nuclides, df=ENDFBVIII, use_tqdm=False)
 		print('Test data generation complete...')
 
 		X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=208,
-											validation_nuclides=target_nuclides, exclusions=exc)
+											  validation_nuclides=target_nuclides,
+											  exclusions=exc,
+											  use_tqdm=False)
 		print("Training...")
 
 		model = xg.XGBRegressor(n_estimators=950,  # define regressor
