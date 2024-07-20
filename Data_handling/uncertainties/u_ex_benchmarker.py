@@ -41,7 +41,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 
 exc = exclusion_func()
 
-num_runs = 1
+num_runs = 100
 
 run_r2 = []
 run_mse = []
@@ -125,7 +125,7 @@ for q in tqdm.tqdm(range(num_runs)):
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
 
-	for i, (pred_xs, true_xs, erg) in tqdm.tqdm(enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)), total=len(P_plotmatrix)):
+	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i]
 
 		evaluation_r2s = []
