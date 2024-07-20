@@ -15,23 +15,23 @@ runtime = time.time()
 
 ENDFBVIII = pd.read_csv('ENDFBVIII_100keV_all_uncertainties.csv')
 ENDFBVIII.index = range(len(ENDFBVIII))
-ENDFB_nuclides = range_setter(df=ENDFBVIII, la=30, ua= 210)
+ENDFB_nuclides = range_setter(df=ENDFBVIII, la=30, ua= 208)
 
 TENDL = pd.read_csv("TENDL_2021_MT_16_all_u.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=208)
 
 JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
+JEFF_nuclides = range_setter(df=JEFF, la=30, ua=208)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
+JENDL_nuclides = range_setter(df=JENDL, la=30, ua=208)
 
 CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
+CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 
 exc = exclusion_func() # 10 sigma with handpicked additions
 
