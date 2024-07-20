@@ -102,9 +102,9 @@ for q in tqdm.tqdm(range(num_runs)):
 							max_leaves=0,
 							seed=modelseed,)
 
-	# print("Training...")
+	print("Training...")
 
-	model.fit(X_train, y_train)
+	model.fit(X_train, y_train, verbose=True)
 
 	predictions = model.predict(X_test)
 
@@ -123,26 +123,21 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		XS_plotmatrix.append(dummy_test_XS)
 		E_plotmatrix.append(dummy_test_E)
+		P_plotmatrix.append(dummy_predictions)
 
-		p_gated = []
-		for p in dummy_predictions:
-			if p > (gate * max(dummy_predictions)):
-				p_gated.append(p)
-			else:
-				p_gated.append(0.0)
-
-		P_plotmatrix.append(p_gated)
-
-	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+	for i, (pred_xs, true_xs, erg) in tqdm.tqdm(enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)), total=len(P_plotmatrix)):
 		nuc = validation_nuclides[i]
 
 		evaluation_r2s = []
-		#
-		# threshold_values = []
-		# for xs, energy in zip(pred_xs, erg):
-		# 	if xs > 0:
-		# 		predicted_threshold = energy
-		# 		break
+		gated_p = []
+		for p in pred_xs:
+			if p >= (gate * max(pred_xs)):
+				gated_p.append(p)
+			else:
+				gated_p.append(0.0)
+
+		pred_xs = gated_p
+
 
 		nuc_all_library_evaluations = []
 		nuc_all_predictions = []
@@ -176,10 +171,6 @@ for q in tqdm.tqdm(range(num_runs)):
 			predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
 			jendl_r2s.append(jendl_r2)
 
-			# for o, p in zip(jendlerg, jendlxs):
-			# 	if p > 0:
-			# 		threshold_values.append(o)
-			# 		break
 
 			for x, y in zip(d2, predjendlgated):
 				benchmark_total_library_evaluations.append(x)
