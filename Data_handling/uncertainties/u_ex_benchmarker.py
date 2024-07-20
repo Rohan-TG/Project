@@ -21,23 +21,23 @@ df = pd.read_csv("ENDFBVIII_100keV_all_uncertainties.csv")
 gate = 0.05
 
 df.index = range(len(df))
-al = range_setter(df=df, la=30, ua=210)
+al = range_setter(df=df, la=30, ua=208)
 
 TENDL = pd.read_csv("TENDL_2021_MT_16_all_u.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=208)
 
 JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
+JEFF_nuclides = range_setter(df=JEFF, la=30, ua=208)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
+JENDL_nuclides = range_setter(df=JENDL, la=30, ua=208)
 
 CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
+CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 
 exc = exclusion_func()
 
@@ -65,6 +65,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	cendl_r2s = []
 	tendl_r2s = []
 	jeff_r2s = []
+
+
+	tendl_rmses = []
 	jendl_r2s = []
 
 	outliers = 0
@@ -88,7 +91,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	benchmark_total_predictions = []
 	print('Forming data...')
 
-	X_train, y_train = make_train_sampler(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,
+	X_train, y_train = make_train_sampler(df=df, validation_nuclides=validation_nuclides, la=30, ua=208,
 										  exclusions=exc)  # make training matrix
 
 	X_test, y_test = make_test_sampler(validation_nuclides, df=TENDL)
@@ -161,6 +164,7 @@ for q in tqdm.tqdm(range(num_runs)):
 															fill_value='extrapolate')
 
 		pred_tendl_gated, truncated_tendl, tendl_r2 = r2_standardiser(library_xs=true_xs, predicted_xs=pred_xs)
+		tendl_rmse = mean_squared_error(truncated_tendl, pred_tendl_gated)**0.5
 		for libxs, p in zip(truncated_tendl, pred_tendl_gated):
 			nuc_all_library_evaluations.append(libxs)
 			nuc_all_predictions.append(p)
@@ -171,8 +175,6 @@ for q in tqdm.tqdm(range(num_runs)):
 		evaluation_r2s.append(tendl_r2)
 
 		current_nuclide = nuc
-
-		evaluation_r2s = []
 
 		truncated_library_r2 = []
 
@@ -200,24 +202,29 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		r2 = r2_score(nuc_all_library_evaluations, nuc_all_predictions)
 
-		nuclide_r2.append([nuc[0], nuc[1], r2])
+		rmsescore = mean_squared_error(nuc_all_library_evaluations, nuc_all_predictions) **0.5
+
+		nuclide_r2.append([nuc[0], nuc[1], r2, rmsescore])
 
 
 
 
-agg_n_r2 = range_setter(df=TENDL, la=30,ua=210)
+agg_n_r2 = range_setter(df=TENDL, la=30,ua=208)
 
 alist = []
 for match in agg_n_r2:
 	r2values = []
+	rmsevalues = []
 	for set in nuclide_r2:
 		if [set[0], set[1]] == match:
 			r2values.append(set[2])
+			rmsevalues.append(set[3])
 
-	alist.append([match[0], match[1], np.mean(r2values)])
+	alist.append([match[0], match[1], np.mean(r2values), np.mean(rmsevalues)])
 
 A_plots = [i[1] for i in alist]
-log_plots = [abs(np.log(abs(i[-1]))) for i in alist]
+log_plots = [abs(np.log(abs(i[-2]))) for i in alist]
+
 
 
 plt.figure()
