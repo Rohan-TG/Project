@@ -168,7 +168,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 			all_proton_deficients.append(pred_tendl_r2)
 
 		mass_difference_with_r2.append([pred_tendl_r2, min_difference])
-		print(f"Mass difference: {min_difference:0.0f}\n")
+		print(f"Mass difference: {-1*min_difference:0.0f}\n")
 
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
 	plt.plot(tendl_erg, tendl_xs, label = "TENDL-2021", color='dimgrey')
