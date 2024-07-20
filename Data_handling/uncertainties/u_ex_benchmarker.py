@@ -61,8 +61,6 @@ for q in tqdm.tqdm(range(num_runs)):
 	every_prediction_list = []
 	every_true_value_list = []
 
-	endfb_r2s = []
-	cendl_r2s = []
 	tendl_r2s = []
 	jeff_r2s = []
 
@@ -89,12 +87,12 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	benchmark_total_library_evaluations = []
 	benchmark_total_predictions = []
-	print('Forming data...')
+	# print('Forming data...')
 
 	X_train, y_train = make_train_sampler(df=df, validation_nuclides=validation_nuclides, la=30, ua=208,
-										  exclusions=exc)  # make training matrix
+										  exclusions=exc, use_tqdm=True)  # make training matrix
 
-	X_test, y_test = make_test_sampler(validation_nuclides, df=TENDL)
+	X_test, y_test = make_test_sampler(validation_nuclides, df=TENDL, use_tqdm=True)
 
 	modelseed= random.randint(a=1, b=1000)
 	model = xg.XGBRegressor(n_estimators=950,
@@ -104,29 +102,16 @@ for q in tqdm.tqdm(range(num_runs)):
 							max_leaves=0,
 							seed=modelseed,)
 
-	print("Training...")
+	# print("Training...")
 
-	model.fit(X_train, y_train, verbose=True)
+	model.fit(X_train, y_train, verbose = True, eval_set= [(X_train, y_train)])
 
-	predictions_ReLU = []
-
-	for n in validation_nuclides:
-
-		temp_x, temp_y = make_test_sampler(nuclides=[n], df=TENDL)
-		initial_predictions = model.predict(temp_x)
-
-		for p in initial_predictions:
-			if p >= (gate * max(initial_predictions)):
-				predictions_ReLU.append(p)
-			else:
-				predictions_ReLU.append(0.0)
-
-	predictions = predictions_ReLU
+	predictions = model.predict(X_test)
 
 	XS_plotmatrix = []
 	E_plotmatrix = []
 	P_plotmatrix = []
-	for nuclide in validation_nuclides:
+	for nuclide in tqdm.tqdm(validation_nuclides, total=len(validation_nuclides)):
 		dummy_test_XS = []
 		dummy_test_E = []
 		dummy_predictions = []
@@ -138,27 +123,32 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		XS_plotmatrix.append(dummy_test_XS)
 		E_plotmatrix.append(dummy_test_E)
-		P_plotmatrix.append(dummy_predictions)
+
+		p_gated = []
+		for p in dummy_predictions:
+			if p > (gate * max(dummy_predictions)):
+				p_gated.append(p)
+			else:
+				p_gated.append(0.0)
+
+		P_plotmatrix.append(p_gated)
 
 	for i, (pred_xs, true_xs, erg) in tqdm.tqdm(enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)), total=len(P_plotmatrix)):
 		nuc = validation_nuclides[i]
 
 		evaluation_r2s = []
-
-		threshold_values = []
-		for xs, energy in zip(pred_xs, erg):
-			if xs > 0:
-				predicted_threshold = energy
-				break
+		#
+		# threshold_values = []
+		# for xs, energy in zip(pred_xs, erg):
+		# 	if xs > 0:
+		# 		predicted_threshold = energy
+		# 		break
 
 		nuc_all_library_evaluations = []
 		nuc_all_predictions = []
 
 		jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[nuc])
-		cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[nuc])
-		jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[nuc])
 		tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[nuc])
-		endfberg, endfbxs = General_plotter(df=df, nuclides=[nuc])
 
 		interpolation_function = scipy.interpolate.interp1d(tendlerg, y=pred_xs,
 															fill_value='extrapolate')
@@ -186,10 +176,10 @@ for q in tqdm.tqdm(range(num_runs)):
 			predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
 			jendl_r2s.append(jendl_r2)
 
-			for o, p in zip(jendlerg, jendlxs):
-				if p > 0:
-					threshold_values.append(o)
-					break
+			# for o, p in zip(jendlerg, jendlxs):
+			# 	if p > 0:
+			# 		threshold_values.append(o)
+			# 		break
 
 			for x, y in zip(d2, predjendlgated):
 				benchmark_total_library_evaluations.append(x)
