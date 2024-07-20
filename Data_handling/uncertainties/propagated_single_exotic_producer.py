@@ -36,7 +36,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[29,68]]
+target_nuclides = [[60,137]]
 target_nuclide = target_nuclides[0]
 n_evaluations = 100
 
@@ -96,7 +96,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	single_run_concat_preds = []
 
 	model_seed = random.randint(a=1, b=10000)
-	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=210,
+	X_train, y_train = make_train_sampler(df=ENDFBVIII, la=30, ua=208,
 										validation_nuclides=target_nuclides,
 										exclusions=exc,
 										use_tqdm=False)
