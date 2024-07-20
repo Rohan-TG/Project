@@ -90,9 +90,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	# print('Forming data...')
 
 	X_train, y_train = make_train_sampler(df=df, validation_nuclides=validation_nuclides, la=30, ua=208,
-										  exclusions=exc, use_tqdm=True)  # make training matrix
+										  exclusions=exc, use_tqdm=False)  # make training matrix
 
-	X_test, y_test = make_test_sampler(validation_nuclides, df=TENDL, use_tqdm=True)
+	X_test, y_test = make_test_sampler(validation_nuclides, df=TENDL, use_tqdm=False)
 
 	modelseed= random.randint(a=1, b=1000)
 	model = xg.XGBRegressor(n_estimators=950,
@@ -104,14 +104,14 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	# print("Training...")
 
-	model.fit(X_train, y_train, verbose = True, eval_set= [(X_train, y_train)])
+	model.fit(X_train, y_train)
 
 	predictions = model.predict(X_test)
 
 	XS_plotmatrix = []
 	E_plotmatrix = []
 	P_plotmatrix = []
-	for nuclide in tqdm.tqdm(validation_nuclides, total=len(validation_nuclides)):
+	for nuclide in validation_nuclides:
 		dummy_test_XS = []
 		dummy_test_E = []
 		dummy_predictions = []
@@ -133,7 +133,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		P_plotmatrix.append(p_gated)
 
-	for i, (pred_xs, true_xs, erg) in tqdm.tqdm(enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)), total=len(P_plotmatrix)):
+	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 		nuc = validation_nuclides[i]
 
 		evaluation_r2s = []
