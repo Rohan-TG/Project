@@ -12,7 +12,7 @@ import time
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
 from matrix_functions import dsigma_dE, make_train, make_test,\
-	range_setter, General_plotter
+	range_setter, General_plotter, exclusion_func
 import scipy.stats
 from datetime import timedelta
 import tqdm
@@ -27,47 +27,51 @@ df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 
 
-al = range_setter(la=30, ua=210, df=df)
+al = range_setter(la=30, ua=208, df=df)
 
 
+exc = exclusion_func()
 
+n_evaluations = 3
 
-n_evaluations = 100
-
-o_nucs = [[31,69], [63,156], [14,32],
-		  [72,174], [48,114], [30,65],
-		  [38,87], [50,118], [50,126],
-		  [18,38], [34,82], [24,54],
-		  [72,178], [52,128], [58,144],
-		  [46,109], [55,137], [40,95],
-		  [71,176], [20,46], [48,113],]
+o_nucs = [[31,69],
+		  # [63,156], [14,32],
+		  # [72,174], [48,114], [30,65],
+		  # [38,87], [50,118], [50,126],
+		  # [18,38], [34,82], [24,54],
+		  # [72,178], [52,128], [58,144],
+		  # [46,109], [55,137], [40,95],
+		  # [71,176], [20,46], [48,113],
+		  ]
 for x in o_nucs:
 	datapoint_matrix = []
 	target_nuclide = x
 	for i in tqdm.tqdm(range(n_evaluations)):
-		print(f"\nRun {i+1}/{n_evaluations}")
+		# print(f"\nRun {i+1}/{n_evaluations}")
 
 
 		validation_nuclides = [target_nuclide]
-		validation_set_size = 25  # number of nuclides hidden from training
+		validation_set_size = 20  # number of nuclides hidden from training
+
+		random.seed(42)
 
 		while len(validation_nuclides) < validation_set_size:
 			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
 			if choice not in validation_nuclides:
 				validation_nuclides.append(choice)
-		print("\nTest nuclide selection complete")
+		# print("\nTest nuclide selection complete")
 
 		time1 = time.time()
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210,) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=208, exclusions=exc) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df_test,)
 
-		print("Data prep done")
+		# print("Data prep done")
 
 		model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
-		model = xg.XGBRegressor(n_estimators=900,
+		model = xg.XGBRegressor(n_estimators=950,
 								learning_rate=0.008,
 								max_depth=8,
 								subsample=0.18236,
@@ -170,7 +174,7 @@ for x in o_nucs:
 
 
 
-	TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
+	TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 	TENDL.index = range(len(TENDL))
 	TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 	tendl_energy, tendl_xs = General_plotter(df=TENDL, nuclides=[target_nuclide])
@@ -242,13 +246,13 @@ for x in o_nucs:
 	#2sigma CF
 	plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 	plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
-	plt.plot(tendl_energy, tendl_xs, label = 'TENDL21', color='dimgrey')
+	plt.plot(tendl_energy, tendl_xs, label = 'TENDL-2021', color='dimgrey')
 	if target_nuclide in JEFF_nuclides:
-		plt.plot(JEFF_energy, JEFF_XS, '--', label='JEFF3.3', color='mediumvioletred')
+		plt.plot(JEFF_energy, JEFF_XS, '--', label='JEFF-3.3', color='mediumvioletred')
 	if target_nuclide in JENDL_nuclides:
-		plt.plot(JENDL5_energy, JENDL5_XS, label='JENDL5', color='green')
+		plt.plot(JENDL5_energy, JENDL5_XS, label='JENDL-5', color='green')
 	if target_nuclide in CENDL_nuclides:
-		plt.plot(CENDL32_energy, CENDL33_XS, '--', label = 'CENDL3.2', color='gold')
+		plt.plot(CENDL32_energy, CENDL33_XS, '--', label = 'CENDL-3.2', color='gold')
 	plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 	# plt.errorbar(cse, csxs, yerr=csxsd, fmt='x', color='violet',capsize=2, label='Csikai, 1967')
 	# plt.errorbar(tiwarie, tiwarixs, yerr=tiwarixsd,
