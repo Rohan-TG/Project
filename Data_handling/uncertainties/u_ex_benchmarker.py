@@ -201,7 +201,7 @@ for match in agg_n_r2:
 			r2values.append(set[2])
 			rmsevalues.append(set[3])
 
-	alist.append([match[0], match[1], np.mean(r2values), np.mean(rmsevalues)])
+	alist.append([match[0], match[1], np.mean(r2values), np.mean(rmsevalues), np.std(r2values)])
 
 A_plots = [i[1] for i in alist]
 log_plots = [abs(np.log(abs(i[-2]))) for i in alist]
