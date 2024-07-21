@@ -3,8 +3,8 @@ import xgboost as xg
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-from matrix_functions import range_setter, r2_standardiser, General_plotter, make_train, exclusion_func
-from propagator_functions import fia_test_propagator
+from matrix_functions import range_setter, r2_standardiser, General_plotter, exclusion_func
+from propagator_functions import fia_test_propagator, make_train_sampler
 from sklearn.metrics import r2_score, mean_squared_error
 import time
 import periodictable
@@ -14,49 +14,35 @@ import tqdm
 runtime = time.time()
 
 ENDFBVIII = pd.read_csv('ENDFBVIII_100keV_all_uncertainties.csv')
-ENDFB_nuclides = range_setter(df=ENDFBVIII, la=0, ua= 210)
+ENDFB_nuclides = range_setter(df=ENDFBVIII, la=30, ua= 208)
 
 TENDL = pd.read_csv("TENDL_2021_MT_16_all_u.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=208)
 
 JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=0, ua=210)
+JEFF_nuclides = range_setter(df=JEFF, la=30, ua=208)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=0, ua=210)
+JENDL_nuclides = range_setter(df=JENDL, la=30, ua=208)
 
 CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
+CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 
 exc = exclusion_func()# 10 sigma with handpicked additions
 
-target_nuclides = [[71,175]]
+target_nuclides = [[72,178]]
 target_nuclide = target_nuclides[0]
-n_evaluations = 100
+n_evaluations = 8
 
 runs_r2_array = []
 
 datapoint_matrix = []
 
-X_train, y_train = make_train(df=ENDFBVIII, exclusions=exc, validation_nuclides=target_nuclides,
-							  la=30, ua=210)
-print("Data matrix formed, training...")
 
-model = xg.XGBRegressor(n_estimators=950,  # define regressor
-						learning_rate=0.008,
-						max_depth=8,
-						subsample=0.18236,
-						max_leaves=0,
-						seed=42, )
-
-
-time1 = time.time()
-model.fit(X_train, y_train)
-print(f"Training completed in {time.time() - time1:0.1f} s.")
 
 for i in tqdm.tqdm(range(n_evaluations)):
 
@@ -66,7 +52,19 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	jeff_r2s = []
 	jendl_r2s = []
 
+	X_train, y_train = make_train_sampler(df=ENDFBVIII, exclusions=exc, validation_nuclides=target_nuclides,
+								  la=30, ua=208,
+										  use_tqdm=False)
+	print("Data matrix formed, training...")
 
+	model = xg.XGBRegressor(n_estimators=950,  # define regressor
+							learning_rate=0.008,
+							max_depth=8,
+							subsample=0.18236,
+							max_leaves=0,
+							seed=42, )
+
+	model.fit(X_train, y_train)
 
 
 	X_test, y_test = fia_test_propagator(nuclides=target_nuclides, df=ENDFBVIII)
