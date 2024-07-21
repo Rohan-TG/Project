@@ -257,7 +257,7 @@ if target_nuclide in JENDL_nuclides:
 
 	print(f"R2 w.r.t. JENDL-5: {jendl_r2}")
 d3,d4, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=datapoint_means)
-print(f"R2 w.r.t. TENDL-2021: {tendlr2}")
+print(f"R2 w.r.t. TENDL-2021: {np.mean(tendl_r2s)} +- {np.std(tendl_r2s)}")
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 if target_nuclide in ENDFB_nuclides:
