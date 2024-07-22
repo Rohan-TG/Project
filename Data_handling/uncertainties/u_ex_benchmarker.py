@@ -41,13 +41,31 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 
 exc = exclusion_func()
 
-num_runs = 100
+num_runs = 1
 
 run_r2 = []
 run_mse = []
 
 nuclide_r2 = []
 nuclide_thresholds = []
+
+
+def diff(target):
+	match_element = []
+	for nuclide in al:
+		if nuclide[0] == target[0]:
+			match_element.append(nuclide)
+	nuc_differences = []
+	for match_nuclide in match_element:
+		difference = match_nuclide[1] - target[1]
+		nuc_differences.append(difference)
+	if len(nuc_differences) > 0:
+		if nuc_differences[0] > 0:
+			min_difference = min(nuc_differences)
+		elif nuc_differences[0] < 0:
+			min_difference = max(nuc_differences)
+	return (-1 * min_difference)
+
 
 
 
@@ -201,10 +219,13 @@ for match in agg_n_r2:
 			r2values.append(set[2])
 			rmsevalues.append(set[3])
 
-	alist.append([match[0], match[1], np.mean(r2values), np.mean(rmsevalues), np.std(r2values)])
+	difference = diff([set[0], set[1]])
+
+	alist.append([match[0], match[1], np.mean(r2values), np.mean(rmsevalues), np.std(r2values),
+				  difference])
 
 A_plots = [i[1] for i in alist]
-log_plots = [abs(np.log(abs(i[-2]))) for i in alist]
+log_plots = [abs(np.log(abs(i[-3]))) for i in alist]
 
 
 
