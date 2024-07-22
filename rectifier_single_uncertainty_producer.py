@@ -68,7 +68,6 @@ runs_rmse_array = []
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i+1}/{n_evaluations}")
 
-	time.sleep(2)
 	validation_nuclides = [target_nuclide]
 	validation_set_size = 20  # number of nuclides hidden from training
 
@@ -181,10 +180,10 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	if target_nuclide in JEFF_nuclides:
 		jeff_test, jeff_xs = make_test(nuclides=[target_nuclide], df=JEFF33)
-		time.sleep(1)
+
 		pred_jeff = model.predict(jeff_test)
 
-		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
+		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -321,7 +320,7 @@ sigma_r2 = np.std(runs_r2_array)
 interval_low_r2, interval_high_r2 = scipy.stats.t.interval(0.95, loc=mu_r2, scale=sigma_r2, df=(len(runs_r2_array) - 1))
 print(f"\nConsensus: {mu_r2:0.5f} +/- {interval_high_r2-interval_low_r2:0.5f}")
 
-print(f'Consensus RMSE: {np.mean(consensus_rmse):0.3f} +/- {np.std(consensus_rmse):0.3f}')
+print(f'Consensus RMSE: {np.mean(runs_rmse_array):0.3f} +/- {np.std(runs_rmse_array):0.3f}')
 
 final_runtime = time.time() - runtime
 
