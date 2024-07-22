@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import periodictable
 from sklearn.metrics import mean_squared_error
 import scipy
-from matrix_functions import General_plotter, range_setter, anomaly_remover, make_train_low, make_test_low
+from matrix_functions import General_plotter, range_setter, make_train, make_test
 import random
 import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error
@@ -12,30 +12,28 @@ import time
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=0, ua=60)
+TENDL_nuclides = range_setter(df=TENDL, la=220, ua=260)
 
 JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
-JEFF_nuclides = range_setter(df=JEFF, la=0, ua=60)
+JEFF_nuclides = range_setter(df=JEFF, la=220, ua=260)
 
 JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
-JENDL_nuclides = range_setter(df=JENDL, la=0, ua=60)
+JENDL_nuclides = range_setter(df=JENDL, la=220, ua=260)
 
 CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
-CENDL_nuclides = range_setter(df=CENDL, la=0, ua=60)
+CENDL_nuclides = range_setter(df=CENDL, la=220, ua=260)
 
 
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
-df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
-al = range_setter(la=0, ua=60, df=df)
+al = range_setter(la=220, ua=260, df=df)
 
 
-validation_nuclides = [[16,32]]
+validation_nuclides = []
 validation_set_size = 5
 
 while len(validation_nuclides) < validation_set_size:
@@ -46,8 +44,8 @@ print("Test nuclide selection complete")
 
 
 
-X_train, y_train = make_train_low(df=df, validation_nuclides=validation_nuclides, la=0, ua=60,)
-X_test, y_test = make_test_low(validation_nuclides, df=df_test)
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=220, ua=260,)
+X_test, y_test = make_test(validation_nuclides, df=df)
 print("Data prep done")
 
 model = xg.XGBRegressor(n_estimators=500,
