@@ -12,7 +12,7 @@ import tqdm
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
 from MT_103_functions import range_setter, make_train, make_test
-from matrix_functions import exclusion_func, r2_standardiser
+from matrix_functions import r2_standardiser
 
 df = pd.read_csv('ENDFBVIII_MT103_fund_features_only.csv')
 al = range_setter(df=df, la=30, ua=210)
@@ -52,7 +52,6 @@ for i in al:
 		newal.append(i)
 
 
-exc = exclusion_func()
 
 validation_set_size = 20  # number of nuclides hidden from training
 
@@ -116,7 +115,7 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=260, exclusions=exc) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=210) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df)
 
@@ -126,12 +125,12 @@ for q in tqdm.tqdm(range(num_runs)):
 		print("Train/val matrices generated")
 
 		modelseed= random.randint(a=1, b=1000)
-		model = xg.XGBRegressor(n_estimators=950,
-								learning_rate=0.008,
-								max_depth=8,
-								subsample=0.18236,
-								max_leaves=0,
-								seed=modelseed,)
+		model = xg.XGBRegressor(n_estimators=600,
+									 learning_rate=0.01,
+									 max_depth=8,
+									 subsample=0.3,
+									 reg_lambda=1
+									 )
 
 		# model = xg.XGBRegressor(n_estimators=600,
 		# 						reg_lambda=1.959,
@@ -397,7 +396,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	print(f"outliers 85/80: {outliers85}/{len(al)}")
 	print(f"Tally of consensus r2 > 0.95: {tally}/{len(al)}")
 	print(f"Tally of consensus r2 > 0.90: {tally90}/{len(al)}")
-	time.sleep(2)
+	# time.sleep(2)
 # print(f"At least one library r2 > 0.90: {at_least_one_agreeing_90}/{len(al)}")
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
