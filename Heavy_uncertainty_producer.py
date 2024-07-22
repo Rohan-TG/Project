@@ -62,6 +62,12 @@ endfberg, endfbxs = General_plotter(df=df, nuclides=[target_nuclide])
 runs_r2_array = []
 runs_rmse_array = []
 
+cendl_r2s = []
+jeff_r2s = []
+jendl_r2s = []
+tendl_r2s = []
+endfb_r2s = []
+
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i+1}/{n_evaluations}")
 
@@ -155,8 +161,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	all_libs = []
 
 
-	pred_endfb_r2 = r2_score(y_true=XS_plotmatrix[0], y_pred=P_plotmatrix[0])
-	for x, y in zip(XS_plotmatrix[0], P_plotmatrix[0]):
+	d1, d2, pred_endfb_r2 = r2_standardiser(library_xs=XS_plotmatrix[0],predicted_xs=P_plotmatrix[0])
+	endfb_r2s.append(pred_endfb_r2)
+	for x, y in zip(d1, d2):
 		all_libs.append(y)
 		all_preds.append(x)
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
@@ -166,8 +173,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL32)
 		pred_cendl = model.predict(cendl_test)
 
-		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
-		for x, y in zip(pred_cendl, cendl_xs):
+		d1, d2, pred_cendl_r2 = r2_standardiser(library_xs=cendl_xs, predicted_xs=pred_cendl)
+		cendl_r2s.append(pred_cendl_r2)
+		for x, y in zip(d1, d2):
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - CENDL-3.2 R2: {pred_cendl_r2:0.5f}")
@@ -177,9 +185,10 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		jendl_test, jendl_xs = make_test(nuclides=[target_nuclide], df=JENDL5)
 		pred_jendl = model.predict(jendl_test)
 
-		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
+		d1,d2,pred_jendl_r2 = r2_standardiser(library_xs=jendl_xs, predicted_xs=pred_jendl)
+		jendl_r2s.append(pred_jendl_r2)
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
-		for x, y in zip(pred_jendl, jendl_xs):
+		for x, y in zip(d1, d2):
 			all_libs.append(y)
 			all_preds.append(x)
 
@@ -189,6 +198,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_jeff = model.predict(jeff_test)
 
 		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
+		jeff_r2s.append(pred_jeff_r2)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -199,9 +209,10 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		tendl_test, tendl_xs = make_test(nuclides=[target_nuclide], df=TENDL)
 		pred_tendl = model.predict(tendl_test)
 
-		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
-		for x, y in zip(pred_tendl, tendl_xs):
+		# pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
+		d1, d2, pred_tendl_r2 = r2_standardiser(library_xs=tendl_xs, predicted_xs=pred_tendl)
+		tendl_r2s.append(pred_tendl_r2)
+		for x, y in zip(d1, d2):
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - TENDL-2021 R2: {pred_tendl_r2:0.5f}")
@@ -220,6 +231,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 XS_plot = []
 E_plot = []
+
 
 for i, row in enumerate(X_test):
 	if [row[0], row[1]] == target_nuclide:
@@ -265,14 +277,20 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 print(f"Turning points: {dsigma_dE(XS=datapoint_means)}")
 
 #2sigma CF
+plt.figure()
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
+print(f"ENDF/B-VIII: {np.mean(endfb_r2s)} +- {np.std(endfb_r2s)}")
 plt.plot(tendlerg, tendl_xs, label = 'TENDL-2021', color='dimgrey')
+print(f"TENDL-2021: {np.mean(tendl_r2s):0.3f} +- {np.std(tendl_r2s):0.3f}")
 if target_nuclide in JEFF_nuclides:
 	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
+	print(f"JEFF-3.3: {np.mean(jeff_r2s):0.3f} +- {np.std(jeff_r2s):0.3f}")
 if target_nuclide in JENDL_nuclides:
+	print(f"JENDL-5: {np.mean(jendl_r2s):0.3f} +- {np.std(jendl_r2s):0.3f}")
 	plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
 if target_nuclide in CENDL_nuclides:
+	print(f"CENDL-3.2: {np.mean(cendl_r2s):0.3f} +- {np.std(cendl_r2s):0.3f}")
 	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 
