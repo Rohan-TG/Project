@@ -68,13 +68,11 @@ def diff(target):
 				min_difference = max(nuc_differences)
 		return (-1 * min_difference)
 
-low_md = []
-mdcount80 = 0
-mdcount90 = 0
 
-highmd80 = 0
-highmd90 = 0
-high_md = []
+
+lmdcount = []
+
+hmdcount = []
 
 validation_nuclides = []
 for nuc in TENDL_nuclides:
@@ -85,8 +83,15 @@ for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
 	every_true_value_list = []
+	mdcount80 = 0
+	mdcount90 = 0
 
+	highmd80 = 0
+	highmd90 = 0
+
+	high_md = []
 	tendl_r2s = []
+	low_md = []
 	jeff_r2s = []
 
 
@@ -230,6 +235,9 @@ for q in tqdm.tqdm(range(num_runs)):
 					highmd90 += 1
 		except TypeError:
 			print('No match for ', nuc)
+
+	lmdcount.append(mdcount90)
+	hmdcount.append(highmd90)
 
 zl = [n[0] for n in al]
 print(len(zl))
