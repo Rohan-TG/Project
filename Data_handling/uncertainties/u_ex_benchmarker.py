@@ -52,22 +52,29 @@ nuclide_thresholds = []
 
 def diff(target):
 	match_element = []
-	for nuclide in al:
-		if nuclide[0] == target[0]:
-			match_element.append(nuclide)
-	nuc_differences = []
-	for match_nuclide in match_element:
-		difference = match_nuclide[1] - target[1]
-		nuc_differences.append(difference)
-	if len(nuc_differences) > 0:
-		if nuc_differences[0] > 0:
-			min_difference = min(nuc_differences)
-		elif nuc_differences[0] < 0:
-			min_difference = max(nuc_differences)
-	return (-1 * min_difference)
+	zl = [n[0] for n in al]
+	if target[0] in zl:
+		for nuclide in al:
+			if nuclide[0] == target[0]:
+				match_element.append(nuclide)
+		nuc_differences = []
+		for match_nuclide in match_element:
+			difference = match_nuclide[1] - target[1]
+			nuc_differences.append(difference)
+		if len(nuc_differences) > 0:
+			if nuc_differences[0] > 0:
+				min_difference = min(nuc_differences)
+			elif nuc_differences[0] < 0:
+				min_difference = max(nuc_differences)
+		return (-1 * min_difference)
 
+low_md = []
+mdcount80 = 0
+mdcount90 = 0
 
-
+highmd80 = 0
+highmd90 = 0
+high_md = []
 
 validation_nuclides = []
 for nuc in TENDL_nuclides:
@@ -110,7 +117,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	X_train, y_train = make_train_sampler(df=df, validation_nuclides=validation_nuclides, la=30, ua=208,
 										  exclusions=exc, use_tqdm=False)  # make training matrix
 
-	X_test, y_test = make_test_sampler(validation_nuclides, df=TENDL, use_tqdm=False)
+	X_test, y_test = make_test_sampler(validation_nuclides, df=TENDL, use_tqdm=True)
 
 	modelseed= random.randint(a=1, b=1000)
 	model = xg.XGBRegressor(n_estimators=950,
@@ -205,8 +212,40 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		nuclide_r2.append([nuc[0], nuc[1], r2, rmsescore])
 
+		md = diff(nuc)
+		try:
+			if abs(md) <= 3:
+				low_md.append(nuc)
+				if r2 >= 0.8:
+					mdcount80 += 1
+				if r2 >= 0.9:
+					mdcount90 += 1
 
 
+			if abs(md) > 3:
+				high_md.append(nuc)
+				if r2>= 0.8:
+					highmd80 += 1
+				if r2>=90:
+					highmd90 += 1
+		except TypeError:
+			print('No match for ', nuc)
+
+zl = [n[0] for n in al]
+print(len(zl))
+
+mins = []
+for c in validation_nuclides:
+	if c[0] in zl:
+		mins.append(c)
+
+print(len(mins))
+
+print('r2 > 80:',mdcount80 , '/', len(low_md))
+print('r2 > 90:',mdcount90 , '/', len(low_md))
+
+print('r2 > 80:', highmd80, '/', len(high_md))
+print('r2 > 90:', highmd90, '/', len(high_md))
 
 agg_n_r2 = range_setter(df=TENDL, la=30,ua=208)
 
