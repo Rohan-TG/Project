@@ -39,7 +39,7 @@ print("Test nuclides selected...")
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210)
 X_test, y_test = make_test(validation_nuclides, df=df)
 
-model = xgboost.XGBRegressor(n_estimators = 600,
+model = xgboost.XGBRegressor(n_estimators = 800,
 							 learning_rate = 0.01,
 							 max_depth = 8,
 							 subsample = 0.3,
@@ -91,7 +91,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	if nuc in CENDL_nuclides:
 		plt.plot(cendlerg, cendlxs, '--', label='CENDL-3.2', color='gold')
 
-	plt.title(f"$\sigma_{{n,p}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}")
+	plt.title(f"$\sigma_{{n,p}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]:0.0f}")
 	plt.legend()
 	plt.grid()
 	plt.ylabel('$\sigma_{n,2n}$ / b')
@@ -152,6 +152,82 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	time.sleep(1.5)
 run = input('Run shap? (y): ')
 if run == 'y':
+
+	model.get_booster().feature_names = ['Z',
+										 'A',
+										 # 'S2n',
+										 'S2p',
+										 'E',
+										 'Sp',
+										 'Sn',
+										 'BEA',
+										 'P',
+										 'Snc',
+										 'g-def',
+										 'N',
+										 'b-def',
+										 'Sn da',
+										 'Sp d',
+										 'S2n d',
+										 'Radius',
+										 'n_g_erg',
+										 'n_c_erg',
+										 'n_rms_r',
+										 'oct_def',
+										 'D_c',
+										 'BEA_d',
+										 'BEA_c',
+										 'Pair_d',
+										 'Par_d',
+										 'S2n_c',
+										 'S2p_c',
+										 'ME',
+										 'Z_even',
+										 'A_even',
+										 'N_even',
+										 'Shell',
+										 'Parity',
+										 'Spin',
+										 'Decay',
+										 'Deform',
+										 'p_g_e',
+										 'p_c_e',
+										 'p_rms_r',
+										 'rms_r',
+										 'Sp_c',
+										 'Sn_c',
+										 'Shell_c',
+										 'S2p-d',
+										 'Shell-d',
+										 'Spin-c',
+										 'Rad-c',
+										 'Def-c',
+										 'ME-c',
+										 'BEA-A-c',
+										 'Decay-d',
+										 'ME-d',
+										 'Rad-d',
+										 'Pair-c',
+										 'Par-c',
+										 'BEA-A-d',
+										 'Spin-d',
+										 'Def-d',
+										 # 'mag_p',
+										 # 'mag-n',
+										 # 'mag-d',
+										 # 'Nlow',
+										 # 'Ulow',
+										 # 'Ntop',
+										 # 'Utop',
+										 # 'ainf',
+										 # 'Asym',
+										 # 'Asym_c',
+										 # 'Asym_d',
+										 # 'AM'
+										 ]
+	plt.figure(figsize=(10, 12))
+	xgboost.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
+	plt.show()
 
 	explainer = shap.Explainer(model.predict, X_train,
 							   feature_names= ['Z',
