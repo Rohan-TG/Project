@@ -63,6 +63,9 @@ atleast190 = []
 atleast193 = []
 atleast195 = []
 
+min100A_at_least_95 = []
+min100A_at_least_90 = []
+
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
@@ -80,6 +83,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	outliers9090 = 0
 	outlier_tally = 0
 	tally = 0
+
+	tally_min100A_at_least_95 = 0
+	tally_min100A_at_least_90 = 0
 
 
 
@@ -351,6 +357,16 @@ for q in tqdm.tqdm(range(num_runs)):
 					at_least_one_agreeing_90 += 1
 					break
 
+			for u in evaluation_r2s:
+				if nuc[1] >= 100 and u >= 0.95:
+					tally_min100A_at_least_95 += 1
+					break
+
+			for q in evaluation_r2s:
+				if nuc[1] >= 100 and q >= 0.90:
+					tally_min100A_at_least_90 += 1
+					break
+
 			for z in evaluation_r2s:
 				if z >=0.93:
 					at_least_one_agreeing_93 += 1
@@ -429,6 +445,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	atleast190.append(at_least_one_agreeing_90)
 	atleast193.append(at_least_one_agreeing_93)
 	atleast195.append(at_least_one_agreeing_95)
+
+	min100A_at_least_90.append(tally_min100A_at_least_90)
+	min100A_at_least_95.append(tally_min100A_at_least_95)
 
 	lncount = 0
 	lncount90 = 0
