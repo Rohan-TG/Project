@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_squared_error
 
 
 def General_plotter(df, nuclides):
@@ -727,3 +727,25 @@ def r2_standardiser(raw_predictions, library_xs):
 	standardised_r2 = r2_score(truncated_library_xs, threshold_gated_predictions)
 
 	return(threshold_gated_predictions, truncated_library_xs, standardised_r2)
+
+
+
+def rmse_standard(libxs, pxs, gate=0.02):
+	gated_predictions = []
+
+	for p in pxs:
+		if p >= (gate * max(pxs)):
+			gated_predictions.append(p)
+		else:
+			gated_predictions.append(0.0)
+
+	threshold_gated_predictions = []
+	truncated_library_xs = []
+	for i, XS in enumerate(gated_predictions):
+		if XS > 0.0:
+			threshold_gated_predictions.append(XS)
+			truncated_library_xs.append(libxs[i])
+
+	srmse= mean_squared_error(truncated_library_xs, threshold_gated_predictions) **0.5
+
+	return (threshold_gated_predictions,truncated_library_xs,srmse)
