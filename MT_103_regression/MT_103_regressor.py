@@ -149,7 +149,6 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
 	print()
-	time.sleep(1.5)
 run = input('Run shap? (y): ')
 if run == 'y':
 
