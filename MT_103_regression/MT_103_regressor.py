@@ -39,14 +39,14 @@ print("Test nuclides selected...")
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210)
 X_test, y_test = make_test(validation_nuclides, df=df)
 
-model = xgboost.XGBRegressor(n_estimators = 800,
-							 learning_rate = 0.01,
-							 max_depth = 8,
-							 subsample = 0.3,
+model = xgboost.XGBRegressor(n_estimators = 1750,
+							 learning_rate = 0.08,
+							 max_depth = 7,
+							 subsample = 0.888,
 							 reg_lambda = 1
 							 )
 
-model.fit(X_train, y_train)
+model.fit(X_train, y_train,verbose=True, eval_set=[(X_test, y_test)])
 print("Training complete")
 predictions = model.predict(X_test)
 
@@ -97,6 +97,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.ylabel('$\sigma_{n,2n}$ / b')
 	plt.xlabel('Energy / MeV')
 	plt.show()
+
+	time.sleep(1)
 
 	if current_nuclide in CENDL_nuclides:
 
