@@ -28,7 +28,7 @@ cendlnuclides = range_setter(df=cendl, la=30, ua=208)
 
 estimators = np.arange(50, 2000, 50)
 space = {'n_estimators': hp.choice('n_estimators', estimators),
-		 'subsample': hp.uniform('subsample', np.log(0.01), np.log(0.99)),
+		 'subsample': hp.uniform('subsample', 0.01, 0.99),
 		 'max_leaves': 0,
 		 'max_depth': scope.int(hp.quniform('max_depth', 5,12,1)),
 		 'learning_rate': hp.uniform('learning_rate', 0.0005, 0.5)}
