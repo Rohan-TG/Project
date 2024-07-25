@@ -27,31 +27,31 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv") # training
 df = df[df.Z != 11]
 df.index = range(len(df))
 
-TENDL_nuclides = range_setter(df=TENDL21, la=30, ua=215)
+TENDL_nuclides = range_setter(df=TENDL21, la=30, ua=208)
 
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=30, ua=208, df=df)
 
 
 n_evaluations = 5
 datapoint_matrix = []
-target_nuclide = [40,86]
+target_nuclide = [39,88]
 
 
 JEFF33 = pd.read_csv('JEFF33_all_features.csv')
 JEFF33.index = range(len(JEFF33))
-JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=210)
+JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=208)
 JEFF_energy, JEFF_XS = General_plotter(df=JEFF33, nuclides=[target_nuclide])
 
 
 JENDL5 = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL5.index = range(len(JENDL5))
-JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=210)
+JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=208)
 JENDL5_energy, JENDL5_XS = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 
 
 CENDL32 = pd.read_csv('CENDL32_all_features.csv')
 CENDL32.index = range(len(CENDL32))
-CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
+CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=208)
 CENDL32_energy, CENDL32_XS = General_plotter(df=CENDL32, nuclides=[target_nuclide])
 
 
@@ -61,7 +61,7 @@ validation_set_size = 1  # train on all ENDF/B-VIII
 
 exc = exclusion_func()
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua= 210,
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua= 208,
 							  exclusions=exc)  # make training matrix
 
 X_test, y_test = make_test(validation_nuclides, df=TENDL21, )
