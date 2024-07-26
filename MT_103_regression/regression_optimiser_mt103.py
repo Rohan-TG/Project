@@ -85,59 +85,63 @@ def optimiser(s):
 		E_plotmatrix.append(dummy_test_E)
 		P_plotmatrix.append(dummy_predictions)
 
-	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
-		all_preds = []
-		all_libs = []
-		current_nuclide = validation_nuclides[i]
+	try:
 
-		nuc = validation_nuclides[i]  # validation nuclide
+		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+			all_preds = []
+			all_libs = []
+			current_nuclide = validation_nuclides[i]
 
-		if current_nuclide in cendlnuclides:
+			nuc = validation_nuclides[i]  # validation nuclide
 
-			cendl_test, cendl_xs = MT_103_functions.make_test(nuclides=[current_nuclide], df=cendl)
-			pred_cendl = model.predict(cendl_test)
+			if current_nuclide in cendlnuclides:
 
-			pred_cendl_gated, truncated_cendl, pred_cendl_rmse = MT_103_functions.rmse_standard(libxs=cendl_xs, pxs=pred_cendl)
+				cendl_test, cendl_xs = MT_103_functions.make_test(nuclides=[current_nuclide], df=cendl)
+				pred_cendl = model.predict(cendl_test)
 
-			for x, y in zip(pred_cendl_gated, truncated_cendl):
-				all_libs.append(y)
-				all_preds.append(x)
+				pred_cendl_gated, truncated_cendl, pred_cendl_rmse = MT_103_functions.rmse_standard(libxs=cendl_xs, pxs=pred_cendl)
 
-		if current_nuclide in jendlnuclides:
+				for x, y in zip(pred_cendl_gated, truncated_cendl):
+					all_libs.append(y)
+					all_preds.append(x)
 
-			jendl_test, jendl_xs = MT_103_functions.make_test(nuclides=[current_nuclide], df=jendl)
-			pred_jendl = model.predict(jendl_test)
+			if current_nuclide in jendlnuclides:
 
-			pred_jendl_gated, truncated_jendl, pred_jendl_rmse = MT_103_functions.rmse_standard(pxs=pred_jendl,
-																			   libxs=jendl_xs)
+				jendl_test, jendl_xs = MT_103_functions.make_test(nuclides=[current_nuclide], df=jendl)
+				pred_jendl = model.predict(jendl_test)
 
-			for x, y in zip(pred_jendl_gated, truncated_jendl):
-				all_libs.append(y)
-				all_preds.append(x)
+				pred_jendl_gated, truncated_jendl, pred_jendl_rmse = MT_103_functions.rmse_standard(pxs=pred_jendl,
+																				   libxs=jendl_xs)
 
-		if current_nuclide in jeffnuclides:
-			jeff_test, jeff_xs = MT_103_functions.make_test(nuclides=[current_nuclide], df=jeff)
+				for x, y in zip(pred_jendl_gated, truncated_jendl):
+					all_libs.append(y)
+					all_preds.append(x)
 
-			pred_jeff = model.predict(jeff_test)
+			if current_nuclide in jeffnuclides:
+				jeff_test, jeff_xs = MT_103_functions.make_test(nuclides=[current_nuclide], df=jeff)
 
-			pred_jeff_gated, truncated_jeff, pred_jeff_rmse = MT_103_functions.rmse_standard(pxs=pred_jeff,
-																			libxs=jeff_xs)
-			for x, y in zip(pred_jeff_gated, truncated_jeff):
-				all_libs.append(y)
-				all_preds.append(x)
+				pred_jeff = model.predict(jeff_test)
 
-		if current_nuclide in tendlnuclides:
+				pred_jeff_gated, truncated_jeff, pred_jeff_rmse = MT_103_functions.rmse_standard(pxs=pred_jeff,
+																				libxs=jeff_xs)
+				for x, y in zip(pred_jeff_gated, truncated_jeff):
+					all_libs.append(y)
+					all_preds.append(x)
 
-			tendl_test, tendl_xs = MT_103_functions.make_test(nuclides=[current_nuclide], df=tendl)
-			pred_tendl = model.predict(tendl_test)
+			if current_nuclide in tendlnuclides:
 
-			pred_tendl_gated, truncated_tendl, pred_tendl_rmse = MT_103_functions.rmse_standard(pxs=pred_tendl,
-																			   libxs=tendl_xs)
-			for x, y in zip(pred_tendl_gated, truncated_tendl):
-				all_libs.append(y)
-				all_preds.append(x)
+				tendl_test, tendl_xs = MT_103_functions.make_test(nuclides=[current_nuclide], df=tendl)
+				pred_tendl = model.predict(tendl_test)
 
+				pred_tendl_gated, truncated_tendl, pred_tendl_rmse = MT_103_functions.rmse_standard(pxs=pred_tendl,
+																				   libxs=tendl_xs)
+				for x, y in zip(pred_tendl_gated, truncated_tendl):
+					all_libs.append(y)
+					all_preds.append(x)
 
+	except:
+		print(current_nuclide)
+		return(1)
 
 	HP_SET_RMSE = mean_squared_error(all_libs, all_preds) ** 0.5
 
@@ -151,7 +155,7 @@ best = fmin(fn=optimiser,
 			algo=tpe.suggest,
 			trials=trials,
 			max_evals=100,
-			early_stop_fn=hyperopt.early_stop.no_progress_loss(25))
+			early_stop_fn=hyperopt.early_stop.no_progress_loss(50))
 
 bestmodel = trials.results[np.argmin([r['loss'] for r in trials.results])]['model']
 
