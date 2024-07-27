@@ -48,7 +48,7 @@ nuclide_queue = [[72,178]]
 for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_bar_format):
 
 	target_nuclide = q_num
-	n_evaluations = 100
+	n_evaluations = 2
 
 	jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 	cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -357,5 +357,9 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	print(f"Consensus R2: {np.mean(runs_r2_array):0.5f} +/- {np.std(runs_r2_array)}")
 	print(f"Consensus RMSE: {np.mean(runs_rmse_array):0.3f} +/- {np.std(runs_rmse_array):0.3f}")
 
-	print()
+	endfbfunc = scipy.interpolate.interp1d(x=endfberg, y=endfbxs, fill_value='extrapolate')
+	e8interptendlgrid = endfbfunc(tendlerg)
+	u1, u2, endfb_wrt_tendl = r2_standardiser(tendlxs, e8interptendlgrid)
+	print(f'R2 TENDL-2021:ENDF/B-VIII: {endfb_wrt_tendl}:0.3f')
 	print(f"Runtime: {timedelta(seconds=final_runtime)}")
+
