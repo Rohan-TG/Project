@@ -49,9 +49,9 @@ CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=260)
 
 exc = exclusion_func()
 
-n_evaluations = 100
+n_evaluations = 10
 datapoint_matrix = []
-target_nuclide = [98,252]
+target_nuclide = [97,250]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
