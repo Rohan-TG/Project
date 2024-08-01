@@ -66,6 +66,15 @@ atleast195 = []
 min100A_at_least_95 = []
 min100A_at_least_90 = []
 
+olbjendl = []
+olbtendl = []
+olbcendl = []
+olbjeff = []
+
+eolbjendl = []
+eolbcendl = []
+eolbtendl = []
+eolbjeff = []
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
@@ -88,7 +97,15 @@ for q in tqdm.tqdm(range(num_runs)):
 	tally_min100A_at_least_90 = 0
 
 
+	exclusions_other_lib_better_jendl = 0
+	exclusions_other_lib_better_cendl = 0
+	exclusions_other_lib_better_tendl = 0
+	exclusions_other_lib_better_jeff = 0
 
+	tendlgeneral_olb = 0
+	jendlgeneral_olb = 0
+	cendlgeneral_olb = 0
+	jeffgeneral_olb = 0
 
 	low_masses = []
 
@@ -247,6 +264,9 @@ for q in tqdm.tqdm(range(num_runs)):
 				cendl_r2s.append(cendl_r2)
 				evaluation_r2s.append(cendl_r2)
 
+				if cendl_r2 > endfb_r2:
+					cendlgeneral_olb += 1
+
 				for o, p in zip(cendlerg, cendlxs):
 					if p > 0:
 						threshold_values.append(o)
@@ -268,6 +288,9 @@ for q in tqdm.tqdm(range(num_runs)):
 				jendl_r2s.append(jendl_r2)
 				evaluation_r2s.append(jendl_r2)
 
+				if jendl_r2 > endfb_r2:
+					jendlgeneral_olb += 1
+
 				for o, p in zip(jendlerg, jendlxs):
 					if p > 0:
 						threshold_values.append(o)
@@ -286,6 +309,9 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				predjeffgated, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs,
 															 predicted_xs=jeffxs_interpolated)
+
+				if jeff_r2 > endfb_r2:
+					jeffgeneral_olb += 1
 
 				for o, p in zip(jefferg, jeffxs):
 					if p > 0:
@@ -308,6 +334,8 @@ for q in tqdm.tqdm(range(num_runs)):
 					threshold_values.append(o)
 					break
 			tendl_r2s.append(tendlr2)
+			if tendlr2 > endfb_r2:
+				tendlgeneral_olb += 1
 			evaluation_r2s.append(tendlr2)
 			for x, y in zip(truncatedtendl, predtendlgated):
 				nuc_all_library_evaluations.append(x)
@@ -320,7 +348,22 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			r2 = r2_score(nuc_all_library_evaluations,nuc_all_predictions) # consensus for the current nuclide
 
+			if current_nuclide in exc:
+				if current_nuclide in JENDL_nuclides:
+					if jendl_r2 > endfb_r2:
+						exclusions_other_lib_better_jendl += 1
 
+				if current_nuclide in CENDL_nuclides:
+					if cendl_r2 > endfb_r2:
+						exclusions_other_lib_better_cendl += 1
+
+				if current_nuclide in TENDL_nuclides:
+					if tendlr2 > endfb_r2:
+						exclusions_other_lib_better_tendl += 1
+
+				if current_nuclide in JEFF_nuclides:
+					if jeff_r2 > endfb_r2:
+						exclusions_other_lib_better_jeff += 1
 
 			# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
 
@@ -427,7 +470,17 @@ for q in tqdm.tqdm(range(num_runs)):
 		time_taken = time.time() - time1
 		# print(f'completed in {time_taken:0.1f} s.\n')
 
+	eolbjeff.append(exclusions_other_lib_better_jeff)
+	eolbcendl.append(exclusions_other_lib_better_cendl)
+	eolbjendl.append(exclusions_other_lib_better_jendl)
+	eolbtendl.append(exclusions_other_lib_better_tendl)
 
+
+
+	olbtendl.append(tendlgeneral_olb)
+	olbjeff.append(jeffgeneral_olb)
+	olbcendl.append(cendlgeneral_olb)
+	olbjendl.append(jendlgeneral_olb)
 	lownucs = range_setter(df=df, la=0, ua=60)
 	othernucs = range_setter(df=df, la=61, ua=210)
 	oncount = 0
