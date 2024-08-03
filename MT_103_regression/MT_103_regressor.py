@@ -27,7 +27,7 @@ TENDL_nuclides = range_setter(df=TENDL_2021)
 ENDFB_nuclides = range_setter(df=df, la=30, ua=210)
 print("Data loaded...")
 
-validation_nuclides = [[68,167], [43,96]]
+validation_nuclides = [[68,167], [43,99], [47,108]]
 validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size:
@@ -39,11 +39,11 @@ print("Test nuclides selected...")
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210)
 X_test, y_test = make_test(validation_nuclides, df=df)
 
-model = xgboost.XGBRegressor(n_estimators = 1750,
-							 learning_rate = 0.08,
+model = xgboost.XGBRegressor(n_estimators = 1200,
+							 learning_rate = 0.008,
 							 max_depth = 7,
 							 subsample = 0.888,
-							 reg_lambda = 1
+							 reg_lambda = 4
 							 )
 
 model.fit(X_train, y_train,verbose=True, eval_set=[(X_test, y_test)])
