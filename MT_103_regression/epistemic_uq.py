@@ -46,9 +46,9 @@ CENDL32.index = range(len(CENDL32))
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 
-n_evaluations = 10
+n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [69,171]
+target_nuclide = [66,161]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -253,6 +253,7 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 
 
 #2sigma CF
+plt.figure()
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 plt.plot(tendlerg, tendlxs, label = 'TENDL-2021', color='dimgrey')
@@ -302,9 +303,9 @@ plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alp
 # 			 capsize=2, label='Veeser, 1977', color='orangered')
 
 plt.grid()
-plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
+plt.title(f"$\sigma_{{n,\gamma}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
 plt.xlabel("Energy / MeV")
-plt.ylabel("$\sigma_{n,2n}$ / b")
+plt.ylabel("$\sigma_{n,\gamma}$ / b")
 plt.legend(loc='upper left')
 plt.show()
 
