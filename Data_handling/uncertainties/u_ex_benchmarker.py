@@ -41,7 +41,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 
 exc = exclusion_func()
 
-num_runs = 1
+num_runs = 10
 
 run_r2 = []
 run_mse = []
@@ -257,8 +257,13 @@ print('r2 > 90:', highmd90, '/', len(high_md))
 
 agg_n_r2 = range_setter(df=TENDL, la=30,ua=208)
 
+exotics = []
+for ll in agg_n_r2:
+	if ll not in al:
+		exotics.append(ll)
+
 alist = []
-for match in agg_n_r2:
+for match in exotics:
 	r2values = []
 	rmsevalues = []
 	for set in nuclide_r2:
@@ -266,7 +271,8 @@ for match in agg_n_r2:
 			r2values.append(set[2])
 			rmsevalues.append(set[3])
 
-	difference = diff([set[0], set[1]])
+
+	difference = diff([match[0], match[1]])
 
 	alist.append([match[0], match[1], np.mean(r2values), np.mean(rmsevalues), np.std(r2values),
 				  difference])
