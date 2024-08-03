@@ -303,9 +303,9 @@ plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alp
 # 			 capsize=2, label='Veeser, 1977', color='orangered')
 
 plt.grid()
-plt.title(f"$\sigma_{{n,\gamma}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
+plt.title(f"$\sigma_{{n,p}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
 plt.xlabel("Energy / MeV")
-plt.ylabel("$\sigma_{n,\gamma}$ / b")
+plt.ylabel("$\sigma_{n,p}$ / b")
 plt.legend(loc='upper left')
 plt.show()
 
