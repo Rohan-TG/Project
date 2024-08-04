@@ -25,11 +25,11 @@ JENDL_nuclides = range_setter(df=JENDL_5, la=0, ua=208)
 TENDL_2021 = pd.read_csv('TENDL-2021_MT107_main_features.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=208)
 
-ENDFB_nuclides = range_setter(df=df, la=0, ua=208)
+ENDFB_nuclides = range_setter(df=df, la=20, ua=208)
 print("Data loaded...")
 
 validation_nuclides = []
-validation_set_size = 15
+validation_set_size = 25
 
 while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -38,11 +38,11 @@ while len(validation_nuclides) < validation_set_size:
 
 
 
-X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=0, ua=208)
+X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=20, ua=208)
 X_test, y_test = maketest107(validation_nuclides, df=df)
 
-model = xg.XGBRegressor(n_estimators = 650,
-							 learning_rate = 0.015,
+model = xg.XGBRegressor(n_estimators = 750,
+							 learning_rate = 0.02,
 							 max_depth = 7,
 							 subsample = 0.888,
 							 reg_lambda = 1
@@ -100,7 +100,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.ylabel(r'$\sigma_{n,\alpha}$ / b')
 	plt.xlabel('Energy / MeV')
 	plt.show()
-	time.sleep(2)
+	time.sleep(1.5)
 
 	if current_nuclide in CENDL_nuclides:
 
@@ -226,7 +226,7 @@ if run == 'y':
 	explainer = shap.Explainer(model.predict, X_train,
 							   feature_names= ['Z',
 										 'A',
-										 # 'S2n',
+										 'S2n',
 										 'S2p',
 										 'E',
 										 'Sp',
@@ -283,17 +283,9 @@ if run == 'y':
 										 'BEA-A-d',
 										 'Spin-d',
 										 'Def-d',
-										 # 'mag_p',
-										 # 'mag-n',
-										 # 'mag-d',
-										 # 'Nlow',
-										 # 'Ulow',
-										 # 'Ntop',
-										 # 'Utop',
-										 # 'ainf',
-										 # 'Asym',
-										 # 'Asym_c',
-										 # 'Asym_d',
+										 'Asym',
+										 'Asym_c',
+										 'Asym_d',
 										 # 'AM'
 										 ]) # SHAP feature importance analysis
 	shap_values = explainer(X_test)
