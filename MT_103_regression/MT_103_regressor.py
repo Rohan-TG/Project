@@ -24,7 +24,7 @@ JENDL_nuclides = range_setter(df=JENDL_5)
 TENDL_2021 = pd.read_csv('TENDL-2021_MT103_fund_only.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021)
 
-ENDFB_nuclides = range_setter(df=df, la=30, ua=210)
+ENDFB_nuclides = range_setter(df=df, la=80, ua=210)
 print("Data loaded...")
 
 validation_nuclides = [[68,167], [43,99], [47,108]]
@@ -36,7 +36,7 @@ while len(validation_nuclides) < validation_set_size:
 		validation_nuclides.append(nuclide_choice)
 print("Test nuclides selected...")
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210)
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=80, ua=210)
 X_test, y_test = make_test(validation_nuclides, df=df)
 
 model = xgboost.XGBRegressor(n_estimators = 1200,

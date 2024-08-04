@@ -48,7 +48,7 @@ CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [66,161]
+target_nuclide = [47,108]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -83,11 +83,11 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
-	model = xg.XGBRegressor(n_estimators=1750,
-								 learning_rate=0.08,
-								 max_depth=7,
+	model = xg.XGBRegressor(n_estimators=1100,
+								 learning_rate=0.008,
+								 max_depth=8,
 								 subsample=0.888,
-								 reg_lambda=1,
+								 reg_lambda=4,
 								 seed=model_seed
 								 )
 
