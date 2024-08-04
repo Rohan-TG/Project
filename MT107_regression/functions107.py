@@ -7,8 +7,14 @@ def Generalplotter107(dataframe, nuclide):
 	except KeyError:
 		xsvals = minidf['XS'].values
 	ergvals = minidf['ERG'].values
+	ergs = []
+	xsv = []
+	for ENERGY, XSVAL in zip(ergvals, xsvals):
+		if ENERGY > 1:
+			ergs.append(ENERGY)
+			xsv.append(XSVAL)
 
-	return(ergvals, xsvals)
+	return(ergs, xsv)
 
 
 
