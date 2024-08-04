@@ -373,7 +373,7 @@ goodnucs = [[14, 30],
  [84, 208],
  [84, 210]]
 
-al = goodnucs
+al = JENDL_nuclides
 validation_set_size = 200  # number of nuclides hidden from training
 
 num_runs = 2
@@ -436,9 +436,9 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=0, ua=260) # make training matrix
+		X_train, y_train = maketrain107(df=JENDL_5, validation_nuclides=validation_nuclides, la=0, ua=260) # make training matrix
 
-		X_test, y_test = maketest107(validation_nuclides, df=df)
+		X_test, y_test = maketest107(validation_nuclides, df=JENDL_5)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
