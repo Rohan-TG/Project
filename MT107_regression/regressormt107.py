@@ -24,11 +24,11 @@ JENDL_nuclides = range_setter(df=JENDL_5, la=0, ua=208)
 TENDL_2021 = pd.read_csv('TENDL-2021_MT107_main_features.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=208)
 
-ENDFB_nuclides = range_setter(df=df, la=20, ua=208)
+ENDFB_nuclides = range_setter(df=df, la=70, ua=208)
 print("Data loaded...")
 
-validation_nuclides = [[64,154]]
-validation_set_size = 25
+validation_nuclides = [[64,154], [68,168], [62,150]]
+validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -37,21 +37,33 @@ while len(validation_nuclides) < validation_set_size:
 
 
 
-X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=20, ua=208)
+X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=70, ua=208)
 X_test, y_test = maketest107(validation_nuclides, df=df)
 
-model = xg.XGBRegressor(n_estimators = 700,
-							 learning_rate = 0.02,
+model = xg.XGBRegressor(n_estimators = 800,
+							 learning_rate = 0.01,
 							 max_depth = 7,
-							 subsample = 0.6,
+							 subsample = 0.5,
 							 reg_lambda = 2
 							 )
 
 model.fit(X_train, y_train,verbose=True, eval_set=[(X_test, y_test)])
 print("Training complete")
-predictions = model.predict(X_test)
 
 
+predictions_r = []
+for n in validation_nuclides:
+
+	temp_x, temp_y = maketest107(nuclides=[n], df=df)
+	initial_predictions = model.predict(temp_x)
+
+	for p in initial_predictions:
+		if p >= (0.02 * max(initial_predictions)):
+			predictions_r.append(p)
+		else:
+			predictions_r.append(0.0)
+
+predictions = predictions_r
 XS_plotmatrix = []
 E_plotmatrix = []
 P_plotmatrix = []
@@ -83,6 +95,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	tendlerg, tendlxs = Generalplotter107(dataframe=TENDL_2021, nuclide=current_nuclide)
 
 	nuc = validation_nuclides[i]  # validation nuclide
+	plt.figure()
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
 	plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
 	plt.plot(tendlerg, tendlxs, label="TENDL-2021", color='dimgrey', linewidth=2)
@@ -100,6 +113,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.xlabel('Energy / MeV')
 	plt.show()
 	time.sleep(1.5)
+	print(f'{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}')
 
 	if current_nuclide in CENDL_nuclides:
 
@@ -214,9 +228,9 @@ if run == 'y':
 										 'BEA-A-d',
 										 'Spin-d',
 										 'Def-d',
-										 'Asym',
-										 'Asym_c',
-										 'Asym_d',
+										 # 'Asym',
+										 # 'Asym_c',
+										 # 'Asym_d',
 										 ]
 	plt.figure(figsize=(10, 12))
 	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
@@ -282,9 +296,9 @@ if run == 'y':
 										 'BEA-A-d',
 										 'Spin-d',
 										 'Def-d',
-										 'Asym',
-										 'Asym_c',
-										 'Asym_d',
+										 # 'Asym',
+										 # 'Asym_c',
+										 # 'Asym_d',
 										 # 'AM'
 										 ]) # SHAP feature importance analysis
 	shap_values = explainer(X_test)
