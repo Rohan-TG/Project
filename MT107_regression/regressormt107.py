@@ -9,8 +9,7 @@ import matplotlib.pyplot as plt
 import periodictable
 import shap
 
-df = pd.read_csv('ENDFBVIII_MT16_MT103_MT107_fund_features.csv')
-df = df.dropna(subset=['MT107XS'])
+df = pd.read_csv('ENDFBVIII_MT107_nanremoved.csv')
 df.index = range(len(df))
 CENDL_32 = pd.read_csv('CENDL-3.2_MT107_main_features.csv')
 CENDL_nuclides = range_setter(df=CENDL_32, la=0, ua=208)
@@ -28,7 +27,7 @@ TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=208)
 ENDFB_nuclides = range_setter(df=df, la=20, ua=208)
 print("Data loaded...")
 
-validation_nuclides = []
+validation_nuclides = [[64,154]]
 validation_set_size = 25
 
 while len(validation_nuclides) < validation_set_size:
@@ -41,11 +40,11 @@ while len(validation_nuclides) < validation_set_size:
 X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=20, ua=208)
 X_test, y_test = maketest107(validation_nuclides, df=df)
 
-model = xg.XGBRegressor(n_estimators = 750,
+model = xg.XGBRegressor(n_estimators = 700,
 							 learning_rate = 0.02,
 							 max_depth = 7,
-							 subsample = 0.888,
-							 reg_lambda = 1
+							 subsample = 0.6,
+							 reg_lambda = 2
 							 )
 
 model.fit(X_train, y_train,verbose=True, eval_set=[(X_test, y_test)])
