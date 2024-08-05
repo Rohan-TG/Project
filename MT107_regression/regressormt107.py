@@ -40,7 +40,7 @@ while len(validation_nuclides) < validation_set_size:
 X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=70, ua=208)
 X_test, y_test = maketest107(validation_nuclides, df=df)
 
-model = xg.XGBRegressor(n_estimators = 800,
+model = xg.XGBRegressor(n_estimators = 900,
 							 learning_rate = 0.01,
 							 max_depth = 7,
 							 subsample = 0.5,

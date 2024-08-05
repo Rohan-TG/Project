@@ -25,7 +25,7 @@ df = pd.read_csv("ENDFBVIII_MT107_nanremoved.csv")
 df.index = range(len(df))
 
 
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=70, ua=215, df=df)
 
 
 TENDL = pd.read_csv("TENDL-2021_MT107_main_features.csv")
@@ -48,7 +48,7 @@ CENDL32.index = range(len(CENDL32))
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 
-n_evaluations = 4
+n_evaluations = 10
 datapoint_matrix = []
 target_nuclide = [64,154]
 
@@ -78,18 +78,18 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	time1 = time.time()
 
 	X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
-								  la=20, ua=208, )  # make training matrix
+								  la=70, ua=208, )  # make training matrix
 
 
 	# print("Training...")
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
-	model = xg.XGBRegressor(n_estimators=600,
-							learning_rate=0.02,
+	model = xg.XGBRegressor(n_estimators=900,
+							learning_rate=0.01,
 							max_depth=7,
-							subsample=0.888,
-							reg_lambda=1,
+							subsample=0.5,
+							reg_lambda=2,
 							seed=model_seed
 							)
 
