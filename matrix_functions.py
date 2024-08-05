@@ -8,8 +8,10 @@ import numpy as np
 from sklearn.metrics import r2_score, mean_squared_error
 
 def r2_standardiser(library_xs, predicted_xs, gate=0.02):
-	"""Both arguments must be lists.
-	Function returns the r2 calculated from the threshold onwards"""
+	"""Returns
+	1: gated predictions
+	2: gated library values
+	3: r2"""
 	gated_predictions = []
 
 
