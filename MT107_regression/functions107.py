@@ -10,7 +10,7 @@ def Generalplotter107(dataframe, nuclide):
 	ergs = []
 	xsv = []
 	for ENERGY, XSVAL in zip(ergvals, xsvals):
-		if ENERGY > 1:
+		if ENERGY > 1 and ENERGY < 20:
 			ergs.append(ENERGY)
 			xsv.append(XSVAL)
 
