@@ -48,7 +48,7 @@ CENDL32.index = range(len(CENDL32))
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 
-n_evaluations = 10
+n_evaluations = 100
 datapoint_matrix = []
 target_nuclide = [64,154]
 
@@ -57,6 +57,18 @@ cendlerg, cendlxs = Generalplotter107(CENDL32,target_nuclide)
 jefferg, jeffxs = Generalplotter107(JEFF33, target_nuclide)
 tendlerg, tendlxs = Generalplotter107(TENDL, target_nuclide)
 endfberg, endfbxs = Generalplotter107(df, target_nuclide)
+
+jendlr2s= []
+cendlr2s = []
+endfbr2s = []
+jeffr2s = []
+tendlr2s = []
+
+jendlrmses = []
+cendlrmses = []
+tendlrmses = []
+jeffrmses = []
+endfbrmses = []
 
 runs_r2_array = []
 runs_rmse_array = []
@@ -147,8 +159,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	all_libs = []
 
 
-	pred_endfb_r2 = r2_score(y_true=XS_plotmatrix[0], y_pred=P_plotmatrix[0])
-	for x, y in zip(XS_plotmatrix[0], P_plotmatrix[0]):
+	d1, d2, pred_endfb_r2 = r2_standardiser(library_xs=XS_plotmatrix[0],predicted_xs=P_plotmatrix[0])
+	endfbr2s.append(pred_endfb_r2)
+	for x, y in zip(d1, d2):
 		all_libs.append(y)
 		all_preds.append(x)
 	# print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
@@ -158,8 +171,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		cendl_test, cendl_xs = maketest107(nuclides=[target_nuclide], df=CENDL32)
 		pred_cendl = model.predict(cendl_test)
 
-		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
-		for x, y in zip(pred_cendl, cendl_xs):
+		d1, d2,pred_cendl_r2 = r2_standardiser(library_xs=cendl_xs, predicted_xs=pred_cendl)
+		cendlr2s.append(pred_cendl_r2)
+		for x, y in zip(d1, d2):
 			all_libs.append(y)
 			all_preds.append(x)
 		# print(f"Predictions - CENDL-3.2 R2: {pred_cendl_r2:0.5f}")
@@ -169,9 +183,10 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		jendl_test, jendl_xs = maketest107(nuclides=[target_nuclide], df=JENDL5)
 		pred_jendl = model.predict(jendl_test)
 
-		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
+		gatedpredjendl, gatedjendl, pred_jendl_r2 = r2_standardiser(library_xs=jendl_xs, predicted_xs=pred_jendl)
+		jendlr2s.append(pred_jendl_r2)
 		# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
-		for x, y in zip(pred_jendl, jendl_xs):
+		for x, y in zip(gatedpredjendl, gatedjendl):
 			all_libs.append(y)
 			all_preds.append(x)
 
@@ -181,6 +196,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_jeff = model.predict(jeff_test)
 
 		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(pred_jeff, jeff_xs)
+		jeffr2s.append(pred_jeff_r2)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -192,8 +208,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
-		for x, y in zip(pred_tendl, tendl_xs):
+		dp,d2,pred_tendl_r2 = r2_standardiser(library_xs=tendl_xs, predicted_xs=pred_tendl)
+		tendlr2s.append(pred_tendl_r2)
+		for x, y in zip(dp, d2):
 			all_libs.append(y)
 			all_preds.append(x)
 		# print(f"Predictions - TENDL-2021 R2: {pred_tendl_r2:0.5f}")
@@ -316,11 +333,15 @@ sigma_r2 = np.std(runs_r2_array)
 interval_low_r2, interval_high_r2 = scipy.stats.t.interval(0.95, loc=mu_r2, scale=sigma_r2, df=(len(runs_r2_array) - 1))
 print(f"\nConsensus: {mu_r2:0.5f} +/- {interval_high_r2-interval_low_r2:0.5f}")
 
-print(f'Consensus RMSE: {np.mean(runs_rmse_array):0.3f} +/- {np.std(runs_rmse_array):0.3f}')
+print(f'Consensus RMSE: {np.mean(runs_rmse_array):0.6f} +/- {np.std(runs_rmse_array):0.6f}')
 
 final_runtime = time.time() - runtime
 
 
-
+print(f'TENDL-2021 R2: {np.mean(tendlr2s):0.3f} +/- {np.std(tendlr2s):0.3f}')
+print(f'JENDL-5 R2: {np.mean(jendlr2s):0.3f} +/- {np.std(jendlr2s):0.3f}')
+print(f'CENDL-3.2 R2: {np.mean(cendlr2s):0.3f} +/- {np.std(cendlr2s):0.3f}')
+print(f'JEFF-3.3 R2: {np.mean(jeffr2s):0.3f} +/- {np.std(jeffr2s):0.3f}')
+print(f'ENDF/B-VIII R2: {np.mean(endfbr2s):0.3f} +/- {np.std(endfbr2s):0.3f}')
 print()
 print(f"Runtime: {timedelta(seconds=final_runtime)}")
