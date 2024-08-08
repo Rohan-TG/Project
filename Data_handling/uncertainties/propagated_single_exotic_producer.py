@@ -36,7 +36,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[39,88]]
+target_nuclides = [[40,89]]
 target_nuclide = target_nuclides[0]
 n_evaluations = 100
 
@@ -69,7 +69,7 @@ def diff(target):
 
 validation_set_size = 1
 
-gate = 0.05
+gate = 0.02
 
 all_consensus_rmses = []
 
@@ -109,6 +109,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 							learning_rate=0.008,
 							max_depth=8,
 							subsample=0.18236,
+							reg_lambda=25,
 							max_leaves=0,
 							seed=42, )
 
