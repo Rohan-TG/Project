@@ -11,22 +11,22 @@ import scipy.stats
 from sklearn.metrics import mean_squared_error, r2_score
 
 JENDL = pd.read_csv('JENDL5_with_MT16_and_ENDFB_MT103_107.csv')
-JENDL_nuclides = range_setter(df=JENDL, la=0, ua=210)
+JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
 
 TENDL = pd.read_csv('TENDL_2021_MT16_with_ENDFB_MT103_107.csv')
-TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
 CENDL = pd.read_csv('CENDL32_MT16_with_ENDFB_MT103_107.csv')
-CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
+CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
 
 JEFF = pd.read_csv('JEFF33_all_features_MT16_103_107.csv')
-JEFF_nuclides = range_setter(df=JEFF, la=0, ua = 210)
+JEFF_nuclides = range_setter(df=JEFF, la=30, ua = 210)
 
 df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
-ENDFB_nuclides = range_setter(df=df, la=0, ua=100)
+ENDFB_nuclides = range_setter(df=df, la=30, ua=208)
 
-validation_nuclides = []
-validation_set_size = 10
+validation_nuclides = [[31,71]]
+validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -35,16 +35,16 @@ while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 print("Test nuclide selection complete")
 
 
-X_train, y_train = make_train(df=df, validation_nuclides= validation_nuclides, la=0, ua=100)
+X_train, y_train = make_train(df=df, validation_nuclides= validation_nuclides, la=30, ua=208)
 
 X_test, y_test = make_test(nuclides=validation_nuclides, df=df)
 
 
 print("Matrices formed")
 
-callback = keras.callbacks.EarlyStopping(monitor='val_loss',
+callback = keras.callbacks.EarlyStopping(monitor='loss',
 										 min_delta=0.005,
-										 patience=100,
+										 patience=20,
 										 mode='min',
 										 start_from_epoch=20)
 
@@ -64,7 +64,7 @@ model.compile(loss='mean_squared_error', optimizer='adam')
 history = model.fit(
     X_train,
     y_train,
-    epochs=500,
+    epochs=100,
 	batch_size= 100,
 	callbacks=callback,
     validation_split = 0.2,
@@ -96,6 +96,10 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	all_preds = []
 	all_libs = []
 	current_nuclide = validation_nuclides[i]
+	target_nuclide = current_nuclide
+
+	interpolation_function = scipy.interpolate.interp1d(erg, y=pred_xs,
+														fill_value='extrapolate')
 
 	jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[current_nuclide])
 	cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[current_nuclide])
@@ -120,71 +124,65 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.show()
 
 	print(f"\n{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-	time.sleep(0.8)
+	time.sleep(1.8)
 
-	# pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
-	# pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(raw_predictions=pred_xs, library_xs=true_xs)
+	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
+	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(predicted_xs=pred_xs, library_xs=true_xs)
 
-	# endfbmape = mean_absolute_percentage_error(truncated_endfb, pred_endfb_gated)
-	# for x, y in zip(pred_endfb_gated, truncated_endfb):
-	# 	all_libs.append(y)
-	# 	all_preds.append(x)
-	# # print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} MAPE: {endfbmape:0.4f}")
-	#
-	# # Find r2 w.r.t. other libraries
-	# if current_nuclide in CENDL_nuclides:
-	#
-	# 	cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
-	# 	pred_cendl = model.predict(cendl_test)
-	#
-	# 	pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl, library_xs=cendl_xs)
-	#
-	# 	pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
-	# 	for x, y in zip(pred_cendl_gated, truncated_cendl):
-	# 		all_libs.append(y)
-	# 		all_preds.append(x)
-	# 	print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
-	#
-	# if current_nuclide in JENDL_nuclides:
-	#
-	# 	jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL)
-	# 	pred_jendl = model.predict(jendl_test)
-	#
-	# 	pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
-	#
-	# 	for x, y in zip(pred_jendl_gated, truncated_jendl):
-	# 		all_libs.append(y)
-	# 		all_preds.append(x)
-	# 	print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
-	#
-	# if current_nuclide in JEFF_nuclides:
-	# 	jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF)
-	#
-	# 	pred_jeff = model.predict(jeff_test)
-	#
-	# 	pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-	# 	pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
-	# 	for x, y in zip(pred_jeff_gated, truncated_jeff):
-	# 		all_libs.append(y)
-	# 		all_preds.append(x)
-	# 	print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
-	#
-	# if current_nuclide in TENDL_nuclides:
-	#
-	# 	tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL)
-	# 	pred_tendl = model.predict(tendl_test)
-	#
-	# 	pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-	# 	pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl, library_xs=tendl_xs)
-	# 	for x, y in zip(pred_tendl_gated, truncated_tendl):
-	# 		all_libs.append(y)
-	# 		all_preds.append(x)
-	# 	print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
-	#
-	# print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
+	for x, y in zip(pred_endfb_gated, truncated_endfb):
+		all_libs.append(y)
+		all_preds.append(x)
+	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f}")
 
-	# print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
-	# print(f"Mean gradient: {sum(abs(np.gradient(pred_xs)))/(len(pred_xs)):0.5f}")
+	# Find r2 w.r.t. other libraries
+	if target_nuclide in JENDL_nuclides:
+		jendlxs_interpolated = interpolation_function(jendlerg)
+
+		predjendlgated, gated_jendl_xs, jendl_r2 = r2_standardiser(library_xs=jendlxs,
+																   predicted_xs=jendlxs_interpolated)
+		# jendl_r2s.append(jendl_r2)
+		jendl_rmse = mean_squared_error(predjendlgated, gated_jendl_xs) ** 0.5
+		# jendl_rmses.append(jendl_rmse)
+
+		for x, y in zip(gated_jendl_xs, predjendlgated):
+			all_libs.append(x)
+			all_preds.append(y)
+
+	if target_nuclide in CENDL_nuclides:
+		cendlxs_interpolated = interpolation_function(cendlerg)
+
+		predcendlgated, truncatedcendl, cendl_r2 = r2_standardiser(library_xs=cendlxs,
+																   predicted_xs=cendlxs_interpolated)
+		# cendl_r2s.append(cendl_r2)
+		cendl_rmse = mean_squared_error(predcendlgated, truncatedcendl) ** 0.5
+		# cendl_rmses.append(cendl_rmse)
+
+		for x, y in zip(truncatedcendl, predcendlgated):
+			all_libs.append(x)
+			all_preds.append(y)
+
+	if target_nuclide in JEFF_nuclides:
+		jeffxs_interpolated = interpolation_function(jefferg)
+
+		predjeffgated, d2, jeff_r2 = r2_standardiser(library_xs=jeffxs,
+													 predicted_xs=jeffxs_interpolated)
+		# jeff_r2s.append(jeff_r2)
+		jeff_rmse = mean_squared_error(d2, predjeffgated) ** 0.5
+		# jeff_rmses.append(jeff_rmse)
+		for x, y in zip(d2, predjeffgated):
+			all_libs.append(x)
+			all_preds.append(y)
+
+	tendlxs_interpolated = interpolation_function(tendlerg)
+	predtendlgated, truncatedtendl, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=tendlxs_interpolated)
+	# tendl_r2s.append(tendlr2)
+	tendlrmse = mean_squared_error(truncatedtendl, predtendlgated) ** 0.5
+	# tendl_rmses.append(tendlrmse)
+	for x, y in zip(truncatedtendl, predtendlgated):
+		all_libs.append(x)
+		all_preds.append(y)
+
+	print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
 
 
 
