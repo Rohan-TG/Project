@@ -54,6 +54,9 @@ nuclide_thresholds = []
 min95_consensus = []
 
 
+anyotherbetter = []
+
+
 nodd_peven = []
 nodd_podd = []
 neven_peven = []
@@ -78,6 +81,8 @@ eolbjeff = []
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
+
+	anyothertally = 0
 	every_true_value_list = []
 
 	endfb_r2s = []
@@ -228,6 +233,7 @@ for q in tqdm.tqdm(range(num_runs)):
 			current_nuclide = nuc
 
 			evaluation_r2s = []
+			otherlibr2s = []
 
 			truncated_library_r2 = []
 
@@ -262,6 +268,7 @@ for q in tqdm.tqdm(range(num_runs)):
 																		   predicted_xs=cendlxs_interpolated)
 
 				cendl_r2s.append(cendl_r2)
+				otherlibr2s.append(cendl_r2)
 				evaluation_r2s.append(cendl_r2)
 
 				if cendl_r2 > endfb_r2:
@@ -287,7 +294,7 @@ for q in tqdm.tqdm(range(num_runs)):
 				predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
 				jendl_r2s.append(jendl_r2)
 				evaluation_r2s.append(jendl_r2)
-
+				otherlibr2s.append(jendl_r2)
 				if jendl_r2 > endfb_r2:
 					jendlgeneral_olb += 1
 
@@ -313,6 +320,8 @@ for q in tqdm.tqdm(range(num_runs)):
 				if jeff_r2 > endfb_r2:
 					jeffgeneral_olb += 1
 
+				otherlibr2s.append(jeff_r2)
+
 				for o, p in zip(jefferg, jeffxs):
 					if p > 0:
 						threshold_values.append(o)
@@ -334,6 +343,7 @@ for q in tqdm.tqdm(range(num_runs)):
 					threshold_values.append(o)
 					break
 			tendl_r2s.append(tendlr2)
+			otherlibr2s.append(tendlr2)
 			if tendlr2 > endfb_r2:
 				tendlgeneral_olb += 1
 			evaluation_r2s.append(tendlr2)
@@ -374,6 +384,12 @@ for q in tqdm.tqdm(range(num_runs)):
 			mean_difference = np.mean(thr_diffs)
 
 			nuclide_thresholds.append([nuc[0], nuc[1], mean_difference])
+
+
+			for jjj in otherlibr2s:
+				if jjj >endfb_r2:
+					anyothertally += 1
+					break
 
 			if r2 > 0.97 and endfb_r2 < 0.9:
 				outliers += 1
@@ -475,7 +491,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	eolbjendl.append(exclusions_other_lib_better_jendl)
 	eolbtendl.append(exclusions_other_lib_better_tendl)
 
-
+	anyotherbetter.append(anyothertally)
 
 	olbtendl.append(tendlgeneral_olb)
 	olbjeff.append(jeffgeneral_olb)
