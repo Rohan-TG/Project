@@ -44,7 +44,7 @@ exc = exclusion_func()
 
 validation_set_size = 20  # number of nuclides hidden from training
 
-num_runs = 10
+num_runs = 2
 run_r2 = []
 run_mse = []
 
@@ -78,6 +78,7 @@ eolbjendl = []
 eolbcendl = []
 eolbtendl = []
 eolbjeff = []
+eolbany = []
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
@@ -106,6 +107,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	exclusions_other_lib_better_cendl = 0
 	exclusions_other_lib_better_tendl = 0
 	exclusions_other_lib_better_jeff = 0
+	exclusionsotherlibbetterany = 0
 
 	tendlgeneral_olb = 0
 	jendlgeneral_olb = 0
@@ -168,6 +170,7 @@ for q in tqdm.tqdm(range(num_runs)):
 								learning_rate=0.008,
 								max_depth=8,
 								subsample=0.18236,
+								reg_lambda=25,
 								max_leaves=0,
 								seed=modelseed,)
 
@@ -234,6 +237,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			evaluation_r2s = []
 			otherlibr2s = []
+			eotherlibr2s = []
 
 			truncated_library_r2 = []
 
@@ -360,18 +364,22 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			if current_nuclide in exc:
 				if current_nuclide in JENDL_nuclides:
+					eotherlibr2s.append(jendl_r2)
 					if jendl_r2 > endfb_r2:
 						exclusions_other_lib_better_jendl += 1
 
 				if current_nuclide in CENDL_nuclides:
+					eotherlibr2s.append(cendl_r2)
 					if cendl_r2 > endfb_r2:
 						exclusions_other_lib_better_cendl += 1
 
 				if current_nuclide in TENDL_nuclides:
+					eotherlibr2s.append(tendlr2)
 					if tendlr2 > endfb_r2:
 						exclusions_other_lib_better_tendl += 1
 
 				if current_nuclide in JEFF_nuclides:
+					eotherlibr2s.append(jeff_r2)
 					if jeff_r2 > endfb_r2:
 						exclusions_other_lib_better_jeff += 1
 
@@ -385,6 +393,10 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			nuclide_thresholds.append([nuc[0], nuc[1], mean_difference])
 
+			for jkl  in eotherlibr2s:
+				if jkl > endfb_r2:
+					exclusionsotherlibbetterany += 1
+					break
 
 			for jjj in otherlibr2s:
 				if jjj >endfb_r2:
@@ -490,6 +502,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	eolbcendl.append(exclusions_other_lib_better_cendl)
 	eolbjendl.append(exclusions_other_lib_better_jendl)
 	eolbtendl.append(exclusions_other_lib_better_tendl)
+	eolbany.append(exclusionsotherlibbetterany)
 
 	anyotherbetter.append(anyothertally)
 
@@ -665,3 +678,7 @@ plt.show()
 print(f'At least one library r2 >=0.9: {np.mean(atleast190)} +- {np.std(atleast190)}')
 print(f'At least one library r2 >=0.93: {np.mean(atleast193)} +- {np.std(atleast193)}')
 print(f'At least one library r2 >=0.95: {np.mean(atleast195)} +- {np.std(atleast195)}')
+
+print(f'Any other lib better than ENDFB: {np.mean(anyotherbetter)} +- {np.std(anyotherbetter)} out of {len(al)}')
+
+print(f'Any other lib better for exclusions: {np.mean(eolbany)} +- {np.std(eolbany)} out of {len(exc)}')
