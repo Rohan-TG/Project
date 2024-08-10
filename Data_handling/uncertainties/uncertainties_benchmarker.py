@@ -44,7 +44,7 @@ exc = exclusion_func()
 
 validation_set_size = 20  # number of nuclides hidden from training
 
-num_runs = 2
+num_runs = 10
 run_r2 = []
 run_mse = []
 
