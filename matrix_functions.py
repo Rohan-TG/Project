@@ -1,8 +1,8 @@
 import random
 import warnings
 import tqdm
-from numba.core.errors import NumbaDeprecationWarning
-warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
+# from numba.core.errors import NumbaDeprecationWarning
+# warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 import pandas as pd
 import numpy as np
 from sklearn.metrics import r2_score, mean_squared_error
