@@ -563,7 +563,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	min95_consensus.append(local_95)
 
 
-agg_n_r2 = range_setter(df=df, la=30,ua=210)
+agg_n_r2 = range_setter(df=df, la=30,ua=208)
 
 alist = []
 
