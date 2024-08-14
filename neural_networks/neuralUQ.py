@@ -43,8 +43,9 @@ callback = keras.callbacks.EarlyStopping(monitor='loss',
 										 start_from_epoch=20)
 
 
+energyrow = 2
 
-n_evals = 10
+n_evals = 5
 datapoint_matrix = []
 
 target_nuclide = [40,90]
@@ -110,21 +111,22 @@ for i in tqdm.tqdm(range(n_evals)):
 		validation_split = 0.2,
 		verbose=1,)
 
-	predictions_ReLU = []
+	# predictions_ReLU = []
+	#
+	# for n in validation_nuclides:
+	#
+	# 	temp_x, temp_y = make_test(nuclides=[n], df=df)
+	# 	initial_predictions = model.predict(temp_x)
+	# 	initial_predictions = initial_predictions.ravel()
+	#
+	# 	for p in initial_predictions:
+	# 		if p >= (0.02 * max(initial_predictions)):
+	# 			predictions_ReLU.append(p)
+	# 		else:
+	# 			predictions_ReLU.append(0.0)
 
-	for n in validation_nuclides:
-
-		temp_x, temp_y = make_test(nuclides=[n], df=df)
-		initial_predictions = model.predict(temp_x)
-		initial_predictions = initial_predictions.ravel()
-
-		for p in initial_predictions:
-			if p >= (0.02 * max(initial_predictions)):
-				predictions_ReLU.append(p)
-			else:
-				predictions_ReLU.append(0.0)
-
-	predictions = predictions_ReLU
+	predictions = model.predict(X_test)
+	predictions = predictions.ravel()
 
 	if i == 0:
 		for k, pred in enumerate(predictions):
@@ -133,7 +135,7 @@ for i in tqdm.tqdm(range(n_evals)):
 	else:
 		valid_predictions = []
 		for k, pred in enumerate(predictions):
-			if [X_test[k, 0], X_test[k, 1]] == validation_nuclides[0]:
+			if [X_test[k, 0], X_test[k, 1]] == target_nuclide:
 				valid_predictions.append(pred)
 		for m, prediction in zip(datapoint_matrix, valid_predictions):
 			m.append(prediction)
@@ -234,7 +236,7 @@ E_plot = []
 for i, row in enumerate(X_test):
 	if [row[0], row[1]] == target_nuclide:
 		XS_plot.append(y_test[i])
-		E_plot.append(row[4])  # Energy values are in 5th column
+		E_plot.append(row[energyrow])  # Energy values are in 5th column
 
 datapoint_means = []
 datapoint_upper_interval = []

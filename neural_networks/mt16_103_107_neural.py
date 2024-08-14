@@ -25,7 +25,7 @@ JEFF_nuclides = range_setter(df=JEFF, la=30, ua = 210)
 df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
 ENDFB_nuclides = range_setter(df=df, la=30, ua=208)
 
-validation_nuclides = [[31,71]]
+validation_nuclides = [[40,90]]
 validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
