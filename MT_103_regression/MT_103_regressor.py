@@ -94,7 +94,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.title(f"$\sigma_{{n,p}}$ for {periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]:0.0f}")
 	plt.legend()
 	plt.grid()
-	plt.ylabel('$\sigma_{n,2n}$ / b')
+	plt.ylabel('$\sigma_{n,p}$ / b')
 	plt.xlabel('Energy / MeV')
 	plt.show()
 
