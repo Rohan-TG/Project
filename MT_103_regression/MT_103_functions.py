@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.metrics import r2_score, mean_squared_error
 
 
-def General_plotter(df, nuclides):
+def General_plotter(df, nuclides, maxenergy=20, minenergy=2):
 	"""df: dataframe source of XSs
 	nuclides: must be array of 1x2 arrays [z,a]
 
@@ -25,7 +25,7 @@ def General_plotter(df, nuclides):
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
-			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] < 20 and Energy[j] >= 2.0:
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] < maxenergy and Energy[j] >= minenergy:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
 				Energy_test.append(Energy[j])
