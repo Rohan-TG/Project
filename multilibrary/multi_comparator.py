@@ -1,7 +1,9 @@
-from matrix_functions import make_test, make_train, range_setter, General_plotter, r2_standardiser
+from matrix_functions import range_setter, General_plotter, r2_standardiser,\
+	exclusion_func
 import pandas as pd
 import xgboost as xg
 import random
+from multilib_functions import make_train, make_test
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_percentage_error
 import time
@@ -25,17 +27,7 @@ JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
 all_libraries = pd.read_csv('MT16_all_lib_mk2_grid.csv')
 all_libraries.index = range(len(all_libraries))
 
-exc = [[22, 47], [65, 159], [66, 157], [38, 90], [61, 150],
-	   [74, 185], [50, 125], [50, 124], [60, 149], [39, 90],
-	   [64, 160], [38, 87], [39, 91], [63, 152], [52, 125],
-	   [19, 40], [56, 139], [52, 126], [71, 175], [34, 79],
-	   [70, 175], [50, 117], [23, 49], [63, 156], [57, 140],
-	   [52, 128], [59, 142], [50, 118], [50, 123], [65, 161],
-	   [52, 124], [38, 85], [51, 122], [19, 41], [54, 135],
-	   [32, 75], [81, 205], [71, 176], [72, 175], [50, 122],
-	   [51, 125], [53, 133], [34, 82], [41, 95], [46, 109],
-	   [84, 209], [56, 140], [64, 159], [68, 167], [16, 35],
-	   [18,38], [44,99], [50,126]] # 10 sigma with handpicked additions
+exc = exclusion_func()
 
 
 
@@ -46,11 +38,12 @@ while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 	if choice not in validation_nuclides:
 		validation_nuclides.append(choice)
-print("Test nuclide selection complete")
+print("Data loaded...")
 
 
-X_train, y_train = make_train(df=all_libraries, validation_nuclides=validation_nuclides, la=30, ua=210,
-							  exclusions=exc) # create training matrix
+X_train, y_train = make_train(df=all_libraries, validation_nuclides=validation_nuclides, la=30, ua=208,
+							  exclusions=exc,
+							  use_tqdm=True) # create training matrix
 X_test, y_test = make_test(validation_nuclides, df=ENDFB,) # create test matrix using validation nuclides
 print("Data preparation complete. Training...")
 
@@ -63,7 +56,8 @@ model = xg.XGBRegressor(n_estimators=800, # define regressor
 						seed=42, )
 time1 = time.time()
 model.fit(X_train, y_train,
-		  # verbose= True, early_stopping_rounds=10, eval_set = [(X_test, y_test)],
+		  verbose= True,
+		  eval_set = [(X_test, y_test)],
 		  )
 print(f"Training time: {(time.time() - time1)} seconds")
 print("Training complete. Processing/Plotting...")
@@ -129,7 +123,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	time.sleep(0.8)
 
 	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
-	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(raw_predictions=pred_xs, library_xs=true_xs)
+	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(predicted_xs=pred_xs, library_xs=true_xs)
 
 	endfbmape = mean_absolute_percentage_error(truncated_endfb, pred_endfb_gated)
 	for x, y in zip(pred_endfb_gated, truncated_endfb):
@@ -143,7 +137,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
 		pred_cendl = model.predict(cendl_test)
 
-		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl, library_xs=cendl_xs)
+		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl, library_xs=cendl_xs)
 
 		pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
 		for x, y in zip(pred_cendl_gated, truncated_cendl):
@@ -157,7 +151,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jendl = model.predict(jendl_test)
 
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
+		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl, library_xs=jendl_xs)
 
 		for x, y in zip(pred_jendl_gated, truncated_jendl):
 			all_libs.append(y)
@@ -170,7 +164,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jeff = model.predict(jeff_test)
 
 		pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
+		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -182,7 +176,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl, library_xs=tendl_xs)
+		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl, library_xs=tendl_xs)
 		for x, y in zip(pred_tendl_gated, truncated_tendl):
 			all_libs.append(y)
 			all_preds.append(x)
