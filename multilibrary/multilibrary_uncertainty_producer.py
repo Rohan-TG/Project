@@ -20,18 +20,19 @@ JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JEFF = pd.read_csv('JEFF33_all_features.csv')
 CENDL = pd.read_csv('CENDL32_all_features.csv')
 
-ENDFB_nuclides = range_setter(df=ENDFB, la=30, ua=210)
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=210)
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua=210)
+ENDFB_nuclides = range_setter(df=ENDFB, la=30, ua=208)
+TENDL_nuclides = range_setter(df=TENDL, la=30, ua=208)
+JENDL_nuclides = range_setter(df=JENDL, la=30, ua=208)
+CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
+JEFF_nuclides = range_setter(df=JEFF, la=30, ua=208)
 
 all_libraries = pd.read_csv('MT16_all_libraries_mk1.csv')
 all_libraries.index = range(len(all_libraries))
 
+gate = 0.02
 n_evaluations = 3
 datapoint_matrix = []
-target_nuclide = [28,60]
+target_nuclide = [23,49]
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -42,7 +43,6 @@ endfberg, endfbxs = General_plotter(df=ENDFB, nuclides=[target_nuclide])
 runs_r2_array = []
 
 for i in tqdm.tqdm(range(n_evaluations)):
-	print(f"\nRun {i+1}/{n_evaluations}")
 
 
 	validation_nuclides = [target_nuclide]
@@ -52,15 +52,14 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides
 		if choice not in validation_nuclides:
 			validation_nuclides.append(choice)
-	print("\nTest nuclide selection complete")
+	# print("\nTest nuclide selection complete")
 
 	X_train, y_train = make_train(df=all_libraries, validation_nuclides=validation_nuclides,
-								  la=30, ua=210)
+								  la=30, ua=208)
 
 	X_test, y_test = make_test(nuclides=validation_nuclides, df=ENDFB)
 
 
-	print("Matrices formed...")
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
@@ -73,15 +72,19 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	model.fit(X_train, y_train)
 
-	print("Training complete")
+	# print("Training complete")
 
-	predictions = model.predict(X_test) # XS predictions
 	predictions_ReLU = []
-	for pred in predictions:
-		if pred >= 0.003:
-			predictions_ReLU.append(pred)
-		else:
-			predictions_ReLU.append(0)
+
+	for n in validation_nuclides:
+		tempx, tempy = make_test(nuclides=[n], df=ENDFB)
+		initial_predictions = model.predict(tempx)
+
+		for p in initial_predictions:
+			if p > (0.02 * max(initial_predictions)):
+				predictions_ReLU.append(p)
+			else:
+				predictions_ReLU.append(0.0)
 
 	predictions = predictions_ReLU
 
@@ -128,9 +131,8 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 		cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL)
 		pred_cendl = model.predict(cendl_test)
-
-		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
-		for x, y in zip(pred_cendl, cendl_xs):
+		predcgated, trunccendl, pred_cendl_r2 = r2_standardiser(cendl_xs, pred_cendl)
+		for x, y in zip(predcgated, trunccendl):
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f}")
@@ -140,9 +142,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		jendl_test, jendl_xs = make_test(nuclides=[target_nuclide], df=JENDL)
 		pred_jendl = model.predict(jendl_test)
 
-		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
+		predjengated, truncjendl, pred_jendl_r2 = r2_standardiser(jendl_xs, pred_jendl)
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
-		for x, y in zip(pred_jendl, jendl_xs):
+		for x, y in zip(predjengated, truncjendl):
 			all_libs.append(y)
 			all_preds.append(x)
 
@@ -151,7 +153,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 		pred_jeff = model.predict(jeff_test)
 
-		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
+		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -163,8 +165,8 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
-		for x, y in zip(pred_tendl, tendl_xs):
+		predtgated, trunctendl, pred_tendl_r2 = r2_standardiser(tendl_xs, pred_tendl)
+		for x, y in zip(predtgated, trunctendl):
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f}")
@@ -176,7 +178,6 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	exp_true_xs = [y for y in y_test]
 	exp_pred_xs = [xs for xs in predictions]
 
-	print(f'completed in {time.time() - time1:0.1f} s')
 
 XS_plot = []
 E_plot = []
