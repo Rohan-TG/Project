@@ -1,6 +1,6 @@
 import numpy as np
 
-def Generalplotter107(dataframe, nuclide):
+def Generalplotter107(dataframe, nuclide, minenergy=1, maxenergy=20):
 	minidf = dataframe[(dataframe['Z'] == nuclide[0]) & (dataframe['A'] == nuclide[1])]
 	try:
 		xsvals = minidf['MT107XS'].values
@@ -10,7 +10,7 @@ def Generalplotter107(dataframe, nuclide):
 	ergs = []
 	xsv = []
 	for ENERGY, XSVAL in zip(ergvals, xsvals):
-		if ENERGY > 1 and ENERGY < 20:
+		if ENERGY > minenergy and ENERGY < maxenergy:
 			ergs.append(ENERGY)
 			xsv.append(XSVAL)
 
