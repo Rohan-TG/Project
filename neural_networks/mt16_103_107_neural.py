@@ -23,7 +23,7 @@ JEFF = pd.read_csv('JEFF33_all_features_MT16_103_107.csv')
 JEFF_nuclides = range_setter(df=JEFF, la=30, ua = 210)
 
 df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
-ENDFB_nuclides = range_setter(df=df, la=30, ua=208)
+ENDFB_nuclides = range_setter(df=df, la=60, ua=208)
 
 validation_nuclides = [[40,90]]
 validation_set_size = 20
@@ -35,15 +35,15 @@ while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 print("Test nuclide selection complete")
 
 
-X_train, y_train = make_train(df=df, validation_nuclides= validation_nuclides, la=30, ua=208)
+X_train, y_train = make_train(df=df, validation_nuclides= validation_nuclides, la=60, ua=208)
 
 X_test, y_test = make_test(nuclides=validation_nuclides, df=df)
 
 
 print("Matrices formed")
 
-callback = keras.callbacks.EarlyStopping(monitor='loss',
-										 min_delta=0.005,
+callback = keras.callbacks.EarlyStopping(monitor='val_loss',
+										 min_delta=0.05,
 										 patience=20,
 										 mode='min',
 										 start_from_epoch=20)

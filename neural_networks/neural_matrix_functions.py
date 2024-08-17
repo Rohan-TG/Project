@@ -320,9 +320,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
 			# AM_train.append(AM[idx])
 
-
-
-
+	ignore_list = [0, 1,2, 6, 10, 11, 12, 15, 16]
 	X = np.array([Z_train,
 				  A_train,
 				  # S2n_train,
@@ -399,7 +397,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 				  # AM_train,
 				  ])
 	for j_idx, feature_list in enumerate(X):
-		if j_idx > 2:
+		if j_idx not in ignore_list:
 			X[j_idx] = scipy.stats.zscore(feature_list)
 
 	y = np.array(XS_train) # cross sections
@@ -661,7 +659,7 @@ def make_test(nuclides, df):
 				Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 
-
+	ignore_list = [0,1,2,6,10,11,12,15,16]
 	xtest = np.array([Z_test,
 	A_test,
 	# S2n_test,
@@ -737,7 +735,7 @@ def make_test(nuclides, df):
 	# AM_test,
 	])
 	for j_idx, feature_list in enumerate(xtest):
-		if j_idx > 2:
+		if j_idx not in ignore_list:
 			xtest[j_idx] = scipy.stats.zscore(feature_list)
 
 	xtest = np.transpose(xtest)
