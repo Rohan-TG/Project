@@ -1,6 +1,7 @@
 import math
 import pandas as pd
 import numpy as np
+import random
 import tqdm
 
 
@@ -198,7 +199,8 @@ def make_train(df, validation_nuclides, exclusions = [], la=0, ua=260, use_tqdm=
 			S2n_train.append(Sep_2n[idx])
 			S2p_train.append(Sep_2p[idx])
 			Energy_train.append(Energy[idx])
-			XS_train.append(XS[idx])
+			# XS_train.append(XS[idx])
+			XS_train.append(random.gauss(mu=XS[idx], sigma=0.1 * XS[idx]))
 			Sp_train.append(Sep_p[idx])
 			Sn_train.append(Sep_n[idx])
 			BEA_train.append(BEA[idx])
