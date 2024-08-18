@@ -75,6 +75,7 @@ runs_rmse_array = []
 
 X_test, y_test = maketest107([target_nuclide], df=df, )
 
+print('Data loaded.')
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i+1}/{n_evaluations}")
 
@@ -90,7 +91,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	time1 = time.time()
 
 	X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
-								  la=70, ua=208, )  # make training matrix
+								  la=30, ua=208, )  # make training matrix
 
 
 	# print("Training...")
@@ -322,9 +323,9 @@ plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alp
 # 			 capsize=2, label='Veeser, 1977', color='orangered')
 
 plt.grid()
-plt.title(f"$\sigma_{{n,p}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
+plt.title(fr"$\sigma_{{n,\alpha}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
 plt.xlabel("Energy / MeV")
-plt.ylabel("$\sigma_{n,p}$ / b")
+plt.ylabel(r"$\sigma_{n,\alpha}$ / b")
 plt.legend(loc='upper left')
 plt.show()
 
