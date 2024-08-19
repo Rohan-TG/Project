@@ -115,6 +115,12 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	time.sleep(1.5)
 	print(f'{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}')
 
+	endfbpredtruncated, endfblibtruncated, endfbr2 = r2_standardiser(library_xs=true_xs, predicted_xs=pred_xs)
+	for x, y in zip(endfbpredtruncated, endfblibtruncated):
+		all_libs.append(y)
+		all_preds.append(x)
+	print(f"Predictions - ENDF/B-VIII: {endfbr2:0.5f}")
+
 	if current_nuclide in CENDL_nuclides:
 
 		cendl_test, cendl_xs = maketest107(nuclides=[current_nuclide], df=CENDL_32)
