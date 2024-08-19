@@ -14,26 +14,30 @@ from sklearn.metrics import mean_squared_error, r2_score
 from functions107 import maketrain107, maketest107, Generalplotter107
 from matrix_functions import r2_standardiser, range_setter
 
-df = pd.read_csv('ENDFBVIII_MT16_MT103_MT107_fund_features.csv')
-al = range_setter(df=df, la=30, ua=260)
+df = pd.read_csv('ENDFBVIII_MT107_nanremoved.csv')
+al = range_setter(df=df, la=30, ua=208)
 
 CENDL_32 = pd.read_csv('CENDL-3.2_MT107_main_features.csv')
-CENDL_nuclides = range_setter(df=CENDL_32, la=0, ua=260)
+CENDL_32= CENDL_32.dropna(subset=['XS'])
+CENDL_nuclides = range_setter(df=CENDL_32, la=30, ua=260)
 CENDL_32.index = range(len(CENDL_32))
 
 JEFF_33 = pd.read_csv('JEFF33_all_features_MT16_103_107.csv')
-JEFF_nuclides = range_setter(df=JEFF_33, la=0, ua=260)
+JEFF_33 = JEFF_33.dropna(subset=['MT107XS'])
+JEFF_nuclides = range_setter(df=JEFF_33, la=30, ua=260)
 JEFF_33.index = range(len(JEFF_33))
 
 JENDL_5 = pd.read_csv('JENDL-5_MT107_main_features.csv')
-JENDL_nuclides = range_setter(df=JENDL_5, la=0, ua=260)
+JENDL_nuclides = range_setter(df=JENDL_5, la=30, ua=260)
+JENDL_5 = JENDL_5.dropna(subset=['XS'])
 JENDL_5.index = range(len(JENDL_5))
 
 TENDL_2021 = pd.read_csv('TENDL-2021_MT107_main_features.csv')
-TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=270)
+TENDL_2021 = TENDL_2021.dropna(subset=['XS'])
+TENDL_nuclides = range_setter(df=TENDL_2021, la=30, ua=270)
 TENDL_2021.index = range(len(TENDL_2021))
 
-ENDFB_nuclides = range_setter(df=df, la=0, ua=260)
+ENDFB_nuclides = range_setter(df=df, la=30, ua=260)
 print("Data loaded...")
 
 
@@ -373,12 +377,13 @@ goodnucs = [[14, 30],
  [84, 208],
  [84, 210]]
 
-al = JENDL_nuclides
-validation_set_size = 200  # number of nuclides hidden from training
+# al = ENDFB_nuclides
+validation_set_size = 20  # number of nuclides hidden from training
 
-num_runs = 2
+num_runs = 10
 run_r2 = []
 
+atleast90 = []
 nuclide_r2 = []
 
 for q in tqdm.tqdm(range(num_runs)):
@@ -392,6 +397,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	outliers9090 = 0
 	outlier_tally = 0
 	tally = 0
+
+
+	atleast90tally = 0
 
 	low_masses = []
 
@@ -436,9 +444,9 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = maketrain107(df=JENDL_5, validation_nuclides=validation_nuclides, la=0, ua=260) # make training matrix
+		X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=30, ua=208) # make training matrix
 
-		X_test, y_test = maketest107(validation_nuclides, df=JENDL_5)
+		X_test, y_test = maketest107(validation_nuclides, df=df)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
@@ -446,11 +454,12 @@ for q in tqdm.tqdm(range(num_runs)):
 		print("Train/val matrices generated")
 
 		modelseed= random.randint(a=1, b=1000)
-		model = xg.XGBRegressor(n_estimators=750,
-								learning_rate=0.02,
+		model = xg.XGBRegressor(n_estimators=900,
+								learning_rate=0.01,
 								max_depth=7,
-								subsample=0.888,
-								reg_lambda=1
+								subsample=0.5,
+								reg_lambda=2,
+								seed = modelseed
 								)
 
 		time1 = time.time()
@@ -615,6 +624,10 @@ for q in tqdm.tqdm(range(num_runs)):
 					outlier_tally += 1
 					break
 
+			for cc in evaluation_r2s:
+				if cc > 0.90:
+					atleast90tally += 1
+					break
 
 
 
@@ -719,6 +732,7 @@ for q in tqdm.tqdm(range(num_runs)):
 # print(f"MSE: {all_libraries_mse:0.5f}")
 	print(f"R2: {benchmark_r2:0.5f}")
 	run_r2.append(benchmark_r2)
+	atleast90.append(atleast90tally)
 
 	print(f"Bad nuclides: {bad_nuclides}")
 
@@ -742,7 +756,7 @@ print(np.std(run_r2))
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
 # mse_plots = [i[-1] for i in nuclide_mse]
 
-log_plots = [abs(np.log(abs(i[-1]))) for i in alist]
+log_plots = [abs(np.log10(abs(i[-1]))) for i in alist]
 # log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 #
 # r2plot = [i[-1] for i in nuclide_r2]
@@ -754,7 +768,7 @@ plt.figure()
 plt.plot(A_plots, log_plots, 'x')
 # plt.plot(A_plots, r2plot, 'x')
 plt.xlabel("A")
-plt.ylabel("$|\ln(|r^2|)|$")
+plt.ylabel("$|\lg(|r^2|)|$")
 plt.title("Performance - A")
 plt.grid()
 plt.show()
@@ -764,6 +778,7 @@ plt.show()
 # plt.xlabel('Z')
 # plt.ylabel("$|\ln(|r^2|)|$")
 # plt.title("Performance - Z")
+print(f'At least 1 lib > 90: {np.mean(atleast90)} +- {np.std(atleast90)}')
 # plt.grid()
 # plt.show()
 
