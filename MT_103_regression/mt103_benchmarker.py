@@ -15,7 +15,7 @@ from MT_103_functions import range_setter, make_train, make_test
 from matrix_functions import r2_standardiser
 
 df = pd.read_csv('ENDFBVIII_MT103_fund_features_only.csv')
-al = range_setter(df=df, la=30, ua=210)
+al = range_setter(df=df, la=30, ua=208)
 
 CENDL_32 = pd.read_csv('CENDL-3.2_MT103_fund_features_only.csv')
 CENDL_nuclides = range_setter(df=CENDL_32)
@@ -33,7 +33,7 @@ TENDL_2021 = pd.read_csv('TENDL-2021_MT103_fund_only.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021)
 TENDL_2021.index = range(len(TENDL_2021))
 
-ENDFB_nuclides = range_setter(df=df, la=30, ua=210)
+ENDFB_nuclides = range_setter(df=df, la=30, ua=208)
 print("Data loaded...")
 
 
@@ -55,10 +55,12 @@ for i in al:
 
 validation_set_size = 20  # number of nuclides hidden from training
 
-num_runs = 2
+num_runs = 10
 run_r2 = []
 
 nuclide_r2 = []
+
+tallyatleast90 = []
 
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
@@ -115,7 +117,7 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=210) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df)
 
@@ -125,11 +127,11 @@ for q in tqdm.tqdm(range(num_runs)):
 		print("Train/val matrices generated")
 
 		modelseed= random.randint(a=1, b=1000)
-		model = xg.XGBRegressor(n_estimators=600,
-									 learning_rate=0.01,
+		model = xg.XGBRegressor(n_estimators=1100,
+									 learning_rate=0.008,
 									 max_depth=8,
-									 subsample=0.3,
-									 reg_lambda=1
+									 subsample=0.888,
+									 reg_lambda=4
 									 )
 
 		# model = xg.XGBRegressor(n_estimators=600,
@@ -390,6 +392,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	print(f"no. outliers estimate: {outliers}/{len(al)}")
 	print()
 	print(f"At least one library >= 0.95: {outlier_tally}/{len(al)}")
+	print(f"At least one library >= 0.9: {at_least_one_agreeing_90}/{len(al)}")
 	n_run_tally95.append(outlier_tally)
 	print(f"Estimate of outliers, threshold 0.9: {outliers90}/{len(al)}")
 	print(f"outliers 90/90: {outliers9090}/{len(al)}")
@@ -405,6 +408,8 @@ for q in tqdm.tqdm(range(num_runs)):
 # print(f"MSE: {all_libraries_mse:0.5f}")
 	print(f"R2: {benchmark_r2:0.5f}")
 	run_r2.append(benchmark_r2)
+
+	tallyatleast90.append(at_least_one_agreeing_90)
 
 	print(f"Bad nuclides: {bad_nuclides}")
 
@@ -457,3 +462,4 @@ plt.show()
 # plt.hist(x=log_plots, bins=50)
 # plt.grid()
 # plt.show()
+print(f"At least 90: {np.mean(tallyatleast90)} +- {np.std(tallyatleast90)}")
