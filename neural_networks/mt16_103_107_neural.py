@@ -9,6 +9,9 @@ import periodictable
 import matplotlib.pyplot as plt
 import scipy.stats
 from sklearn.metrics import mean_squared_error, r2_score
+from keras import regularizers
+
+energyrow=3
 
 JENDL = pd.read_csv('JENDL5_with_MT16_and_ENDFB_MT103_107.csv')
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
@@ -25,7 +28,7 @@ JEFF_nuclides = range_setter(df=JEFF, la=30, ua = 210)
 df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
 ENDFB_nuclides = range_setter(df=df, la=60, ua=208)
 
-validation_nuclides = [[40,90]]
+validation_nuclides = [[55,133]]
 validation_set_size = 20
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
@@ -48,15 +51,21 @@ callback = keras.callbacks.EarlyStopping(monitor='val_loss',
 										 mode='min',
 										 start_from_epoch=20)
 
+L2Const = 0.01
 model = keras.Sequential()
-model.add(keras.layers.Dense(100, input_shape=(17,), kernel_initializer='normal', activation='relu',
-							 ))
-model.add(keras.layers.Dense(400, activation='relu'))
-model.add(keras.layers.Dense(800, activation='relu'))
+model.add(keras.layers.Dense(38, input_shape=(X_train.shape[1],), kernel_initializer='normal',
+							 activation='relu',
+							 activity_regularizer=regularizers.L2(0.01)))
+# model.add(keras.layers.Dense(100, input_shape=(X_train.shape[1],), kernel_initializer='normal',
+# 							 activation='relu',))
+model.add(keras.layers.Dense(1022, activation='relu', activity_regularizer=regularizers.L2(0.01)))
 model.add(keras.layers.Dropout(0.1))
-model.add(keras.layers.Dense(1022, activation='relu'))
-model.add(keras.layers.Dropout(0.2))
-model.add(keras.layers.Dense(400, activation='relu'))
+model.add(keras.layers.Dense(1022, activation='relu',activity_regularizer=regularizers.L2(0.01)))
+model.add(keras.layers.Dropout(0.1))
+model.add(keras.layers.Dense(1022, activation='relu',activity_regularizer=regularizers.L2(0.01)))
+# model.add(keras.layers.Dense(1022, activation='relu'))
+# model.add(keras.layers.Dropout(0.2))
+# model.add(keras.layers.Dense(400, activation='relu'))
 model.add(keras.layers.Dense(1, activation='linear',))
 
 model.compile(loss='mean_squared_error', optimizer='adam')
@@ -64,8 +73,8 @@ model.compile(loss='mean_squared_error', optimizer='adam')
 history = model.fit(
     X_train,
     y_train,
-    epochs=100,
-	batch_size= 100,
+    epochs=30,
+	batch_size= 64,
 	callbacks=callback,
     validation_split = 0.2,
 	verbose=1,)
@@ -85,7 +94,7 @@ for nuclide in validation_nuclides:
 	for i, row in enumerate(X_test):
 		if [row[0], row[1]] == nuclide:
 			dummy_test_XS.append(y_test[i])
-			dummy_test_E.append(row[2])  # Energy values are in 5th row
+			dummy_test_E.append(row[energyrow])  # Energy values are in 5th row
 			dummy_predictions.append(predictions[i])
 
 	XS_plotmatrix.append(dummy_test_XS)
