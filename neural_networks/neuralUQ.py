@@ -36,19 +36,19 @@ print('Data loaded')
 
 
 
-callback = keras.callbacks.EarlyStopping(monitor='loss',
-										 min_delta=0.005,
-										 patience=20,
+callback = keras.callbacks.EarlyStopping(monitor='val_loss',
+										 min_delta=0.05,
+										 patience=10,
 										 mode='min',
 										 start_from_epoch=20)
 
 
-energyrow = 2
+energyrow = 3
 
-n_evals = 5
+n_evals = 2
 datapoint_matrix = []
 
-target_nuclide = [40,90]
+target_nuclide = [55,133]
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -79,7 +79,7 @@ jeff_rmses = []
 for i in tqdm.tqdm(range(n_evals)):
 
 	validation_nuclides = [target_nuclide]
-	validation_set_size = 20
+	validation_set_size = 5
 
 	while len(validation_nuclides) < validation_set_size:  # up to 25 nuclides
 		choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -90,13 +90,13 @@ for i in tqdm.tqdm(range(n_evals)):
 
 	X_test, y_test = make_test(nuclides=validation_nuclides, df=df)
 	model = keras.Sequential()
-	model.add(keras.layers.Dense(100, input_shape=(17,), kernel_initializer='normal', activation='relu',
+	model.add(keras.layers.Dense(100, input_shape=(X_train.shape[1],), kernel_initializer='normal', activation='relu',
 								 ))
-	model.add(keras.layers.Dense(400, activation='relu'))
-	model.add(keras.layers.Dense(800, activation='relu'))
+	model.add(keras.layers.Dense(500, activation='relu'))
+	model.add(keras.layers.Dense(1000, activation='relu'))
 	model.add(keras.layers.Dropout(0.1))
 	model.add(keras.layers.Dense(1022, activation='relu'))
-	model.add(keras.layers.Dropout(0.2))
+	model.add(keras.layers.Dropout(0.1))
 	model.add(keras.layers.Dense(400, activation='relu'))
 	model.add(keras.layers.Dense(1, activation='linear',))
 
@@ -105,25 +105,13 @@ for i in tqdm.tqdm(range(n_evals)):
 	history = model.fit(
 		X_train,
 		y_train,
-		epochs=100,
-		batch_size= 100,
+		epochs=20,
+		batch_size= 64,
 		callbacks=callback,
 		validation_split = 0.2,
 		verbose=1,)
 
-	# predictions_ReLU = []
-	#
-	# for n in validation_nuclides:
-	#
-	# 	temp_x, temp_y = make_test(nuclides=[n], df=df)
-	# 	initial_predictions = model.predict(temp_x)
-	# 	initial_predictions = initial_predictions.ravel()
-	#
-	# 	for p in initial_predictions:
-	# 		if p >= (0.02 * max(initial_predictions)):
-	# 			predictions_ReLU.append(p)
-	# 		else:
-	# 			predictions_ReLU.append(0.0)
+
 
 	predictions = model.predict(X_test)
 	predictions = predictions.ravel()
@@ -151,7 +139,7 @@ for i in tqdm.tqdm(range(n_evals)):
 		for i, row in enumerate(X_test):
 			if [row[0], row[1]] == nuclide:
 				dummy_test_XS.append(y_test[i])
-				dummy_test_E.append(row[2])  # Energy values are in 5th row
+				dummy_test_E.append(row[energyrow])  # Energy values are in 5th row
 				dummy_predictions.append(predictions[i])
 
 		XS_plotmatrix.append(dummy_test_XS)
