@@ -159,11 +159,11 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 
 	Z_train = []
 	A_train = []
-	# S2n_train = []
+	S2n_train = []
 	# S2p_train = []
 	Energy_train = []
 	XS_train = []
-	# Sp_train = []
+	Sp_train = []
 	Sn_train = []
 	BEA_train = []
 	# Pairing_train = []
@@ -249,11 +249,11 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
 			Z_train.append(Z[idx])
 			A_train.append(A[idx])
-			# S2n_train.append(Sep_2n[idx])
+			S2n_train.append(Sep_2n[idx])
 			# S2p_train.append(Sep_2p[idx])
 			Energy_train.append(Energy[idx])
 			XS_train.append(XS[idx])
-			# Sp_train.append(Sep_p[idx])
+			Sp_train.append(Sep_p[idx])
 			Sn_train.append(Sep_n[idx])
 			BEA_train.append(BEA[idx])
 			# Pairing_train.append(Pairing[idx])
@@ -320,13 +320,13 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
 			# AM_train.append(AM[idx])
 
-	ignore_list = [0, 1,2, 6, 10, 11, 12, 15, 16]
+	ignore_list = [0,1,3,8,12,13,14,17,18]
 	X = np.array([Z_train,
 				  A_train,
-				  # S2n_train,
+				  S2n_train,
 				  # S2p_train,
 				  Energy_train,
-				  # Sp_train,
+				  Sp_train,
 				  Sn_train,
 				  BEA_train,
 				  # Pairing_train,
@@ -659,13 +659,13 @@ def make_test(nuclides, df):
 				Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 
-	ignore_list = [0,1,2,6,10,11,12,15,16]
+	ignore_list = [0,1,3,8,12,13,14,17,18]
 	xtest = np.array([Z_test,
 	A_test,
-	# S2n_test,
+	S2n_test,
 	# S2p_test,
 	Energy_test,
-	# Sp_test,
+	Sp_test,
 	Sn_test,
 	BEA_test,
 	# Pairing_train,
