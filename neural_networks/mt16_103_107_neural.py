@@ -25,7 +25,7 @@ JEFF_nuclides = range_setter(df=JEFF, la=30, ua = 210)
 df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
 ENDFB_nuclides = range_setter(df=df, la=60, ua=208)
 
-validation_nuclides = [[40,90]]
+validation_nuclides = []
 validation_set_size = 20
 energyrow=3
 
@@ -33,21 +33,34 @@ while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 	if choice not in validation_nuclides:
 		validation_nuclides.append(choice)
+
+
+test_nuclides = [[40,90]]
+test_set_size = 20
+
+while (len(test_nuclides) < test_set_size):
+	choice = random.choice(ENDFB_nuclides)
+	if choice not in validation_nuclides and choice not in test_nuclides:
+		test_nuclides.append(choice)
+
 print("Test nuclide selection complete")
 
+X_train, y_train, unnormxtrain = make_train(df=df, validation_nuclides= validation_nuclides,
+											la=60, ua=208, test_nuclides=test_nuclides)
 
-X_train, y_train, unnormxtrain = make_train(df=df, validation_nuclides= validation_nuclides, la=60, ua=208)
+X_val, y_val, unnormxval = make_test(nuclides=validation_nuclides, df=df)
 
-X_test, y_test, unnormxtest = make_test(nuclides=validation_nuclides, df=df)
+X_test, y_test, unnormxtest = make_test(nuclides=test_nuclides, df=df)
 
 
 print("Matrices formed")
 
 callback = keras.callbacks.EarlyStopping(monitor='val_loss',
 										 min_delta=0.005,
-										 patience=6,
+										 patience=10,
 										 mode='min',
-										 start_from_epoch=3)
+										 start_from_epoch=3,
+										 restore_best_weights=True)
 
 model = keras.Sequential()
 model.add(keras.layers.Dense(100, input_shape=(X_train.shape[1],), kernel_initializer='normal', activation='relu',
@@ -66,10 +79,10 @@ model.compile(loss='mean_squared_error', optimizer='adam')
 history = model.fit(
     X_train,
     y_train,
-    epochs=25,
+    epochs=50,
 	batch_size= 100,
 	callbacks=callback,
-    validation_split = 0.2,
+    validation_data= (X_val, y_val),
 	verbose=1,)
 
 predictions = model.predict(X_test)
@@ -80,7 +93,7 @@ XS_plotmatrix = []
 E_plotmatrix = []
 P_plotmatrix = []
 
-for nuclide in validation_nuclides:
+for nuclide in test_nuclides:
 	dummy_test_XS = []
 	dummy_test_E = []
 	dummy_predictions = []
@@ -97,7 +110,7 @@ for nuclide in validation_nuclides:
 for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 	all_preds = []
 	all_libs = []
-	current_nuclide = validation_nuclides[i]
+	current_nuclide = test_nuclides[i]
 	target_nuclide = current_nuclide
 
 	interpolation_function = scipy.interpolate.interp1d(erg, y=pred_xs,
@@ -108,7 +121,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[current_nuclide])
 	tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[current_nuclide])
 
-	nuc = validation_nuclides[i]  # validation nuclide
+	nuc = test_nuclides[i]  # validation nuclide
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
 	plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
 	plt.plot(tendlerg, tendlxs, label="TENDL-2021", color='dimgrey', linewidth=2)

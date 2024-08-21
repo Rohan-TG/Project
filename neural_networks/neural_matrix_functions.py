@@ -68,7 +68,7 @@ def range_setter(df, la, ua):
 			nucs.append([j, i])  # format is [Z, A]
 	return nucs
 
-def make_train(df, validation_nuclides, la=0, ua=260):
+def make_train(df, validation_nuclides, test_nuclides, la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -245,6 +245,8 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope data to training data
 		if Energy[idx] >= 30: # training on data less than 30 MeV
+			continue
+		if [Z[idx], A[idx]] in test_nuclides:
 			continue
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
 			Z_train.append(Z[idx])
@@ -894,7 +896,7 @@ def make_test(nuclides, df):
 	])
 	unnormxtest = np.transpose(unnormxtest)
 
-	y_test = XS_test
+	y_test = np.array(XS_test)
 
 	return xtest, y_test, unnormxtest
 

@@ -14,16 +14,16 @@ import tqdm
 from sklearn.metrics import mean_squared_error, r2_score
 runtime = time.time()
 JENDL = pd.read_csv('JENDL5_with_MT16_and_ENDFB_MT103_107.csv')
-JENDL_nuclides = range_setter(df=JENDL, la=30, ua=208)
+JENDL_nuclides = range_setter(df=JENDL, la=60, ua=208)
 
 TENDL = pd.read_csv('TENDL_2021_MT16_with_ENDFB_MT103_107.csv')
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=208)
+TENDL_nuclides = range_setter(df=TENDL, la=60, ua=208)
 
 CENDL = pd.read_csv('CENDL32_MT16_with_ENDFB_MT103_107.csv')
-CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
+CENDL_nuclides = range_setter(df=CENDL, la=60, ua=208)
 
 JEFF = pd.read_csv('JEFF33_all_features_MT16_103_107.csv')
-JEFF_nuclides = range_setter(df=JEFF, la=30, ua = 208)
+JEFF_nuclides = range_setter(df=JEFF, la=60, ua = 208)
 
 df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
 ENDFB_nuclides = range_setter(df=df, la=60, ua=208)
@@ -38,17 +38,18 @@ print('Data loaded')
 
 callback = keras.callbacks.EarlyStopping(monitor='val_loss',
 										 min_delta=0.0005,
-										 patience=3,
+										 patience=10,
 										 mode='min',
-										 start_from_epoch=2)
+										 start_from_epoch=3,
+										 restore_best_weights=True)
 
 
 energyrow = 3
 
-n_evals = 50
+n_evals = 5
 datapoint_matrix = []
 
-target_nuclide = [55,137]
+target_nuclide = [62,160]
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -78,7 +79,7 @@ jeff_rmses = []
 
 for i in tqdm.tqdm(range(n_evals)):
 
-	validation_nuclides = [target_nuclide]
+	validation_nuclides = []
 	validation_set_size = 20
 
 	while len(validation_nuclides) < validation_set_size:  # up to 25 nuclides
@@ -86,9 +87,20 @@ for i in tqdm.tqdm(range(n_evals)):
 		if choice not in validation_nuclides:
 			validation_nuclides.append(choice)
 
-	X_train, y_train, unnormxtrain = make_train(df=df, validation_nuclides= validation_nuclides, la=60, ua=208)
+	test_nuclides = [target_nuclide]
+	test_set_size = 20
 
-	X_test, y_test, unnormxtest = make_test(nuclides=validation_nuclides, df=df)
+	while (len(test_nuclides) < test_set_size):
+		choice = random.choice(ENDFB_nuclides)
+		if choice not in validation_nuclides and choice not in test_nuclides:
+			test_nuclides.append(choice)
+
+	X_train, y_train, unnormxtrain = make_train(df=df, validation_nuclides= validation_nuclides, test_nuclides=test_nuclides,
+												la=60, ua=208)
+
+	X_val, y_val, unnormxval = make_test(nuclides=validation_nuclides, df=df)
+
+	X_test, y_test, unnormxtest = make_test(nuclides=test_nuclides, df=df)
 	model = keras.Sequential()
 	model.add(keras.layers.Dense(100, input_shape=(X_train.shape[1],), kernel_initializer='normal', activation='relu',
 								 ))
@@ -106,10 +118,10 @@ for i in tqdm.tqdm(range(n_evals)):
 	history = model.fit(
 		X_train,
 		y_train,
-		epochs=20,
+		epochs=50,
 		batch_size= 64,
 		callbacks=callback,
-		validation_split = 0.2,
+		validation_data= (X_val, y_val),
 		verbose=1,)
 
 
@@ -119,7 +131,7 @@ for i in tqdm.tqdm(range(n_evals)):
 
 	if i == 0:
 		for k, pred in enumerate(predictions):
-			if [unnormxtest[k,0], unnormxtest[k,1]] == validation_nuclides[0]:
+			if [unnormxtest[k,0], unnormxtest[k,1]] == test_nuclides[0]:
 				datapoint_matrix.append([pred])
 	else:
 		valid_predictions = []
@@ -133,7 +145,7 @@ for i in tqdm.tqdm(range(n_evals)):
 	E_plotmatrix = []
 	P_plotmatrix = []
 
-	for nuclide in validation_nuclides:
+	for nuclide in test_nuclides:
 		dummy_test_XS = []
 		dummy_test_E = []
 		dummy_predictions = []
