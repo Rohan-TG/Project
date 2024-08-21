@@ -320,8 +320,84 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
 			# AM_train.append(AM[idx])
 
-	ignore_list = [0,1,3,8,12,13,14,17,18]
+	ignore_list = []
+	# ignore_list = [0, 1, 3, 8, 12, 13, 14, 17, 18]
 	X = np.array([Z_train,
+				  A_train,
+				  S2n_train,
+				  # S2p_train,
+				  Energy_train,
+				  Sp_train,
+				  Sn_train,
+				  BEA_train,
+				  # Pairing_train,
+				  Sn_c_train,
+				  # gd_train,
+				  N_train,
+				  # bd_train,
+				  # Sn_d_train,
+				  # Sp_d_train,
+				  # S2n_d_train,
+				  # Radius_train,
+				  # n_gap_erg_train,
+				  # n_chem_erg_train,
+				  # xs_max_train,
+				  # n_rms_radius_train,
+				  # octupole_deformation_train,
+				  # Decay_compound_train,
+				  BEA_daughter_train,
+				  BEA_compound_train,
+				  # Pairing_daughter_train,
+				  # Parity_daughter_train,
+				  # S2n_compound_train,
+				  # S2p_compound_train,
+				  ME_train,
+				  # Z_even_train,
+				  # A_even_train,
+				  # N_even_train,
+				  Shell_train,
+				  # Parity_train,
+				  # Spin_train,
+				  Decay_Const_train,
+				  # Deform_train,
+				  # p_gap_erg_train,
+				  # p_chem_erg_train,
+				  # p_rms_radius_train,
+				  # rms_radius_train,
+				  # Sp_compound_train,
+				  # Sn_compound_train,
+				  Shell_compound_train,
+				  # S2p_daughter_train,
+				  # Shell_daughter_train,
+				  # Spin_compound_train,
+				  # Radius_compound_train,
+				  # Deform_compound_train,
+				  # ME_compound_train,
+				  BEA_A_compound_train,
+				  # Decay_daughter_train,
+				  # ME_daughter_train,
+				  # Radius_daughter_train,
+				  # Pairing_compound_train,
+				  # Parity_compound_train,
+				  BEA_A_daughter_train,
+				  # Spin_daughter_train,
+				  # Deform_daughter_train,
+				  # cat_proton_train,
+				  # cat_neutron_train,
+				  # cat_double_train,
+				  # Nlow_train,
+				  # Ulow_train,
+				  # Ntop_train,
+				  # Utop_train,
+				  # ainf_train,
+				  # XSlow_train,
+				  # XSupp_train,
+				  Asymmetry_train,
+				  # Asymmetry_compound_train,
+				  Asymmetry_daughter_train,
+				  # AM_train,
+				  ])
+	unnormXtrain = np.array([Z_train,
 				  A_train,
 				  S2n_train,
 				  # S2p_train,
@@ -403,7 +479,8 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 	y = np.array(XS_train) # cross sections
 
 	X = np.transpose(X) # forms matrix into correct shape (values, features)
-	return X, y
+	unnormXtrain = np.transpose(unnormXtrain)
+	return X, y, unnormXtrain
 
 def make_test(nuclides, df):
 	"""
@@ -659,7 +736,8 @@ def make_test(nuclides, df):
 				Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 
-	ignore_list = [0,1,3,8,12,13,14,17,18]
+	ignore_list = []
+	# ignore_list = [0, 1, 3, 8, 12, 13, 14, 17, 18]
 	xtest = np.array([Z_test,
 	A_test,
 	S2n_test,
@@ -740,9 +818,85 @@ def make_test(nuclides, df):
 
 	xtest = np.transpose(xtest)
 
+	unnormxtest = np.array([Z_test,
+	A_test,
+	S2n_test,
+	# S2p_test,
+	Energy_test,
+	Sp_test,
+	Sn_test,
+	BEA_test,
+	# Pairing_train,
+	Sn_c_test,
+	# gd_test,
+	N_test,
+	# bd_test,
+	# Sn_d_test,
+	# Sp_d_train,
+	# S2n_d_test,
+	# Radius_test,
+	# n_gap_erg_test,
+	# n_chem_erg_test,
+	# xs_max_train,
+	# n_rms_radius_test,
+	# octupole_deformation_train,
+	# Decay_compound_train,
+	BEA_daughter_test,
+	BEA_compound_test,
+	# Pairing_daughter_train,
+	# Parity_daughter_train,
+	# S2n_compound_train,
+	# S2p_compound_test,
+	ME_test,
+	# Z_even_train,
+	# A_even_train,
+	# N_even_train,
+	Shell_test,
+	# Parity_test,
+	# Spin_test,
+	Decay_Const_test,
+	# Deform_train,
+	# p_gap_erg_test,
+	# p_chem_erg_test,
+	# p_rms_radius_train,
+	# rms_radius_train,
+	# Sp_compound_test,
+	# Sn_compound_train,
+	Shell_compound_test,
+	# S2p_daughter_train,
+	# Shell_daughter_train,
+	#   Spin_compound_test,
+	# Radius_compound_train,
+	# Deform_compound_test,
+	# ME_compound_train,
+	BEA_A_compound_test,
+	# Decay_daughter_test,
+	# ME_daughter_train,
+	# Radius_daughter_train,
+	# Pairing_compound_train,
+	# Parity_compound_train,
+	BEA_A_daughter_test,
+	# Spin_daughter_train,
+	# Deform_daughter_test,
+	# cat_proton_train,
+	# cat_neutron_train,
+	# cat_double_train,
+	# Nlow_test,
+	  # Ulow_train,
+	# Ntop_train,
+	# Utop_test,
+	# ainf_train,
+	# XSlow_train,
+	Asymmetry_test,
+	# Asymmetry_compound_train,
+	Asymmetry_daughter_test,
+	# AM_test,
+	])
+	unnormxtest = np.transpose(unnormxtest)
+
 	y_test = XS_test
 
-	return xtest, y_test
+	return xtest, y_test, unnormxtest
 
 
 
