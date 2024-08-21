@@ -9,9 +9,6 @@ import periodictable
 import matplotlib.pyplot as plt
 import scipy.stats
 from sklearn.metrics import mean_squared_error, r2_score
-from keras import regularizers
-
-energyrow=3
 
 JENDL = pd.read_csv('JENDL5_with_MT16_and_ENDFB_MT103_107.csv')
 JENDL_nuclides = range_setter(df=JENDL, la=30, ua=210)
@@ -28,8 +25,9 @@ JEFF_nuclides = range_setter(df=JEFF, la=30, ua = 210)
 df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
 ENDFB_nuclides = range_setter(df=df, la=60, ua=208)
 
-validation_nuclides = [[55,133]]
+validation_nuclides = [[40,90]]
 validation_set_size = 20
+energyrow=3
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -38,34 +36,29 @@ while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 print("Test nuclide selection complete")
 
 
-X_train, y_train = make_train(df=df, validation_nuclides= validation_nuclides, la=60, ua=208)
+X_train, y_train, unnormxtrain = make_train(df=df, validation_nuclides= validation_nuclides, la=60, ua=208)
 
-X_test, y_test = make_test(nuclides=validation_nuclides, df=df)
+X_test, y_test, unnormxtest = make_test(nuclides=validation_nuclides, df=df)
 
 
 print("Matrices formed")
 
 callback = keras.callbacks.EarlyStopping(monitor='val_loss',
-										 min_delta=0.05,
-										 patience=20,
+										 min_delta=0.005,
+										 patience=6,
 										 mode='min',
-										 start_from_epoch=20)
+										 start_from_epoch=3)
 
-L2Const = 0.01
 model = keras.Sequential()
-model.add(keras.layers.Dense(38, input_shape=(X_train.shape[1],), kernel_initializer='normal',
-							 activation='relu',
-							 activity_regularizer=regularizers.L2(0.01)))
-# model.add(keras.layers.Dense(100, input_shape=(X_train.shape[1],), kernel_initializer='normal',
-# 							 activation='relu',))
-model.add(keras.layers.Dense(1022, activation='relu', activity_regularizer=regularizers.L2(0.01)))
+model.add(keras.layers.Dense(100, input_shape=(X_train.shape[1],), kernel_initializer='normal', activation='relu',
+							 ))
+model.add(keras.layers.Dense(1000, activation='relu'))
+model.add(keras.layers.Dropout(0.3))
+model.add(keras.layers.Dense(1000, activation='relu'))
+model.add(keras.layers.Dropout(0.3))
+model.add(keras.layers.Dense(1022, activation='relu'))
 model.add(keras.layers.Dropout(0.1))
-model.add(keras.layers.Dense(1022, activation='relu',activity_regularizer=regularizers.L2(0.01)))
-model.add(keras.layers.Dropout(0.1))
-model.add(keras.layers.Dense(1022, activation='relu',activity_regularizer=regularizers.L2(0.01)))
-# model.add(keras.layers.Dense(1022, activation='relu'))
-# model.add(keras.layers.Dropout(0.2))
-# model.add(keras.layers.Dense(400, activation='relu'))
+model.add(keras.layers.Dense(400, activation='relu'))
 model.add(keras.layers.Dense(1, activation='linear',))
 
 model.compile(loss='mean_squared_error', optimizer='adam')
@@ -73,8 +66,8 @@ model.compile(loss='mean_squared_error', optimizer='adam')
 history = model.fit(
     X_train,
     y_train,
-    epochs=30,
-	batch_size= 64,
+    epochs=25,
+	batch_size= 100,
 	callbacks=callback,
     validation_split = 0.2,
 	verbose=1,)
@@ -91,10 +84,10 @@ for nuclide in validation_nuclides:
 	dummy_test_XS = []
 	dummy_test_E = []
 	dummy_predictions = []
-	for i, row in enumerate(X_test):
-		if [row[0], row[1]] == nuclide:
+	for i, (row, rowunnorm) in enumerate(zip(X_test, unnormxtest)):
+		if [rowunnorm[0], rowunnorm[1]] == nuclide:
 			dummy_test_XS.append(y_test[i])
-			dummy_test_E.append(row[energyrow])  # Energy values are in 5th row
+			dummy_test_E.append(rowunnorm[energyrow])  # Energy values are in 5th row
 			dummy_predictions.append(predictions[i])
 
 	XS_plotmatrix.append(dummy_test_XS)
