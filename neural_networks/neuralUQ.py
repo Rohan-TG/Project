@@ -26,7 +26,7 @@ JEFF = pd.read_csv('JEFF33_all_features_MT16_103_107.csv')
 JEFF_nuclides = range_setter(df=JEFF, la=30, ua = 208)
 
 df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
-ENDFB_nuclides = range_setter(df=df, la=30, ua=208)
+ENDFB_nuclides = range_setter(df=df, la=60, ua=208)
 
 
 print('Data loaded')
@@ -37,18 +37,18 @@ print('Data loaded')
 
 
 callback = keras.callbacks.EarlyStopping(monitor='val_loss',
-										 min_delta=0.05,
-										 patience=10,
+										 min_delta=0.0005,
+										 patience=3,
 										 mode='min',
-										 start_from_epoch=20)
+										 start_from_epoch=2)
 
 
 energyrow = 3
 
-n_evals = 2
+n_evals = 50
 datapoint_matrix = []
 
-target_nuclide = [55,133]
+target_nuclide = [55,137]
 
 jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -79,22 +79,23 @@ jeff_rmses = []
 for i in tqdm.tqdm(range(n_evals)):
 
 	validation_nuclides = [target_nuclide]
-	validation_set_size = 5
+	validation_set_size = 20
 
 	while len(validation_nuclides) < validation_set_size:  # up to 25 nuclides
 		choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 		if choice not in validation_nuclides:
 			validation_nuclides.append(choice)
 
-	X_train, y_train = make_train(df=df, validation_nuclides= validation_nuclides, la=30, ua=208)
+	X_train, y_train, unnormxtrain = make_train(df=df, validation_nuclides= validation_nuclides, la=60, ua=208)
 
-	X_test, y_test = make_test(nuclides=validation_nuclides, df=df)
+	X_test, y_test, unnormxtest = make_test(nuclides=validation_nuclides, df=df)
 	model = keras.Sequential()
 	model.add(keras.layers.Dense(100, input_shape=(X_train.shape[1],), kernel_initializer='normal', activation='relu',
 								 ))
-	model.add(keras.layers.Dense(500, activation='relu'))
 	model.add(keras.layers.Dense(1000, activation='relu'))
-	model.add(keras.layers.Dropout(0.1))
+	model.add(keras.layers.Dropout(0.3))
+	model.add(keras.layers.Dense(1000, activation='relu'))
+	model.add(keras.layers.Dropout(0.3))
 	model.add(keras.layers.Dense(1022, activation='relu'))
 	model.add(keras.layers.Dropout(0.1))
 	model.add(keras.layers.Dense(400, activation='relu'))
@@ -118,12 +119,12 @@ for i in tqdm.tqdm(range(n_evals)):
 
 	if i == 0:
 		for k, pred in enumerate(predictions):
-			if [X_test[k,0], X_test[k,1]] == validation_nuclides[0]:
+			if [unnormxtest[k,0], unnormxtest[k,1]] == validation_nuclides[0]:
 				datapoint_matrix.append([pred])
 	else:
 		valid_predictions = []
 		for k, pred in enumerate(predictions):
-			if [X_test[k, 0], X_test[k, 1]] == target_nuclide:
+			if [unnormxtest[k, 0], unnormxtest[k, 1]] == target_nuclide:
 				valid_predictions.append(pred)
 		for m, prediction in zip(datapoint_matrix, valid_predictions):
 			m.append(prediction)
@@ -136,10 +137,10 @@ for i in tqdm.tqdm(range(n_evals)):
 		dummy_test_XS = []
 		dummy_test_E = []
 		dummy_predictions = []
-		for i, row in enumerate(X_test):
-			if [row[0], row[1]] == nuclide:
+		for i, (row, unnormrow) in enumerate(zip(X_test, unnormxtest)):
+			if [unnormrow[0], unnormrow[1]] == nuclide:
 				dummy_test_XS.append(y_test[i])
-				dummy_test_E.append(row[energyrow])  # Energy values are in 5th row
+				dummy_test_E.append(unnormrow[energyrow])  # Energy values are in 5th row
 				dummy_predictions.append(predictions[i])
 
 		XS_plotmatrix.append(dummy_test_XS)
@@ -221,10 +222,10 @@ exp_pred_xs = [xs for xs in predictions]
 XS_plot = []
 E_plot = []
 
-for i, row in enumerate(X_test):
-	if [row[0], row[1]] == target_nuclide:
+for i, (row, unnormrow) in enumerate(zip(X_test, unnormxtest)):
+	if [unnormrow[0], unnormrow[1]] == target_nuclide:
 		XS_plot.append(y_test[i])
-		E_plot.append(row[energyrow])  # Energy values are in 5th column
+		E_plot.append(unnormrow[energyrow])  # Energy values are in 5th column
 
 datapoint_means = []
 datapoint_upper_interval = []

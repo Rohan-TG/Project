@@ -320,7 +320,7 @@ def make_train(df, validation_nuclides, la=0, ua=260):
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
 			# AM_train.append(AM[idx])
 
-	ignore_list = []
+	ignore_list = [17,18]
 	# ignore_list = [0, 1, 3, 8, 12, 13, 14, 17, 18]
 	X = np.array([Z_train,
 				  A_train,
@@ -736,7 +736,7 @@ def make_test(nuclides, df):
 				Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
 
-	ignore_list = []
+	ignore_list = [17,18]
 	# ignore_list = [0, 1, 3, 8, 12, 13, 14, 17, 18]
 	xtest = np.array([Z_test,
 	A_test,
