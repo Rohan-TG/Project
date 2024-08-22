@@ -10,15 +10,12 @@ import time
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
 import periodictable
-from matrix_functions import anomaly_remover, make_train, make_test, range_setter
+from matrix_functions import exclusion_func, make_train, make_test, range_setter
 
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")  # dataframe as above, but with the new features from the Gilbert-Cameron model
 
 
 
-
-df_test = anomaly_remover(dfa = df_test)
 
 # for i, j, in zip(df['A'], df['Z']): # i is A, j is Z
 # 	if [j, i] in al or i > 215 or i < 28:
@@ -28,7 +25,7 @@ df_test = anomaly_remover(dfa = df_test)
 
 
 
-al = range_setter(df=df, la=0, ua=270)
+al = range_setter(df=df, la=215, ua=270)
 
 
 nuclides_used = []
@@ -69,9 +66,9 @@ if __name__ == "__main__":
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=270) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=215, ua=270) # make training matrix
 
-		X_test, y_test = make_test(validation_nuclides, df=df_test)
+		X_test, y_test = make_test(validation_nuclides, df=df)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
@@ -79,10 +76,10 @@ if __name__ == "__main__":
 		print("Train/val matrices generated")
 
 
-		model = xg.XGBRegressor(n_estimators=900,
-								learning_rate=0.01555,
+		model = xg.XGBRegressor(n_estimators=500,
+								learning_rate=0.01,
 								max_depth=8,
-								subsample=0.18236,
+								subsample=0.2,
 								max_leaves=0,
 								seed=42,)
 
@@ -124,7 +121,7 @@ if __name__ == "__main__":
 			# plt.xlabel('Energy / MeV')
 			# plt.show()
 			r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
-			print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+			# print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
 
 			mse = mean_squared_error(true_xs, pred_xs)
 
