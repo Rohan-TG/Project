@@ -34,12 +34,12 @@ all_libraries = pd.concat([endfb8, jendl5])
 all_libraries = pd.concat([all_libraries, jeff33])
 all_libraries = pd.concat([all_libraries, cendl32])
 
-nucs = range_setter(df=all_libraries, la=30, ua=210)
+nucs = range_setter(df=all_libraries, la=30, ua=208)
 
 all_libraries.index = range(len(all_libraries))
 
 
-al = range_setter(la=30, ua=210, df=all_libraries)
+al = range_setter(la=30, ua=208, df=all_libraries)
 
 
 nuclides_used = []
@@ -114,13 +114,14 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		print("Training complete")
 
-		print("Training complete")
-
-		predictions = model.predict(X_test)  # XS predictions
 		predictions_ReLU = []
-		for pred in predictions:
-			if pred >= 0.003:
-				predictions_ReLU.append(pred)
+
+		for n in validation_nuclides:
+			tempx, tempy = make_test(nuclides=[n], df=all_libraries)
+			initial_predictions = model.predict(tempx)
+			for p in initial_predictions:
+				if p >= (0.02 * max(initial_predictions)):
+					predictions_ReLU.append(p)
 			else:
 				predictions_ReLU.append(0)
 
