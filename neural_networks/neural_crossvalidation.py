@@ -81,8 +81,8 @@ callback = keras.callbacks.EarlyStopping(monitor='val_loss',
 
 validation_set_size = 15
 energyrow=3
-test_set_size = 220
-num_runs = 2
+test_set_size = 20
+num_runs =2
 
 
 
@@ -175,6 +175,9 @@ for q in tqdm.tqdm(range(num_runs)):
 		X_val, y_val, unnormxval = make_test(nuclides=validation_nuclides, df=df)
 		X_test, y_test, unnormxtest = make_test(test_nuclides, df=df)
 
+
+
+		keras.backend.clear_session(free_memory=True)
 		model = keras.Sequential()
 		model.add(keras.layers.Dense(100, input_shape=(X_train.shape[1],), kernel_initializer='normal', activation='relu',
 									 ))
@@ -193,7 +196,7 @@ for q in tqdm.tqdm(range(num_runs)):
 			X_train,
 			y_train,
 			epochs=50,
-			batch_size=64,
+			batch_size=48,
 			callbacks=callback,
 			validation_data=(X_val, y_val),
 			verbose=1, )
@@ -540,48 +543,48 @@ agg_n_r2 = range_setter(df=df, la=30,ua=208)
 
 alist = []
 
-matrix95 = [[] for x in range(num_runs)]
-for match in agg_n_r2:
-	r2values = []
-	for set in nuclide_r2:
-		if [set[0], set[1]] == match:
-			r2values.append(set[2])
-
-	for j, run in enumerate(r2values):
-		matrix95[j].append(run)
-
-
-	alist.append([match[0], match[1], np.mean(r2values)])
-
-A_plots = [i[1] for i in alist]
-print(np.mean(run_r2))
-print(np.std(run_r2))
-print()
-
-
-
-
-
-
-
-
-
-
-
-
-log_plots = [abs(np.log10(abs(i[-1]))) for i in alist]
-# log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
+# matrix95 = [[] for x in range(num_runs)]
+# for match in agg_n_r2:
+# 	r2values = []
+# 	for set in nuclide_r2:
+# 		if [set[0], set[1]] == match:
+# 			r2values.append(set[2])
 #
-# r2plot = [i[-1] for i in nuclide_r2]
+# 	for j, run in enumerate(r2values):
+# 		matrix95[j].append(run)
+#
+#
+# 	alist.append([match[0], match[1], np.mean(r2values)])
 
-plt.figure()
-plt.plot(A_plots, log_plots, 'x')
-# plt.plot(A_plots, r2plot, 'x')
-plt.xlabel("A")
-plt.ylabel("$|\lg(|r^2|)|$")
-plt.title("Performance - A")
-plt.grid()
-plt.show()
+# A_plots = [i[1] for i in alist]
+# print(np.mean(run_r2))
+# print(np.std(run_r2))
+# print()
+
+
+
+
+
+
+
+
+
+
+
+
+# log_plots = [abs(np.log10(abs(i[-1]))) for i in alist]
+# # log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
+# #
+# # r2plot = [i[-1] for i in nuclide_r2]
+#
+# plt.figure()
+# plt.plot(A_plots, log_plots, 'x')
+# # plt.plot(A_plots, r2plot, 'x')
+# plt.xlabel("A")
+# plt.ylabel("$|\lg(|r^2|)|$")
+# plt.title("Performance - A")
+# plt.grid()
+# plt.show()
 #
 # plt.figure()
 # plt.plot(Z_plots, log_plots_Z, 'x')
@@ -640,3 +643,4 @@ print(f'Any other lib better than ENDFB: {np.mean(anyotherbetter)} +- {np.std(an
 
 
 # individual_r2_list.append(r2)
+print(atleast190)

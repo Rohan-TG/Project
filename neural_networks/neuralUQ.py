@@ -119,7 +119,7 @@ for i in tqdm.tqdm(range(n_evals)):
 		X_train,
 		y_train,
 		epochs=50,
-		batch_size= 64,
+		batch_size= 48,
 		callbacks=callback,
 		validation_data= (X_val, y_val),
 		verbose=1,)
