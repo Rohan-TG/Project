@@ -19,39 +19,36 @@ import tqdm
 
 runtime = time.time()
 
-df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
-
-df = df[df.Z != 11]
-
-df.index = range(len(df))
+df = pd.read_csv("/Users/rntg/PycharmProjects/Project/ENDFBVIII_MT16_XS_feateng.csv")
 
 
-al = range_setter(la=220, ua=260, df=df)
 
-TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
+al = range_setter(la=220, ua=245, df=df)
+
+TENDL = pd.read_csv("/Users/rntg/PycharmProjects/Project/TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=260)
 
 
-JEFF33 = pd.read_csv('JEFF33_all_features.csv')
+JEFF33 = pd.read_csv('/Users/rntg/PycharmProjects/Project/JEFF33_all_features.csv')
 JEFF33.index = range(len(JEFF33))
 JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=260)
 
 
-JENDL5 = pd.read_csv('JENDL5_arange_all_features.csv')
+JENDL5 = pd.read_csv('/Users/rntg/PycharmProjects/Project/JENDL5_arange_all_features.csv')
 JENDL5.index = range(len(JENDL5))
 JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=260)
 
 
-CENDL32 = pd.read_csv('CENDL32_all_features.csv')
+CENDL32 = pd.read_csv('/Users/rntg/PycharmProjects/Project/CENDL32_all_features.csv')
 CENDL32.index = range(len(CENDL32))
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=260)
 
 exc = exclusion_func()
 
-n_evaluations = 10
+n_evaluations = 20
 datapoint_matrix = []
-target_nuclide = [97,250]
+target_nuclide = [88,226]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -61,12 +58,6 @@ endfberg, endfbxs = General_plotter(df=df, nuclides=[target_nuclide])
 
 runs_r2_array = []
 runs_rmse_array = []
-
-cendl_r2s = []
-jeff_r2s = []
-jendl_r2s = []
-tendl_r2s = []
-endfb_r2s = []
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i+1}/{n_evaluations}")
@@ -84,26 +75,18 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides,
 								  exclusions=exc,
-								  la=220, ua=260,) # make training matrix
+								  la=220, ua=240,) # make training matrix
 
-	X_test, y_test = make_test(validation_nuclides, df=df,)
+	X_test, y_test = make_test(validation_nuclides, df=JENDL5,)
 
 	print("Training...")
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
-	# model = xg.XGBRegressor(n_estimators=950,
-	# 						learning_rate=0.008,
-	# 						max_depth=8,
-	# 						subsample=0.18236,
-	# 						max_leaves=0,
-	# 						seed=model_seed,)
-
-
-	model = xg.XGBRegressor(n_estimators=500,
-							learning_rate=0.01,
+	model = xg.XGBRegressor(n_estimators=950,
+							learning_rate=0.008,
 							max_depth=8,
-							subsample=0.2,
+							subsample=0.18236,
 							max_leaves=0,
 							seed=model_seed,)
 
@@ -115,7 +98,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	for n in validation_nuclides:
 
-		temp_x, temp_y = make_test(nuclides=[n], df=df)
+		temp_x, temp_y = make_test(nuclides=[n], df=JENDL5)
 		initial_predictions = model.predict(temp_x)
 
 		for p in initial_predictions:
@@ -161,9 +144,8 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	all_libs = []
 
 
-	d1, d2, pred_endfb_r2 = r2_standardiser(library_xs=XS_plotmatrix[0],predicted_xs=P_plotmatrix[0])
-	endfb_r2s.append(pred_endfb_r2)
-	for x, y in zip(d1, d2):
+	pred_endfb_r2 = r2_score(y_true=XS_plotmatrix[0], y_pred=P_plotmatrix[0])
+	for x, y in zip(XS_plotmatrix[0], P_plotmatrix[0]):
 		all_libs.append(y)
 		all_preds.append(x)
 	print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
@@ -173,9 +155,8 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL32)
 		pred_cendl = model.predict(cendl_test)
 
-		d1, d2, pred_cendl_r2 = r2_standardiser(library_xs=cendl_xs, predicted_xs=pred_cendl)
-		cendl_r2s.append(pred_cendl_r2)
-		for x, y in zip(d1, d2):
+		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
+		for x, y in zip(pred_cendl, cendl_xs):
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - CENDL-3.2 R2: {pred_cendl_r2:0.5f}")
@@ -185,10 +166,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		jendl_test, jendl_xs = make_test(nuclides=[target_nuclide], df=JENDL5)
 		pred_jendl = model.predict(jendl_test)
 
-		d1,d2,pred_jendl_r2 = r2_standardiser(library_xs=jendl_xs, predicted_xs=pred_jendl)
-		jendl_r2s.append(pred_jendl_r2)
+		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f}")
-		for x, y in zip(d1, d2):
+		for x, y in zip(pred_jendl, jendl_xs):
 			all_libs.append(y)
 			all_preds.append(x)
 
@@ -198,7 +178,6 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_jeff = model.predict(jeff_test)
 
 		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
-		jeff_r2s.append(pred_jeff_r2)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -209,10 +188,9 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		tendl_test, tendl_xs = make_test(nuclides=[target_nuclide], df=TENDL)
 		pred_tendl = model.predict(tendl_test)
 
-		# pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		d1, d2, pred_tendl_r2 = r2_standardiser(library_xs=tendl_xs, predicted_xs=pred_tendl)
-		tendl_r2s.append(pred_tendl_r2)
-		for x, y in zip(d1, d2):
+		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
+		pred_tendl_r2 = r2_score(y_true=tendl_xs, y_pred=pred_tendl)
+		for x, y in zip(pred_tendl, tendl_xs):
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - TENDL-2021 R2: {pred_tendl_r2:0.5f}")
@@ -231,7 +209,6 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 XS_plot = []
 E_plot = []
-
 
 for i, row in enumerate(X_test):
 	if [row[0], row[1]] == target_nuclide:
@@ -277,22 +254,53 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 print(f"Turning points: {dsigma_dE(XS=datapoint_means)}")
 
 #2sigma CF
-plt.figure()
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
-print(f"ENDF/B-VIII: {np.mean(endfb_r2s)} +- {np.std(endfb_r2s)}")
 plt.plot(tendlerg, tendl_xs, label = 'TENDL-2021', color='dimgrey')
-print(f"TENDL-2021: {np.mean(tendl_r2s):0.3f} +- {np.std(tendl_r2s):0.3f}")
 if target_nuclide in JEFF_nuclides:
 	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
-	print(f"JEFF-3.3: {np.mean(jeff_r2s):0.3f} +- {np.std(jeff_r2s):0.3f}")
 if target_nuclide in JENDL_nuclides:
-	print(f"JENDL-5: {np.mean(jendl_r2s):0.3f} +- {np.std(jendl_r2s):0.3f}")
 	plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
 if target_nuclide in CENDL_nuclides:
-	print(f"CENDL-3.2: {np.mean(cendl_r2s):0.3f} +- {np.std(cendl_r2s):0.3f}")
 	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
+# plt.errorbar(fe, fxs, yerr=fdxs, fmt='x', color='indigo', capsize=2, label='Frehaut, 1980')
+# plt.errorbar(ne, nxs, yerr=ndxs, fmt='x', color='orangered', capsize=2, label='Nethaway, 1972')
+# plt.errorbar(fe, fxs, yerr=fdxs, fmt='x', color='magenta', capsize=2, label='Frehaut, 1980')
+# plt.errorbar(ce, cxs, yerr=cdxs, fmt='x', color='gold', capsize=2, label='Chuanxin, 2011')
+# plt.errorbar(de, dxs, yerr=ddxs, fmt='x', color='dodgerblue', capsize=2, label='Dzysiuk, 2010')
+# plt.errorbar(ve, vxs, yerr=vdxs, fmt='x', color='firebrick', capsize=2, label='Veeser, 1977')
+# plt.errorbar(ze, zxs, yerr=zdxs, fmt='x', color='aquamarine', capsize=2, label='Zhengwei, 2018')
+# plt.errorbar(be, bxs, yerr=bdxs, fmt='x', color='purple', capsize=2, label = 'Bayhurst, 1975')
+# plt.errorbar(frehaute, frehautxs, yerr=frehautdxs, fmt='x', color='violet', capsize=2, label = 'Frehaut, 1980')
+# plt.errorbar(filae, filasexs, yerr=filasexsd, fmt='x', color='indigo', capsize=2, label = 'Filatenkov, 2016')
+# plt.errorbar(cse, csxs, yerr=csxsd, fmt='x', color='violet',capsize=2, label='Csikai, 1967')
+# plt.errorbar(tiwarie, tiwarixs, yerr=tiwarixsd,
+# 			 fmt='x', color='indigo',capsize=2, label='Tiwari, 1968')
+# plt.errorbar(hillmane, hillmanxs, yerr=hillmanxsd, fmt='x', color='orangered',capsize=2, label='Hillman, 1962')
+#
+# plt.errorbar(ikedae,ikedaxs, yerr=ikedaxsd, fmt='x',
+# 			 capsize=2, label='Ikeda, 1988', color='blue')
+# plt.errorbar(pue, puxs, yerr=puxsd, fmt='x', color='indigo',capsize=2, label='Pu, 2006')
+# plt.errorbar(meghae, meghaxs, yerr=meghaxsd, fmt='x', color='violet',capsize=2, label='Megha, 2017')
+# plt.errorbar(junhua_E, junhua_XS, yerr=junhua_XSd, fmt='x', color='orangered',capsize=2, label='Junhua, 2018')
+# plt.errorbar(FrehautW182_E, FrehautW182_XS, yerr=FrehautW182_dXS,
+# 			 fmt='x', color='indigo',capsize=2, label='Frehaut, 1980')
+# plt.errorbar(Frehaut_Pb_E, Frehaut_Pb_XS, yerr=Frehaut_Pb_dXS, fmt='x', color='indigo',capsize=2, label='Frehaut, 1980')
+# plt.errorbar(LuE, LuXS, yerr=LudXS, fmt='x', color='indigo',capsize=2, label='Lu, 1970')
+# plt.errorbar(QaimE, QaimXS, yerr=QaimdXS, fmt='x', color='violet',capsize=2, label='Qaim, 1974')
+# plt.errorbar(JunhuaE, JunhuaXS, yerr=JunhuadXS, fmt='x', color='blue',capsize=2, label='JunhuaLuoo, 2007')
+# plt.errorbar(TemperleyE, TemperleyXS, yerr=TemperleydXS, fmt='x', color='orangered',capsize=2, label='Temperley, 1970')
+# plt.errorbar(BormannE, BormannXS, yerr=BormanndXS, fmt='x',capsize=2, label='Bormann, 1970')
+
+# plt.errorbar(Bayhurst_energies, Bayhurst_XS, Bayhurst_delta_XS, Bayhurst_delta_energies, fmt='x',
+# 			 capsize=2, label='Bayhurst, 1975', color='indigo')
+# plt.errorbar(Frehaut_E, Frehaut_XS, Frehaut_XS_d, Frehaut_E_d, fmt='x',
+# 			 capsize=2, label='Frehaut, 1980', color='violet')
+# plt.errorbar(Dzysiuk_energies, Dzysiuk_XS, Dzysiuk_delta_XS, Dzysiuk_delta_energies, fmt='x',
+# 			 capsize=2, label='Dzysiuk, 2010', color='blue')
+# plt.errorbar(Veeser_energies, Veeser_XS, Veeser_delta_XS, Veeser_delta_energies, fmt='x',
+# 			 capsize=2, label='Veeser, 1977', color='orangered')
 
 plt.grid()
 plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}")
