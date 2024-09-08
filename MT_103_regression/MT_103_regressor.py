@@ -11,17 +11,17 @@ import time
 import shap
 from sklearn.metrics import mean_squared_error, r2_score
 
-df = pd.read_csv('ENDFBVIII_MT103_fund_features_only.csv')
-CENDL_32 = pd.read_csv('CENDL-3.2_MT103_fund_features_only.csv')
+df = pd.read_csv('ENDFBVIII_MT103_all_features.csv')
+CENDL_32 = pd.read_csv('CENDL32_MT103_all_features.csv')
 CENDL_nuclides = range_setter(df=CENDL_32)
 
-JEFF_33 = pd.read_csv('JEFF-3.3_MT103_fund_only.csv')
+JEFF_33 = pd.read_csv('JEFF33_MT103_all_features.csv')
 JEFF_nuclides = range_setter(df=JEFF_33)
 
-JENDL_5 = pd.read_csv('JENDL-5_MT103_fund_features_only.csv')
+JENDL_5 = pd.read_csv('JENDL5_MT103_all_features.csv')
 JENDL_nuclides = range_setter(df=JENDL_5)
 
-TENDL_2021 = pd.read_csv('TENDL-2021_MT103_fund_only.csv')
+TENDL_2021 = pd.read_csv('TENDL2021_MT103_all_features.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021)
 
 ENDFB_nuclides = range_setter(df=df, la=80, ua=210)
@@ -29,6 +29,8 @@ print("Data loaded...")
 
 validation_nuclides = [[68,167], [43,99], [47,108]]
 validation_set_size = 20
+
+energy_row = 4
 
 while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -39,7 +41,7 @@ print("Test nuclides selected...")
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=80, ua=210)
 X_test, y_test = make_test(validation_nuclides, df=df)
 
-model = xgboost.XGBRegressor(n_estimators = 1200,
+model = xgboost.XGBRegressor(n_estimators = 1100,
 							 learning_rate = 0.008,
 							 max_depth = 7,
 							 subsample = 0.888,
@@ -61,7 +63,7 @@ for nuclide in validation_nuclides:
 	for i, row in enumerate(X_test):
 		if [row[0], row[1]] == nuclide:
 			dummy_test_XS.append(y_test[i])
-			dummy_test_E.append(row[3])  # Energy values are in 5th row
+			dummy_test_E.append(row[energy_row])  # Energy values are in 5th row
 			dummy_predictions.append(predictions[i])
 
 	XS_plotmatrix.append(dummy_test_XS)
@@ -156,7 +158,7 @@ if run == 'y':
 
 	model.get_booster().feature_names = ['Z',
 										 'A',
-										 # 'S2n',
+										 'S2n',
 										 'S2p',
 										 'E',
 										 'Sp',
@@ -221,10 +223,11 @@ if run == 'y':
 										 # 'Ntop',
 										 # 'Utop',
 										 # 'ainf',
-										 # 'Asym',
-										 # 'Asym_c',
-										 # 'Asym_d',
-										 # 'AM'
+										 'Asym',
+										 'Asym_c',
+										 'Asym_d',
+										 # 'AM',
+										 'Q'
 										 ]
 	plt.figure(figsize=(10, 12))
 	xgboost.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
@@ -233,7 +236,7 @@ if run == 'y':
 	explainer = shap.Explainer(model.predict, X_train,
 							   feature_names= ['Z',
 										 'A',
-										 # 'S2n',
+										 'S2n',
 										 'S2p',
 										 'E',
 										 'Sp',
@@ -298,9 +301,10 @@ if run == 'y':
 										 # 'Ntop',
 										 # 'Utop',
 										 # 'ainf',
-										 # 'Asym',
-										 # 'Asym_c',
-										 # 'Asym_d',
+										 'Asym',
+										 'Asym_c',
+										 'Asym_d',
+										 'Q',
 										 # 'AM'
 										 ]) # SHAP feature importance analysis
 	shap_values = explainer(X_test)
