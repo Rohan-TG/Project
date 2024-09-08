@@ -14,26 +14,26 @@ from sklearn.metrics import mean_squared_error, r2_score
 from MT_103_functions import range_setter, make_train, make_test
 from matrix_functions import r2_standardiser
 
-df = pd.read_csv('ENDFBVIII_MT103_fund_features_only.csv')
+df = pd.read_csv('ENDFBVIII_MT103_all_features.csv')
 al = range_setter(df=df, la=30, ua=208)
 
-CENDL_32 = pd.read_csv('CENDL-3.2_MT103_fund_features_only.csv')
+CENDL_32 = pd.read_csv('CENDL32_MT103_all_features.csv')
 CENDL_nuclides = range_setter(df=CENDL_32)
 CENDL_32.index = range(len(CENDL_32))
 
-JEFF_33 = pd.read_csv('JEFF-3.3_MT103_fund_only.csv')
+JEFF_33 = pd.read_csv('JEFF33_MT103_all_features.csv')
 JEFF_nuclides = range_setter(df=JEFF_33)
 JEFF_33.index = range(len(JEFF_33))
 
-JENDL_5 = pd.read_csv('JENDL-5_MT103_fund_features_only.csv')
+JENDL_5 = pd.read_csv('JENDL5_MT103_all_features.csv')
 JENDL_nuclides = range_setter(df=JENDL_5)
 JENDL_5.index = range(len(JENDL_5))
 
-TENDL_2021 = pd.read_csv('TENDL-2021_MT103_fund_only.csv')
+TENDL_2021 = pd.read_csv('TENDL2021_MT103_all_features.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021)
 TENDL_2021.index = range(len(TENDL_2021))
 
-ENDFB_nuclides = range_setter(df=df, la=30, ua=208)
+ENDFB_nuclides = range_setter(df=df, la=0, ua=260)
 print("Data loaded...")
 
 
@@ -117,7 +117,7 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=30, ua=210) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=260) # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df)
 
@@ -134,12 +134,6 @@ for q in tqdm.tqdm(range(num_runs)):
 									 reg_lambda=4
 									 )
 
-		# model = xg.XGBRegressor(n_estimators=600,
-		# 						reg_lambda=1.959,
-		# 						learning_rate=0.00856,
-		# 						max_depth=7,
-		# 						subsample=0.1895,
-		# 						seed=42)
 
 		time1 = time.time()
 		model.fit(X_train, y_train)
