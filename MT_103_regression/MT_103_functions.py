@@ -665,7 +665,7 @@ def make_test(nuclides, df):
 	p_gap_erg_test,
 	p_chem_erg_test,
 	p_rms_radius_test,
-	rms_radius_test,
+	rms_radius_test, #
 	Sp_compound_test,
 	Sn_compound_test,
 	Shell_compound_test,
