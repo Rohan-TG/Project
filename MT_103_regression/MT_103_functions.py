@@ -60,7 +60,7 @@ def make_train(df, validation_nuclides, la, ua):
 	Pairing = df['Pairing']
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
-	octupole_deformation = df['octopole_deformation']
+	# octupole_deformation = df['octopole_deformation']
 	Z_even = df['Z_even']
 	A_even = df['A_even']
 	N_even = df['N_even']
@@ -143,7 +143,7 @@ def make_train(df, validation_nuclides, la, ua):
 	n_gap_erg_train = []
 	n_chem_erg_train = []
 	n_rms_radius_train = []
-	octupole_deformation_train = []
+	# octupole_deformation_train = []
 	# cat_proton_train = []
 	# cat_neutron_train = []
 	# cat_double_train = []
@@ -240,7 +240,7 @@ def make_train(df, validation_nuclides, la, ua):
 			Pairing_daughter_train.append(Pairing_daughter[idx])
 			Parity_daughter_train.append(Parity_daughter[idx])
 			n_rms_radius_train.append(n_rms_radius[idx])
-			octupole_deformation_train.append(octupole_deformation[idx])
+			# octupole_deformation_train.append(octupole_deformation[idx])
 			Decay_compound_train.append(Decay_compound[idx])
 			BEA_daughter_train.append(BEA_daughter[idx])
 			BEA_compound_train.append(BEA_compound[idx])
@@ -310,7 +310,7 @@ def make_train(df, validation_nuclides, la, ua):
 				  n_gap_erg_train,
 				  n_chem_erg_train,
 				  n_rms_radius_train,
-				  octupole_deformation_train,
+				  # octupole_deformation_train,
 				  Decay_compound_train,
 				  BEA_daughter_train,
 				  BEA_compound_train,
@@ -399,7 +399,7 @@ def make_test(nuclides, df):
 	Pairing = df['Pairing']
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
-	octupole_deformation = df['octopole_deformation']
+	# octupole_deformation = df['octopole_deformation']
 	Z_even = df['Z_even']
 	A_even = df['A_even']
 	N_even = df['N_even']
@@ -491,7 +491,7 @@ def make_test(nuclides, df):
 	p_chem_erg_test = []
 	p_rms_radius_test = []
 	rms_radius_test = []
-	octupole_deformation_test = []
+	# octupole_deformation_test = []
 	# Nlow_test = []
 	# Ulow_test = []
 	# Ntop_test = []
@@ -568,7 +568,7 @@ def make_test(nuclides, df):
 				n_gap_erg_test.append(n_gap_erg[j])
 				n_chem_erg_test.append(n_chem_erg[j])
 				Pairing_daughter_test.append(Pairing_daughter[j])
-				octupole_deformation_test.append(octupole_deformation[j])
+				# octupole_deformation_test.append(octupole_deformation[j])
 
 				Parity_daughter_test.append(Parity_daughter[j])
 				n_rms_radius_test.append(n_rms_radius[j])
@@ -645,7 +645,7 @@ def make_test(nuclides, df):
 	n_gap_erg_test,
 	n_chem_erg_test,
 	n_rms_radius_test,
-	octupole_deformation_test,
+	# octupole_deformation_test,
 	Decay_compound_test,
 	BEA_daughter_test,
 	BEA_compound_test,
@@ -665,7 +665,7 @@ def make_test(nuclides, df):
 	p_gap_erg_test,
 	p_chem_erg_test,
 	p_rms_radius_test,
-	rms_radius_test, #
+	# rms_radius_test, #
 	Sp_compound_test,
 	Sn_compound_test,
 	Shell_compound_test,
