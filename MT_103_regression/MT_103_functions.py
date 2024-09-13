@@ -330,7 +330,7 @@ def make_train(df, validation_nuclides, la, ua):
 				  p_gap_erg_train,
 				  p_chem_erg_train,
 				  p_rms_radius_train,
-				  rms_radius_train,
+				  # rms_radius_train,
 				  Sp_compound_train,
 				  Sn_compound_train,
 				  Shell_compound_train,
