@@ -57,6 +57,7 @@ validation_set_size = 20  # number of nuclides hidden from training
 
 num_runs = 10
 run_r2 = []
+run_rmse = []
 
 nuclide_r2 = []
 
@@ -399,9 +400,11 @@ for q in tqdm.tqdm(range(num_runs)):
 
 # all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
 	benchmark_r2 = r2_score(y_true=benchmark_total_library_evaluations, y_pred= benchmark_total_predictions)
+	benchmark_rmse = mean_squared_error(y_true=benchmark_total_library_evaluations, y_pred=benchmark_total_predictions) **0.5
 # print(f"MSE: {all_libraries_mse:0.5f}")
 	print(f"R2: {benchmark_r2:0.5f}")
 	run_r2.append(benchmark_r2)
+	run_rmse.append(benchmark_rmse)
 
 	tallyatleast90.append(at_least_one_agreeing_90)
 
@@ -423,6 +426,8 @@ for match in agg_n_r2:
 A_plots = [i[1] for i in alist]
 print(np.mean(run_r2))
 print(np.std(run_r2))
+
+print(f'Benchmark RMSE: {np.mean(run_rmse)} +- {np.std(run_rmse)}')
 # Z_plots = [i[0] for i in nuclide_r2]
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
 # mse_plots = [i[-1] for i in nuclide_mse]
