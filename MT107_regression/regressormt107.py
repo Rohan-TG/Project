@@ -9,26 +9,29 @@ import matplotlib.pyplot as plt
 import periodictable
 import shap
 
-df = pd.read_csv('ENDFBVIII_MT107_nanremoved.csv')
+df = pd.read_csv('ENDFBVIII_MT107_all_features.csv')
 df.index = range(len(df))
-CENDL_32 = pd.read_csv('CENDL-3.2_MT107_main_features.csv')
-CENDL_nuclides = range_setter(df=CENDL_32, la=0, ua=208)
+CENDL_32 = pd.read_csv('CENDL-3.2_MT107_all_features.csv')
+CENDL_nuclides = range_setter(df=CENDL_32, la=0, ua=260)
 #
-JEFF_33 = pd.read_csv('JEFF33_all_features_MT16_103_107.csv')
-JEFF_nuclides = range_setter(df=JEFF_33, la=0, ua=208)
+JEFF_33 = pd.read_csv('JEFF-3.3_MT107_all_features.csv')
+JEFF_nuclides = range_setter(df=JEFF_33, la=0, ua=260)
 #
-JENDL_5 = pd.read_csv('JENDL-5_MT107_main_features.csv')
-JENDL_nuclides = range_setter(df=JENDL_5, la=0, ua=208)
+JENDL_5 = pd.read_csv('JENDL-5_MT107_all_features.csv')
+JENDL_nuclides = range_setter(df=JENDL_5, la=0, ua=260)
 
 #
-TENDL_2021 = pd.read_csv('TENDL-2021_MT107_main_features.csv')
-TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=208)
+TENDL_2021 = pd.read_csv('TENDL-2021_MT107_all_features.csv')
+TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=260)
 
-ENDFB_nuclides = range_setter(df=df, la=70, ua=208)
+ENDFB_nuclides = range_setter(df=df, la=0, ua=260)
 print("Data loaded...")
 
 validation_nuclides = [[64,154], [68,168], [62,150]]
 validation_set_size = 20
+
+minenergy = 0
+maxenergy = 20
 
 while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -37,7 +40,8 @@ while len(validation_nuclides) < validation_set_size:
 
 
 
-X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=70, ua=208)
+X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
+								la=0, ua=260, maxerg=maxenergy, minerg=minenergy)
 X_test, y_test = maketest107(validation_nuclides, df=df)
 
 model = xg.XGBRegressor(n_estimators = 900,
@@ -89,6 +93,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	all_libs = []
 	current_nuclide = validation_nuclides[i]
 
+	q =df[(df['Z'] == current_nuclide[0]) & (df['A'] == current_nuclide[1])]['Q'].values[0]
+
 	jendlerg, jendlxs = Generalplotter107(dataframe=JENDL_5, nuclide=current_nuclide)
 	cendlerg, cendlxs = Generalplotter107(dataframe=CENDL_32, nuclide=current_nuclide)
 	jefferg, jeffxs = Generalplotter107(dataframe=JEFF_33, nuclide=current_nuclide)
@@ -114,6 +120,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.show()
 	time.sleep(1.5)
 	print(f'{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}')
+	print(f"Q: {q} eV +ve no threshold, -ve threshold")
 
 	endfbpredtruncated, endfblibtruncated, endfbr2 = r2_standardiser(library_xs=true_xs, predicted_xs=pred_xs)
 	for x, y in zip(endfbpredtruncated, endfblibtruncated):
@@ -234,9 +241,9 @@ if run == 'y':
 										 'BEA-A-d',
 										 'Spin-d',
 										 'Def-d',
-										 # 'Asym',
-										 # 'Asym_c',
-										 # 'Asym_d',
+										 'Asym',
+										 'Asym_c',
+										 'Asym_d',
 										 ]
 	plt.figure(figsize=(10, 12))
 	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
@@ -302,9 +309,9 @@ if run == 'y':
 										 'BEA-A-d',
 										 'Spin-d',
 										 'Def-d',
-										 # 'Asym',
-										 # 'Asym_c',
-										 # 'Asym_d',
+										 'Asym',
+										 'Asym_c',
+										 'Asym_d',
 										 # 'AM'
 										 ]) # SHAP feature importance analysis
 	shap_values = explainer(X_test)

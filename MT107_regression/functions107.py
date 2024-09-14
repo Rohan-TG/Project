@@ -19,7 +19,7 @@ def Generalplotter107(dataframe, nuclide, minenergy=1, maxenergy=20):
 
 
 
-def maketrain107(df, validation_nuclides, exclusions = [], la=0, ua=260):
+def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -65,6 +65,7 @@ def maketrain107(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	p_rms_radius = df['p_rms_radius']
 	rms_radius = df['rms_radius']
 	Asymmetry = df['Asymmetry']
+	Q = df['Q']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -134,6 +135,7 @@ def maketrain107(df, validation_nuclides, exclusions = [], la=0, ua=260):
 	p_rms_radius_train = []
 	rms_radius_train = []
 	Asymmetry_train = []
+	Q_train = []
 
 
 
@@ -179,9 +181,9 @@ def maketrain107(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			continue # prevents loop from adding test isotope data to training data
 		if [Z[idx], A[idx]] in exclusions:
 			continue
-		if Energy[idx] > 20: # training on data less than 30 MeV
+		if Energy[idx] > maxerg: # training on data less than 30 MeV
 			continue
-		if Energy[idx] < 1:
+		if Energy[idx] < minerg:
 			continue
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
 			Z_train.append(Z[idx])
@@ -247,6 +249,7 @@ def maketrain107(df, validation_nuclides, exclusions = [], la=0, ua=260):
 			Asymmetry_train.append(Asymmetry[idx])
 			Asymmetry_compound_train.append(Asymmetry_compound[idx])
 			Asymmetry_daughter_train.append(Asymmetry_daughter[idx])
+			Q_train.append(Q[idx])
 
 	X = np.array([Z_train,
 				  A_train,
@@ -310,6 +313,7 @@ def maketrain107(df, validation_nuclides, exclusions = [], la=0, ua=260):
 				  Asymmetry_train,
 				  Asymmetry_compound_train,
 				  Asymmetry_daughter_train,
+				  Q_train,
 				  ])
 	y = np.array(XS_train) # cross-sections
 
@@ -366,6 +370,7 @@ def maketest107(nuclides, df):
 	p_rms_radius = df['p_rms_radius']
 	rms_radius = df['rms_radius']
 	Asymmetry = df['Asymmetry']
+	Q = df['Q']
 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
@@ -434,6 +439,7 @@ def maketest107(nuclides, df):
 	rms_radius_test = []
 	octupole_deformation_test = []
 	Asymmetry_test = []
+	Q_test = []
 
 
 	# Daughter features
@@ -541,6 +547,7 @@ def maketest107(nuclides, df):
 				Asymmetry_test.append(Asymmetry[j])
 				Asymmetry_compound_test.append(Asymmetry_compound[j])
 				Asymmetry_daughter_test.append(Asymmetry_daughter[j])
+				Q_test.append(Q[j])
 
 
 	xtest = np.array([Z_test,
@@ -605,6 +612,7 @@ def maketest107(nuclides, df):
 	Asymmetry_test,
 	Asymmetry_compound_test,
 	Asymmetry_daughter_test,
+	Q_test,
 	])
 
 	xtest = np.transpose(xtest)
