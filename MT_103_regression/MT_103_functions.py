@@ -37,7 +37,7 @@ def General_plotter(df, nuclides, maxenergy=20, minenergy=2):
 
 	return energies, xs
 
-def make_train(df, validation_nuclides, la, ua):
+def make_train(df, validation_nuclides, la, ua, minerg, maxerg):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -212,9 +212,9 @@ def make_train(df, validation_nuclides, la, ua):
 	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope data to training data
-		if Energy[idx] > 20: # training on data less than 30 MeV
+		if Energy[idx] > maxerg: # training on data less than 30 MeV
 			continue
-		if Energy[idx] < 2.0:
+		if Energy[idx] < minerg:
 			continue
 		if A[idx] <= ua and A[idx] >= la: # checks that nuclide is within bounds for A
 			Z_train.append(Z[idx])
@@ -370,7 +370,7 @@ def make_train(df, validation_nuclides, la, ua):
 	X = np.transpose(X) # forms matrix into correct shape (values, features)
 	return X, y
 
-def make_test(nuclides, df):
+def make_test(nuclides, df, minerg, maxerg):
 	"""
 	nuclides: array of (1x2) arrays containing Z of nuclide at index 0, and A at index 1.
 	df: dataframe used for validation data
@@ -544,9 +544,9 @@ def make_test(nuclides, df):
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
-			if Energy[j] < 2.0:
+			if Energy[j] < minerg:
 				continue
-			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20:
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= maxerg:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
 				S2n_test.append(S_2n[j])
