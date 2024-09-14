@@ -24,7 +24,7 @@ JENDL_nuclides = range_setter(df=JENDL_5)
 TENDL_2021 = pd.read_csv('TENDL2021_MT103_all_features.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021)
 
-ENDFB_nuclides = range_setter(df=df, la=80, ua=210)
+ENDFB_nuclides = range_setter(df=df, la=0, ua=208)
 print("Data loaded...")
 
 validation_nuclides = []
@@ -32,14 +32,17 @@ validation_set_size = 20
 
 energy_row = 4
 
+min_energy = 1
+max_energy = 20
+
 while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 	if nuclide_choice not in validation_nuclides:
 		validation_nuclides.append(nuclide_choice)
 print("Test nuclides selected...")
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=80, ua=210)
-X_test, y_test = make_test(validation_nuclides, df=df)
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=208, minerg=min_energy, maxerg=max_energy)
+X_test, y_test = make_test(validation_nuclides, df=df, minerg=min_energy, maxerg=max_energy)
 
 model = xgboost.XGBRegressor(n_estimators = 1100,
 							 learning_rate = 0.008,
@@ -104,7 +107,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 	if current_nuclide in CENDL_nuclides:
 
-		cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL_32)
+		cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL_32, minerg=min_energy, maxerg=max_energy)
 		pred_cendl = model.predict(cendl_test)
 
 		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl, library_xs=cendl_xs)
@@ -117,7 +120,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 	if current_nuclide in JENDL_nuclides:
 
-		jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL_5)
+		jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL_5, minerg=min_energy, maxerg=max_energy)
 		pred_jendl = model.predict(jendl_test)
 
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
@@ -129,7 +132,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 	if current_nuclide in JEFF_nuclides:
-		jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF_33)
+		jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF_33, minerg=min_energy, maxerg=max_energy)
 
 		pred_jeff = model.predict(jeff_test)
 
@@ -142,7 +145,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 	if current_nuclide in TENDL_nuclides:
 
-		tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL_2021)
+		tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL_2021, minerg=min_energy, maxerg=max_energy)
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)

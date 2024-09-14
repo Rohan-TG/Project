@@ -35,7 +35,8 @@ TENDL_2021.index = range(len(TENDL_2021))
 
 ENDFB_nuclides = range_setter(df=df, la=0, ua=260)
 print("Data loaded...")
-
+min_energy = 1
+max_energy = 20
 
 
 n_run_tally95 = []
@@ -118,9 +119,9 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=260) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=208, minerg=min_energy, maxerg=max_energy) # make training matrix
 
-		X_test, y_test = make_test(validation_nuclides, df=df)
+		X_test, y_test = make_test(validation_nuclides, df=df,minerg=min_energy, maxerg=max_energy)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
@@ -144,7 +145,7 @@ for q in tqdm.tqdm(range(num_runs)):
 		predictions_ReLU = []
 
 		for testnuclide in validation_nuclides:
-			X_test_temp, y_test_temp = make_test(nuclides=[testnuclide], df=df)
+			X_test_temp, y_test_temp = make_test(nuclides=[testnuclide], df=df,minerg=min_energy, maxerg=max_energy)
 
 			temp_predictions = model.predict(X_test_temp)
 
@@ -206,7 +207,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			if current_nuclide in CENDL_nuclides:
 
-				cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL_32)
+				cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL_32,minerg=min_energy, maxerg=max_energy)
 				pred_cendl = model.predict(cendl_test)
 
 				pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
@@ -224,7 +225,7 @@ for q in tqdm.tqdm(range(num_runs)):
 				# print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
 
 			if current_nuclide in JENDL_nuclides:
-				jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL_5)
+				jendl_test, jendl_xs = make_test(nuclides=[current_nuclide], df=JENDL_5,minerg=min_energy, maxerg=max_energy)
 				pred_jendl = model.predict(jendl_test)
 
 				pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
@@ -240,7 +241,7 @@ for q in tqdm.tqdm(range(num_runs)):
 				# print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 			if current_nuclide in JEFF_nuclides:
-				jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF_33)
+				jeff_test, jeff_xs = make_test(nuclides=[current_nuclide], df=JEFF_33,minerg=min_energy, maxerg=max_energy)
 
 				pred_jeff = model.predict(jeff_test)
 
@@ -259,7 +260,7 @@ for q in tqdm.tqdm(range(num_runs)):
 				# print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
 
 			if current_nuclide in TENDL_nuclides:
-				tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL_2021)
+				tendl_test, tendl_xs = make_test(nuclides=[current_nuclide], df=TENDL_2021,minerg=min_energy, maxerg=max_energy)
 				pred_tendl = model.predict(tendl_test)
 
 				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
