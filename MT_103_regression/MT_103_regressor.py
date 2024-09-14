@@ -32,16 +32,20 @@ validation_set_size = 20
 
 energy_row = 4
 
-min_energy = 1
+min_energy = 0
 max_energy = 20
+
+mode = input("Mode (thr/1v): ")
 
 while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
-	if nuclide_choice not in validation_nuclides:
+	qchoice = df[(df['Z'] == nuclide_choice[0]) & (df['A'] == nuclide_choice[1])]['Q'].values[0]
+	if nuclide_choice not in validation_nuclides and qchoice < 0 and mode == "thr":
 		validation_nuclides.append(nuclide_choice)
 print("Test nuclides selected...")
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=208, minerg=min_energy, maxerg=max_energy)
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=208, minerg=min_energy, maxerg=max_energy,
+							  mode='threshold')
 X_test, y_test = make_test(validation_nuclides, df=df, minerg=min_energy, maxerg=max_energy)
 
 model = xgboost.XGBRegressor(n_estimators = 1100,
@@ -80,6 +84,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	all_libs = []
 	current_nuclide = validation_nuclides[i]
 
+	q = df[(df['Z'] == current_nuclide[0]) & (df['A'] == current_nuclide[1])]['Q'].values[0]
+
 	jendlerg, jendlxs = General_plotter(df=JENDL_5, nuclides=[current_nuclide])
 	cendlerg, cendlxs = General_plotter(df=CENDL_32, nuclides=[current_nuclide])
 	jefferg, jeffxs = General_plotter(df=JEFF_33, nuclides=[current_nuclide])
@@ -104,6 +110,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.show()
 
 	time.sleep(1)
+	print(f'{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]:0.0f}')
+	print(f"Q: {q} eV, +ve no threshold, -ve threshold")
 
 	if current_nuclide in CENDL_nuclides:
 

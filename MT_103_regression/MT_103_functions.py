@@ -37,13 +37,16 @@ def General_plotter(df, nuclides, maxenergy=20, minenergy=2):
 
 	return energies, xs
 
-def make_train(df, validation_nuclides, la, ua, minerg, maxerg):
+def make_train(df, validation_nuclides, la, ua, minerg, maxerg, mode):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
 	df: dataframe to use
 	validation_nuclides are explicitly omitted from the training matrix
-	Returns X: X values matrix in shape (nsamples, nfeatures)"""
+	Returns X: X values matrix in shape (nsamples, nfeatures)
+
+	mode: threshold, 1v, or dual
+	"""
 
 	# MT = df['MT']
 	ME = df['ME']
@@ -210,6 +213,10 @@ def make_train(df, validation_nuclides, la, ua, minerg, maxerg):
 	Q_train = []
 
 	for idx, unused in enumerate(Z):  # MT = 16 is (n,2n) (already extracted)
+		if mode.lower() == "threshold" and Q[idx] > 0:
+			continue
+		if mode.lower() == "1v" and Q[idx] < 0:
+			continue
 		if [Z[idx], A[idx]] in validation_nuclides:
 			continue # prevents loop from adding test isotope data to training data
 		if Energy[idx] > maxerg: # training on data less than 30 MeV
