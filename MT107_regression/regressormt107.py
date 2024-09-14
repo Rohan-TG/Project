@@ -30,7 +30,7 @@ print("Data loaded...")
 validation_nuclides = [[64,154], [68,168], [62,150]]
 validation_set_size = 20
 
-minenergy = 0
+minenergy = 0.1
 maxenergy = 20
 
 while len(validation_nuclides) < validation_set_size:
@@ -244,6 +244,7 @@ if run == 'y':
 										 'Asym',
 										 'Asym_c',
 										 'Asym_d',
+										 'Q'
 										 ]
 	plt.figure(figsize=(10, 12))
 	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
@@ -312,7 +313,8 @@ if run == 'y':
 										 'Asym',
 										 'Asym_c',
 										 'Asym_d',
-										 # 'AM'
+										 # 'AM',
+										 'Q',
 										 ]) # SHAP feature importance analysis
 	shap_values = explainer(X_test)
 
