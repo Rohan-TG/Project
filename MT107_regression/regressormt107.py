@@ -14,7 +14,7 @@ df.index = range(len(df))
 CENDL_32 = pd.read_csv('CENDL-3.2_MT107_all_features.csv')
 CENDL_nuclides = range_setter(df=CENDL_32, la=0, ua=260)
 #
-JEFF_33 = pd.read_csv('JEFF-3.3_MT107_all_features.csv')
+JEFF_33 = pd.read_csv('JEFF-3.3_MT_107_all_params.csv')
 JEFF_nuclides = range_setter(df=JEFF_33, la=0, ua=260)
 #
 JENDL_5 = pd.read_csv('JENDL-5_MT107_all_features.csv')
