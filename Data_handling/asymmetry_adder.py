@@ -34,9 +34,9 @@ df = df.drop(columns=['Unnamed: 0'])
 print(df.columns)
 print(df.shape)
 
-df.insert(61, 'Asymmetry', value=s)
-df.insert(62, 'Asymmetry_compound', value=s_c)
-df.insert(63, 'Asymmetry_daughter', value=s_d)
+df.insert(df.shape[1], 'Asymmetry', value=s)
+df.insert(df.shape[1], 'Asymmetry_compound', value=s_c)
+df.insert(df.shape[1], 'Asymmetry_daughter', value=s_d)
 
 print(df.columns)
 print(df.shape)
