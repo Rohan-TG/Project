@@ -22,8 +22,8 @@ CENDL_32= CENDL_32.dropna(subset=['XS'])
 CENDL_nuclides = range_setter(df=CENDL_32, la=0, ua=260)
 CENDL_32.index = range(len(CENDL_32))
 
-JEFF_33 = pd.read_csv('JEFF-3.3_MT107_all_features.csv')
-JEFF_33 = JEFF_33.dropna(subset=['MT107XS'])
+JEFF_33 = pd.read_csv('JEFF-3.3_MT_107_all_params.csv')
+JEFF_33 = JEFF_33.dropna(subset=['XS'])
 JEFF_nuclides = range_setter(df=JEFF_33, la=0, ua=260)
 JEFF_33.index = range(len(JEFF_33))
 
@@ -54,6 +54,20 @@ run_r2 = []
 atleast90 = []
 nuclide_r2 = []
 
+nucq = []
+thrn = []
+v1n = []
+for n in al:
+	q = df[(df['Z'] == n[0]) & (df['A'] == n[1])]['Q'].values[0]
+	nucq.append([n, q])
+	if q < 0:
+		thrn.append(n)
+	elif q > 0:
+		v1n.append(n)
+
+fullthr = []
+fullnothr = []
+
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
@@ -65,6 +79,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	outliers9090 = 0
 	outlier_tally = 0
 	tally = 0
+
+	thrnucs = []
+	nothrnucs = []
 
 
 	atleast90tally = 0
@@ -112,7 +129,8 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides, la=30, ua=208) # make training matrix
+		X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
+										la=0, ua=260) # make training matrix
 
 		X_test, y_test = maketest107(validation_nuclides, df=df)
 
@@ -181,6 +199,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			all_library_evaluations = []
 			all_predictions = []
+
+			q = df[(df['Z'] == current_nuclide[0]) & (df['A'] == current_nuclide[1])]['Q'].values[0]
 
 
 
@@ -272,6 +292,11 @@ for q in tqdm.tqdm(range(num_runs)):
 
 
 			r2 = r2_score(all_library_evaluations,all_predictions) # various comparisons
+
+			if q < 0:
+				thrnucs.append(current_nuclide, r2)
+			elif q > 0:
+				nothrnucs.append(current_nuclide, r2)
 
 			# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
 
@@ -403,6 +428,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	atleast90.append(atleast90tally)
 
 	print(f"Bad nuclides: {bad_nuclides}")
+
+	fullthr.append(thrnucs)
+	fullnothr.append(nothrnucs)
 
 # print(f"Good predictions {tally}/{len(al)}")
 
