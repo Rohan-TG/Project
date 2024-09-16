@@ -50,6 +50,7 @@ validation_set_size = 20  # number of nuclides hidden from training
 
 num_runs = 10
 run_r2 = []
+run_rmse = []
 
 atleast90 = []
 nuclide_r2 = []
@@ -422,9 +423,11 @@ for q in tqdm.tqdm(range(num_runs)):
 
 # all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
 	benchmark_r2 = r2_score(y_true=benchmark_total_library_evaluations, y_pred= benchmark_total_predictions)
+	benchmark_rmse = mean_squared_error(benchmark_total_library_evaluations, y_pred=benchmark_total_predictions) ** 0.5
 # print(f"MSE: {all_libraries_mse:0.5f}")
 	print(f"R2: {benchmark_r2:0.5f}")
 	run_r2.append(benchmark_r2)
+	run_rmse.append(benchmark_rmse)
 	atleast90.append(atleast90tally)
 
 	print(f"Bad nuclides: {bad_nuclides}")
@@ -477,7 +480,7 @@ plt.show()
 print(f'At least 1 lib > 90: {np.mean(atleast90)} +- {np.std(atleast90)}')
 # plt.grid()
 # plt.show()
-
+print(f'RMSE: {np.mean(run_rmse)} +- {np.std(run_rmse)}')
 # plt.figure()
 # plt.hist(x=log_plots, bins=50)
 # plt.grid()
