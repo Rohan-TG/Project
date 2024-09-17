@@ -70,7 +70,7 @@ fullthr = []
 fullnothr = []
 
 for q in tqdm.tqdm(range(num_runs)):
-	nuclides_used = []
+	nuclides_used = [[6,12]]
 	every_prediction_list = []
 	every_true_value_list = []
 
@@ -295,9 +295,9 @@ for q in tqdm.tqdm(range(num_runs)):
 			r2 = r2_score(all_library_evaluations,all_predictions) # various comparisons
 
 			if q < 0:
-				thrnucs.append(current_nuclide, r2)
+				thrnucs.append([current_nuclide, r2])
 			elif q > 0:
-				nothrnucs.append(current_nuclide, r2)
+				nothrnucs.append([current_nuclide, r2])
 
 			# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
 
