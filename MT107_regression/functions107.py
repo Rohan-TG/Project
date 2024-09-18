@@ -53,7 +53,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	N = df['N']
 	Radius = df['Radius']
 	Shell = df['Shell']
-	Parity = df['Parity']
+	# Parity = df['Parity']
 	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
@@ -63,7 +63,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	p_chem_erg = df['p_chem_erg']
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
-	rms_radius = df['rms_radius']
+	# rms_radius = df['rms_radius']
 	Asymmetry = df['Asymmetry']
 	Q = df['Q']
 
@@ -95,7 +95,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	S2p_daughter = df['S2p_daughter']
 	Radius_daughter = df['Radius_daughter']
 	ME_daughter = df['ME_daughter']
-	BEA_A_daughter = df['BEA_A_daughter']
+	# BEA_A_daughter = df['BEA_A_daughter']
 	Spin_daughter = df['Spin_daughter']
 	Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
@@ -126,14 +126,14 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	A_even_train = []
 	N_even_train = []
 	Shell_train = []
-	Parity_train = []
+	# Parity_train = []
 	Spin_train = []
 	Decay_Const_train = []
 	Deform_train = []
 	p_gap_erg_train = []
 	p_chem_erg_train = []
 	p_rms_radius_train = []
-	rms_radius_train = []
+	# rms_radius_train = []
 	Asymmetry_train = []
 	Q_train = []
 
@@ -151,7 +151,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	Decay_daughter_train = []
 	ME_daughter_train = []
 	Radius_daughter_train = []
-	BEA_A_daughter_train = []
+	# BEA_A_daughter_train = []
 	Spin_daughter_train = []
 	Deform_daughter_train = []
 	Asymmetry_daughter_train = []
@@ -220,14 +220,14 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			A_even_train.append(A_even[idx])
 			N_even_train.append(N_even[idx])
 			Shell_train.append(Shell[idx])
-			Parity_train.append(Parity[idx])
+			# Parity_train.append(Parity[idx])
 			Spin_train.append(Spin[idx])
 			Decay_Const_train.append(Decay_Const[idx])
 			Deform_train.append(Deform[idx])
 			p_gap_erg_train.append(p_gap_erg[idx])
 			p_chem_erg_train.append(p_chem_erg[idx])
 			p_rms_radius_train.append(p_rms_radius[idx])
-			rms_radius_train.append(rms_radius[idx])
+			# rms_radius_train.append(rms_radius[idx])
 			Sp_compound_train.append(Sp_compound[idx])
 			Sn_compound_train.append(Sn_compound[idx])
 			Shell_compound_train.append(Shell_compound[idx])
@@ -243,7 +243,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			Radius_daughter_train.append(Radius_daughter[idx])
 			Pairing_compound_train.append(Pairing_compound[idx])
 			Parity_compound_train.append(Parity_compound[idx])
-			BEA_A_daughter_train.append(BEA_A_daughter[idx])
+			# BEA_A_daughter_train.append(BEA_A_daughter[idx])
 			Spin_daughter_train.append(Spin_daughter[idx])
 			Deform_daughter_train.append(Deform_daughter[idx])
 			Asymmetry_train.append(Asymmetry[idx])
@@ -284,14 +284,14 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  A_even_train,
 				  N_even_train,
 				  Shell_train,
-				  Parity_train,
+				  # Parity_train,
 				  Spin_train,
 				  Decay_Const_train,
 				  Deform_train,
 				  p_gap_erg_train,
 				  p_chem_erg_train,
 				  p_rms_radius_train,
-				  rms_radius_train,
+				  # rms_radius_train,
 				  Sp_compound_train,
 				  Sn_compound_train,
 				  Shell_compound_train,
@@ -307,7 +307,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  Radius_daughter_train,
 				  Pairing_compound_train,
 				  Parity_compound_train,
-				  BEA_A_daughter_train,
+				  # BEA_A_daughter_train,
 				  Spin_daughter_train,
 				  Deform_daughter_train,
 				  Asymmetry_train,
@@ -358,7 +358,7 @@ def maketest107(nuclides, df):
 	N = df['N']
 	Radius = df['Radius']
 	Shell = df['Shell']
-	Parity = df['Parity']
+	# Parity = df['Parity']
 	Spin = df['Spin']
 	Decay_Const = df['Decay_Const']
 	Deform = df['Deform']
@@ -368,7 +368,7 @@ def maketest107(nuclides, df):
 	p_chem_erg = df['p_chem_erg']
 	n_rms_radius = df['n_rms_radius']
 	p_rms_radius = df['p_rms_radius']
-	rms_radius = df['rms_radius']
+	# rms_radius = df['rms_radius']
 	Asymmetry = df['Asymmetry']
 	Q = df['Q']
 
@@ -400,7 +400,7 @@ def maketest107(nuclides, df):
 	S2p_daughter = df['S2p_daughter']
 	Radius_daughter = df['Radius_daughter']
 	ME_daughter = df['ME_daughter']
-	BEA_A_daughter = df['BEA_A_daughter']
+	# BEA_A_daughter = df['BEA_A_daughter']
 	Spin_daughter = df['Spin_daughter']
 	Deform_daughter = df['Deform_daughter']
 	Decay_daughter = df['Decay_daughter']
@@ -429,14 +429,14 @@ def maketest107(nuclides, df):
 	A_even_test = []
 	N_even_test = []
 	Shell_test = []
-	Parity_test = []
+	# Parity_test = []
 	Spin_test = []
 	Decay_Const_test = []
 	Deform_test = []
 	p_gap_erg_test = []
 	p_chem_erg_test = []
 	p_rms_radius_test = []
-	rms_radius_test = []
+	# rms_radius_test = []
 	octupole_deformation_test = []
 	Asymmetry_test = []
 	Q_test = []
@@ -454,7 +454,7 @@ def maketest107(nuclides, df):
 	ME_daughter_test = []
 	BEA_daughter_test = []
 	Radius_daughter_test = []
-	BEA_A_daughter_test = []
+	# BEA_A_daughter_test = []
 	Spin_daughter_test = []
 	Deform_daughter_test = []
 	Pairing_daughter_test = []
@@ -518,14 +518,14 @@ def maketest107(nuclides, df):
 				A_even_test.append(A_even[j])
 				N_even_test.append(N_even[j])
 				Shell_test.append(Shell[j])
-				Parity_test.append(Parity[j])
+				# Parity_test.append(Parity[j])
 				Spin_test.append(Spin[j])
 				Decay_Const_test.append(Decay_Const[j])
 				Deform_test.append(Deform[j])
 				p_gap_erg_test.append(p_gap_erg[j])
 				p_chem_erg_test.append(p_chem_erg[j])
 				p_rms_radius_test.append(p_rms_radius[j])
-				rms_radius_test.append(rms_radius[j])
+				# rms_radius_test.append(rms_radius[j])
 				Sp_compound_test.append(Sp_compound[j])
 				Sn_compound_test.append(Sn_compound[j])
 				Shell_compound_test.append(Shell_compound[j])
@@ -541,7 +541,7 @@ def maketest107(nuclides, df):
 				Radius_daughter_test.append(Radius_daughter[j])
 				Pairing_compound_test.append(Pairing_compound[j])
 				Parity_compound_test.append(Parity_compound[j])
-				BEA_A_daughter_test.append(BEA_A_daughter[j])
+				# BEA_A_daughter_test.append(BEA_A_daughter[j])
 				Spin_daughter_test.append(Spin_daughter[j])
 				Deform_daughter_test.append(Deform_daughter[j])
 				Asymmetry_test.append(Asymmetry[j])
@@ -583,14 +583,14 @@ def maketest107(nuclides, df):
 	A_even_test,
 	N_even_test,
 	Shell_test,
-	Parity_test,
+	# Parity_test,
 	Spin_test,
 	Decay_Const_test,
 	Deform_test,
 	p_gap_erg_test,
 	p_chem_erg_test,
 	p_rms_radius_test,
-	rms_radius_test,
+	# rms_radius_test,
 	Sp_compound_test,
 	Sn_compound_test,
 	Shell_compound_test,
@@ -606,7 +606,7 @@ def maketest107(nuclides, df):
 	Radius_daughter_test,
 	Pairing_compound_test,
 	Parity_compound_test,
-	BEA_A_daughter_test,
+	# BEA_A_daughter_test,
 	Spin_daughter_test,
 	Deform_daughter_test,
 	Asymmetry_test,
