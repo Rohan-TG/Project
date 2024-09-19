@@ -74,7 +74,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	S2p_compound = df['S2p_compound']
 	Decay_compound = df['Decay_compound']
 	BEA_compound = df['BEA_compound']
-	BEA_A_compound = df['BEA_A_compound']
+	# BEA_A_compound = df['BEA_A_compound']
 	Radius_compound = df['Radius_compound']
 	ME_compound = df['ME_compound']
 	Pairing_compound = df['Pairing_compound']
@@ -169,7 +169,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	Radius_compound_train = []
 	Deform_compound_train = []
 	ME_compound_train = []
-	BEA_A_compound_train = []
+	# BEA_A_compound_train = []
 	Pairing_compound_train = []
 	Parity_compound_train = []
 	Asymmetry_compound_train = []
@@ -237,7 +237,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			Radius_compound_train.append(Radius_compound[idx])
 			Deform_compound_train.append(Deform_compound[idx])
 			ME_compound_train.append(ME_compound[idx])
-			BEA_A_compound_train.append(BEA_A_compound[idx])
+			# BEA_A_compound_train.append(BEA_A_compound[idx])
 			Decay_daughter_train.append(Decay_daughter[idx])
 			ME_daughter_train.append(ME_daughter[idx])
 			Radius_daughter_train.append(Radius_daughter[idx])
@@ -301,7 +301,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  Radius_compound_train,
 				  Deform_compound_train,
 				  ME_compound_train,
-				  BEA_A_compound_train,
+				  # BEA_A_compound_train,
 				  Decay_daughter_train,
 				  ME_daughter_train,
 				  Radius_daughter_train,
@@ -379,7 +379,7 @@ def maketest107(nuclides, df):
 	S2p_compound = df['S2p_compound']
 	Decay_compound = df['Decay_compound']
 	BEA_compound = df['BEA_compound']
-	BEA_A_compound = df['BEA_A_compound']
+	# BEA_A_compound = df['BEA_A_compound']
 	Radius_compound = df['Radius_compound']
 	ME_compound = df['ME_compound']
 	Pairing_compound = df['Pairing_compound']
@@ -468,7 +468,7 @@ def maketest107(nuclides, df):
 	Radius_compound_test  = []
 	Deform_compound_test = []
 	ME_compound_test = []
-	BEA_A_compound_test = []
+	# BEA_A_compound_test = []
 	Pairing_compound_test = []
 	Parity_compound_test = []
 	BEA_compound_test = []
@@ -535,7 +535,7 @@ def maketest107(nuclides, df):
 				Radius_compound_test.append(Radius_compound[j])
 				Deform_compound_test.append(Deform_compound[j])
 				ME_compound_test.append(ME_compound[j])
-				BEA_A_compound_test.append(BEA_A_compound[j])
+				# BEA_A_compound_test.append(BEA_A_compound[j])
 				Decay_daughter_test.append(Decay_daughter[j])
 				ME_daughter_test.append(ME_daughter[j])
 				Radius_daughter_test.append(Radius_daughter[j])
@@ -600,7 +600,7 @@ def maketest107(nuclides, df):
 	Radius_compound_test,
 	Deform_compound_test,
 	ME_compound_test,
-	BEA_A_compound_test,
+	# BEA_A_compound_test,
 	Decay_daughter_test,
 	ME_daughter_test,
 	Radius_daughter_test,

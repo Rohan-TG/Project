@@ -212,7 +212,7 @@ if run == 'y':
 										 'S2p_c',
 										 'ME',
 										 'Z_even',
-										 'A_even',
+										 # 'A_even',
 										 'N_even',
 										 'Shell',
 										 # 'Parity',
@@ -232,7 +232,7 @@ if run == 'y':
 										 'Rad-c',
 										 'Def-c',
 										 'ME-c',
-										 'BEA-A-c',
+										 # 'BEA-A-c',
 										 'Decay-d',
 										 'ME-d',
 										 'Rad-d',
@@ -281,7 +281,7 @@ if run == 'y':
 										 'S2p_c',
 										 'ME',
 										 'Z_even',
-										 'A_even',
+										 # 'A_even',
 										 'N_even',
 										 'Shell',
 										 # 'Parity',
@@ -301,7 +301,7 @@ if run == 'y':
 										 'Rad-c',
 										 'Def-c',
 										 'ME-c',
-										 'BEA-A-c',
+										 # 'BEA-A-c',
 										 'Decay-d',
 										 'ME-d',
 										 'Rad-d',
@@ -317,7 +317,4 @@ if run == 'y':
 										 'Q',
 										 ]) # SHAP feature importance analysis
 	shap_values = explainer(X_test)
-
-
-
 	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
