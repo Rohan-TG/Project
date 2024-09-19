@@ -47,7 +47,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	# octupole_deformation = df['octopole_deformation']
-	Z_even = df['Z_even']
+	# Z_even = df['Z_even']
 	# A_even = df['A_even']
 	N_even = df['N_even']
 	N = df['N']
@@ -122,7 +122,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	n_rms_radius_train = []
 	# octupole_deformation_train = []
 	ME_train = []
-	Z_even_train = []
+	# Z_even_train = []
 	# A_even_train = []
 	N_even_train = []
 	Shell_train = []
@@ -216,7 +216,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			S2n_compound_train.append(S2n_compound[idx])
 			S2p_compound_train.append(S2p_compound[idx])
 			ME_train.append(ME[idx])
-			Z_even_train.append(Z_even[idx])
+			# Z_even_train.append(Z_even[idx])
 			# A_even_train.append(A_even[idx])
 			N_even_train.append(N_even[idx])
 			Shell_train.append(Shell[idx])
@@ -280,7 +280,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  S2n_compound_train,
 				  S2p_compound_train,
 				  ME_train,
-				  Z_even_train,
+				  # Z_even_train,
 				  # A_even_train,
 				  N_even_train,
 				  Shell_train,
@@ -352,7 +352,7 @@ def maketest107(nuclides, df):
 	gamma_deformation = df['gamma_deformation']
 	beta_deformation = df['beta_deformation']
 	# octupole_deformation = df['octopole_deformation']
-	Z_even = df['Z_even']
+	# Z_even = df['Z_even']
 	# A_even = df['A_even']
 	N_even = df['N_even']
 	N = df['N']
@@ -425,7 +425,7 @@ def maketest107(nuclides, df):
 	n_gap_erg_test = []
 	n_chem_erg_test = []
 	ME_test = []
-	Z_even_test = []
+	# Z_even_test = []
 	# A_even_test = []
 	N_even_test = []
 	Shell_test = []
@@ -514,7 +514,7 @@ def maketest107(nuclides, df):
 				S2p_compound_test.append(S2p_compound[j])
 
 				ME_test.append(ME[j])
-				Z_even_test.append(Z_even[j])
+				# Z_even_test.append(Z_even[j])
 				# A_even_test.append(A_even[j])
 				N_even_test.append(N_even[j])
 				Shell_test.append(Shell[j])
@@ -579,7 +579,7 @@ def maketest107(nuclides, df):
 	S2n_compound_test,
 	S2p_compound_test,
 	ME_test,
-	Z_even_test,
+	# Z_even_test,
 	# A_even_test,
 	N_even_test,
 	Shell_test,
