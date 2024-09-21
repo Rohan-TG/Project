@@ -62,7 +62,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	p_gap_erg = df['p_gap_erg']
 	p_chem_erg = df['p_chem_erg']
 	n_rms_radius = df['n_rms_radius']
-	p_rms_radius = df['p_rms_radius']
+	# p_rms_radius = df['p_rms_radius']
 	# rms_radius = df['rms_radius']
 	Asymmetry = df['Asymmetry']
 	Q = df['Q']
@@ -132,7 +132,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	Deform_train = []
 	p_gap_erg_train = []
 	p_chem_erg_train = []
-	p_rms_radius_train = []
+	# p_rms_radius_train = []
 	# rms_radius_train = []
 	Asymmetry_train = []
 	Q_train = []
@@ -226,7 +226,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			Deform_train.append(Deform[idx])
 			p_gap_erg_train.append(p_gap_erg[idx])
 			p_chem_erg_train.append(p_chem_erg[idx])
-			p_rms_radius_train.append(p_rms_radius[idx])
+			# p_rms_radius_train.append(p_rms_radius[idx])
 			# rms_radius_train.append(rms_radius[idx])
 			Sp_compound_train.append(Sp_compound[idx])
 			Sn_compound_train.append(Sn_compound[idx])
@@ -290,7 +290,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  Deform_train,
 				  p_gap_erg_train,
 				  p_chem_erg_train,
-				  p_rms_radius_train,
+				  # p_rms_radius_train,
 				  # rms_radius_train,
 				  Sp_compound_train,
 				  Sn_compound_train,
@@ -367,7 +367,7 @@ def maketest107(nuclides, df):
 	p_gap_erg = df['p_gap_erg']
 	p_chem_erg = df['p_chem_erg']
 	n_rms_radius = df['n_rms_radius']
-	p_rms_radius = df['p_rms_radius']
+	# p_rms_radius = df['p_rms_radius']
 	# rms_radius = df['rms_radius']
 	Asymmetry = df['Asymmetry']
 	Q = df['Q']
@@ -435,7 +435,7 @@ def maketest107(nuclides, df):
 	Deform_test = []
 	p_gap_erg_test = []
 	p_chem_erg_test = []
-	p_rms_radius_test = []
+	# p_rms_radius_test = []
 	# rms_radius_test = []
 	# octupole_deformation_test = []
 	Asymmetry_test = []
@@ -524,7 +524,7 @@ def maketest107(nuclides, df):
 				Deform_test.append(Deform[j])
 				p_gap_erg_test.append(p_gap_erg[j])
 				p_chem_erg_test.append(p_chem_erg[j])
-				p_rms_radius_test.append(p_rms_radius[j])
+				# p_rms_radius_test.append(p_rms_radius[j])
 				# rms_radius_test.append(rms_radius[j])
 				Sp_compound_test.append(Sp_compound[j])
 				Sn_compound_test.append(Sn_compound[j])
@@ -589,7 +589,7 @@ def maketest107(nuclides, df):
 	Deform_test,
 	p_gap_erg_test,
 	p_chem_erg_test,
-	p_rms_radius_test,
+	# p_rms_radius_test,
 	# rms_radius_test,
 	Sp_compound_test,
 	Sn_compound_test,
