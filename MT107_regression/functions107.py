@@ -49,7 +49,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	# octupole_deformation = df['octopole_deformation']
 	# Z_even = df['Z_even']
 	# A_even = df['A_even']
-	N_even = df['N_even']
+	# N_even = df['N_even']
 	N = df['N']
 	Radius = df['Radius']
 	Shell = df['Shell']
@@ -124,7 +124,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	ME_train = []
 	# Z_even_train = []
 	# A_even_train = []
-	N_even_train = []
+	# N_even_train = []
 	Shell_train = []
 	# Parity_train = []
 	Spin_train = []
@@ -218,7 +218,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			ME_train.append(ME[idx])
 			# Z_even_train.append(Z_even[idx])
 			# A_even_train.append(A_even[idx])
-			N_even_train.append(N_even[idx])
+			# N_even_train.append(N_even[idx])
 			Shell_train.append(Shell[idx])
 			# Parity_train.append(Parity[idx])
 			Spin_train.append(Spin[idx])
@@ -282,7 +282,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  ME_train,
 				  # Z_even_train,
 				  # A_even_train,
-				  N_even_train,
+				  # N_even_train,
 				  Shell_train,
 				  # Parity_train,
 				  Spin_train,
@@ -354,7 +354,7 @@ def maketest107(nuclides, df):
 	# octupole_deformation = df['octopole_deformation']
 	# Z_even = df['Z_even']
 	# A_even = df['A_even']
-	N_even = df['N_even']
+	# N_even = df['N_even']
 	N = df['N']
 	Radius = df['Radius']
 	Shell = df['Shell']
@@ -427,7 +427,7 @@ def maketest107(nuclides, df):
 	ME_test = []
 	# Z_even_test = []
 	# A_even_test = []
-	N_even_test = []
+	# N_even_test = []
 	Shell_test = []
 	# Parity_test = []
 	Spin_test = []
@@ -516,7 +516,7 @@ def maketest107(nuclides, df):
 				ME_test.append(ME[j])
 				# Z_even_test.append(Z_even[j])
 				# A_even_test.append(A_even[j])
-				N_even_test.append(N_even[j])
+				# N_even_test.append(N_even[j])
 				Shell_test.append(Shell[j])
 				# Parity_test.append(Parity[j])
 				Spin_test.append(Spin[j])
@@ -581,7 +581,7 @@ def maketest107(nuclides, df):
 	ME_test,
 	# Z_even_test,
 	# A_even_test,
-	N_even_test,
+	# N_even_test,
 	Shell_test,
 	# Parity_test,
 	Spin_test,
