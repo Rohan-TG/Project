@@ -89,7 +89,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	S2n_daughter = df['S2n_daughter']
 	Sp_daughter = df['Sp_daughter']
 	# Pairing_daughter = df['Pairing_daughter']
-	Parity_daughter = df['Parity_daughter']
+	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
 	Shell_daughter = df['Shell_daughter']
 	S2p_daughter = df['S2p_daughter']
@@ -144,7 +144,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	Sp_d_train = []
 	S2n_d_train = []
 	# Pairing_daughter_train = []
-	Parity_daughter_train = []
+	# Parity_daughter_train = []
 	BEA_daughter_train = []
 	S2p_daughter_train = []
 	Shell_daughter_train = []
@@ -207,7 +207,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			n_gap_erg_train.append(n_gap_erg[idx])
 			n_chem_erg_train.append(n_chem_erg[idx])
 			# Pairing_daughter_train.append(Pairing_daughter[idx])
-			Parity_daughter_train.append(Parity_daughter[idx])
+			# Parity_daughter_train.append(Parity_daughter[idx])
 			n_rms_radius_train.append(n_rms_radius[idx])
 			# octupole_deformation_train.append(octupole_deformation[idx])
 			Decay_compound_train.append(Decay_compound[idx])
@@ -276,7 +276,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  BEA_daughter_train,
 				  BEA_compound_train,
 				  # Pairing_daughter_train,
-				  Parity_daughter_train,
+				  # Parity_daughter_train,
 				  S2n_compound_train,
 				  S2p_compound_train,
 				  ME_train,
@@ -394,7 +394,7 @@ def maketest107(nuclides, df):
 	S2n_daughter = df['S2n_daughter']
 	Sp_daughter = df['Sp_daughter']
 	# Pairing_daughter = df['Pairing_daughter']
-	Parity_daughter = df['Parity_daughter']
+	# Parity_daughter = df['Parity_daughter']
 	BEA_daughter = df['BEA_daughter']
 	Shell_daughter = df['Shell_daughter']
 	S2p_daughter = df['S2p_daughter']
@@ -458,7 +458,7 @@ def maketest107(nuclides, df):
 	Spin_daughter_test = []
 	Deform_daughter_test = []
 	# Pairing_daughter_test = []
-	Parity_daughter_test = []
+	# Parity_daughter_test = []
 	Asymmetry_daughter_test = []
 
 	Sp_compound_test = []
@@ -503,7 +503,7 @@ def maketest107(nuclides, df):
 				# Pairing_daughter_test.append(Pairing_daughter[j])
 				# octupole_deformation_test.append(octupole_deformation[j])
 
-				Parity_daughter_test.append(Parity_daughter[j])
+				# Parity_daughter_test.append(Parity_daughter[j])
 				n_rms_radius_test.append(n_rms_radius[j])
 				Decay_compound_test.append(Decay_compound[j]) # D_c
 				BEA_daughter_test.append(BEA_daughter[j])
@@ -575,7 +575,7 @@ def maketest107(nuclides, df):
 	BEA_daughter_test,
 	  BEA_compound_test,
 	# Pairing_daughter_test,
-	Parity_daughter_test,
+	# Parity_daughter_test,
 	S2n_compound_test,
 	S2p_compound_test,
 	ME_test,
