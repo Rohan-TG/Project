@@ -30,7 +30,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	# print("Forming training matrix...")
 
 	# MT = df['MT']
-	ME = df['ME']
+	# ME = df['ME']
 	Z = df['Z']
 	A = df['A']
 	Sep_2n = df['S2n']
@@ -121,7 +121,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	n_chem_erg_train = []
 	n_rms_radius_train = []
 	# octupole_deformation_train = []
-	ME_train = []
+	# ME_train = []
 	# Z_even_train = []
 	# A_even_train = []
 	# N_even_train = []
@@ -215,7 +215,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			BEA_compound_train.append(BEA_compound[idx])
 			S2n_compound_train.append(S2n_compound[idx])
 			S2p_compound_train.append(S2p_compound[idx])
-			ME_train.append(ME[idx])
+			# ME_train.append(ME[idx])
 			# Z_even_train.append(Z_even[idx])
 			# A_even_train.append(A_even[idx])
 			# N_even_train.append(N_even[idx])
@@ -279,7 +279,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  # Parity_daughter_train,
 				  S2n_compound_train,
 				  S2p_compound_train,
-				  ME_train,
+				  # ME_train,
 				  # Z_even_train,
 				  # A_even_train,
 				  # N_even_train,
@@ -335,7 +335,7 @@ def maketest107(nuclides, df):
 
 	# MT = df['MT']
 	# AM = df['AM']
-	ME = df['ME']
+	# ME = df['ME']
 	Z = df['Z']
 	A = df['A']
 	S_2n = df['S2n']
@@ -424,7 +424,7 @@ def maketest107(nuclides, df):
 	Radius_test = []
 	n_gap_erg_test = []
 	n_chem_erg_test = []
-	ME_test = []
+	# ME_test = []
 	# Z_even_test = []
 	# A_even_test = []
 	# N_even_test = []
@@ -513,7 +513,7 @@ def maketest107(nuclides, df):
 				S2n_compound_test.append(S2n_compound[j])
 				S2p_compound_test.append(S2p_compound[j])
 
-				ME_test.append(ME[j])
+				# ME_test.append(ME[j])
 				# Z_even_test.append(Z_even[j])
 				# A_even_test.append(A_even[j])
 				# N_even_test.append(N_even[j])
@@ -578,7 +578,7 @@ def maketest107(nuclides, df):
 	# Parity_daughter_test,
 	S2n_compound_test,
 	S2p_compound_test,
-	ME_test,
+	# ME_test,
 	# Z_even_test,
 	# A_even_test,
 	# N_even_test,
