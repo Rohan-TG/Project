@@ -70,7 +70,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
 	Sn_compound = df['Sn_compound']
-	S2n_compound = df['S2n_compound']
+	# S2n_compound = df['S2n_compound']
 	S2p_compound = df['S2p_compound']
 	Decay_compound = df['Decay_compound']
 	BEA_compound = df['BEA_compound']
@@ -86,7 +86,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 
 	# Daughter nucleus properties
 	Sn_daughter = df['Sn_daughter']
-	S2n_daughter = df['S2n_daughter']
+	# S2n_daughter = df['S2n_daughter']
 	Sp_daughter = df['Sp_daughter']
 	# Pairing_daughter = df['Pairing_daughter']
 	# Parity_daughter = df['Parity_daughter']
@@ -142,7 +142,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	# Daughter nucleus properties
 	Sn_d_train = []
 	Sp_d_train = []
-	S2n_d_train = []
+	# S2n_d_train = []
 	# Pairing_daughter_train = []
 	# Parity_daughter_train = []
 	BEA_daughter_train = []
@@ -160,7 +160,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	Sn_c_train = []  # Sn compound
 	Sp_compound_train = []
 	BEA_compound_train = []
-	S2n_compound_train = []
+	# S2n_compound_train = []
 	S2p_compound_train = []
 	Decay_compound_train = []
 	Sn_compound_train = []
@@ -202,7 +202,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			bd_train.append(beta_deformation[idx])
 			Sn_d_train.append(Sn_daughter[idx])
 			Sp_d_train.append(Sp_daughter[idx])
-			S2n_d_train.append(S2n_daughter[idx])
+			# S2n_d_train.append(S2n_daughter[idx])
 			Radius_train.append(Radius[idx])
 			n_gap_erg_train.append(n_gap_erg[idx])
 			n_chem_erg_train.append(n_chem_erg[idx])
@@ -213,7 +213,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 			Decay_compound_train.append(Decay_compound[idx])
 			BEA_daughter_train.append(BEA_daughter[idx])
 			BEA_compound_train.append(BEA_compound[idx])
-			S2n_compound_train.append(S2n_compound[idx])
+			# S2n_compound_train.append(S2n_compound[idx])
 			S2p_compound_train.append(S2p_compound[idx])
 			# ME_train.append(ME[idx])
 			# Z_even_train.append(Z_even[idx])
@@ -266,7 +266,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  bd_train,
 				  Sn_d_train,
 				  Sp_d_train,
-				  S2n_d_train,
+				  # S2n_d_train,
 				  Radius_train,
 				  n_gap_erg_train,
 				  n_chem_erg_train,
@@ -277,7 +277,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 				  BEA_compound_train,
 				  # Pairing_daughter_train,
 				  # Parity_daughter_train,
-				  S2n_compound_train,
+				  # S2n_compound_train,
 				  S2p_compound_train,
 				  # ME_train,
 				  # Z_even_train,
@@ -375,7 +375,7 @@ def maketest107(nuclides, df):
 	# Compound nucleus properties
 	Sp_compound = df['Sp_compound']
 	Sn_compound = df['Sn_compound']
-	S2n_compound = df['S2n_compound']
+	# S2n_compound = df['S2n_compound']
 	S2p_compound = df['S2p_compound']
 	Decay_compound = df['Decay_compound']
 	BEA_compound = df['BEA_compound']
@@ -391,7 +391,7 @@ def maketest107(nuclides, df):
 
 	# Daughter nucleus properties
 	Sn_daughter = df['Sn_daughter']
-	S2n_daughter = df['S2n_daughter']
+	# S2n_daughter = df['S2n_daughter']
 	Sp_daughter = df['Sp_daughter']
 	# Pairing_daughter = df['Pairing_daughter']
 	# Parity_daughter = df['Parity_daughter']
@@ -445,7 +445,7 @@ def maketest107(nuclides, df):
 	# Daughter features
 	Sn_d_test = []
 	Sp_d_test = []
-	S2n_d_test = []
+	# S2n_d_test = []
 	n_rms_radius_test = []
 	Decay_compound_test = []
 	S2p_daughter_test = []
@@ -472,7 +472,7 @@ def maketest107(nuclides, df):
 	# Pairing_compound_test = []
 	# Parity_compound_test = []
 	BEA_compound_test = []
-	S2n_compound_test = []
+	# S2n_compound_test = []
 	S2p_compound_test = []
 	Asymmetry_compound_test = []
 
@@ -496,7 +496,7 @@ def maketest107(nuclides, df):
 				bd_test.append(beta_deformation[j])
 				Sn_d_test.append(Sn_daughter[j])
 				Sp_d_test.append(Sp_daughter[j])
-				S2n_d_test.append(S2n_daughter[j])
+				# S2n_d_test.append(S2n_daughter[j])
 				Radius_test.append(Radius[j])
 				n_gap_erg_test.append(n_gap_erg[j])
 				n_chem_erg_test.append(n_chem_erg[j])
@@ -510,7 +510,7 @@ def maketest107(nuclides, df):
 
 				BEA_compound_test.append(BEA_compound[j])
 
-				S2n_compound_test.append(S2n_compound[j])
+				# S2n_compound_test.append(S2n_compound[j])
 				S2p_compound_test.append(S2p_compound[j])
 
 				# ME_test.append(ME[j])
@@ -565,7 +565,7 @@ def maketest107(nuclides, df):
 	bd_test,
 	Sn_d_test,
 	Sp_d_test,
-	S2n_d_test,
+	# S2n_d_test,
 	Radius_test,
 	n_gap_erg_test,
 	n_chem_erg_test,
@@ -576,7 +576,7 @@ def maketest107(nuclides, df):
 	  BEA_compound_test,
 	# Pairing_daughter_test,
 	# Parity_daughter_test,
-	S2n_compound_test,
+	# S2n_compound_test,
 	S2p_compound_test,
 	# ME_test,
 	# Z_even_test,
