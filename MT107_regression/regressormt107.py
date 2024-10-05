@@ -10,6 +10,7 @@ import periodictable
 import shap
 
 df = pd.read_csv('ENDFBVIII_MT107_all_features.csv')
+df = df[(df['Z'] != 6) & (df['A'] != 12)]
 df.index = range(len(df))
 CENDL_32 = pd.read_csv('CENDL-3.2_MT107_all_features.csv')
 CENDL_nuclides = range_setter(df=CENDL_32, la=0, ua=260)
@@ -234,7 +235,7 @@ model.get_booster().feature_names = ['Z',
 									 'ME-c',
 									 # 'BEA-A-c',
 									 'Decay-d',
-									 'ME-d',
+									 # 'ME-d',
 									 'Rad-d',
 									 # 'Pair-c',
 									 # 'Par-c',
@@ -303,7 +304,7 @@ explainer = shap.Explainer(model.predict, X_train,
 									 'ME-c',
 									 # 'BEA-A-c',
 									 'Decay-d',
-									 'ME-d',
+									 # 'ME-d',
 									 'Rad-d',
 									 # 'Pair-c',
 									 # 'Par-c',
