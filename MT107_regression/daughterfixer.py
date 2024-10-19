@@ -3,14 +3,14 @@ from matrix_functions import range_setter
 import tqdm
 import numpy as np
 
-wrongFile = pd.read_csv('JEFF-3.3_MT_107_all_params.csv')
+wrongFile = pd.read_csv('ENDFBVIII_MT107_all_features_old.csv')
 cols = wrongFile.columns
 target_nuclides = range_setter(df=wrongFile, la=0, ua=300)
 
-fund = pd.read_csv('1_fund.csv')
+fund = pd.read_csv(r'/mnt/c/Users/TG300/Project/Data_handling/1_fund.csv')
 fundnucs = range_setter(df=fund, la=0, ua=300)
 
-dock = pd.read_csv('JEFF-3.3_MT_107_all_params.csv')
+# dock = pd.read_csv('CENDL-3.2_MT107_all_features_old.csv')
 
 
 Sn_daughter_list = []
@@ -38,8 +38,10 @@ for n in tqdm.tqdm(target_nuclides, total=len(target_nuclides)):
 	alpha_daughter_nuclide = [alpha_daughter_Z, alpha_daughter_A]
 
 	alpha_daughter_N = alpha_daughter_A - alpha_daughter_Z
-
-	daughter_asymmetry = (alpha_daughter_N - alpha_daughter_Z) / alpha_daughter_A
+	if alpha_daughter_A > 0:
+		daughter_asymmetry = (alpha_daughter_N - alpha_daughter_Z) / alpha_daughter_A
+	else:
+		daughter_asymmetry = np.nan
 
 	reduced_df = wrongFile[(wrongFile['Z'] == currentnuc[0]) & (wrongFile['A'] == currentnuc[1])]
 
@@ -104,3 +106,5 @@ wrongFile['Parity_daughter'] = Parity_daughter_list
 wrongFile['Deform_daughter'] = Deform_daughter_list
 wrongFile['Decay_daughter'] = Decay_daughter_list
 wrongFile['Asymmetry_daughter'] = Asymmetry_daughter_list
+
+wrongFile.to_csv('ENDFBVIII_MT_107_all_features.csv')
