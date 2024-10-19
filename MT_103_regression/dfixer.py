@@ -7,7 +7,7 @@ wrongFile = pd.read_csv('ENDFBVIII_MT103_all_features.csv')
 cols = wrongFile.columns
 target_nuclides = range_setter(df=wrongFile, la=0, ua=300)
 
-fund = pd.read_csv('/Users/rntg/PycharmProjects/Project/MT107_regression/1_fund.csv')
+fund = pd.read_csv(r'/mnt/c/Users/TG300/Project/Data_handling/1_fund.csv')
 fundnucs = range_setter(df=fund, la=0, ua=300)
 
 
@@ -32,7 +32,10 @@ for n in tqdm.tqdm(target_nuclides, total=len(target_nuclides)):
 	currentnuc = [n[0], n[1]]
 	np_daughter_Z = currentnuc[0] - 1
 	np_daughter_A = currentnuc[1]
+	np_daughter_N = currentnuc[1] - np_daughter_Z
 	np_daughter_nuclide = [np_daughter_Z, np_daughter_A]
+
+	daughter_asymmetry = (np_daughter_N - np_daughter_Z) / np_daughter_A
 
 	reduced_df = wrongFile[(wrongFile['Z'] == currentnuc[0]) & (wrongFile['A'] == currentnuc[1])]
 
@@ -62,7 +65,7 @@ for n in tqdm.tqdm(target_nuclides, total=len(target_nuclides)):
 					Parity_daughter_list.append(feature_row['Parity_daughter'])
 					Deform_daughter_list.append(feature_row['Deform_daughter'])
 					Decay_daughter_list.append(feature_row['Decay_daughter'])
-					# Asymmetry_daughter_list.append(feature_row['Asymmetry_daughter'])
+					Asymmetry_daughter_list.append(daughter_asymmetry)
 	else:
 		for idx, rowx in reduced_df.iterrows():
 			Sn_daughter_list.append(np.nan)
@@ -96,3 +99,6 @@ wrongFile['Spin_daughter'] = Spin_daughter_list
 wrongFile['Parity_daughter'] = Parity_daughter_list
 wrongFile['Deform_daughter'] = Deform_daughter_list
 wrongFile['Decay_daughter'] = Decay_daughter_list
+wrongFile['Asymmetry_daughter'] = Asymmetry_daughter_list
+
+wrongFile.to_csv('JENDL-5_MT103_all_features.csv')
