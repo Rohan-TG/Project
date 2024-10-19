@@ -37,6 +37,10 @@ for n in tqdm.tqdm(target_nuclides, total=len(target_nuclides)):
 	alpha_daughter_A = currentnuc[1] - 3
 	alpha_daughter_nuclide = [alpha_daughter_Z, alpha_daughter_A]
 
+	alpha_daughter_N = alpha_daughter_A - alpha_daughter_Z
+
+	daughter_asymmetry = (alpha_daughter_N - alpha_daughter_Z) / alpha_daughter_A
+
 	reduced_df = wrongFile[(wrongFile['Z'] == currentnuc[0]) & (wrongFile['A'] == currentnuc[1])]
 
 	if alpha_daughter_nuclide in fundnucs:
@@ -65,7 +69,7 @@ for n in tqdm.tqdm(target_nuclides, total=len(target_nuclides)):
 					Parity_daughter_list.append(feature_row['Parity_daughter'])
 					Deform_daughter_list.append(feature_row['Deform_daughter'])
 					Decay_daughter_list.append(feature_row['Decay_daughter'])
-					# Asymmetry_daughter_list.append(feature_row['Asymmetry_daughter'])
+					Asymmetry_daughter_list.append(daughter_asymmetry)
 	else:
 		for idx, rowx in reduced_df.iterrows():
 			Sn_daughter_list.append(np.nan)
@@ -99,3 +103,4 @@ wrongFile['Spin_daughter'] = Spin_daughter_list
 wrongFile['Parity_daughter'] = Parity_daughter_list
 wrongFile['Deform_daughter'] = Deform_daughter_list
 wrongFile['Decay_daughter'] = Decay_daughter_list
+wrongFile['Asymmetry_daughter'] = Asymmetry_daughter_list
