@@ -9,20 +9,20 @@ import matplotlib.pyplot as plt
 import periodictable
 import shap
 
-df = pd.read_csv('ENDFBVIII_MT107_all_features.csv')
+df = pd.read_csv('ENDFBVIII_MT_107_all_features.csv')
 df = df[(df['Z'] != 6) & (df['A'] != 12)]
 df.index = range(len(df))
-CENDL_32 = pd.read_csv('CENDL-3.2_MT107_all_features.csv')
+CENDL_32 = pd.read_csv('CENDL-3.2_MT_107_all_features.csv')
 CENDL_nuclides = range_setter(df=CENDL_32, la=0, ua=260)
 #
-JEFF_33 = pd.read_csv('JEFF-3.3_MT_107_all_params.csv')
+JEFF_33 = pd.read_csv('JEFF-3.3_MT_107_all_features.csv')
 JEFF_nuclides = range_setter(df=JEFF_33, la=0, ua=260)
 #
-JENDL_5 = pd.read_csv('JENDL-5_MT107_all_features.csv')
+JENDL_5 = pd.read_csv('JENDL-5_MT_107_all_features.csv')
 JENDL_nuclides = range_setter(df=JENDL_5, la=0, ua=260)
 
 #
-TENDL_2021 = pd.read_csv('TENDL-2021_MT107_all_features.csv')
+TENDL_2021 = pd.read_csv('TENDL-2021_MT_107_all_features.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=260)
 
 ENDFB_nuclides = range_setter(df=df, la=0, ua=260)
