@@ -14,25 +14,25 @@ from sklearn.metrics import mean_squared_error, r2_score
 from functions107 import maketrain107, maketest107, Generalplotter107
 from matrix_functions import r2_standardiser, range_setter
 
-df = pd.read_csv('ENDFBVIII_MT107_all_features.csv')
+df = pd.read_csv('ENDFBVIII_MT_107_all_features.csv')
 al = range_setter(df=df, la=0, ua=260)
 
-CENDL_32 = pd.read_csv('CENDL-3.2_MT107_all_features.csv')
+CENDL_32 = pd.read_csv('CENDL-3.2_MT_107_all_features.csv')
 CENDL_32= CENDL_32.dropna(subset=['XS'])
 CENDL_nuclides = range_setter(df=CENDL_32, la=0, ua=260)
 CENDL_32.index = range(len(CENDL_32))
 
-JEFF_33 = pd.read_csv('JEFF-3.3_MT_107_all_params.csv')
+JEFF_33 = pd.read_csv('JEFF-3.3_MT_107_all_features.csv')
 JEFF_33 = JEFF_33.dropna(subset=['XS'])
 JEFF_nuclides = range_setter(df=JEFF_33, la=0, ua=260)
 JEFF_33.index = range(len(JEFF_33))
 
-JENDL_5 = pd.read_csv('JENDL-5_MT107_all_features.csv')
+JENDL_5 = pd.read_csv('JENDL-5_MT_107_all_features.csv')
 JENDL_nuclides = range_setter(df=JENDL_5, la=0, ua=260)
 JENDL_5 = JENDL_5.dropna(subset=['XS'])
 JENDL_5.index = range(len(JENDL_5))
 
-TENDL_2021 = pd.read_csv('TENDL-2021_MT107_all_features.csv')
+TENDL_2021 = pd.read_csv('TENDL-2021_MT_107_all_features.csv')
 TENDL_2021 = TENDL_2021.dropna(subset=['XS'])
 TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=270)
 TENDL_2021.index = range(len(TENDL_2021))
