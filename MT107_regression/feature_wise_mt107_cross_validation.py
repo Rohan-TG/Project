@@ -96,7 +96,7 @@ for nuclide in al:
 	feature_matrix_Decay_Const.append([feat])
 
 
-n_runs = 2
+n_runs = 5
 
 for idx in tqdm.tqdm(range(n_runs)):
 	nuclides_used = []
