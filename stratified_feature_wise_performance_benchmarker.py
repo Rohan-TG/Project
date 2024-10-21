@@ -14,7 +14,7 @@ from matrix_functions import make_test, make_train, range_setter, feature_fetche
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 
-TENDL = pd.read_csv("TENDL21_MT16_XS_features_zeroed.csv")
+TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=4, ua=270)
 
