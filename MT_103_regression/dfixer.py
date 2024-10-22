@@ -3,7 +3,7 @@ from matrix_functions import range_setter
 import tqdm
 import numpy as np
 
-wrongFile = pd.read_csv('ENDFBVIII_MT103_all_features.csv')
+wrongFile = pd.read_csv('TENDL-2021_MT103_all_features.csv')
 cols = wrongFile.columns
 target_nuclides = range_setter(df=wrongFile, la=0, ua=300)
 
@@ -35,7 +35,10 @@ for n in tqdm.tqdm(target_nuclides, total=len(target_nuclides)):
 	np_daughter_N = currentnuc[1] - np_daughter_Z
 	np_daughter_nuclide = [np_daughter_Z, np_daughter_A]
 
-	daughter_asymmetry = (np_daughter_N - np_daughter_Z) / np_daughter_A
+	if np_daughter_A > 0:
+		daughter_asymmetry = (np_daughter_N - np_daughter_Z) / np_daughter_A
+	else:
+		daughter_asymmetry = np.nan
 
 	reduced_df = wrongFile[(wrongFile['Z'] == currentnuc[0]) & (wrongFile['A'] == currentnuc[1])]
 
@@ -101,4 +104,4 @@ wrongFile['Deform_daughter'] = Deform_daughter_list
 wrongFile['Decay_daughter'] = Decay_daughter_list
 wrongFile['Asymmetry_daughter'] = Asymmetry_daughter_list
 
-wrongFile.to_csv('JENDL-5_MT103_all_features.csv')
+wrongFile.to_csv('TENDL-2021_MT_103_all_features.csv')
