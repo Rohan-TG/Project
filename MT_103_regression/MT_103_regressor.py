@@ -11,23 +11,23 @@ import time
 import shap
 from sklearn.metrics import mean_squared_error, r2_score
 
-df = pd.read_csv('ENDFBVIII_MT103_all_features.csv')
-CENDL_32 = pd.read_csv('CENDL32_MT103_all_features.csv')
+df = pd.read_csv('endfb8maybefixed.csv')
+CENDL_32 = pd.read_csv('CENDL-3.2_MT_103_all_features.csv')
 CENDL_nuclides = range_setter(df=CENDL_32)
 
-JEFF_33 = pd.read_csv('JEFF33_MT103_all_features.csv')
+JEFF_33 = pd.read_csv('JEFF-3.3_MT_103_all_features.csv')
 JEFF_nuclides = range_setter(df=JEFF_33)
 
-JENDL_5 = pd.read_csv('JENDL5_MT103_all_features.csv')
+JENDL_5 = pd.read_csv('JENDL-5_MT_103_all_features.csv')
 JENDL_nuclides = range_setter(df=JENDL_5)
 
-TENDL_2021 = pd.read_csv('TENDL2021_MT103_all_features.csv')
+TENDL_2021 = pd.read_csv('TENDL-2021_MT_103_all_features.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021)
 
 ENDFB_nuclides = range_setter(df=df, la=0, ua=208)
 print("Data loaded...")
 
-validation_nuclides = []
+validation_nuclides = [[53,129]]
 validation_set_size = 20
 
 energy_row = 4
@@ -35,13 +35,16 @@ energy_row = 4
 min_energy = 0
 max_energy = 20
 
-mode = input("Mode (thr/1v): ")
+mode = input("Mode (thr/1v/both): ")
 
 while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 	qchoice = df[(df['Z'] == nuclide_choice[0]) & (df['A'] == nuclide_choice[1])]['Q'].values[0]
 	if nuclide_choice not in validation_nuclides and qchoice < 0 and mode == "thr":
 		validation_nuclides.append(nuclide_choice)
+	elif nuclide_choice not in validation_nuclides:
+		validation_nuclides.append(nuclide_choice)
+
 print("Test nuclides selected...")
 
 X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=208, minerg=min_energy, maxerg=max_energy,
@@ -49,7 +52,7 @@ X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la
 X_test, y_test = make_test(validation_nuclides, df=df, minerg=min_energy, maxerg=max_energy)
 
 model = xgboost.XGBRegressor(n_estimators = 1100,
-							 learning_rate = 0.008,
+							 learning_rate = 0.007,
 							 max_depth = 7,
 							 subsample = 0.888,
 							 reg_lambda = 4
@@ -95,10 +98,10 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
 	plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
 	plt.plot(tendlerg, tendlxs, label="TENDL-2021", color='dimgrey', linewidth=2)
-	if nuc in JEFF_nuclides:
-		plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
 	if nuc in JENDL_nuclides:
 		plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
+	if nuc in JEFF_nuclides:
+		plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
 	if nuc in CENDL_nuclides:
 		plt.plot(cendlerg, cendlxs, '--', label='CENDL-3.2', color='gold')
 
