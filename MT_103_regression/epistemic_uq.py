@@ -18,7 +18,7 @@ import tqdm
 
 runtime = time.time()
 
-df = pd.read_csv("ENDFBVIII_MT103_fund_features_only.csv")
+df = pd.read_csv("ENDFBVIII_MT_103_all_features.csv")
 
 
 df.index = range(len(df))
@@ -26,29 +26,29 @@ df.index = range(len(df))
 
 al = range_setter(la=30, ua=215, df=df)
 
-TENDL = pd.read_csv("TENDL-2021_MT103_fund_only.csv")
+TENDL = pd.read_csv("TENDL-2021_MT_103_all_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
 
 
-JEFF33 = pd.read_csv('JEFF-3.3_MT103_fund_only.csv')
+JEFF33 = pd.read_csv('JEFF-3.3_MT_103_all_features.csv')
 JEFF33.index = range(len(JEFF33))
 JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=210)
 
 
-JENDL5 = pd.read_csv('JENDL-5_MT103_fund_features_only.csv')
+JENDL5 = pd.read_csv('JENDL-5_MT_103_all_features.csv')
 JENDL5.index = range(len(JENDL5))
 JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=210)
 
 
-CENDL32 = pd.read_csv('CENDL-3.2_MT103_fund_features_only.csv')
+CENDL32 = pd.read_csv('CENDL-3.2_MT_103_all_features.csv')
 CENDL32.index = range(len(CENDL32))
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [47,108]
+target_nuclide = [34,74]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -84,8 +84,8 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
 	model = xg.XGBRegressor(n_estimators=1100,
-								 learning_rate=0.008,
-								 max_depth=8,
+								 learning_rate=0.007,
+								 max_depth=7,
 								 subsample=0.888,
 								 reg_lambda=4,
 								 seed=model_seed
