@@ -20,6 +20,10 @@ runtime = time.time()
 
 df = pd.read_csv("ENDFBVIII_MT_103_all_features.csv")
 
+energy_row = 4
+min_energy = 0.01
+
+
 
 df.index = range(len(df))
 
@@ -46,9 +50,9 @@ CENDL32.index = range(len(CENDL32))
 CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 
-n_evaluations = 100
+n_evaluations = 5
 datapoint_matrix = []
-target_nuclide = [34,74]
+target_nuclide = [32,74]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -59,7 +63,7 @@ endfberg, endfbxs = General_plotter(df=df, nuclides=[target_nuclide])
 runs_r2_array = []
 runs_rmse_array = []
 
-X_test, y_test = make_test([target_nuclide], df=df, )
+X_test, y_test = make_test([target_nuclide], df=df, minerg=min_energy, maxerg=20)
 
 for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i+1}/{n_evaluations}")
@@ -71,15 +75,12 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
 		if choice not in validation_nuclides:
 			validation_nuclides.append(choice)
-	# print("\nTest nuclide selection complete")
 
 	time1 = time.time()
 
 	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides,
-								  la=30, ua=210, )  # make training matrix
+								  la=30, ua=210, minerg=min_energy, maxerg=20, mode='dual')  # make training matrix
 
-
-	# print("Training...")
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
@@ -88,28 +89,14 @@ for i in tqdm.tqdm(range(n_evaluations)):
 								 max_depth=7,
 								 subsample=0.888,
 								 reg_lambda=4,
-								 seed=model_seed
+								seed=model_seed
 								 )
 
 	model.fit(X_train, y_train)
 
-	# print("Training complete")
-
-	predictions_ReLU = []
-
-	for n in validation_nuclides:
-
-		temp_x, temp_y = make_test(nuclides=[n], df=df)
-		initial_predictions = model.predict(temp_x)
-
-		for p in initial_predictions:
-			if p >= (0.02 * max(initial_predictions)):
-				predictions_ReLU.append(p)
-			else:
-				predictions_ReLU.append(0.0)
 
 
-	predictions = predictions_ReLU
+	predictions = model.predict(X_test)
 
 	if i == 0:
 		for k, pred in enumerate(predictions):
@@ -134,7 +121,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		for i, row in enumerate(X_test):
 			if [row[0], row[1]] == nuclide:
 				dummy_test_XS.append(y_test[i])
-				dummy_test_E.append(row[4]) # Energy values are in 5th row
+				dummy_test_E.append(row[energy_row]) # Energy values are in 5th row
 				dummy_predictions.append(predictions[i])
 
 		XS_plotmatrix.append(dummy_test_XS)
@@ -153,7 +140,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	if target_nuclide in CENDL_nuclides:
 
-		cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL32)
+		cendl_test, cendl_xs = make_test(nuclides=[target_nuclide], df=CENDL32, minerg=min_energy, maxerg=20)
 		pred_cendl = model.predict(cendl_test)
 
 		pred_cendl_r2 = r2_score(y_true=cendl_xs, y_pred=pred_cendl)
@@ -164,7 +151,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	if target_nuclide in JENDL_nuclides:
 
-		jendl_test, jendl_xs = make_test(nuclides=[target_nuclide], df=JENDL5)
+		jendl_test, jendl_xs = make_test(nuclides=[target_nuclide], df=JENDL5, minerg=min_energy, maxerg=20)
 		pred_jendl = model.predict(jendl_test)
 
 		pred_jendl_r2 = r2_score(y_true=jendl_xs, y_pred=pred_jendl)
@@ -174,7 +161,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 			all_preds.append(x)
 
 	if target_nuclide in JEFF_nuclides:
-		jeff_test, jeff_xs = make_test(nuclides=[target_nuclide], df=JEFF33)
+		jeff_test, jeff_xs = make_test(nuclides=[target_nuclide], df=JEFF33, minerg=min_energy, maxerg=20)
 
 		pred_jeff = model.predict(jeff_test)
 
@@ -186,7 +173,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	if target_nuclide in TENDL_nuclides:
 
-		tendl_test, tendl_xs = make_test(nuclides=[target_nuclide], df=TENDL)
+		tendl_test, tendl_xs = make_test(nuclides=[target_nuclide], df=TENDL, minerg=min_energy, maxerg=20)
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
@@ -214,7 +201,7 @@ E_plot = []
 for i, row in enumerate(X_test):
 	if [row[0], row[1]] == target_nuclide:
 		XS_plot.append(y_test[i])
-		E_plot.append(row[3]) # Energy values are in 5th row
+		E_plot.append(row[energy_row]) # Energy values are in 5th row
 
 
 datapoint_means = []
