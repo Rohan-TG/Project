@@ -64,7 +64,7 @@ model.fit(X_train, y_train,verbose=True, eval_set=[(X_val, y_val)])
 print("Training complete")
 
 
-predictions_r = []
+predictions_val = []
 for n in validation_nuclides:
 
 	temp_x, temp_y = maketest107(nuclides=[n], df=df)
@@ -72,24 +72,25 @@ for n in validation_nuclides:
 
 	for p in initial_predictions:
 		if p >= (0.02 * max(initial_predictions)):
-			predictions_r.append(p)
+			predictions_val.append(p)
 		else:
-			predictions_r.append(0.0)
+			predictions_val.append(0.0)
 
 
+predictions_test = []
 for nt in test_nuclides:
 	temp_x, temp_y = maketest107(nuclides=[nt], df=df)
 	initial_predictions = model.predict(temp_x)
 	for p in initial_predictions:
 		if p >= (0.02 * max(initial_predictions)):
-			predictions_r.append(p)
+			predictions_test.append(p)
 		else:
-			predictions_r.append(0.0)
+			predictions_test.append(0.0)
 
-predictions = predictions_r
 XS_plotmatrix = []
 E_plotmatrix = []
 P_plotmatrix = []
+
 
 for nuclide in validation_nuclides:
 	dummy_val_XS = []
@@ -99,11 +100,15 @@ for nuclide in validation_nuclides:
 		if [row[0], row[1]] == nuclide:
 			dummy_val_XS.append(y_val[i])
 			dummy_val_E.append(row[4])  # Energy values are in 5th row
-			dummy_predictions.append(predictions[i])
+			dummy_predictions.append(predictions_val[i])
 
 	XS_plotmatrix.append(dummy_val_XS)
 	E_plotmatrix.append(dummy_val_E)
 	P_plotmatrix.append(dummy_predictions)
+
+XS_test_plotmatrix = []
+E_test_plotmatrix = []
+P_test_plotmatrix = []
 
 for nuclide in test_nuclides:
 	dummy_test_XS = []
@@ -112,21 +117,20 @@ for nuclide in test_nuclides:
 	for i, row in enumerate(X_test):
 		if [row[0], row[1]] == nuclide:
 			dummy_test_XS.append(y_test[i])
-			dummy_predictions.append(predictions[i])
+			dummy_predictions.append(predictions_test[i])
 			dummy_test_E.append(row[4])
 
-	XS_plotmatrix.append(dummy_test_XS)
-	E_plotmatrix.append(dummy_test_E)
-	P_plotmatrix.append(dummy_predictions)
+	XS_test_plotmatrix.append(dummy_test_XS)
+	E_test_plotmatrix.append(dummy_test_E)
+	P_test_plotmatrix.append(dummy_predictions)
 
 print("Plotting matrices formed")
 
-check_nuclides = validation_nuclides + test_nuclides
 
 for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 	all_preds = []
 	all_libs = []
-	current_nuclide = check_nuclides[i]
+	current_nuclide = validation_nuclides[i]
 
 	q =df[(df['Z'] == current_nuclide[0]) & (df['A'] == current_nuclide[1])]['Q'].values[0]
 
@@ -218,6 +222,102 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	print()
 # run = input('Run shap? (y): ')
 # if run == 'y':
+
+
+
+for i, (pred_xs, true_xs, erg) in enumerate(zip(P_test_plotmatrix, XS_test_plotmatrix, E_test_plotmatrix)):
+	all_preds = []
+	all_libs = []
+
+	nuc = test_nuclides[i]
+
+	q =df[(df['Z'] == nuc[0]) & (df['A'] == nuc[1])]['Q'].values[0]
+
+	jendlerg, jendlxs = Generalplotter107(dataframe=JENDL_5, nuclide=nuc)
+	cendlerg, cendlxs = Generalplotter107(dataframe=CENDL_32, nuclide=nuc)
+	jefferg, jeffxs = Generalplotter107(dataframe=JEFF_33, nuclide=nuc)
+	tendlerg, tendlxs = Generalplotter107(dataframe=TENDL_2021, nuclide=nuc)
+
+	plt.figure()
+	plt.plot(erg, pred_xs, label='Predictions', color='red')
+	plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
+	plt.plot(tendlerg, tendlxs, label="TENDL-2021", color='dimgrey', linewidth=2)
+	if nuc in JEFF_nuclides:
+		plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
+	if nuc in JENDL_nuclides:
+		plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
+	if nuc in CENDL_nuclides:
+		plt.plot(cendlerg, cendlxs, '--', label='CENDL-3.2', color='gold')
+
+	plt.title(fr"$\sigma_{{n,\alpha}}$ for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+	plt.legend()
+	plt.grid()
+	plt.ylabel(r'$\sigma_{n,\alpha}$ / b')
+	plt.xlabel('Energy / MeV')
+	plt.show()
+	time.sleep(1.5)
+	print(f'{periodictable.elements[nuc[0]]}-{nuc[1]}')
+	if nuc in test_nuclides:
+		print('Test nuclide')
+	print(f"Q: {q} eV +ve no threshold, -ve threshold")
+
+	endfbpredtruncated, endfblibtruncated, endfbr2 = r2_standardiser(library_xs=true_xs, predicted_xs=pred_xs)
+	for x, y in zip(endfbpredtruncated, endfblibtruncated):
+		all_libs.append(y)
+		all_preds.append(x)
+	print(f"Predictions - ENDF/B-VIII: {endfbr2:0.5f}")
+
+	if nuc in CENDL_nuclides:
+
+		cendl_test, cendl_xs = maketest107(nuclides=[nuc], df=CENDL_32)
+		pred_cendl = model.predict(cendl_test)
+
+		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl, library_xs=cendl_xs)
+
+		pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
+		for x, y in zip(pred_cendl_gated, truncated_cendl):
+			all_libs.append(y)
+			all_preds.append(x)
+		print(f"Predictions - CENDL3.2 R2: {pred_cendl_r2:0.5f} MSE: {pred_cendl_mse:0.6f}")
+
+	if nuc in JENDL_nuclides:
+
+		jendl_test, jendl_xs = maketest107(nuclides=[nuc], df=JENDL_5)
+		pred_jendl = model.predict(jendl_test)
+
+		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
+		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl, library_xs=jendl_xs)
+
+		for x, y in zip(pred_jendl_gated, truncated_jendl):
+			all_libs.append(y)
+			all_preds.append(x)
+		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
+
+	if nuc in JEFF_nuclides:
+		jeff_test, jeff_xs = maketest107(nuclides=[nuc], df=JEFF_33)
+
+		pred_jeff = model.predict(jeff_test)
+
+		pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
+		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
+		for x, y in zip(pred_jeff_gated, truncated_jeff):
+			all_libs.append(y)
+			all_preds.append(x)
+		print(f"Predictions - JEFF3.3 R2: {pred_jeff_r2:0.5f} MSE: {pred_jeff_mse:0.6f}")
+
+	if nuc in TENDL_nuclides:
+
+		tendl_test, tendl_xs = maketest107(nuclides=[nuc], df=TENDL_2021)
+		pred_tendl = model.predict(tendl_test)
+
+		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
+		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl, library_xs=tendl_xs)
+		for x, y in zip(pred_tendl_gated, truncated_tendl):
+			all_libs.append(y)
+			all_preds.append(x)
+		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
+
+	print()
 
 model.get_booster().feature_names = ['Z',
 									 'A',
