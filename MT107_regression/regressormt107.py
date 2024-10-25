@@ -116,18 +116,17 @@ for nuclide in test_nuclides:
 			dummy_test_E.append(row[4])
 
 	XS_plotmatrix.append(dummy_test_XS)
-	E_plotmatrix.append(dummy_predictions)
+	E_plotmatrix.append(dummy_test_E)
 	P_plotmatrix.append(dummy_predictions)
 
 print("Plotting matrices formed")
 
+check_nuclides = validation_nuclides + test_nuclides
+
 for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 	all_preds = []
 	all_libs = []
-	if i < len(validation_nuclides):
-		current_nuclide = validation_nuclides[i]
-	else:
-		current_nuclide = test_nuclides[i-len(validation_nuclides)]
+	current_nuclide = check_nuclides[i]
 
 	q =df[(df['Z'] == current_nuclide[0]) & (df['A'] == current_nuclide[1])]['Q'].values[0]
 
