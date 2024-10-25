@@ -115,6 +115,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	time.sleep(1)
 	print(f'{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]:0.0f}')
 	print(f"Q: {q} eV, +ve no threshold, -ve threshold")
+	print(f'Predictions - ENDF/B R2: {r2_score(pred_xs, true_xs):0.5f}')
 
 	if current_nuclide in CENDL_nuclides:
 
