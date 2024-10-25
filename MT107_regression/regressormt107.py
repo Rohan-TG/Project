@@ -31,6 +31,9 @@ print("Data loaded...")
 validation_nuclides = [[64,154], [68,168], [62,150]]
 validation_set_size = 20
 
+test_nuclides = []
+test_set_size = 10
+
 minenergy = 0.1
 maxenergy = 20
 
@@ -39,11 +42,16 @@ while len(validation_nuclides) < validation_set_size:
 	if nuclide_choice not in validation_nuclides:
 		validation_nuclides.append(nuclide_choice)
 
-
+while len(test_nuclides) < test_set_size:
+	test_choice = random.choice(ENDFB_nuclides)
+	if test_choice not in validation_nuclides and test_choice not in test_nuclides:
+		test_nuclides.append(test_choice)
 
 X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
 								la=0, ua=260, maxerg=maxenergy, minerg=minenergy)
-X_test, y_test = maketest107(validation_nuclides, df=df)
+X_val, y_val = maketest107(validation_nuclides, df=df)
+
+X_test, y_test = maketest107(test_nuclides, df=df)
 
 model = xg.XGBRegressor(n_estimators = 900,
 							 learning_rate = 0.01,
@@ -52,7 +60,7 @@ model = xg.XGBRegressor(n_estimators = 900,
 							 reg_lambda = 2
 							 )
 
-model.fit(X_train, y_train,verbose=True, eval_set=[(X_test, y_test)])
+model.fit(X_train, y_train,verbose=True, eval_set=[(X_val, y_val)])
 print("Training complete")
 
 
@@ -68,23 +76,47 @@ for n in validation_nuclides:
 		else:
 			predictions_r.append(0.0)
 
+
+for nt in test_nuclides:
+	temp_x, temp_y = maketest107(nuclides=[nt], df=df)
+	initial_predictions = model.predict(temp_x)
+	for p in initial_predictions:
+		if p >= (0.02 * max(initial_predictions)):
+			predictions_r.append(p)
+		else:
+			predictions_r.append(0.0)
+
 predictions = predictions_r
 XS_plotmatrix = []
 E_plotmatrix = []
 P_plotmatrix = []
 
 for nuclide in validation_nuclides:
+	dummy_val_XS = []
+	dummy_val_E = []
+	dummy_predictions = []
+	for i, row in enumerate(X_val):
+		if [row[0], row[1]] == nuclide:
+			dummy_val_XS.append(y_val[i])
+			dummy_val_E.append(row[4])  # Energy values are in 5th row
+			dummy_predictions.append(predictions[i])
+
+	XS_plotmatrix.append(dummy_val_XS)
+	E_plotmatrix.append(dummy_val_E)
+	P_plotmatrix.append(dummy_predictions)
+
+for nuclide in test_nuclides:
 	dummy_test_XS = []
 	dummy_test_E = []
 	dummy_predictions = []
 	for i, row in enumerate(X_test):
 		if [row[0], row[1]] == nuclide:
 			dummy_test_XS.append(y_test[i])
-			dummy_test_E.append(row[4])  # Energy values are in 5th row
 			dummy_predictions.append(predictions[i])
+			dummy_test_E.append(row[4])
 
 	XS_plotmatrix.append(dummy_test_XS)
-	E_plotmatrix.append(dummy_test_E)
+	E_plotmatrix.append(dummy_predictions)
 	P_plotmatrix.append(dummy_predictions)
 
 print("Plotting matrices formed")
@@ -92,7 +124,10 @@ print("Plotting matrices formed")
 for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
 	all_preds = []
 	all_libs = []
-	current_nuclide = validation_nuclides[i]
+	if i < len(validation_nuclides):
+		current_nuclide = validation_nuclides[i]
+	else:
+		current_nuclide = test_nuclides[i-len(validation_nuclides)]
 
 	q =df[(df['Z'] == current_nuclide[0]) & (df['A'] == current_nuclide[1])]['Q'].values[0]
 
@@ -101,7 +136,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	jefferg, jeffxs = Generalplotter107(dataframe=JEFF_33, nuclide=current_nuclide)
 	tendlerg, tendlxs = Generalplotter107(dataframe=TENDL_2021, nuclide=current_nuclide)
 
-	nuc = validation_nuclides[i]  # validation nuclide
+	nuc = current_nuclide
 	plt.figure()
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
 	plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
@@ -121,6 +156,8 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	plt.show()
 	time.sleep(1.5)
 	print(f'{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}')
+	if nuc in test_nuclides:
+		print('Test nuclide')
 	print(f"Q: {q} eV +ve no threshold, -ve threshold")
 
 	endfbpredtruncated, endfblibtruncated, endfbr2 = r2_standardiser(library_xs=true_xs, predicted_xs=pred_xs)
