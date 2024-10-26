@@ -1,6 +1,6 @@
 import numpy as np
 
-def Generalplotter107(dataframe, nuclide, minenergy=1, maxenergy=20):
+def Generalplotter107(dataframe, nuclide, minenergy=1, maxenergy=21):
 	minidf = dataframe[(dataframe['Z'] == nuclide[0]) & (dataframe['A'] == nuclide[1])]
 	try:
 		xsvals = minidf['MT107XS'].values

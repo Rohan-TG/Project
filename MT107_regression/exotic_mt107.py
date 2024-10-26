@@ -27,28 +27,28 @@ TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=260)
 ENDFB_nuclides = range_setter(df=df, la=0, ua=260)
 print("Data loaded...")
 
-validation_nuclides = [[64,154], [68,168], [62,150]]
+validation_nuclides = []
 validation_set_size = 20
 
 minenergy = 0.1
 maxenergy = 20
 
-
+#
 exotic_nuclides = []
 for n in TENDL_nuclides:
 	if n not in ENDFB_nuclides or n not in JEFF_nuclides or n not in CENDL_nuclides:
 		exotic_nuclides.append(n)
 
 while len(validation_nuclides) < validation_set_size:
-	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
+	nuclide_choice = random.choice(exotic_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
 	if nuclide_choice not in validation_nuclides:
 		validation_nuclides.append(nuclide_choice)
 
 
 
 X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
-								la=0, ua=260, maxerg=maxenergy, minerg=minenergy)
-X_test, y_test = maketest107(validation_nuclides, df=df)
+								la=0, ua=208, maxerg=maxenergy, minerg=minenergy)
+X_test, y_test = maketest107(validation_nuclides, df=TENDL_2021)
 
 model = xg.XGBRegressor(n_estimators = 900,
 							 learning_rate = 0.01,
@@ -64,7 +64,7 @@ print("Training complete")
 predictions_r = []
 for n in validation_nuclides:
 
-	temp_x, temp_y = maketest107(nuclides=[n], df=df)
+	temp_x, temp_y = maketest107(nuclides=[n], df=TENDL_2021)
 	initial_predictions = model.predict(temp_x)
 
 	for p in initial_predictions:
@@ -99,7 +99,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	all_libs = []
 	current_nuclide = validation_nuclides[i]
 
-	q =df[(df['Z'] == current_nuclide[0]) & (df['A'] == current_nuclide[1])]['Q'].values[0]
+	q =TENDL_2021[(TENDL_2021['Z'] == current_nuclide[0]) & (TENDL_2021['A'] == current_nuclide[1])]['Q'].values[0]
 
 	jendlerg, jendlxs = Generalplotter107(dataframe=JENDL_5, nuclide=current_nuclide)
 	cendlerg, cendlxs = Generalplotter107(dataframe=CENDL_32, nuclide=current_nuclide)
@@ -109,7 +109,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	nuc = validation_nuclides[i]  # validation nuclide
 	plt.figure()
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
-	plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
+	# plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
 	plt.plot(tendlerg, tendlxs, label="TENDL-2021", color='dimgrey', linewidth=2)
 	if nuc in JEFF_nuclides:
 		plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
