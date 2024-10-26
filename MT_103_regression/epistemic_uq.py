@@ -28,31 +28,31 @@ min_energy = 0.01
 df.index = range(len(df))
 
 
-al = range_setter(la=30, ua=215, df=df)
+al = range_setter(la=0, ua=215, df=df)
 
 TENDL = pd.read_csv("TENDL-2021_MT_103_all_features.csv")
 TENDL.index = range(len(TENDL))
-TENDL_nuclides = range_setter(df=TENDL, la=30, ua=210)
+TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
 
 
 JEFF33 = pd.read_csv('JEFF-3.3_MT_103_all_features.csv')
 JEFF33.index = range(len(JEFF33))
-JEFF_nuclides = range_setter(df=JEFF33, la=30, ua=210)
+JEFF_nuclides = range_setter(df=JEFF33, la=0, ua=210)
 
 
 JENDL5 = pd.read_csv('JENDL-5_MT_103_all_features.csv')
 JENDL5.index = range(len(JENDL5))
-JENDL_nuclides = range_setter(df=JENDL5, la=30, ua=210)
+JENDL_nuclides = range_setter(df=JENDL5, la=0, ua=210)
 
 
 CENDL32 = pd.read_csv('CENDL-3.2_MT_103_all_features.csv')
 CENDL32.index = range(len(CENDL32))
-CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
+CENDL_nuclides = range_setter(df=CENDL32, la=0, ua=210)
 
 
-n_evaluations = 5
+n_evaluations = 10
 datapoint_matrix = []
-target_nuclide = [32,74]
+target_nuclide = [42,95]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -69,7 +69,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	# print(f"\nRun {i+1}/{n_evaluations}")
 
 	validation_nuclides = [target_nuclide]
-	validation_set_size = 1  # number of nuclides hidden from training
+	validation_set_size = 10  # number of nuclides hidden from training
 
 	while len(validation_nuclides) < validation_set_size:
 		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
@@ -85,8 +85,8 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
 	model = xg.XGBRegressor(n_estimators=1100,
-								 learning_rate=0.007,
-								 max_depth=7,
+								 learning_rate=0.008,
+								 max_depth=8,
 								 subsample=0.888,
 								 reg_lambda=4,
 								seed=model_seed
@@ -236,6 +236,35 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 
 
 
+artemeve = [14.8]
+artemevxs = [0.04]
+artemevdxs = [0.005]
+
+marcinkowskie = [13.4, 13.9, 14.5, 15.0, 15.4]
+marcinkowskixs = [0.0428, 0.0375, 0.041, 0.0388, 0.0348]
+marcinkowskidxs = [0.0051, 0.005, 0.0055, 0.0055, 0.0055]
+
+
+rahmane = [5.911, 6.474, 7.032, 7.549, 8.132, 8.632, 9.153, 9.577]
+rahmanxs = [0.00121, 0.00181, 0.00344, 0.0043, 0.00654, 0.01098, 0.014, 0.01634]
+rahmandxs = [0.00015, 0.00023, 0.00043, 0.00055, 0.00084, 0.00141, 0.0017, 0.00195]
+
+reimere = [13.48, 13.64, 13.87, 14.05, 14.28, 14.45, 14.64, 14.82]
+reimerxs = [0.0345, 0.036, 0.0368, 0.039, 0.0399, 0.042, 0.0414, 0.0426]
+reimerdxs = [0.0014, 0.0014, 0.0015, 0.0016, 0.0016, 0.0017, 0.0017, 0.0017]
+
+
+semkovae = [8.08, 10.05, 12.09, 13.08]
+semkovaxs = [0.0057, 0.0151, 0.0277, 0.036]
+semkovadxs = [0.0008, 0.001, 0.0015, 0.001]
+
+qaime = [14.7]
+qaimxs = [0.031]
+qaimdxs = [0.0036]
+
+mollae = [13.57, 13.74, 14.1, 14.57, 14.71]
+mollaxs = [0.02992, 0.02984, 0.0308, 0.03022, 0.03281]
+molladxs = [0.0025, 0.00267, 0.00277, 0.00266, 0.00291]
 
 
 
@@ -244,20 +273,21 @@ plt.figure()
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 plt.plot(tendlerg, tendlxs, label = 'TENDL-2021', color='dimgrey')
-if target_nuclide in JEFF_nuclides:
-	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
 if target_nuclide in JENDL_nuclides:
 	plt.plot(jendlerg, jendlxs, label='JENDL-5', color='green')
+if target_nuclide in JEFF_nuclides:
+	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
+
 if target_nuclide in CENDL_nuclides:
 	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
-# plt.errorbar(fe, fxs, yerr=fdxs, fmt='x', color='indigo', capsize=2, label='Frehaut, 1980')
-# plt.errorbar(ne, nxs, yerr=ndxs, fmt='x', color='orangered', capsize=2, label='Nethaway, 1972')
-# plt.errorbar(fe, fxs, yerr=fdxs, fmt='x', color='magenta', capsize=2, label='Frehaut, 1980')
+plt.errorbar(marcinkowskie, marcinkowskixs, yerr=marcinkowskidxs, fmt='x', color='indigo', capsize=2, label='Marcinkowski, 1986')
+plt.errorbar(artemeve,artemevxs, yerr=artemevdxs, fmt='x', color='orangered', capsize=2, label='Artemev, 1980')
+plt.errorbar(semkovae, semkovaxs, yerr=semkovadxs, fmt='x', color='mediumorchid', capsize=2, label='Semkova, 2014')
 # plt.errorbar(ce, cxs, yerr=cdxs, fmt='x', color='gold', capsize=2, label='Chuanxin, 2011')
-# plt.errorbar(de, dxs, yerr=ddxs, fmt='x', color='dodgerblue', capsize=2, label='Dzysiuk, 2010')
-# plt.errorbar(ve, vxs, yerr=vdxs, fmt='x', color='firebrick', capsize=2, label='Veeser, 1977')
-# plt.errorbar(ze, zxs, yerr=zdxs, fmt='x', color='aquamarine', capsize=2, label='Zhengwei, 2018')
+plt.errorbar(rahmane,rahmanxs, yerr=rahmandxs, fmt='x', color='dodgerblue', capsize=2, label='Rahman, 1985')
+plt.errorbar(reimere, reimerxs, yerr=reimerdxs, fmt='x', color='firebrick', capsize=2, label='Reimer, 2005')
+plt.errorbar(mollae,mollaxs, yerr=molladxs, fmt='x', color='slategrey', capsize=2, label='Molla, 1997')
 # plt.errorbar(be, bxs, yerr=bdxs, fmt='x', color='purple', capsize=2, label = 'Bayhurst, 1975')
 # plt.errorbar(frehaute, frehautxs, yerr=frehautdxs, fmt='x', color='violet', capsize=2, label = 'Frehaut, 1980')
 # plt.errorbar(filae, filasexs, yerr=filasexsd, fmt='x', color='indigo', capsize=2, label = 'Filatenkov, 2016')
@@ -275,7 +305,7 @@ plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alp
 # 			 fmt='x', color='indigo',capsize=2, label='Frehaut, 1980')
 # plt.errorbar(Frehaut_Pb_E, Frehaut_Pb_XS, yerr=Frehaut_Pb_dXS, fmt='x', color='indigo',capsize=2, label='Frehaut, 1980')
 # plt.errorbar(LuE, LuXS, yerr=LudXS, fmt='x', color='indigo',capsize=2, label='Lu, 1970')
-# plt.errorbar(QaimE, QaimXS, yerr=QaimdXS, fmt='x', color='violet',capsize=2, label='Qaim, 1974')
+# plt.errorbar(qaime,qaimxs, yerr=qaimdxs, fmt='x', color='lightgreen',capsize=2, label='Qaim, 1974')
 # plt.errorbar(JunhuaE, JunhuaXS, yerr=JunhuadXS, fmt='x', color='blue',capsize=2, label='JunhuaLuoo, 2007')
 # plt.errorbar(TemperleyE, TemperleyXS, yerr=TemperleydXS, fmt='x', color='orangered',capsize=2, label='Temperley, 1970')
 # plt.errorbar(BormannE, BormannXS, yerr=BormanndXS, fmt='x',capsize=2, label='Bormann, 1970')
