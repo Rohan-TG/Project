@@ -50,9 +50,9 @@ CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=210)
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [42,100]
+target_nuclide = [59,142]
 
-jendlerg, jendlxs = Generalplotter107(JENDL5, target_nuclide)
+jendlerg, jendlxs = Generalplotter107(JENDL5, target_nuclide, maxenergy=20)
 cendlerg, cendlxs = Generalplotter107(CENDL32,target_nuclide)
 jefferg, jeffxs = Generalplotter107(JEFF33, target_nuclide)
 tendlerg, tendlxs = Generalplotter107(TENDL, target_nuclide)
@@ -259,30 +259,30 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 	upper_bound.append(point+up)
 
 
-ikedae = [13.35, 13.55, 13.55, 13.58, 13.68, 13.76, 13.81, 13.81, 13.95, 13.95, 13.99, 14.1, 14.23, 14.32, 14.44, 14.53, 14.53, 14.71, 14.71, 14.84, 14.92, 14.92, 14.95, 14.96, 14.96]
-ikedaxs = [0.00211, 0.00254, 0.00202, 0.00215, 0.00209, 0.00227, 0.00218, 0.00259, 0.00237, 0.00233, 0.00259, 0.00202, 0.0029, 0.00223, 0.00281, 0.00196, 0.00287, 0.00284, 0.00305, 0.00286, 0.00268, 0.00306, 0.00339, 0.00307, 0.00277]
-ikedadxs = [0.00017, 0.00041, 0.00023, 0.00017, 0.00021, 0.00017, 0.00031, 0.00023, 0.00034, 0.00023, 0.00019, 0.00022, 0.00021, 0.00027, 0.0002, 0.00023, 0.00023, 0.00028, 0.00023, 0.00027, 0.00025, 0.00023, 0.00023, 0.00026, 0.00021]
-
-liskiene = [12.59, 12.64, 13.39, 13.43, 14.36, 14.39, 15.82, 15.84, 16.9, 16.96, 17.92, 17.99, 18.81, 18.88, 19.58]
-liskienxs = [0.002, 0.0027, 0.0017, 0.002, 0.0035, 0.0045, 0.0033, 0.0044, 0.0052, 0.0052, 0.0053, 0.0043, 0.0048, 0.0047, 0.0047]
-liskiendxs = [0.0005, 0.0005, 0.0005, 0.0005, 0.0006, 0.0006, 0.0005, 0.0007, 0.0006, 0.0006, 0.0006, 0.0005, 0.0005, 0.0005, 0.0004169]
-
-
-marcinkowskie = [13.0, 13.4, 13.9, 14.5, 15.0, 15.4, 15.9, 16.6]
-marcinkowskixs = [0.001, 0.0021, 0.0025, 0.0027, 0.0033, 0.0037, 0.0026, 0.0026]
-marcinkowskidxs = [0.0001, 0.0002, 0.0003, 0.0003, 0.0003, 0.0005, 0.0002, 0.0003]
-
-
-reimere = [16.2, 18, 19.3, 20.5]
-reimerxs = [0.0034, 0.0046, 0.0053, 0.0052]
-reimerdxs = [0.0002, 0.0004, 0.0005, 0.0005]
-
-
-semkovae = [1.09200E+01, 1.20900E+01, 1.30800E+01, 1.44800E+01]
-semkovaxs = [7.20000E-01 / 1000, 1.12000E+00 / 1000, 1.78000E+00 / 1000, 3.10000E+00 / 1000]
-
-
-semkovadxs = [1.40000E-01 / 1000, 1.00000E-01 / 1000, 1.00000E-01 / 1000, 2.00000E-01 / 1000]
+# ikedae = [13.35, 13.55, 13.55, 13.58, 13.68, 13.76, 13.81, 13.81, 13.95, 13.95, 13.99, 14.1, 14.23, 14.32, 14.44, 14.53, 14.53, 14.71, 14.71, 14.84, 14.92, 14.92, 14.95, 14.96, 14.96]
+# ikedaxs = [0.00211, 0.00254, 0.00202, 0.00215, 0.00209, 0.00227, 0.00218, 0.00259, 0.00237, 0.00233, 0.00259, 0.00202, 0.0029, 0.00223, 0.00281, 0.00196, 0.00287, 0.00284, 0.00305, 0.00286, 0.00268, 0.00306, 0.00339, 0.00307, 0.00277]
+# ikedadxs = [0.00017, 0.00041, 0.00023, 0.00017, 0.00021, 0.00017, 0.00031, 0.00023, 0.00034, 0.00023, 0.00019, 0.00022, 0.00021, 0.00027, 0.0002, 0.00023, 0.00023, 0.00028, 0.00023, 0.00027, 0.00025, 0.00023, 0.00023, 0.00026, 0.00021]
+#
+# liskiene = [12.59, 12.64, 13.39, 13.43, 14.36, 14.39, 15.82, 15.84, 16.9, 16.96, 17.92, 17.99, 18.81, 18.88, 19.58]
+# liskienxs = [0.002, 0.0027, 0.0017, 0.002, 0.0035, 0.0045, 0.0033, 0.0044, 0.0052, 0.0052, 0.0053, 0.0043, 0.0048, 0.0047, 0.0047]
+# liskiendxs = [0.0005, 0.0005, 0.0005, 0.0005, 0.0006, 0.0006, 0.0005, 0.0007, 0.0006, 0.0006, 0.0006, 0.0005, 0.0005, 0.0005, 0.0004169]
+#
+#
+# marcinkowskie = [13.0, 13.4, 13.9, 14.5, 15.0, 15.4, 15.9, 16.6]
+# marcinkowskixs = [0.001, 0.0021, 0.0025, 0.0027, 0.0033, 0.0037, 0.0026, 0.0026]
+# marcinkowskidxs = [0.0001, 0.0002, 0.0003, 0.0003, 0.0003, 0.0005, 0.0002, 0.0003]
+#
+#
+# reimere = [16.2, 18, 19.3, 20.5]
+# reimerxs = [0.0034, 0.0046, 0.0053, 0.0052]
+# reimerdxs = [0.0002, 0.0004, 0.0005, 0.0005]
+#
+#
+# semkovae = [1.09200E+01, 1.20900E+01, 1.30800E+01, 1.44800E+01]
+# semkovaxs = [7.20000E-01 / 1000, 1.12000E+00 / 1000, 1.78000E+00 / 1000, 3.10000E+00 / 1000]
+#
+#
+# semkovadxs = [1.40000E-01 / 1000, 1.00000E-01 / 1000, 1.00000E-01 / 1000, 2.00000E-01 / 1000]
 
 #2sigma CF
 plt.figure()
@@ -296,11 +296,11 @@ if target_nuclide in JEFF_nuclides:
 if target_nuclide in CENDL_nuclides:
 	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
-plt.errorbar(reimere, reimerxs, yerr=reimerdxs, fmt='x', color='indigo', label= 'Reimer, 2005', capsize=2)
-plt.errorbar(semkovae, semkovaxs, yerr=semkovadxs, fmt='x', color = 'orange', label= 'Semkova, 2014', capsize=2)
-plt.errorbar(marcinkowskie, marcinkowskixs, yerr=marcinkowskidxs, fmt='x', color = 'tomato', label= 'Marcinkowski, 1986', capsize=2)
-plt.errorbar(ikedae, ikedaxs, yerr=ikedadxs, fmt='x', color = 'lawngreen', label= 'Ikeda, 1988', capsize=2)
-plt.errorbar(liskiene, liskienxs, yerr=liskiendxs, fmt='x', color = 'blue', label= 'Liskien, 1990', capsize=2)
+# plt.errorbar(reimere, reimerxs, yerr=reimerdxs, fmt='x', color='indigo', label= 'Reimer, 2005', capsize=2)
+# plt.errorbar(semkovae, semkovaxs, yerr=semkovadxs, fmt='x', color = 'orange', label= 'Semkova, 2014', capsize=2)
+# plt.errorbar(marcinkowskie, marcinkowskixs, yerr=marcinkowskidxs, fmt='x', color = 'tomato', label= 'Marcinkowski, 1986', capsize=2)
+# plt.errorbar(ikedae, ikedaxs, yerr=ikedadxs, fmt='x', color = 'lawngreen', label= 'Ikeda, 1988', capsize=2)
+# plt.errorbar(liskiene, liskienxs, yerr=liskiendxs, fmt='x', color = 'blue', label= 'Liskien, 1990', capsize=2)
 # plt.errorbar(fe, fxs, yerr=fdxs, fmt='x', color='indigo', capsize=2, label='Frehaut, 1980')
 # plt.errorbar(ne, nxs, yerr=ndxs, fmt='x', color='orangered', capsize=2, label='Nethaway, 1972')
 # plt.errorbar(fe, fxs, yerr=fdxs, fmt='x', color='magenta', capsize=2, label='Frehaut, 1980')
