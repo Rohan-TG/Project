@@ -36,7 +36,7 @@ TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=208)
 ENDFB_nuclides = range_setter(df=df, la=0, ua=208)
 print("Data loaded...")
 
-validation_nuclides = [[73,174]]
+validation_nuclides = []
 validation_set_size = 20
 
 minenergy = 0.1
@@ -83,8 +83,15 @@ for n in TENDL_nuclides:
 
 while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(exotic_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
+	choicediff = diff(nuclide_choice)
 	if nuclide_choice not in validation_nuclides:
-		validation_nuclides.append(nuclide_choice)
+		try:
+			absval = abs(choicediff)
+			if absval < 4:
+				validation_nuclides.append(nuclide_choice)
+		except:
+			continue
+		# validation_nuclides.append(nuclide_choice)
 
 
 
@@ -226,6 +233,6 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 			all_libs.append(y)
 			all_preds.append(x)
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
-
-	print()
 	print(f'Mass difference: {mass_difference}')
+	print()
+
