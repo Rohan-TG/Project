@@ -36,7 +36,7 @@ TENDL_nuclides = range_setter(df=TENDL_2021, la=0, ua=208)
 ENDFB_nuclides = range_setter(df=df, la=0, ua=208)
 print("Data loaded...")
 
-validation_nuclides = []
+validation_nuclides = [[73,174]]
 validation_set_size = 20
 
 minenergy = 0.1

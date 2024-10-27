@@ -32,7 +32,7 @@ ENDFB_nuclides = range_setter(df=df, la=0, ua=208)
 print("Data loaded...")
 
 
-validation_set_size = 10
+validation_set_size = 1
 
 minenergy = 0.1
 maxenergy = 20
@@ -56,13 +56,10 @@ def diff(target):
 		return (-1 * min_difference)
 
 
-target_nuclide = [63,141]
+target_nuclide = [73,174]
 
-exotic_nuclides = [[target_nuclide]]
+
 runs_r2_array = []
-for n in TENDL_nuclides:
-	if n not in ENDFB_nuclides:
-		exotic_nuclides.append(n)
 
 
 
@@ -70,20 +67,20 @@ for n in TENDL_nuclides:
 n_evaluations = 3
 datapoint_matrix = []
 
+validation_nuclides = [target_nuclide]
+X_test, y_test = maketest107(validation_nuclides, df=TENDL_2021)
+
+X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
+									la=0, ua=208, maxerg=maxenergy, minerg=minenergy)
+
 for i in tqdm.tqdm(range(n_evaluations)):
 
-	validation_nuclides = []
-	while len(validation_nuclides) < validation_set_size:
-		nuclide_choice = random.choice(
-			exotic_nuclides)  # randomly select nuclide from list of all nuclides in ENDF/B-VIII
-		if nuclide_choice not in validation_nuclides:
-			validation_nuclides.append(nuclide_choice)
+
 
 
 	model_seed = random.randint(a=1, b=1000)
-	X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
-									la=0, ua=208, maxerg=maxenergy, minerg=minenergy)
-	X_test, y_test = maketest107(validation_nuclides, df=TENDL_2021)
+
+
 
 	model = xg.XGBRegressor(n_estimators=900,
 							learning_rate=0.01,
@@ -237,9 +234,9 @@ if target_nuclide in CENDL_nuclides:
 	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
 plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
 plt.grid()
-plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}")
+plt.title(fr"$\sigma_{{n,\alpha}}$ for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}")
 plt.xlabel("Energy / MeV")
-plt.ylabel("$\sigma_{n,2n}$ / b")
+plt.ylabel(r"$\sigma_{n,\alpha}$ / b")
 plt.legend(loc='upper left')
 plt.show()
 
