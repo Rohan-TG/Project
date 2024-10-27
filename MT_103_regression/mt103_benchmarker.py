@@ -134,7 +134,8 @@ for q in tqdm.tqdm(range(num_runs)):
 									 learning_rate=0.008,
 									 max_depth=8,
 									 subsample=0.888,
-									 reg_lambda=4
+									 reg_lambda=4,
+									 seed=modelseed
 									 )
 
 
