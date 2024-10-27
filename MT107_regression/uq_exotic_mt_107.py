@@ -1,5 +1,6 @@
 import time
 import pandas as pd
+import tqdm
 import xgboost as xg
 from matrix_functions import range_setter, r2_standardiser
 import random
@@ -55,7 +56,7 @@ def diff(target):
 		return (-1 * min_difference)
 
 
-target_nuclide = []
+target_nuclide = [63,141]
 
 exotic_nuclides = [[target_nuclide]]
 runs_r2_array = []
@@ -66,10 +67,10 @@ for n in TENDL_nuclides:
 
 
 
-n_evaluations = 10
+n_evaluations = 3
 datapoint_matrix = []
 
-for i in range(n_evaluations):
+for i in tqdm.tqdm(range(n_evaluations)):
 
 	validation_nuclides = []
 	while len(validation_nuclides) < validation_set_size:
@@ -218,4 +219,32 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 
 
 tendl_energy, tendl_xs = Generalplotter107(dataframe=TENDL_2021, nuclide=target_nuclide)
+jendlerg, jendlxs = Generalplotter107(dataframe=JENDL_5, nuclide=target_nuclide)
+cendlerg, cendlxs = Generalplotter107(dataframe=CENDL_32, nuclide=target_nuclide)
+jefferg, jeffxs = Generalplotter107(dataframe=JEFF_33, nuclide=target_nuclide)
+tendlerg, tendlxs = Generalplotter107(dataframe=TENDL_2021, nuclide=target_nuclide)
 
+# 2sigma CF
+plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
+if target_nuclide in ENDFB_nuclides:
+	plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
+plt.plot(tendl_energy, tendl_xs, label = 'TENDL-2021', color='dimgrey', linewidth=2)
+if target_nuclide in JEFF_nuclides:
+	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
+if target_nuclide in JENDL_nuclides:
+	plt.plot(jendlerg, jendlxs, '--', label='JENDL-5', color='green')
+if target_nuclide in CENDL_nuclides:
+	plt.plot(cendlerg, cendlxs, '--', label = 'CENDL-3.2', color='gold')
+plt.fill_between(E_plot, datapoint_lower_interval, datapoint_upper_interval, alpha=0.2, label='95% CI', color='red')
+plt.grid()
+plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}")
+plt.xlabel("Energy / MeV")
+plt.ylabel("$\sigma_{n,2n}$ / b")
+plt.legend(loc='upper left')
+plt.show()
+
+mu_r2 = np.mean(runs_r2_array)
+sigma_r2 = np.std(runs_r2_array)
+interval_low_r2, interval_high_r2 = scipy.stats.t.interval(0.95, loc=mu_r2, scale=sigma_r2, df=(len(runs_r2_array) - 1))
+print(f"\nConsensus: {mu_r2:0.5f} +/- {interval_high_r2-interval_low_r2:0.5f}")
+print(f'Mass difference: {diff(target_nuclide)}')
