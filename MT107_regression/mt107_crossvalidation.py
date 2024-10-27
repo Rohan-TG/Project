@@ -15,7 +15,7 @@ from functions107 import maketrain107, maketest107, Generalplotter107
 from matrix_functions import r2_standardiser, range_setter
 
 df = pd.read_csv('ENDFBVIII_MT_107_all_features.csv')
-al = range_setter(df=df, la=0, ua=260)
+al = range_setter(df=df, la=0, ua=208)
 
 CENDL_32 = pd.read_csv('CENDL-3.2_MT_107_all_features.csv')
 CENDL_32= CENDL_32.dropna(subset=['XS'])
@@ -91,6 +91,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 
 	atleast90tally = 0
+
+	anyothertally = 0 # tallies how many nuclides in a single crossvalidation iteration have predictions closer to another library than to ENDF/B
 
 	low_masses = []
 
@@ -206,6 +208,8 @@ for q in tqdm.tqdm(range(num_runs)):
 			all_library_evaluations = []
 			all_predictions = []
 
+			otherlibr2s = [] # list of lib r2s other than endfb8 for this particular nuclide
+
 			q = df[(df['Z'] == current_nuclide[0]) & (df['A'] == current_nuclide[1])]['Q'].values[0]
 
 
@@ -231,6 +235,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
 				pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl, library_xs=cendl_xs)
+
+				otherlibr2s.append(pred_cendl_r2)
 				for libxs, p in zip(truncated_cendl, pred_cendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -249,6 +255,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
 				pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl, library_xs=jendl_xs)
+				otherlibr2s.append(pred_jendl_r2)
 				for libxs, p in zip(truncated_jendl, pred_jendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -266,6 +273,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
 				pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
+
+				otherlibr2s.append(pred_jeff_r2)
 				for libxs, p in zip(truncated_jeff, pred_jeff_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -284,6 +293,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl, library_xs=tendl_xs)
+
+				otherlibr2s.append(pred_tendl_r2)
 				for libxs, p in zip(truncated_tendl, pred_tendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -328,6 +339,11 @@ for q in tqdm.tqdm(range(num_runs)):
 					atleast90tally += 1
 					break
 
+
+			for stored_r2 in otherlibr2s:
+				if stored_r2 > endfb_r2:
+					anyothertally += 1
+					break
 
 
 			for z in evaluation_r2s:
@@ -382,6 +398,9 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	lownucs = range_setter(df=df, la=0, ua=60)
 	othernucs = range_setter(df=df, la=61, ua=210)
+
+	anyotherbetter.append(anyothertally)
+
 	oncount = 0
 	oncount90=0
 	for q in other:
@@ -490,3 +509,6 @@ print(f'RMSE: {np.mean(run_rmse)} +- {np.std(run_rmse)}')
 # plt.hist(x=log_plots, bins=50)
 # plt.grid()
 # plt.show()
+
+
+print(f'Any other lib better than ENDFB: {np.mean(anyotherbetter)} +- {np.std(anyotherbetter)} out of {len(al)}')
