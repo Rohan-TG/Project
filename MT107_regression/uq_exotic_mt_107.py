@@ -56,7 +56,7 @@ def diff(target):
 		return (-1 * min_difference)
 
 
-target_nuclide = [73,174]
+target_nuclide = [41,96]
 
 
 runs_r2_array = []
@@ -72,6 +72,9 @@ X_test, y_test = maketest107(validation_nuclides, df=TENDL_2021)
 
 X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
 									la=0, ua=208, maxerg=maxenergy, minerg=minenergy)
+
+jendl_r2s = []
+tendl_r2s = []
 
 for i in tqdm.tqdm(range(n_evaluations)):
 
@@ -144,6 +147,8 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl,
 																		   library_xs=jendl_xs)
 
+		jendl_r2s.append(pred_jendl_r2)
+
 		for x, y in zip(pred_jendl_gated, truncated_jendl):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -169,6 +174,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl,
 																		   library_xs=tendl_xs)
+		tendl_r2s.append(pred_tendl_r2)
 		for x, y in zip(pred_tendl_gated, truncated_tendl):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -216,7 +222,7 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 
 
 tendl_energy, tendl_xs = Generalplotter107(dataframe=TENDL_2021, nuclide=target_nuclide)
-jendlerg, jendlxs = Generalplotter107(dataframe=JENDL_5, nuclide=target_nuclide)
+jendlerg, jendlxs = Generalplotter107(dataframe=JENDL_5, nuclide=target_nuclide, maxenergy=20)
 cendlerg, cendlxs = Generalplotter107(dataframe=CENDL_32, nuclide=target_nuclide)
 jefferg, jeffxs = Generalplotter107(dataframe=JEFF_33, nuclide=target_nuclide)
 tendlerg, tendlxs = Generalplotter107(dataframe=TENDL_2021, nuclide=target_nuclide)
@@ -245,3 +251,6 @@ sigma_r2 = np.std(runs_r2_array)
 interval_low_r2, interval_high_r2 = scipy.stats.t.interval(0.95, loc=mu_r2, scale=sigma_r2, df=(len(runs_r2_array) - 1))
 print(f"\nConsensus: {mu_r2:0.5f} +/- {interval_high_r2-interval_low_r2:0.5f}")
 print(f'Mass difference: {diff(target_nuclide)}')
+
+print(np.mean(jendl_r2s), np.std(jendl_r2s), 'jendl')
+print(np.mean(tendl_r2s), np.std(tendl_r2s), 'tendl')
