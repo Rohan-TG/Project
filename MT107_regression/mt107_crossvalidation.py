@@ -46,7 +46,7 @@ n_run_tally95 = []
 
 
 # al = ENDFB_nuclides
-validation_set_size = 20  # number of nuclides hidden from training
+validation_set_size = 10  # number of nuclides hidden from training
 
 num_runs = 10
 run_r2 = []
