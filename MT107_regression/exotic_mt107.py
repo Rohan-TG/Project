@@ -8,6 +8,15 @@ from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 import periodictable
 
+
+
+
+
+
+
+
+
+
 df = pd.read_csv('ENDFBVIII_MT_107_all_features.csv')
 df = df[(df['Z'] != 6) & (df['A'] != 12)]
 df.index = range(len(df))
@@ -33,10 +42,43 @@ validation_set_size = 20
 minenergy = 0.1
 maxenergy = 20
 
+
+
+
+
+
+
+
+
+def diff(target):
+	match_element = []
+	zl = [n[0] for n in ENDFB_nuclides]
+	if target[0] in zl:
+		for nuclide in ENDFB_nuclides:
+			if nuclide[0] == target[0]:
+				match_element.append(nuclide)
+		nuc_differences = []
+		for match_nuclide in match_element:
+			difference = match_nuclide[1] - target[1]
+			nuc_differences.append(difference)
+		if len(nuc_differences) > 0:
+			if nuc_differences[0] > 0:
+				min_difference = min(nuc_differences)
+			elif nuc_differences[0] < 0:
+				min_difference = max(nuc_differences)
+		return (-1 * min_difference)
+
+
+
+
+
+
+
+
 #
 exotic_nuclides = []
 for n in TENDL_nuclides:
-	if n not in ENDFB_nuclides or n not in JEFF_nuclides or n not in CENDL_nuclides:
+	if n not in ENDFB_nuclides:
 		exotic_nuclides.append(n)
 
 while len(validation_nuclides) < validation_set_size:
@@ -98,6 +140,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	all_preds = []
 	all_libs = []
 	current_nuclide = validation_nuclides[i]
+	mass_difference = diff(current_nuclide)
 
 	q =TENDL_2021[(TENDL_2021['Z'] == current_nuclide[0]) & (TENDL_2021['A'] == current_nuclide[1])]['Q'].values[0]
 
@@ -185,3 +228,4 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
 	print()
+	print(f'Mass difference: {mass_difference}')
