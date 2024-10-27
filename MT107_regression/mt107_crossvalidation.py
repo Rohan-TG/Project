@@ -58,6 +58,11 @@ nuclide_r2 = []
 nucq = []
 thrn = []
 v1n = []
+
+
+anyotherbetter = [] # counts how many times any library other than ENDF/B-VIII is closer to predictions than
+
+
 for n in al:
 	q = df[(df['Z'] == n[0]) & (df['A'] == n[1])]['Q'].values[0]
 	nucq.append([n, q])
