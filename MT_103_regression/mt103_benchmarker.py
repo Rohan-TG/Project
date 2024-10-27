@@ -14,22 +14,22 @@ from sklearn.metrics import mean_squared_error, r2_score
 from MT_103_functions import range_setter, make_train, make_test
 from matrix_functions import r2_standardiser
 
-df = pd.read_csv('ENDFBVIII_MT103_all_features.csv')
+df = pd.read_csv('ENDFBVIII_MT_103_all_features.csv')
 al = range_setter(df=df, la=30, ua=208)
 
-CENDL_32 = pd.read_csv('CENDL32_MT103_all_features.csv')
+CENDL_32 = pd.read_csv('CENDL-3.2_MT_103_all_features.csv')
 CENDL_nuclides = range_setter(df=CENDL_32)
 CENDL_32.index = range(len(CENDL_32))
 
-JEFF_33 = pd.read_csv('JEFF33_MT103_all_features.csv')
+JEFF_33 = pd.read_csv('JEFF-3.3_MT_103_all_features.csv')
 JEFF_nuclides = range_setter(df=JEFF_33)
 JEFF_33.index = range(len(JEFF_33))
 
-JENDL_5 = pd.read_csv('JENDL5_MT103_all_features.csv')
+JENDL_5 = pd.read_csv('JENDL-5_MT_103_all_features.csv')
 JENDL_nuclides = range_setter(df=JENDL_5)
 JENDL_5.index = range(len(JENDL_5))
 
-TENDL_2021 = pd.read_csv('TENDL2021_MT103_all_features.csv')
+TENDL_2021 = pd.read_csv('TENDL-2021_MT_103_all_features.csv')
 TENDL_nuclides = range_setter(df=TENDL_2021)
 TENDL_2021.index = range(len(TENDL_2021))
 
@@ -54,7 +54,7 @@ for i in al:
 
 
 
-validation_set_size = 20  # number of nuclides hidden from training
+validation_set_size = 10  # number of nuclides hidden from training
 
 num_runs = 10
 run_r2 = []
@@ -119,7 +119,8 @@ for q in tqdm.tqdm(range(num_runs)):
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=208, minerg=min_energy, maxerg=max_energy) # make training matrix
+		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=208, minerg=min_energy, maxerg=max_energy,
+									  mode='both') # make training matrix
 
 		X_test, y_test = make_test(validation_nuclides, df=df,minerg=min_energy, maxerg=max_energy)
 
