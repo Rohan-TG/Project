@@ -56,7 +56,7 @@ def diff(target):
 		return (-1 * min_difference)
 
 
-target_nuclide = [76,182]
+target_nuclide = [63,158]
 
 
 runs_r2_array = []
@@ -64,7 +64,7 @@ runs_r2_array = []
 
 
 
-n_evaluations = 3
+n_evaluations = 5
 datapoint_matrix = []
 
 validation_nuclides = [target_nuclide]
@@ -103,7 +103,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		initial_predictions = model.predict(temp_x)
 
 		for p in initial_predictions:
-			if p >= (0.02 * max(initial_predictions)):
+			if p >= (0.0 * max(initial_predictions)):
 				predictions_r.append(p)
 			else:
 				predictions_r.append(0.0)
