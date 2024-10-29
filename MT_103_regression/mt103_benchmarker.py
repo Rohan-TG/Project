@@ -41,6 +41,8 @@ max_energy = 20
 
 n_run_tally95 = []
 
+anyotherbetter = []
+
 banned_nuclides = [[3, 7],
 [4, 9],
 [1, 2],
@@ -75,6 +77,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	outliers9090 = 0
 	outlier_tally = 0
 	tally = 0
+
+
+	anyothertally = 0
 
 	low_masses = []
 
@@ -188,6 +193,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			truncated_library_r2 = []
 
+			otherlibr2s = []
+
 			all_library_evaluations = []
 			all_predictions = []
 
@@ -214,6 +221,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
 				pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl, library_xs=cendl_xs)
+				otherlibr2s.append(pred_cendl_r2)
 				for libxs, p in zip(truncated_cendl, pred_cendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -232,6 +240,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
 				pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl, library_xs=jendl_xs)
+				otherlibr2s.append(pred_jendl_r2)
 				for libxs, p in zip(truncated_jendl, pred_jendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -249,6 +258,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
 				pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
+				otherlibr2s.append(pred_jeff_r2)
 				for libxs, p in zip(truncated_jeff, pred_jeff_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -267,6 +277,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl, library_xs=tendl_xs)
+				otherlibr2s.append(pred_tendl_r2)
 				for libxs, p in zip(truncated_tendl, pred_tendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
@@ -283,6 +294,11 @@ for q in tqdm.tqdm(range(num_runs)):
 			r2 = r2_score(all_library_evaluations,all_predictions) # various comparisons
 
 			# print(f"{periodictable.elements[current_nuclide[0]]}-{current_nuclide[1]}: {r2}")
+
+			for stored_r2 in otherlibr2s:
+				if stored_r2 > endfb_r2:
+					anyothertally += 1
+					break
 
 			if r2 > 0.97 and endfb_r2 < 0.9:
 				outliers += 1
@@ -367,6 +383,13 @@ for q in tqdm.tqdm(range(num_runs)):
 	print(f"{oncount}/{len(othernucs)} of mid nucs have r2 below 0.8")
 	print(f"{oncount90}/{len(othernucs)} of mid nucs have r2 below 0.9")
 	print(f">= 97 consensus: {gewd_97}/{len(al)}")
+
+
+
+
+
+
+	anyotherbetter.append(anyothertally)
 
 	lncount = 0
 	lncount90 = 0
@@ -465,3 +488,5 @@ plt.show()
 # plt.grid()
 # plt.show()
 print(f"At least 90: {np.mean(tallyatleast90)} +- {np.std(tallyatleast90)}")
+
+print(f'Any other lib better than ENDFB: {np.mean(anyotherbetter)} +- {np.std(anyotherbetter)} out of {len(al)}')

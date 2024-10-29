@@ -81,7 +81,6 @@ for nuc in TENDL_nuclides:
 	if nuc not in al:
 		validation_nuclides.append(nuc)
 
-validation_nuclides = validation_nuclides[:50]
 
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
