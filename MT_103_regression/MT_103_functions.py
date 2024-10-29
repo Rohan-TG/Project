@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.metrics import r2_score, mean_squared_error
-
+import tqdm
 
 def General_plotter(df, nuclides, maxenergy=20, minenergy=2):
 	"""df: dataframe source of XSs
@@ -25,7 +25,7 @@ def General_plotter(df, nuclides, maxenergy=20, minenergy=2):
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
-			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] < maxenergy and Energy[j] >= minenergy:
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] < maxenergy and Energy[j] > minenergy:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
 				Energy_test.append(Energy[j])
@@ -549,11 +549,11 @@ def make_test(nuclides, df, minerg, maxerg):
 
 	Q_test = []
 
-	for nuc_test_z, nuc_test_a in zip(ztest, atest):
+	for nuc_test_z, nuc_test_a in tqdm.tqdm(zip(ztest, atest), total=len(ztest)):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
 			if Energy[j] < minerg:
 				continue
-			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= maxerg:
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] < maxerg:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
 				S2n_test.append(S_2n[j])

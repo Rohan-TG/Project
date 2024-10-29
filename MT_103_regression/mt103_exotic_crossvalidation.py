@@ -140,10 +140,12 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	predictions = model.predict(X_test)
 
+	print('Inference complete')
+
 	XS_plotmatrix = []
 	E_plotmatrix = []
 	P_plotmatrix = []
-	for nuclide in validation_nuclides:
+	for nuclide in tqdm.tqdm(validation_nuclides, total=len(validation_nuclides)):
 		dummy_test_XS = []
 		dummy_test_E = []
 		dummy_predictions = []
