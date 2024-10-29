@@ -16,7 +16,7 @@ from matrix_functions import range_setter
 from functions107 import maketest107, maketrain107, Generalplotter107
 import scipy.interpolate
 
-df = pd.read_csv("ENDFBVIII_MT_103_all_features.csv")
+df = pd.read_csv("ENDFBVIII_MT_107_all_features.csv")
 
 gate = 0.0
 
