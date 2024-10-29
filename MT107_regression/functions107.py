@@ -320,7 +320,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	X = np.transpose(X) # forms matrix into correct shape (values, features)
 	return X, y
 
-def maketest107(nuclides, df):
+def maketest107(nuclides, df, minerg=2, maxerg=20):
 	"""
 	nuclides: array of (1x2) arrays containing Z of nuclide at index 0, and A at index 1.
 	df: dataframe used for validation data
@@ -479,7 +479,7 @@ def maketest107(nuclides, df):
 
 	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
-			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] <= 20 and Energy[j] > 1 :
+			if zval == nuc_test_z and aval == nuc_test_a and Energy[j] < maxerg and Energy[j] > minerg:
 				Z_test.append(Z[j])
 				A_test.append(A[j])
 				S2n_test.append(S_2n[j])
