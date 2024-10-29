@@ -138,7 +138,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 
 		X_train, y_train = maketrain107(df=df, validation_nuclides=validation_nuclides,
-										la=0, ua=260) # make training matrix
+										la=0, ua=208) # make training matrix
 
 		X_test, y_test = maketest107(validation_nuclides, df=df)
 

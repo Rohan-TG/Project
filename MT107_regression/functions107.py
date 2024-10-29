@@ -19,7 +19,7 @@ def Generalplotter107(dataframe, nuclide, minenergy=1, maxenergy=21):
 
 
 
-def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], la=0, ua=260):
+def maketrain107(df, validation_nuclides, maxerg=20, minerg=1, exclusions = [], la=0, ua=260):
 	"""la: lower bound for A
 	ua: upper bound for A
 	arguments la and ua allow data stratification using A
@@ -320,7 +320,7 @@ def maketrain107(df, validation_nuclides, maxerg=20, minerg=2, exclusions = [], 
 	X = np.transpose(X) # forms matrix into correct shape (values, features)
 	return X, y
 
-def maketest107(nuclides, df, minerg=2, maxerg=20):
+def maketest107(nuclides, df, minerg=1, maxerg=20):
 	"""
 	nuclides: array of (1x2) arrays containing Z of nuclide at index 0, and A at index 1.
 	df: dataframe used for validation data
