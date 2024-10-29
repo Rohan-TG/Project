@@ -15,7 +15,7 @@ from MT_103_functions import range_setter, make_train, make_test
 from matrix_functions import r2_standardiser
 
 df = pd.read_csv('ENDFBVIII_MT_103_all_features.csv')
-al = range_setter(df=df, la=30, ua=208)
+al = range_setter(df=df, la=0, ua=208)
 
 CENDL_32 = pd.read_csv('CENDL-3.2_MT_103_all_features.csv')
 CENDL_nuclides = range_setter(df=CENDL_32)
