@@ -4,7 +4,7 @@ import tqdm
 import xgboost as xg
 from matrix_functions import range_setter, r2_standardiser
 import random
-from MT_103_functions import make_test, make_train, General_plotter
+from MT_103_functions import make_test, make_train, Generalplotter103
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 import periodictable
@@ -222,11 +222,11 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 	upper_bound.append(point+up)
 
 
-tendl_energy, tendl_xs = General_plotter(df=TENDL_2021, nuclides=[target_nuclide])
-jendlerg, jendlxs = General_plotter(df=JENDL_5, nuclides=[target_nuclide], maxenergy=20)
-cendlerg, cendlxs = General_plotter(df=CENDL_32, nuclides=[target_nuclide])
-jefferg, jeffxs = General_plotter(df=JEFF_33, nuclides=[target_nuclide])
-tendlerg, tendlxs = General_plotter(df=TENDL_2021, nuclides=[target_nuclide])
+tendl_energy, tendl_xs = Generalplotter103(dataframe=TENDL_2021, nuclide=target_nuclide)
+jendlerg, jendlxs = Generalplotter103(dataframe=JENDL_5, nuclide=target_nuclide, maxenergy=20)
+cendlerg, cendlxs = Generalplotter103(dataframe=CENDL_32, nuclide=target_nuclide)
+jefferg, jeffxs = Generalplotter103(dataframe=JEFF_33, nuclide=target_nuclide)
+tendlerg, tendlxs = Generalplotter103(dataframe=TENDL_2021, nuclide=target_nuclide)
 
 # 2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')

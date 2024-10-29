@@ -54,11 +54,11 @@ n_evaluations = 10
 datapoint_matrix = []
 target_nuclide = [42,95]
 
-jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
-cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
-jefferg, jeffxs = General_plotter(df=JEFF33, nuclides=[target_nuclide])
-tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[target_nuclide])
-endfberg, endfbxs = General_plotter(df=df, nuclides=[target_nuclide])
+jendlerg, jendlxs = Generalplotter103(dataframe=JENDL5, nuclide=target_nuclide)
+cendlerg, cendlxs = Generalplotter103(dataframe=CENDL32, nuclide=target_nuclide)
+jefferg, jeffxs = Generalplotter103(dataframe=JEFF33, nuclide=target_nuclide)
+tendlerg, tendlxs = Generalplotter103(dataframe=TENDL, nuclide=target_nuclide)
+endfberg, endfbxs = Generalplotter103(dataframe=df, nuclide=target_nuclide)
 
 runs_r2_array = []
 runs_rmse_array = []

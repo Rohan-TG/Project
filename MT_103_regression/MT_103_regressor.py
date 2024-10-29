@@ -2,7 +2,7 @@ import pandas as pd
 import warnings
 from numba.core.errors import NumbaDeprecationWarning
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
-from MT_103_functions import make_train, make_test, range_setter, r2_standardiser, General_plotter
+from MT_103_functions import make_train, make_test, range_setter, r2_standardiser, Generalplotter103
 import matplotlib.pyplot as plt
 import xgboost
 import periodictable
@@ -89,10 +89,10 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 	q = df[(df['Z'] == current_nuclide[0]) & (df['A'] == current_nuclide[1])]['Q'].values[0]
 
-	jendlerg, jendlxs = General_plotter(df=JENDL_5, nuclides=[current_nuclide])
-	cendlerg, cendlxs = General_plotter(df=CENDL_32, nuclides=[current_nuclide])
-	jefferg, jeffxs = General_plotter(df=JEFF_33, nuclides=[current_nuclide])
-	tendlerg, tendlxs = General_plotter(df=TENDL_2021, nuclides=[current_nuclide])
+	jendlerg, jendlxs = Generalplotter103(dataframe=JENDL_5, nuclide=current_nuclide)
+	cendlerg, cendlxs = Generalplotter103(dataframe=CENDL_32, nuclide=current_nuclide)
+	jefferg, jeffxs = Generalplotter103(dataframe=JEFF_33, nuclide=current_nuclide)
+	tendlerg, tendlxs = Generalplotter103(dataframe=TENDL_2021, nuclide=current_nuclide)
 
 	nuc = validation_nuclides[i]  # validation nuclide
 	plt.plot(erg, pred_xs, label='Predictions', color='red')

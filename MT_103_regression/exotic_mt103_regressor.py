@@ -3,7 +3,7 @@ import pandas as pd
 import xgboost as xg
 from matrix_functions import range_setter, r2_standardiser
 import random
-from MT_103_functions import make_test, make_train, General_plotter
+from MT_103_functions import make_test, make_train, Generalplotter103
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 import periodictable
@@ -152,10 +152,10 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 	q =TENDL_2021[(TENDL_2021['Z'] == current_nuclide[0]) & (TENDL_2021['A'] == current_nuclide[1])]['Q'].values[0]
 
-	jendlerg, jendlxs = General_plotter(df=JENDL_5, nuclides=[current_nuclide])
-	cendlerg, cendlxs = General_plotter(df=CENDL_32, nuclides=[current_nuclide])
-	jefferg, jeffxs = General_plotter(df=JEFF_33, nuclides=[current_nuclide])
-	tendlerg, tendlxs = General_plotter(df=TENDL_2021, nuclides=[current_nuclide])
+	jendlerg, jendlxs = Generalplotter103(dataframe=JENDL_5, nuclide=current_nuclide)
+	cendlerg, cendlxs = Generalplotter103(dataframe=CENDL_32, nuclide=current_nuclide)
+	jefferg, jeffxs = Generalplotter103(dataframe=JEFF_33, nuclide=current_nuclide)
+	tendlerg, tendlxs = Generalplotter103(dataframe=TENDL_2021, nuclide=current_nuclide)
 
 	nuc = validation_nuclides[i]  # validation nuclide
 	plt.figure()

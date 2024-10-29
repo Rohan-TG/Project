@@ -8,12 +8,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 import xgboost as xg
-import time
+# import time
 import tqdm
 # import shap
 from sklearn.metrics import mean_squared_error, r2_score
 from matrix_functions import range_setter
-from MT_103_functions import make_test, make_train, General_plotter
+from MT_103_functions import make_test, make_train, Generalplotter103
 import scipy.interpolate
 
 df = pd.read_csv("ENDFBVIII_MT_103_all_features.csv")
@@ -81,6 +81,8 @@ for nuc in TENDL_nuclides:
 	if nuc not in al:
 		validation_nuclides.append(nuc)
 
+validation_nuclides = validation_nuclides[:50]
+
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
@@ -127,6 +129,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	X_test, y_test = make_test(validation_nuclides, df=TENDL, minerg=minenergy, maxerg=maxenergy)
 
 	modelseed= random.randint(a=1, b=1000)
+	print('Training...')
 	model = xg.XGBRegressor(n_estimators=900,
 							learning_rate=0.01,
 							max_depth=7,
@@ -176,14 +179,13 @@ for q in tqdm.tqdm(range(num_runs)):
 		nuc_all_library_evaluations = []
 		nuc_all_predictions = []
 
-		jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[nuc], maxenergy=maxenergy, minenergy=minenergy)
-		tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[nuc], maxenergy=maxenergy, minenergy=minenergy)
+		jendlerg, jendlxs = Generalplotter103(dataframe=JENDL, nuclide=nuc, maxenergy=maxenergy, minenergy=minenergy)
 
-		interpolation_function = scipy.interpolate.interp1d(tendlerg, y=pred_xs,
+		interpolation_function = scipy.interpolate.interp1d(erg, y=pred_xs,
 															fill_value='extrapolate')
 
 		tendl_r2 = r2_score(true_xs, pred_xs)
-		tendl_rmse = mean_squared_error(tendlxs, pred_xs)**0.5
+		tendl_rmse = mean_squared_error(true_xs, pred_xs)**0.5
 		for libxs, p in zip(true_xs, pred_xs):
 			nuc_all_library_evaluations.append(libxs)
 			nuc_all_predictions.append(p)
