@@ -36,7 +36,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[40,89]]
+target_nuclides = [[52,118]]
 target_nuclide = target_nuclides[0]
 n_evaluations = 100
 
@@ -109,7 +109,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 							learning_rate=0.008,
 							max_depth=8,
 							subsample=0.18236,
-							reg_lambda=25,
+							reg_lambda=0,
 							max_leaves=0,
 							seed=42, )
 
@@ -260,6 +260,8 @@ if target_nuclide in JENDL_nuclides:
 d3,d4, tendlr2 = r2_standardiser(library_xs=tendlxs, predicted_xs=datapoint_means)
 print(f"R2 w.r.t. TENDL-2021: {np.mean(tendl_r2s)} +- {np.std(tendl_r2s)}")
 #2sigma CF
+plt.rcParams.update({'font.size': 12})
+
 plt.figure()
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 if target_nuclide in ENDFB_nuclides:
@@ -278,7 +280,10 @@ plt.title(f"$\sigma_{{n,2n}}$ for {periodictable.elements[target_nuclide[0]]}-{t
 plt.xlabel("Energy / MeV")
 plt.ylabel("$\sigma_{n,2n}$ / b")
 plt.legend(loc='upper left')
+plt.savefig(f'{periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}_n2n_exotic.png', dpi=500)
 plt.show()
+
+
 
 final_runtime = time.time() - runtime
 
