@@ -43,12 +43,12 @@ main_bar_format = '{l_bar}%s{bar}%s{r_bar}' % (Colours.BLUE, Colours.BLUE)
 
 exc = exclusion_func() # 10 sigma with handpicked additions
 
-nuclide_queue = [[72,178]]
+nuclide_queue = [[50,118]]
 
 for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_bar_format):
 
 	target_nuclide = q_num
-	n_evaluations = 2
+	n_evaluations = 100
 
 	jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 	cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -313,7 +313,9 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	fila2xs = [1.759, 1.811, 1.809, 1.791, 1.724, 1.819, 1.73]
 	fila2dxs = [0.079155, 0.0813139, 0.0750735, 0.0834606, 0.0755112, 0.0713048, 0.067643]
 
+	plt.rcParams.update({'font.size': 12})
 	plt.figure()
+	plt.rcParams.update({'font.size': 12})
 	plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 	plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 	print(f"ENDF/B-VIII: {np.mean(endfb_r2s)} +- {np.std(endfb_r2s)}, RMSE: {np.mean(endfb_rmses):0.3f} +- {np.std(endfb_rmses):0.3f}")
@@ -350,6 +352,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	plt.xlabel("Energy / MeV")
 	plt.ylabel("$\sigma_{n,2n}$ / b")
 	plt.legend(loc='upper left')
+	plt.savefig(f'{periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}_n2n.png', dpi=500)
 	plt.show()
 
 	final_runtime = time.time() - runtime
