@@ -170,7 +170,7 @@ for q in tqdm.tqdm(range(num_runs)):
 								learning_rate=0.008,
 								max_depth=8,
 								subsample=0.18236,
-								reg_lambda=25,
+								reg_lambda=0,
 								max_leaves=0,
 								seed=modelseed,)
 
