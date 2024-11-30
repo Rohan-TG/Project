@@ -41,13 +41,16 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 
 exc = exclusion_func()
 
-num_runs = 10
+num_runs = 1
 
 run_r2 = []
 run_mse = []
 
 nuclide_r2 = []
 nuclide_thresholds = []
+
+nuclide_jendl_r2 = []
+nuclide_tendl_r2 = []
 
 
 def diff(target):
@@ -180,6 +183,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		pred_tendl_gated, truncated_tendl, tendl_r2 = r2_standardiser(library_xs=true_xs, predicted_xs=pred_xs)
 		tendl_rmse = mean_squared_error(truncated_tendl, pred_tendl_gated)**0.5
+
+		nuclide_tendl_r2.append([nuc[0], nuc[1], tendl_r2])
 		for libxs, p in zip(truncated_tendl, pred_tendl_gated):
 			nuc_all_library_evaluations.append(libxs)
 			nuc_all_predictions.append(p)
@@ -200,6 +205,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
 			jendl_r2s.append(jendl_r2)
+			nuclide_jendl_r2.append([nuc[0], nuc[1]], jendl_r2)
 
 
 			for x, y in zip(d2, predjendlgated):
@@ -216,6 +222,7 @@ for q in tqdm.tqdm(range(num_runs)):
 		rmsescore = mean_squared_error(nuc_all_library_evaluations, nuc_all_predictions) **0.5
 
 		nuclide_r2.append([nuc[0], nuc[1], r2, rmsescore])
+
 
 		md = diff(nuc)
 		try:
@@ -281,12 +288,40 @@ A_plots = [i[1] for i in alist]
 log_plots = [abs(np.log(abs(i[-3]))) for i in alist]
 
 
+jendldiffs = []
+for jendlnuc in nuclide_jendl_r2:
+	d = diff([jendlnuc[0], jendlnuc[1]])
+	jendldiffs.append(d)
+
+lg_plots_jendl = [abs(np.log10(abs(i[-1]))) for i in nuclide_jendl_r2]
+
+tendldiffs = []
+for tendlnuc in nuclide_tendl_r2:
+	dt = diff([tendlnuc[0], tendlnuc[1]])
+	tendldiffs.append(dt)
+lg_plots_tendl = [abs(np.log10(abs(i[-1]))) for i in nuclide_tendl_r2]
 
 plt.figure()
 plt.plot(A_plots, log_plots, 'x')
 # plt.plot(A_plots, r2plot, 'x')
 plt.xlabel("A")
-plt.ylabel("$|\ln(|r^2|)|$")
+plt.ylabel("$|\lg(|r^2|)|$")
 plt.title("Performance - A")
+plt.grid()
+plt.show()
+
+plt.figure()
+plt.plot(jendldiffs, lg_plots_jendl, 'x')
+plt.xlabel('Mass difference')
+plt.ylabel("$|\lg(|r^2|)|$")
+plt.title('MD for jendl')
+plt.grid()
+plt.show()
+
+plt.figure()
+plt.plot(tendldiffs, lg_plots_tendl, 'x')
+plt.xlabel('Mass difference')
+plt.ylabel("$|\lg(|r^2|)|$")
+plt.title('MD for tendl')
 plt.grid()
 plt.show()
