@@ -36,10 +36,22 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 
-target_nuclides = [[52,118]]
+
+
+
+
+target_nuclides = [[39,87]]
 target_nuclide = target_nuclides[0]
 n_evaluations = 100
 
+
+
+
+
+
+
+jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
+nativeerg, unused = General_plotter(df=TENDL, nuclides=[target_nuclide])
 
 def diff(target):
 
@@ -69,7 +81,7 @@ def diff(target):
 
 validation_set_size = 1
 
-gate = 0.02
+gate = 0.05
 
 all_consensus_rmses = []
 
@@ -159,8 +171,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 	all_libs = []
 
 	if target_nuclide in JENDL_nuclides:
-		jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
-		nativeerg, unused = General_plotter(df=TENDL, nuclides=[target_nuclide])
+
 		interpolation_function_loop = scipy.interpolate.interp1d(nativeerg, y=predictions, fill_value='extrapolate')
 
 		jendlxs_loop_interpolated = interpolation_function_loop(jendlerg)
