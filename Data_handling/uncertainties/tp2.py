@@ -43,12 +43,12 @@ main_bar_format = '{l_bar}%s{bar}%s{r_bar}' % (Colours.BLUE, Colours.BLUE)
 
 exc = exclusion_func() # 10 sigma with handpicked additions
 
-nuclide_queue = [[50,118]]
+nuclide_queue = [[16,32]]
 
 for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_bar_format):
 
 	target_nuclide = q_num
-	n_evaluations = 100
+	n_evaluations = 3
 
 	jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 	cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
@@ -59,7 +59,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 
 	validation_set_size = 20
 
-
+	nuclide_thresholds = []
 
 
 	runs_r2_array = []
@@ -145,6 +145,8 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 		E_plotmatrix = []
 		P_plotmatrix = []
 
+		threshold_values = []
+
 		for nuclide in target_nuclides:
 			dummy_test_XS = []
 			dummy_test_E = []
@@ -162,13 +164,21 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 		all_preds = []
 		all_libs = []
 
+		for xs, energy in zip(P_plotmatrix[0], E_plotmatrix[0]):
+			if xs > 0:
+				predicted_threshold = energy
+				break
+
 		endfbgated, dee, pred_endfb_r2 = r2_standardiser(library_xs=XS_plotmatrix[0], predicted_xs=P_plotmatrix[0])
 		endfb_r2s.append(r2_score(endfbgated, dee))
 		for x, y in zip(dee, endfbgated):
 			all_libs.append(x)
 			all_preds.append(y)
 		# print(f"Predictions - ENDF/B-VIII R2: {pred_endfb_r2:0.5f} ")
-
+		for o, p in zip(endfberg, endfbxs):
+			if p > 0:
+				threshold_values.append(o)
+				break
 		interpolation_function = scipy.interpolate.interp1d(endfberg, y=P_plotmatrix[0],
 															fill_value='extrapolate')
 
@@ -179,6 +189,11 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 			jendl_r2s.append(jendl_r2)
 			jendl_rmse = mean_squared_error(predjendlgated, gated_jendl_xs) **0.5
 			jendl_rmses.append(jendl_rmse)
+
+			for o, p in zip(jendlerg, jendlxs):
+				if p > 0:
+					threshold_values.append(o)
+					break
 
 			for x, y in zip(gated_jendl_xs, predjendlgated):
 				all_libs.append(x)
@@ -194,6 +209,11 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 			cendl_rmse = mean_squared_error(predcendlgated, truncatedcendl) ** 0.5
 			cendl_rmses.append(cendl_rmse)
 
+			for o, p in zip(cendlerg, cendlxs):
+				if p > 0:
+					threshold_values.append(o)
+					break
+
 			for x, y in zip(truncatedcendl, predcendlgated):
 				all_libs.append(x)
 				all_preds.append(y)
@@ -207,9 +227,14 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 			jeff_r2s.append(jeff_r2)
 			jeff_rmse = mean_squared_error(d2, predjeffgated) ** 0.5
 			jeff_rmses.append(jeff_rmse)
+			for o, p in zip(jefferg, jeffxs):
+				if p > 0:
+					threshold_values.append(o)
+					break
 			for x, y in zip(d2, predjeffgated):
 				all_libs.append(x)
 				all_preds.append(y)
+
 
 
 		tendlxs_interpolated = interpolation_function(tendlerg)
@@ -217,12 +242,25 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 		tendl_r2s.append(tendlr2)
 		tendlrmse = mean_squared_error(truncatedtendl, predtendlgated)**0.5
 		tendl_rmses.append(tendlrmse)
+		for o, p in zip(tendlerg, tendlxs):
+			if p > 0:
+				threshold_values.append(o)
+				break
+
 		for x, y in zip(truncatedtendl, predtendlgated):
 			all_libs.append(x)
 			all_preds.append(y)
 
 
 		consensus = r2_score(all_libs, all_preds)
+
+		thr_diffs = []
+		for lib_thr in threshold_values:
+			difference = lib_thr - predicted_threshold
+			thr_diffs.append(difference)
+		mean_difference = np.mean(thr_diffs)
+
+		nuclide_thresholds.append(mean_difference)
 
 		consensus_rmse = mean_squared_error(all_libs, all_preds) ** 0.5
 
@@ -366,3 +404,5 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	print(f'R2 TENDL-2021:ENDF/B-VIII: {endfb_wrt_tendl}:0.3f')
 	print(f"Runtime: {timedelta(seconds=final_runtime)}")
 
+
+print('mean threshold difference:', mean_difference)
