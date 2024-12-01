@@ -32,115 +32,109 @@ nuclides_used = []
 nuclide_mse = []
 nuclide_r2 = []
 
-if __name__ == "__main__":
-	# lower_a = int(input("Enter lower boundary A: "))
-	# upper_a = int(input("Enter upper boundary A: "))
+every_prediction_list = []
+every_true_value_list = []
 
-	# overall_r2_list = []
-
-	every_prediction_list = []
-	every_true_value_list = []
-
-	counter = 0
-	while len(nuclides_used) < len(al):
+counter = 0
+while len(nuclides_used) < len(al):
 
 
-		# print(f"{len(nuclides_used) // len(al)} Epochs left")
+	# print(f"{len(nuclides_used) // len(al)} Epochs left")
 
-		validation_nuclides = []  # list of nuclides used for validation
-		# test_nuclides = []
-		validation_set_size = 20  # number of nuclides hidden from training
+	validation_nuclides = []  # list of nuclides used for validation
+	# test_nuclides = []
+	validation_set_size = 1  # number of nuclides hidden from training
 
-		while len(validation_nuclides) < validation_set_size:
+	while len(validation_nuclides) < validation_set_size:
 
-			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
-			if choice not in validation_nuclides and choice not in nuclides_used:
-				validation_nuclides.append(choice)
-				nuclides_used.append(choice)
-			if len(nuclides_used) == len(al):
-				break
-
-
-		print("Test nuclide selection complete")
-		print(f"{len(nuclides_used)}/{len(al)} selections")
-		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
+		choice = random.choice(al)  # randomly select nuclide from list of all nuclides
+		if choice not in validation_nuclides and choice not in nuclides_used:
+			validation_nuclides.append(choice)
+			nuclides_used.append(choice)
+		if len(nuclides_used) == len(al):
+			break
 
 
-		X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=215, ua=270) # make training matrix
-
-		X_test, y_test = make_test(validation_nuclides, df=df)
-
-		# X_train must be in the shape (n_samples, n_features)
-		# and y_train must be in the shape (n_samples) of the target
-
-		print("Train/val matrices generated")
+	print("Test nuclide selection complete")
+	print(f"{len(nuclides_used)}/{len(al)} selections")
+	# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 
-		model = xg.XGBRegressor(n_estimators=500,
-								learning_rate=0.01,
-								max_depth=8,
-								subsample=0.2,
-								max_leaves=0,
-								seed=42,)
+	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, la=215, ua=270) # make training matrix
 
-		time1 = time.time()
-		model.fit(X_train, y_train)
+	X_test, y_test = make_test(validation_nuclides, df=df)
 
-		print("Training complete")
+	# X_train must be in the shape (n_samples, n_features)
+	# and y_train must be in the shape (n_samples) of the target
 
-		predictions = model.predict(X_test) # XS predictions
+	print("Train/val matrices generated")
 
 
-		# Form arrays for plots below
-		XS_plotmatrix = []
-		E_plotmatrix = []
-		P_plotmatrix = []
-		for nuclide in validation_nuclides:
-			dummy_test_XS = []
-			dummy_test_E = []
-			dummy_predictions = []
-			for i, row in enumerate(X_test):
-				if [row[0], row[1]] == nuclide:
-					dummy_test_XS.append(y_test[i])
-					dummy_test_E.append(row[4]) # Energy values are in 5th row
-					dummy_predictions.append(predictions[i])
+	model = xg.XGBRegressor(n_estimators=500,
+							learning_rate=0.01,
+							max_depth=8,
+							subsample=0.2,
+							max_leaves=0,
+							seed=42,)
 
-			XS_plotmatrix.append(dummy_test_XS)
-			E_plotmatrix.append(dummy_test_E)
-			P_plotmatrix.append(dummy_predictions)
+	time1 = time.time()
+	model.fit(X_train, y_train)
 
-		# plot predictions against data
-		for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
-			nuc = validation_nuclides[i]
-			# plt.plot(erg, pred_xs, label='predictions')
-			# plt.plot(erg, true_xs, label='data')
-			# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
-			# plt.legend()
-			# plt.grid()
-			# plt.ylabel('XS / b')
-			# plt.xlabel('Energy / MeV')
-			# plt.show()
-			r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
-			# print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+	print("Training complete")
 
-			mse = mean_squared_error(true_xs, pred_xs)
+	predictions = model.predict(X_test) # XS predictions
 
-			nuclide_mse.append([nuc[0], nuc[1], mse])
-			nuclide_r2.append([nuc[0], nuc[1], r2])
-			# individual_r2_list.append(r2)
 
-		overall_r2 = r2_score(y_test, predictions)
-		for pred in predictions:
-			every_prediction_list.append(pred)
+	# Form arrays for plots below
+	XS_plotmatrix = []
+	E_plotmatrix = []
+	P_plotmatrix = []
+	for nuclide in validation_nuclides:
+		dummy_test_XS = []
+		dummy_test_E = []
+		dummy_predictions = []
+		for i, row in enumerate(X_test):
+			if [row[0], row[1]] == nuclide:
+				dummy_test_XS.append(y_test[i])
+				dummy_test_E.append(row[4]) # Energy values are in 5th row
+				dummy_predictions.append(predictions[i])
 
-		for val in y_test:
-			every_true_value_list.append(val)
-		# overall_r2_list.append(overall_r2)
-		# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
-		print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
-		time_taken = time.time() - time1
-		print(f'completed in {time_taken} s.\n')
-		# time.sleep(10)
+		XS_plotmatrix.append(dummy_test_XS)
+		E_plotmatrix.append(dummy_test_E)
+		P_plotmatrix.append(dummy_predictions)
+
+	# plot predictions against data
+	for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_plotmatrix)):
+		nuc = validation_nuclides[i]
+		# plt.plot(erg, pred_xs, label='predictions')
+		# plt.plot(erg, true_xs, label='data')
+		# plt.title(f"(n,2n) XS for {periodictable.elements[nuc[0]]}-{nuc[1]:0.0f}")
+		# plt.legend()
+		# plt.grid()
+		# plt.ylabel('XS / b')
+		# plt.xlabel('Energy / MeV')
+		# plt.show()
+		r2 = r2_score(true_xs, pred_xs) # R^2 score for this specific nuclide
+		# print(f"{periodictable.elements[nuc[0]]}-{nuc[1]:0.0f} R2: {r2:0.5f}")
+
+		mse = mean_squared_error(true_xs, pred_xs)
+
+		nuclide_mse.append([nuc[0], nuc[1], mse])
+		nuclide_r2.append([nuc[0], nuc[1], r2])
+		# individual_r2_list.append(r2)
+
+	overall_r2 = r2_score(y_test, predictions)
+	for pred in predictions:
+		every_prediction_list.append(pred)
+
+	for val in y_test:
+		every_true_value_list.append(val)
+	# overall_r2_list.append(overall_r2)
+	# print(f"MSE: {mean_squared_error(y_test, predictions, squared=False)}") # MSE
+	print(f"R2: {overall_r2}") # Total R^2 for all predictions in this training campaign
+	time_taken = time.time() - time1
+	print(f'completed in {time_taken} s.\n')
+	# time.sleep(10)
 
 
 

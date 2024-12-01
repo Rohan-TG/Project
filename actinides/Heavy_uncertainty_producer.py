@@ -46,9 +46,9 @@ CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=260)
 
 exc = exclusion_func()
 
-n_evaluations = 20
+n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [88,226]
+target_nuclide = [92,233]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -102,7 +102,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 		initial_predictions = model.predict(temp_x)
 
 		for p in initial_predictions:
-			if p >= (0.02 * max(initial_predictions)):
+			if p >= (0.05 * max(initial_predictions)):
 				predictions_ReLU.append(p)
 			else:
 				predictions_ReLU.append(0.0)
@@ -254,6 +254,8 @@ for point, up, low, in zip(datapoint_means, datapoint_upper_interval, datapoint_
 print(f"Turning points: {dsigma_dE(XS=datapoint_means)}")
 
 #2sigma CF
+plt.rcParams.update({'font.size': 12})
+plt.figure()
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
 plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
 plt.plot(tendlerg, tendl_xs, label = 'TENDL-2021', color='dimgrey')
