@@ -22,11 +22,11 @@ jeff33 = pd.read_csv('JEFF33_all_features.csv')
 cendl32 = pd.read_csv('CENDL32_all_features.csv')
 
 
-CENDL_nuclides = range_setter(df=cendl32, la=30, ua=210)
-JENDL_nuclides = range_setter(df=jendl5, la=30, ua=210)
-JEFF_nuclides = range_setter(df=jeff33, la=30, ua=210)
-TENDL_nuclides = range_setter(df=tendl21, la=30, ua=210)
-ENDFB_nuclides = range_setter(df=endfb8, la=30, ua=210)
+CENDL_nuclides = range_setter(df=cendl32, la=30, ua=208)
+JENDL_nuclides = range_setter(df=jendl5, la=30, ua=208)
+JEFF_nuclides = range_setter(df=jeff33, la=30, ua=208)
+TENDL_nuclides = range_setter(df=tendl21, la=30, ua=208)
+ENDFB_nuclides = range_setter(df=endfb8, la=30, ua=208)
 
 all_libraries = pd.concat([endfb8, jendl5])
 
@@ -47,8 +47,27 @@ nuclides_used = []
 nuclide_mse = []
 nuclide_r2 = []
 
+anyotherbetter = []
 
+olbjendl = []
+olbtendl = []
+olbcendl = []
+olbjeff = []
+
+eolbjendl = []
+eolbcendl = []
+eolbtendl = []
+eolbjeff = []
+eolbany = []
 # overall_r2_list = []
+
+
+atleast190 = []
+atleast193 = []
+atleast195 = []
+
+min100A_at_least_95 = []
+min100A_at_least_90 = []
 
 every_prediction_list = []
 every_true_value_list = []
@@ -58,11 +77,12 @@ all_interpolated_predictions = []
 
 benchmark_total_library_evaluations = []
 benchmark_total_predictions = []
-
+n_run_tally95 = []
 
 validation_set_size = 20
 counter = 0
-
+run_r2 = []
+run_mse = []
 
 
 
@@ -72,6 +92,50 @@ counter = 0
 num_runs = 2
 
 for q in tqdm.tqdm(range(num_runs)):
+
+	endfb_r2s = []
+	cendl_r2s = []
+	tendl_r2s = []
+	jeff_r2s = []
+	jendl_r2s = []
+
+	anyothertally = 0
+
+	outliers = 0
+	outliers90 = 0
+	outliers85 = 0
+	outliers9090 = 0
+	outlier_tally = 0
+	tally = 0
+
+	tally_min100A_at_least_95 = 0
+	tally_min100A_at_least_90 = 0
+
+	exclusions_other_lib_better_jendl = 0
+	exclusions_other_lib_better_cendl = 0
+	exclusions_other_lib_better_tendl = 0
+	exclusions_other_lib_better_jeff = 0
+	exclusionsotherlibbetterany = 0
+
+	tendlgeneral_olb = 0
+	jendlgeneral_olb = 0
+	cendlgeneral_olb = 0
+	jeffgeneral_olb = 0
+
+	low_masses = []
+
+	nuclide_mse = []
+
+	tally90 = 0
+
+	other = []
+	gewd_97 = 0
+
+	bad_nuclides = []
+
+	at_least_one_agreeing_90 = 0
+	at_least_one_agreeing_93 = 0
+	at_least_one_agreeing_95 = 0
 
 	while len(nuclides_used) < len(al):
 
@@ -159,6 +223,9 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			limited_evaluations = []
 			limited_predictions = []
+
+			otherlibr2s = []
+			eotherlibr2s = []
 
 			try:
 				pred_endfb_gated, truncated_endfb, endfb_r2 = r2_standardiser(predicted_xs=pred_xs,
@@ -261,9 +328,161 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			r2 = r2_score(all_library_evaluations, all_predictions)  # various comparisons
 
+			for jkl  in eotherlibr2s:
+				if jkl > endfb_r2:
+					exclusionsotherlibbetterany += 1
+					break
+
+			for jjj in otherlibr2s:
+				if jjj >endfb_r2:
+					anyothertally += 1
+					break
+
+			if r2 > 0.97 and endfb_r2 < 0.9:
+				outliers += 1
+
+			if r2 > 0.95 and endfb_r2 <= 0.9:
+				outliers90 += 1
+
+			if r2 > 0.85 and endfb_r2 <0.8:
+				outliers85 += 1
+
+			if r2 >0.9 and endfb_r2 <0.9:
+				outliers9090+=1
+
+			for z in evaluation_r2s:
+				if z > 0.95:
+					outlier_tally += 1
+					break
+
+
+
+
+			for z in evaluation_r2s:
+				if z >= 0.9:
+					at_least_one_agreeing_90 += 1
+					break
+
+			for u in evaluation_r2s:
+				if nuc[1] >= 100 and u >= 0.95:
+					tally_min100A_at_least_95 += 1
+					break
+
+			for q in evaluation_r2s:
+				if nuc[1] >= 100 and q >= 0.90:
+					tally_min100A_at_least_90 += 1
+					break
+
+			for z in evaluation_r2s:
+				if z >=0.93:
+					at_least_one_agreeing_93 += 1
+					break
+
+			for z in evaluation_r2s:
+				if z >= 0.95:
+					at_least_one_agreeing_95 += 1
+					break
+
+			l_temp = 0
+			for l in evaluation_r2s:
+				if l < 0.9:
+					l_temp += 1
+				if int(l_temp) == len(evaluation_r2s):
+					bad_nuclides.append(current_nuclide)
+
+
+			if nuc[1] > 60:
+				other.append(r2)
+
+			if r2 > 0.95:
+				tally += 1
+
+			if r2 >= 0.9:
+				tally90 += 1
+
+			if r2 >= 0.97:
+				gewd_97 +=1
+			if current_nuclide[1] <= 60:
+				low_masses.append(r2)
+
 			limited_r2 = r2_score(limited_evaluations, limited_predictions)
 
+	eolbjeff.append(exclusions_other_lib_better_jeff)
+	eolbcendl.append(exclusions_other_lib_better_cendl)
+	eolbjendl.append(exclusions_other_lib_better_jendl)
+	eolbtendl.append(exclusions_other_lib_better_tendl)
+	eolbany.append(exclusionsotherlibbetterany)
 
+	anyotherbetter.append(anyothertally)
+
+	olbtendl.append(tendlgeneral_olb)
+	olbjeff.append(jeffgeneral_olb)
+	olbcendl.append(cendlgeneral_olb)
+	olbjendl.append(jendlgeneral_olb)
+	lownucs = range_setter(df=endfb8, la=0, ua=60)
+	othernucs = range_setter(df=endfb8, la=61, ua=210)
+	oncount = 0
+	oncount90 = 0
+	for q in other:
+		if q < 0.8:
+			oncount += 1
+		if q < 0.9:
+			oncount90 += 1
+
+	print(f"{oncount}/{len(othernucs)} of mid nucs have r2 below 0.8")
+	print(f"{oncount90}/{len(othernucs)} of mid nucs have r2 below 0.9")
+	print(f">= 97 consensus: {gewd_97}/{len(al)}")
+
+	atleast190.append(at_least_one_agreeing_90)
+	atleast193.append(at_least_one_agreeing_93)
+	atleast195.append(at_least_one_agreeing_95)
+
+	min100A_at_least_90.append(tally_min100A_at_least_90)
+	min100A_at_least_95.append(tally_min100A_at_least_95)
+
+	lncount = 0
+	lncount90 = 0
+	for u in low_masses:
+		if u < 0.8:
+			lncount += 1
+		if u < 0.9:
+			lncount90 += 1
+	print(f"{lncount}/{len(lownucs)} of A<=60 nuclides have r2 below 0.8")
+	print(f"{lncount90}/{len(lownucs)} of A<=60 nuclides have r2 below 0.9")
+	# plt.figure()
+	# plt.hist(x=low_masses)
+	# plt.show()
+
+	low_a_badp = 0
+	for a in bad_nuclides:
+		if a[1] <= 60:
+			low_a_badp += 1
+	print(f"{low_a_badp}/{len(bad_nuclides)} have A <= 60 and are bad performers")
+
+	print(f"no. outliers estimate: {outliers}/{len(al)}")
+	print()
+	print(f"At least one library >= 0.95: {outlier_tally}/{len(al)}")
+	n_run_tally95.append(outlier_tally)
+	print(f"Estimate of outliers, threshold 0.9: {outliers90}/{len(al)}")
+	print(f"outliers 90/90: {outliers9090}/{len(al)}")
+	print(f"outliers 85/80: {outliers85}/{len(al)}")
+	print(f"Tally of consensus r2 > 0.95: {tally}/{len(al)}")
+	print(f"Tally of consensus r2 > 0.90: {tally90}/{len(al)}")
+	time.sleep(2)
+	# print(f"At least one library r2 > 0.90: {at_least_one_agreeing_90}/{len(al)}")
+	# print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
+
+	# all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_predictions)
+	benchmark_r2 = r2_score(y_true=benchmark_total_library_evaluations, y_pred=benchmark_total_predictions)
+	benchmark_mse = mean_squared_error(y_true=benchmark_total_library_evaluations, y_pred=benchmark_total_predictions)
+	# print(f"MSE: {all_libraries_mse:0.5f}")
+	print(f"R2: {benchmark_r2:0.5f}")
+	run_r2.append(benchmark_r2)  # stores all the benchmark r2s
+	run_mse.append(benchmark_mse)
+
+	print(f"Bad nuclides: {bad_nuclides}")
+
+	# min95_consensus.append(local_95)
 	print()
 
 
