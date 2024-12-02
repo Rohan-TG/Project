@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import periodictable
-import scipy
 from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE, r2_standardiser
 import random
 import shap
@@ -26,11 +25,9 @@ CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 
-df_test = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 
-df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=30, ua=210, df=df)
@@ -54,8 +51,8 @@ print("Test nuclide selection complete")
 
 
 
-X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, exclusions= [[54,135]],la=52, ua=63,) # create training matrix
-X_test, y_test = make_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
+X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides, exclusions= [],la=52, ua=63,) # create training matrix
+X_test, y_test = make_test(validation_nuclides, df=df,) # create test matrix using validation nuclides
 print("Data prep done")
 
 model = xg.XGBRegressor(n_estimators=900, # define regressor
@@ -130,7 +127,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	time.sleep(0.8)
 
 	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
-	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(raw_predictions=pred_xs, library_xs=true_xs)
+	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(predicted_xs=pred_xs, library_xs=true_xs)
 	for x, y in zip(pred_endfb_gated, truncated_endfb):
 		all_libs.append(y)
 		all_preds.append(x)
@@ -142,7 +139,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		cendl_test, cendl_xs = make_test(nuclides=[current_nuclide], df=CENDL)
 		pred_cendl = model.predict(cendl_test)
 
-		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(raw_predictions=pred_cendl, library_xs=cendl_xs)
+		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl, library_xs=cendl_xs)
 
 		pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
 		for x, y in zip(pred_cendl_gated, truncated_cendl):
@@ -156,7 +153,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jendl = model.predict(jendl_test)
 
 		pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
-		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(raw_predictions=pred_jendl, library_xs=jendl_xs)
+		pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl, library_xs=jendl_xs)
 
 		for x, y in zip(pred_jendl_gated, truncated_jendl):
 			all_libs.append(y)
@@ -169,7 +166,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_jeff = model.predict(jeff_test)
 
 		pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
-		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(raw_predictions=pred_jeff, library_xs=jeff_xs)
+		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -181,7 +178,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_tendl = model.predict(tendl_test)
 
 		pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
-		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(raw_predictions=pred_tendl, library_xs=tendl_xs)
+		pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl, library_xs=tendl_xs)
 		for x, y in zip(pred_tendl_gated, truncated_tendl):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -192,172 +189,172 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
 	# print(f"Mean gradient: {sum(abs(np.gradient(pred_xs)))/(len(pred_xs)):0.5f}")
 
-
-FIA = input("Run FIA? y/n: ")
-
-if FIA.lower() == 'y':
-
-	# FIA
-	model.get_booster().feature_names = ['Z',
-										 'A',
-										 'S2n',
-										 'S2p',
-										 'E',
-										 'Sp',
-										 'Sn',
-										 'BEA',
-										 # 'P',
-										 'Snc',
-										 'g-def',
-										 'N',
-										 'b-def',
-										 'Sn da',
-										 # 'Sp d',
-										 'S2n d',
-										 'Radius',
-										 'n_g_erg',
-										 'n_c_erg',
-										 'n_rms_r',
-										 # 'oct_def',
-										 # 'D_c',
-										 'BEA_d',
-										 'BEA_c',
-										 # 'Pair_d',
-										 # 'Par_d',
-										 # 'S2n_c',
-										 'S2p_c',
-										 'ME',
-										 # 'Z_even',
-										 # 'A_even',
-										 # 'N_even',
-										 'Shell',
-										 # 'Parity',
-										 # 'Spin',
-										 'Decay',
-										 # 'Deform',
-										 'p_g_e',
-										 'p_c_e',
-										 # 'p_rms_r',
-										 # 'rms_r',
-										 # 'Sp_c',
-										 # 'Sn_c',
-										 'Shell_c',
-										 # 'S2p-d',
-										 # 'Shell-d',
-										 'Spin-c',
-										 # 'Rad-c',
-										 'Def-c',
-										 # 'ME-c',
-										 'BEA-A-c',
-										 'Decay-d',
-										 # 'ME-d',
-										 # 'Rad-d',
-										 # 'Pair-c',
-										 # 'Par-c',
-										 'BEA-A-d',
-										 # 'Spin-d',
-										 'Def-d',
-										 # 'mag_p',
-										 # 'mag-n',
-										 # 'mag-d',
-										 'Nlow',
-										 # 'Ulow',
-										 # 'Ntop',
-										 'Utop',
-										 # 'ainf',
-										 'Asym',
-										 # 'Asym_c',
-										 'Asym_d',
-										 # 'AM'
-										 ]
-
-	# Gain-based feature importance plot
-	plt.figure(figsize=(10, 12))
-	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
-	plt.show()
-
-	# Splits-based feature importance plot
-	plt.figure(figsize=(10, 12))
-	plt.title("Splits-based FI")
-	xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
-	plt.show()
-
-	explainer = shap.Explainer(model.predict, X_train,
-							   feature_names= ['Z',
-										 'A',
-										 'S2n',
-										 'S2p',
-										 'E',
-										 'Sp',
-										 'Sn',
-										 'BEA',
-										 # 'P',
-										 'Snc',
-										 'g-def',
-										 'N',
-										 'b-def',
-										 'Sn da',
-										 # 'Sp d',
-										 'S2n d',
-										 'Radius',
-										 'n_g_erg',
-										 'n_c_erg',
-										 'n_rms_r',
-										 # 'oct_def',
-										 # 'D_c',
-										 'BEA_d',
-										 'BEA_c',
-										 # 'Pair_d',
-										 # 'Par_d',
-										 # 'S2n_c',
-										 'S2p_c',
-										 'ME',
-										 # 'Z_even',
-										 # 'A_even',
-										 # 'N_even',
-										 'Shell',
-										 # 'Parity',
-										 # 'Spin',
-										 'Decay',
-										 # 'Deform',
-										 'p_g_e',
-										 'p_c_e',
-										 # 'p_rms_r',
-										 # 'rms_r',
-										 # 'Sp_c',
-										 # 'Sn_c',
-										 'Shell_c',
-										 # 'S2p-d',
-										 # 'Shell-d',
-										 'Spin-c',
-										 # 'Rad-c',
-										 'Def-c',
-										 # 'ME-c',
-										 'BEA-A-c',
-										 'Decay-d',
-										 # 'ME-d',
-										 # 'Rad-d',
-										 # 'Pair-c',
-										 # 'Par-c',
-										 'BEA-A-d',
-										 # 'Spin-d',
-										 'Def-d',
-										 # 'mag_p',
-										 # 'mag-n',
-										 # 'mag-d',
-										 'Nlow',
-										 # 'Ulow',
-										 # 'Ntop',
-										 'Utop',
-										 # 'ainf',
-										 'Asym',
-										 # 'Asym_c',
-										 'Asym_d',
-										 # 'AM'
-										 ]) # SHAP feature importance analysis
-	shap_values = explainer(X_test)
-
-
-
-	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
-	shap.plots.waterfall(shap_values[0], max_display=70)
+#
+# FIA = input("Run FIA? y/n: ")
+#
+# if FIA.lower() == 'y':
+#
+# 	# FIA
+# 	model.get_booster().feature_names = ['Z',
+# 										 'A',
+# 										 'S2n',
+# 										 'S2p',
+# 										 'E',
+# 										 'Sp',
+# 										 'Sn',
+# 										 'BEA',
+# 										 # 'P',
+# 										 'Snc',
+# 										 'g-def',
+# 										 'N',
+# 										 'b-def',
+# 										 'Sn da',
+# 										 # 'Sp d',
+# 										 'S2n d',
+# 										 'Radius',
+# 										 'n_g_erg',
+# 										 'n_c_erg',
+# 										 'n_rms_r',
+# 										 # 'oct_def',
+# 										 # 'D_c',
+# 										 'BEA_d',
+# 										 'BEA_c',
+# 										 # 'Pair_d',
+# 										 # 'Par_d',
+# 										 # 'S2n_c',
+# 										 'S2p_c',
+# 										 'ME',
+# 										 # 'Z_even',
+# 										 # 'A_even',
+# 										 # 'N_even',
+# 										 'Shell',
+# 										 # 'Parity',
+# 										 # 'Spin',
+# 										 'Decay',
+# 										 # 'Deform',
+# 										 'p_g_e',
+# 										 'p_c_e',
+# 										 # 'p_rms_r',
+# 										 # 'rms_r',
+# 										 # 'Sp_c',
+# 										 # 'Sn_c',
+# 										 'Shell_c',
+# 										 # 'S2p-d',
+# 										 # 'Shell-d',
+# 										 'Spin-c',
+# 										 # 'Rad-c',
+# 										 'Def-c',
+# 										 # 'ME-c',
+# 										 'BEA-A-c',
+# 										 'Decay-d',
+# 										 # 'ME-d',
+# 										 # 'Rad-d',
+# 										 # 'Pair-c',
+# 										 # 'Par-c',
+# 										 'BEA-A-d',
+# 										 # 'Spin-d',
+# 										 'Def-d',
+# 										 # 'mag_p',
+# 										 # 'mag-n',
+# 										 # 'mag-d',
+# 										 'Nlow',
+# 										 # 'Ulow',
+# 										 # 'Ntop',
+# 										 'Utop',
+# 										 # 'ainf',
+# 										 'Asym',
+# 										 # 'Asym_c',
+# 										 'Asym_d',
+# 										 # 'AM'
+# 										 ]
+#
+# 	# Gain-based feature importance plot
+# 	plt.figure(figsize=(10, 12))
+# 	xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
+# 	plt.show()
+#
+# 	# Splits-based feature importance plot
+# 	plt.figure(figsize=(10, 12))
+# 	plt.title("Splits-based FI")
+# 	xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
+# 	plt.show()
+#
+# 	explainer = shap.Explainer(model.predict, X_train,
+# 							   feature_names= ['Z',
+# 										 'A',
+# 										 'S2n',
+# 										 'S2p',
+# 										 'E',
+# 										 'Sp',
+# 										 'Sn',
+# 										 'BEA',
+# 										 # 'P',
+# 										 'Snc',
+# 										 'g-def',
+# 										 'N',
+# 										 'b-def',
+# 										 'Sn da',
+# 										 # 'Sp d',
+# 										 'S2n d',
+# 										 'Radius',
+# 										 'n_g_erg',
+# 										 'n_c_erg',
+# 										 'n_rms_r',
+# 										 # 'oct_def',
+# 										 # 'D_c',
+# 										 'BEA_d',
+# 										 'BEA_c',
+# 										 # 'Pair_d',
+# 										 # 'Par_d',
+# 										 # 'S2n_c',
+# 										 'S2p_c',
+# 										 'ME',
+# 										 # 'Z_even',
+# 										 # 'A_even',
+# 										 # 'N_even',
+# 										 'Shell',
+# 										 # 'Parity',
+# 										 # 'Spin',
+# 										 'Decay',
+# 										 # 'Deform',
+# 										 'p_g_e',
+# 										 'p_c_e',
+# 										 # 'p_rms_r',
+# 										 # 'rms_r',
+# 										 # 'Sp_c',
+# 										 # 'Sn_c',
+# 										 'Shell_c',
+# 										 # 'S2p-d',
+# 										 # 'Shell-d',
+# 										 'Spin-c',
+# 										 # 'Rad-c',
+# 										 'Def-c',
+# 										 # 'ME-c',
+# 										 'BEA-A-c',
+# 										 'Decay-d',
+# 										 # 'ME-d',
+# 										 # 'Rad-d',
+# 										 # 'Pair-c',
+# 										 # 'Par-c',
+# 										 'BEA-A-d',
+# 										 # 'Spin-d',
+# 										 'Def-d',
+# 										 # 'mag_p',
+# 										 # 'mag-n',
+# 										 # 'mag-d',
+# 										 'Nlow',
+# 										 # 'Ulow',
+# 										 # 'Ntop',
+# 										 'Utop',
+# 										 # 'ainf',
+# 										 'Asym',
+# 										 # 'Asym_c',
+# 										 'Asym_d',
+# 										 # 'AM'
+# 										 ]) # SHAP feature importance analysis
+# 	shap_values = explainer(X_test)
+#
+#
+#
+# 	shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+# 	shap.plots.waterfall(shap_values[0], max_display=70)
