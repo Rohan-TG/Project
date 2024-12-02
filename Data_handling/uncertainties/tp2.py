@@ -43,12 +43,12 @@ main_bar_format = '{l_bar}%s{bar}%s{r_bar}' % (Colours.BLUE, Colours.BLUE)
 
 exc = exclusion_func() # 10 sigma with handpicked additions
 
-nuclide_queue = [[16,32]]
+nuclide_queue = [[30,64]]
 
 for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_bar_format):
 
 	target_nuclide = q_num
-	n_evaluations = 3
+	n_evaluations = 100
 
 	jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[target_nuclide])
 	cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[target_nuclide])
