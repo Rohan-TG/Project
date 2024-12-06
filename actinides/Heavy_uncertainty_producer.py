@@ -46,9 +46,9 @@ CENDL_nuclides = range_setter(df=CENDL32, la=30, ua=260)
 
 exc = exclusion_func()
 
-n_evaluations = 100
+n_evaluations = 10
 datapoint_matrix = []
-target_nuclide = [92,233]
+target_nuclide = [98,252]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -75,7 +75,7 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	X_train, y_train = make_train(df=df, validation_nuclides=validation_nuclides,
 								  exclusions=exc,
-								  la=220, ua=240,) # make training matrix
+								  la=215, ua=270,) # make training matrix
 
 	X_test, y_test = make_test(validation_nuclides, df=JENDL5,)
 
@@ -83,10 +83,10 @@ for i in tqdm.tqdm(range(n_evaluations)):
 
 	model_seed = random.randint(a=1, b=1000) # seed for subsampling
 
-	model = xg.XGBRegressor(n_estimators=950,
-							learning_rate=0.008,
+	model = xg.XGBRegressor(n_estimators=500,
+							learning_rate=0.1,
 							max_depth=8,
-							subsample=0.18236,
+							subsample=0.2,
 							max_leaves=0,
 							seed=model_seed,)
 
