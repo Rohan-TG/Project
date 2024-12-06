@@ -43,7 +43,7 @@ main_bar_format = '{l_bar}%s{bar}%s{r_bar}' % (Colours.BLUE, Colours.BLUE)
 
 exc = exclusion_func() # 10 sigma with handpicked additions
 
-nuclide_queue = [[30,64]]
+nuclide_queue = [[82,208]]
 
 for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_bar_format):
 
@@ -351,6 +351,25 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	fila2xs = [1.759, 1.811, 1.809, 1.791, 1.724, 1.819, 1.73]
 	fila2dxs = [0.079155, 0.0813139, 0.0750735, 0.0834606, 0.0755112, 0.0713048, 0.067643]
 
+
+	#PB-208 data
+	free = [
+		7.93, 8.18, 8.44, 8.94, 9.44, 9.93, 10.42, 10.91,
+		11.4, 11.88, 12.36, 12.85, 13.33, 13.8, 14.28, 14.76
+	]
+
+	# Column 2 (xs(mb) divided by 1000)
+	frexs = [
+		0.083, 0.171, 0.314, 0.605, 0.941, 1.184, 1.434, 1.58,
+		1.714, 1.804, 1.817, 1.921, 1.972, 2.071, 2.01, 2.028
+	]
+
+	# Column 3 (dxs(mb) divided by 1000)
+	fredxs = [
+		0.01, 0.014, 0.022, 0.04, 0.061, 0.075, 0.083, 0.097,
+		0.098, 0.105, 0.137, 0.143, 0.15, 0.16, 0.158, 0.163
+	]
+
 	plt.rcParams.update({'font.size': 12})
 	plt.figure()
 	plt.rcParams.update({'font.size': 12})
@@ -373,8 +392,8 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	# 			 capsize=2, label='Junhua, 2017', color='indigo')
 	# plt.errorbar(jun2erg, jun2xs, jun2dxs, fmt='x',
 	# 			 capsize=2, label='Junhua, 2017', color='violet')
-	# plt.errorbar(wange, wangxs, wangdxs, fmt='x',
-	# 			 capsize=2, label='Wang, 1992', color='blue')
+	plt.errorbar(free, frexs, fredxs, fmt='x',
+				 capsize=2, label='Frehaut, 1980', color='violet')
 	# plt.errorbar(konnoe, konnoxs, konnodxs, fmt='x',
 	# 			 capsize=2, label='Konno, 1993', color='orangered')
 	# plt.errorbar(qaime, qaimxs, qaimdxs, fmt='x',
