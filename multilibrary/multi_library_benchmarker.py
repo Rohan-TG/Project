@@ -34,15 +34,12 @@ all_libraries = pd.concat([endfb8, jendl5])
 all_libraries = pd.concat([all_libraries, jeff33])
 all_libraries = pd.concat([all_libraries, cendl32])
 
-nucs = range_setter(df=all_libraries, la=30, ua=208)
 
 all_libraries.index = range(len(all_libraries))
 
 
-al = range_setter(la=30, ua=208, df=all_libraries)
 
 
-nuclides_used = []
 
 nuclide_mse = []
 nuclide_r2 = []
@@ -89,7 +86,7 @@ run_mse = []
 
 
 
-num_runs = 2
+num_runs = 8
 
 for q in tqdm.tqdm(range(num_runs)):
 
@@ -98,6 +95,8 @@ for q in tqdm.tqdm(range(num_runs)):
 	tendl_r2s = []
 	jeff_r2s = []
 	jendl_r2s = []
+
+	nuclides_used = []
 
 	anyothertally = 0
 
@@ -137,7 +136,7 @@ for q in tqdm.tqdm(range(num_runs)):
 	at_least_one_agreeing_93 = 0
 	at_least_one_agreeing_95 = 0
 
-	while len(nuclides_used) < len(al):
+	while len(nuclides_used) < len(ENDFB_nuclides):
 
 	# print(f"{len(nuclides_used) // len(al)} Epochs left")
 
@@ -145,20 +144,20 @@ for q in tqdm.tqdm(range(num_runs)):
 
 		while len(validation_nuclides) < validation_set_size:
 
-			choice = random.choice(al)  # randomly select nuclide from list of all nuclides
+			choice = random.choice(ENDFB_nuclides)  # randomly select nuclide from list of all nuclides
 			if choice not in validation_nuclides and choice not in nuclides_used:
 				validation_nuclides.append(choice)
 				nuclides_used.append(choice)
-			if len(nuclides_used) == len(al):
+			if len(nuclides_used) == len(ENDFB_nuclides):
 				break
 
 		print("Test nuclide selection complete")
-		print(f"{len(nuclides_used)}/{len(al)} selections")
+		print(f"{len(nuclides_used)}/{len(ENDFB_nuclides)} selections")
 		# print(f"Epoch {len(al) // len(nuclides_used) + 1}/")
 
 		X_train, y_train = make_train(df=all_libraries, validation_nuclides=validation_nuclides, la=30, ua=208) # make training matrix
 
-		X_test, y_test = make_test(validation_nuclides, df=all_libraries)
+		X_test, y_test = make_test(validation_nuclides, df=endfb8)
 
 		# X_train must be in the shape (n_samples, n_features)
 		# and y_train must be in the shape (n_samples) of the target
@@ -181,13 +180,13 @@ for q in tqdm.tqdm(range(num_runs)):
 		predictions_ReLU = []
 
 		for n in validation_nuclides:
-			tempx, tempy = make_test(nuclides=[n], df=all_libraries)
+			tempx, tempy = make_test(nuclides=[n], df=endfb8)
 			initial_predictions = model.predict(tempx)
 			for p in initial_predictions:
 				if p >= (0.02 * max(initial_predictions)):
 					predictions_ReLU.append(p)
-			else:
-				predictions_ReLU.append(0)
+				else:
+					predictions_ReLU.append(0)
 
 		predictions = predictions_ReLU
 
@@ -235,6 +234,7 @@ for q in tqdm.tqdm(range(num_runs)):
 			for libxs, p in zip(truncated_endfb, pred_endfb_gated):
 				all_library_evaluations.append(libxs)
 				all_predictions.append(p)
+				all_interpolated_predictions.append(p)
 
 				benchmark_total_library_evaluations.append(libxs)
 				benchmark_total_predictions.append(p)
@@ -249,12 +249,16 @@ for q in tqdm.tqdm(range(num_runs)):
 				pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
 				pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl,
 																				   library_xs=cendl_xs)
+
+				otherlibr2s.append(pred_cendl_r2)
 				for libxs, p in zip(truncated_cendl, pred_cendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
+					all_interpolated_predictions.append(p)
 
 					limited_evaluations.append(libxs)
 					limited_predictions.append(p)
+
 
 					benchmark_total_library_evaluations.append(libxs)
 					benchmark_total_predictions.append(p)
@@ -270,9 +274,11 @@ for q in tqdm.tqdm(range(num_runs)):
 				pred_jendl_mse = mean_squared_error(pred_jendl, jendl_xs)
 				pred_jendl_gated, truncated_jendl, pred_jendl_r2 = r2_standardiser(predicted_xs=pred_jendl,
 																				   library_xs=jendl_xs)
+				otherlibr2s.append(pred_jendl_r2)
 				for libxs, p in zip(truncated_jendl, pred_jendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
+					all_interpolated_predictions.append(p)
 
 					limited_evaluations.append(libxs)
 					limited_predictions.append(p)
@@ -291,9 +297,12 @@ for q in tqdm.tqdm(range(num_runs)):
 				pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
 				pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff,
 																				library_xs=jeff_xs)
+
+				otherlibr2s.append(pred_jeff_r2)
 				for libxs, p in zip(truncated_jeff, pred_jeff_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
+					all_interpolated_predictions.append(p)
 
 					limited_evaluations.append(libxs)
 					limited_predictions.append(p)
@@ -312,9 +321,12 @@ for q in tqdm.tqdm(range(num_runs)):
 				pred_tendl_mse = mean_squared_error(pred_tendl, tendl_xs)
 				pred_tendl_gated, truncated_tendl, pred_tendl_r2 = r2_standardiser(predicted_xs=pred_tendl,
 																				   library_xs=tendl_xs)
+
+				otherlibr2s.append(pred_tendl_r2)
 				for libxs, p in zip(truncated_tendl, pred_tendl_gated):
 					all_library_evaluations.append(libxs)
 					all_predictions.append(p)
+					all_interpolated_predictions.append(p)
 
 					limited_evaluations.append(libxs)
 					limited_predictions.append(p)
@@ -431,7 +443,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	print(f"{oncount}/{len(othernucs)} of mid nucs have r2 below 0.8")
 	print(f"{oncount90}/{len(othernucs)} of mid nucs have r2 below 0.9")
-	print(f">= 97 consensus: {gewd_97}/{len(al)}")
+	print(f">= 97 consensus: {gewd_97}/{len(ENDFB_nuclides)}")
 
 	atleast190.append(at_least_one_agreeing_90)
 	atleast193.append(at_least_one_agreeing_93)
@@ -459,15 +471,15 @@ for q in tqdm.tqdm(range(num_runs)):
 			low_a_badp += 1
 	print(f"{low_a_badp}/{len(bad_nuclides)} have A <= 60 and are bad performers")
 
-	print(f"no. outliers estimate: {outliers}/{len(al)}")
+	print(f"no. outliers estimate: {outliers}/{len(ENDFB_nuclides)}")
 	print()
-	print(f"At least one library >= 0.95: {outlier_tally}/{len(al)}")
+	print(f"At least one library >= 0.95: {outlier_tally}/{len(ENDFB_nuclides)}")
 	n_run_tally95.append(outlier_tally)
-	print(f"Estimate of outliers, threshold 0.9: {outliers90}/{len(al)}")
-	print(f"outliers 90/90: {outliers9090}/{len(al)}")
-	print(f"outliers 85/80: {outliers85}/{len(al)}")
-	print(f"Tally of consensus r2 > 0.95: {tally}/{len(al)}")
-	print(f"Tally of consensus r2 > 0.90: {tally90}/{len(al)}")
+	print(f"Estimate of outliers, threshold 0.9: {outliers90}/{len(ENDFB_nuclides)}")
+	print(f"outliers 90/90: {outliers9090}/{len(ENDFB_nuclides)}")
+	print(f"outliers 85/80: {outliers85}/{len(ENDFB_nuclides)}")
+	print(f"Tally of consensus r2 > 0.95: {tally}/{len(ENDFB_nuclides)}")
+	print(f"Tally of consensus r2 > 0.90: {tally90}/{len(ENDFB_nuclides)}")
 	time.sleep(2)
 	# print(f"At least one library r2 > 0.90: {at_least_one_agreeing_90}/{len(al)}")
 	# print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
@@ -489,8 +501,8 @@ for q in tqdm.tqdm(range(num_runs)):
 
 A_plots = [i[1] for i in nuclide_r2]
 Z_plots = [i[0] for i in nuclide_r2]
-all_libraries_mse = mean_squared_error(y_true=all_library_evaluations, y_pred=all_interpolated_predictions)
-all_libraries_r2 = r2_score(y_true=all_library_evaluations, y_pred= all_interpolated_predictions)
+all_libraries_mse = mean_squared_error(y_true=benchmark_total_library_evaluations, y_pred=all_interpolated_predictions)
+all_libraries_r2 = r2_score(y_true=benchmark_total_library_evaluations, y_pred= all_interpolated_predictions)
 print(f"MSE: {all_libraries_mse:0.5f}")
 print(f"R2: {all_libraries_r2:0.5f}")
 
@@ -515,4 +527,12 @@ plt.grid()
 plt.show()
 
 
-print(f"Overall r2: {r2_score(every_true_value_list, every_prediction_list):0.5f}")
+# print(f"Overall r2: {r2_score(every_true_value_list, every_prediction_list):0.5f}")
+
+print(f'At least one library r2 >=0.9: {np.mean(atleast190)} +- {np.std(atleast190)}')
+print(f'At least one library r2 >=0.93: {np.mean(atleast193)} +- {np.std(atleast193)}')
+print(f'At least one library r2 >=0.95: {np.mean(atleast195)} +- {np.std(atleast195)}')
+
+print(f'Any other lib better than ENDFB: {np.mean(anyotherbetter)} +- {np.std(anyotherbetter)} out of {len(ENDFB_nuclides)}')
+
+# print(f'Any other lib better for exclusions: {np.mean(eolbany)} +- {np.std(eolbany)} out of {len(exc)}')
