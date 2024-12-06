@@ -41,7 +41,7 @@ CENDL_nuclides = range_setter(df=CENDL, la=30, ua=208)
 
 exc = exclusion_func()
 
-num_runs = 1
+num_runs = 10
 
 run_r2 = []
 run_mse = []
@@ -205,7 +205,7 @@ for q in tqdm.tqdm(range(num_runs)):
 
 			predjendlgated, d2, jendl_r2 = r2_standardiser(library_xs=jendlxs, predicted_xs=jendlxs_interpolated)
 			jendl_r2s.append(jendl_r2)
-			nuclide_jendl_r2.append([nuc[0], nuc[1]], jendl_r2)
+			nuclide_jendl_r2.append([nuc[0], nuc[1], jendl_r2])
 
 
 			for x, y in zip(d2, predjendlgated):
@@ -285,8 +285,12 @@ for match in exotics:
 				  difference])
 
 A_plots = [i[1] for i in alist]
-log_plots = [abs(np.log(abs(i[-3]))) for i in alist]
+log_plots = [abs(np.log10(abs(i[-3]))) for i in alist]
+cdiffplots = []
+for set in alist:
+	cdiffplots.append(set[-1])
 
+log_plots_consensus = [abs(np.log(abs(i[-4]))) for i in alist]
 
 jendldiffs = []
 for jendlnuc in nuclide_jendl_r2:
@@ -318,10 +322,19 @@ plt.title('MD for jendl')
 plt.grid()
 plt.show()
 
+plt.rcParams.update({'font.size': 12})
+plt.figure()
+plt.plot(cdiffplots, log_plots_consensus, 'x', color= 'slategrey')
+plt.grid()
+plt.title('Closeness to consensus for exotic nuclides')
+plt.xlabel('Mass difference')
+plt.ylabel("$|\ln(|r^2|)|$")
+plt.show()
+
 plt.figure()
 plt.plot(tendldiffs, lg_plots_tendl, 'x')
 plt.xlabel('Mass difference')
 plt.ylabel("$|\lg(|r^2|)|$")
-plt.title('MD for tendl')
+plt.title('Closeness to TENDL-2021')
 plt.grid()
 plt.show()
