@@ -66,6 +66,10 @@ atleast190 = []
 atleast193 = []
 atleast195 = []
 
+
+lessthan60_90_list = []
+lessthan60_95_list = []
+
 min100A_at_least_95 = []
 min100A_at_least_90 = []
 
@@ -85,6 +89,9 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	anyothertally = 0
 	every_true_value_list = []
+
+	lessthan60_95_tally = 0
+	lessthan60_90_tally = 0
 
 	endfb_r2s = []
 	cendl_r2s = []
@@ -455,6 +462,16 @@ for q in tqdm.tqdm(range(num_runs)):
 				if int(l_temp) == len(evaluation_r2s):
 					bad_nuclides.append(current_nuclide)
 
+			for sixties in evaluation_r2s:
+				if nuc[1] <= 60 and sixties >= 0.95:
+					lessthan60_95_tally += 1
+					break
+
+			for S in evaluation_r2s:
+				if nuc[1] <= 60 and S >= 0.9:
+					lessthan60_90_tally += 1
+					break
+
 			if nuc[1] <= 60:
 				low_mass_r2.append(r2)
 
@@ -505,6 +522,10 @@ for q in tqdm.tqdm(range(num_runs)):
 	eolbany.append(exclusionsotherlibbetterany)
 
 	anyotherbetter.append(anyothertally)
+
+
+	lessthan60_95_list.append(lessthan60_95_tally)
+	lessthan60_90_list.append(lessthan60_90_tally)
 
 	olbtendl.append(tendlgeneral_olb)
 	olbjeff.append(jeffgeneral_olb)
@@ -682,3 +703,10 @@ print(f'At least one library r2 >=0.95: {np.mean(atleast195)} +- {np.std(atleast
 print(f'Any other lib better than ENDFB: {np.mean(anyotherbetter)} +- {np.std(anyotherbetter)} out of {len(al)}')
 
 print(f'Any other lib better for exclusions: {np.mean(eolbany)} +- {np.std(eolbany)} out of {len(exc)}')
+
+
+lightnuclist = range_setter(df=df, la=0, ua=60)
+
+print(f'Nuclides with A <= 60 and r2 >= 0.90: {np.mean(lessthan60_90_list)} +- {np.std(lessthan60_90_list)}')
+print(f'Nuclides with A <= 60 and r2 >= 0.95: {np.mean(lessthan60_95_list)} +- {np.std(lessthan60_95_list)}')
+print(f'Out of {len(lightnuclist)}')
