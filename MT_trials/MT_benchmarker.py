@@ -31,24 +31,29 @@ CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 scriptrun1 = time.time()
 
 df = pd.read_csv('ENDFBVIII_MT16_MT103_MT107_fund_features.csv')
-df_test = pd.read_csv('ENDFBVIII_MT16_MT103_MT107_fund_features.csv')
 
 df = df[df.Z != 6]
-df_test = df_test[df_test.Z != 6]
 
 
-df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
-al = range_setter(la=0, ua=100, df=df)
+al = range_setter(la=0, ua=208, df=df)
+
+al.remove([4,9])
+al.remove([1,2])
+al.remove([1,3])
+al.remove([7,14])
+
+gate = 0.02
+
+lowMassList90 = []
+lowMassList95 = []
 
 
 
 
 
-
-
-validation_set_size = 10
+validation_set_size = 20
 num_runs = 10
 run_r2 = []
 tally_95 = []
@@ -57,6 +62,11 @@ for i in tqdm.tqdm(range(num_runs)):
 	every_prediction_list = []
 	every_true_value_list = []
 	outlier_tally = 0
+
+
+	lowMassTally90 = 0
+	lowMassTally95 = 0
+
 	while len(nuclides_used) < len(al):
 		time1 = time.time()
 
@@ -74,7 +84,7 @@ for i in tqdm.tqdm(range(num_runs)):
 
 		X_train, y_train = mtmake_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100, exclusions=[])
 
-		X_test, y_test = mtmake_test(df= df_test, nuclides=validation_nuclides)
+		X_test, y_test = mtmake_test(df= df, nuclides=validation_nuclides)
 
 		model = xg.XGBRegressor(n_estimators=950,  # define regressor
 								learning_rate=0.008,
@@ -90,11 +100,16 @@ for i in tqdm.tqdm(range(num_runs)):
 		predictions = model.predict(X_test)  # XS predictions
 		predictions_ReLU = []
 
-		for pred in predictions:
-			if pred >= 0.003:
-				predictions_ReLU.append(pred)
-			else:
-				predictions_ReLU.append(0)
+		for n in validation_nuclides:
+
+			temp_x, temp_y = mtmake_test(nuclides=[n], df=df)
+			initial_predictions = model.predict(temp_x)
+
+			for p in initial_predictions:
+				if p >= (gate * max(initial_predictions)):
+					predictions_ReLU.append(p)
+				else:
+					predictions_ReLU.append(0.0)
 
 		predictions = predictions_ReLU
 
@@ -233,6 +248,20 @@ for i in tqdm.tqdm(range(num_runs)):
 
 			limited_r2 = r2_score(limited_evaluations, limited_predictions)
 
+			for z in evaluation_r2s:
+				if z > 0.95:
+					outlier_tally += 1
+					break
+
+			for xx in evaluation_r2s:
+				if nuc[1] <= 60 and xx >= 0.90:
+					lowMassTally90 += 1
+					break
+
+			for jjl in evaluation_r2s:
+				if nuc[1] <= 60 and jjl >= 0.95:
+					lowMassTally95 += 1
+
 
 		for pred in predictions:
 			every_prediction_list.append(pred)
@@ -240,10 +269,9 @@ for i in tqdm.tqdm(range(num_runs)):
 		for val in y_test:
 			every_true_value_list.append(val)
 
-		for z in evaluation_r2s:
-			if z > 0.95:
-				outlier_tally += 1
-				break
+
+
+
 
 		time_taken = time.time() - time1
 		print(f'completed in {time_taken:0.1f} s.\n')
@@ -255,8 +283,14 @@ for i in tqdm.tqdm(range(num_runs)):
 	print(f"At least one library >= 0.95: {outlier_tally}/{len(al)}")
 	tally_95.append(outlier_tally)
 
+	lowMassList90.append(lowMassTally90)
+	lowMassList95.append(lowMassTally95)
+
 	print(f"Total time elapsed: {datetime.timedelta(seconds=(time.time() - scriptrun1))}")
 
 print(run_r2)
 print(np.mean(run_r2))
 print(np.std(run_r2))
+
+print(f'A <= 60 with r^2 >= 0.95 w.r.t one or more libs: {np.mean(lowMassList95)} +- {np.std(lowMassList95)}')
+print(f'A <= 60 with r^2 >= 0.90 w.r.t one or more libs: {np.mean(lowMassList90)} +- {np.std(lowMassList90)}')
