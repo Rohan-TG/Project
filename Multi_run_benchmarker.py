@@ -18,7 +18,7 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 
 df.index = range(len(df))
-al = range_setter(df=df, la=0, ua=260)
+al = range_setter(df=df, la=0, ua=208)
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
@@ -61,6 +61,10 @@ run_r2 = []
 
 nuclide_r2 = []
 
+
+lessthan60_90_list = []
+lessthan60_95_list = []
+
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 	every_prediction_list = []
@@ -72,6 +76,11 @@ for q in tqdm.tqdm(range(num_runs)):
 	outliers9090 = 0
 	outlier_tally = 0
 	tally = 0
+
+
+
+	lessthan60_95_tally = 0
+	lessthan60_90_tally = 0
 
 	low_masses = []
 
@@ -310,6 +319,16 @@ for q in tqdm.tqdm(range(num_runs)):
 					at_least_one_agreeing_90 += 1
 					break
 
+			for sixties in evaluation_r2s:
+				if nuc[1] <= 60 and sixties >= 0.95:
+					lessthan60_95_tally +=1
+					break
+
+			for S in evaluation_r2s:
+				if nuc[1] <= 60 and S >= 0.9:
+					lessthan60_90_tally += 1
+					break
+
 			l_temp = 0
 			for l in evaluation_r2s:
 				if l < 0.9:
@@ -398,6 +417,10 @@ for q in tqdm.tqdm(range(num_runs)):
 	print(f"Tally of consensus r2 > 0.95: {tally}/{len(al)}")
 	print(f"Tally of consensus r2 > 0.90: {tally90}/{len(al)}")
 	time.sleep(2)
+
+
+	lessthan60_95_list.append(lessthan60_95_tally)
+	lessthan60_90_list.append(lessthan60_90_tally)
 # print(f"At least one library r2 > 0.90: {at_least_one_agreeing_90}/{len(al)}")
 # print(f"New overall r2: {r2_score(every_true_value_list, every_prediction_list)}")
 
@@ -458,3 +481,10 @@ plt.show()
 # plt.hist(x=log_plots, bins=50)
 # plt.grid()
 # plt.show()
+
+
+lightnuclist = range_setter(df=df, la=0, ua=60)
+
+print(f'Nuclides with A <= 60 and r2 >= 0.90: {np.mean(lessthan60_90_list)} +- {np.std(lessthan60_90_list)}')
+print(f'Nuclides with A <= 60 and r2 >= 0.95: {np.mean(lessthan60_95_list)} +- {np.std(lessthan60_95_list)}')
+print(f'Out of {len(lightnuclist)}')
