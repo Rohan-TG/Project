@@ -44,6 +44,8 @@ exc = exclusion_func()
 
 validation_set_size = 20  # number of nuclides hidden from training
 
+gate = 0.02
+
 num_runs = 10
 run_r2 = []
 run_mse = []
@@ -196,7 +198,7 @@ for q in tqdm.tqdm(range(num_runs)):
 			initial_predictions = model.predict(temp_x)
 
 			for p in initial_predictions:
-				if p >= (0.02 * max(initial_predictions)):
+				if p >= (gate * max(initial_predictions)):
 					predictions_ReLU.append(p)
 				else:
 					predictions_ReLU.append(0.0)
