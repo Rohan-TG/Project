@@ -81,12 +81,12 @@ counter = 0
 run_r2 = []
 run_mse = []
 
+lessthan60_90_list = []
+lessthan60_95_list = []
 
 
 
-
-
-num_runs = 8
+num_runs = 10
 
 for q in tqdm.tqdm(range(num_runs)):
 
@@ -99,6 +99,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
 
 	anyothertally = 0
+
+	lessthan60_95_tally = 0
+	lessthan60_90_tally = 0
 
 	outliers = 0
 	outliers90 = 0
@@ -368,6 +371,15 @@ for q in tqdm.tqdm(range(num_runs)):
 					break
 
 
+			for sixties in evaluation_r2s:
+				if nuc[1] <= 60 and sixties >= 0.95:
+					lessthan60_95_tally +=1
+					break
+
+			for S in evaluation_r2s:
+				if nuc[1] <= 60 and S >= 0.9:
+					lessthan60_90_tally += 1
+					break
 
 
 			for z in evaluation_r2s:
@@ -424,6 +436,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	eolbjendl.append(exclusions_other_lib_better_jendl)
 	eolbtendl.append(exclusions_other_lib_better_tendl)
 	eolbany.append(exclusionsotherlibbetterany)
+
+	lessthan60_95_list.append(lessthan60_95_tally)
+	lessthan60_90_list.append(lessthan60_90_tally)
 
 	anyotherbetter.append(anyothertally)
 
@@ -536,3 +551,10 @@ print(f'At least one library r2 >=0.95: {np.mean(atleast195)} +- {np.std(atleast
 print(f'Any other lib better than ENDFB: {np.mean(anyotherbetter)} +- {np.std(anyotherbetter)} out of {len(ENDFB_nuclides)}')
 
 # print(f'Any other lib better for exclusions: {np.mean(eolbany)} +- {np.std(eolbany)} out of {len(exc)}')
+
+
+lightnuclist = range_setter(df=endfb8, la=0, ua=60)
+
+print(f'Nuclides with A <= 60 and r2 >= 0.90: {np.mean(lessthan60_90_list)} +- {np.std(lessthan60_90_list)}')
+print(f'Nuclides with A <= 60 and r2 >= 0.95: {np.mean(lessthan60_95_list)} +- {np.std(lessthan60_95_list)}')
+print(f'Out of {len(lightnuclist)}')
