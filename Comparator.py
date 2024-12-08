@@ -4,6 +4,7 @@ import periodictable
 from matrix_functions import General_plotter, range_setter, make_train, make_test, dsigma_dE, exclusion_func, r2_standardiser
 import random
 import shap
+import numpy as np
 import xgboost as xg
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_percentage_error
 import time
@@ -35,7 +36,7 @@ al = range_setter(la=30, ua=210, df=df)
 exc = exclusion_func()
 
 
-
+all_threshold_values = []
 
 
 
@@ -114,10 +115,17 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	all_libs = []
 	current_nuclide = validation_nuclides[i]
 
+	threshold_values = [] # contains thresholds for all libraries for this current nuclide
+
 	jendlerg, jendlxs = General_plotter(df=JENDL, nuclides=[current_nuclide])
 	cendlerg, cendlxs = General_plotter(df=CENDL, nuclides=[current_nuclide])
 	jefferg, jeffxs = General_plotter(df=JEFF, nuclides=[current_nuclide])
 	tendlerg, tendlxs = General_plotter(df=TENDL, nuclides=[current_nuclide])
+
+	for XS_val, energy in zip(pred_xs, erg): # locates the predicted threshold, according to the ML model
+		if XS_val > 0:
+			predicted_threshold = energy
+			break
 
 	nuc = validation_nuclides[i]  # validation nuclide
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
@@ -142,6 +150,11 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
 	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(predicted_xs=pred_xs, library_xs=true_xs)
 
+	for o, p in zip(erg, true_xs):
+		if p > 0:
+			threshold_values.append(o)
+			break
+
 	endfbmape = mean_absolute_percentage_error(truncated_endfb, pred_endfb_gated)
 	for x, y in zip(pred_endfb_gated, truncated_endfb):
 		all_libs.append(y)
@@ -157,6 +170,12 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		pred_cendl_gated, truncated_cendl, pred_cendl_r2 = r2_standardiser(predicted_xs=pred_cendl, library_xs=cendl_xs)
 
 		pred_cendl_mse = mean_squared_error(pred_cendl, cendl_xs)
+
+		for o, p in zip(cendlerg, cendlxs):
+			if p > 0:
+				threshold_values.append(o)
+				break
+
 		for x, y in zip(pred_cendl_gated, truncated_cendl):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -173,6 +192,11 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		for x, y in zip(pred_jendl_gated, truncated_jendl):
 			all_libs.append(y)
 			all_preds.append(x)
+
+		for o, p in zip(jendlerg, jendlxs):
+			if p > 0:
+				threshold_values.append(o)
+				break
 		print(f"Predictions - JENDL5 R2: {pred_jendl_r2:0.5f} MSE: {pred_jendl_mse:0.6f}")
 
 	if current_nuclide in JEFF_nuclides:
@@ -182,6 +206,12 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 		pred_jeff_mse = mean_squared_error(pred_jeff, jeff_xs)
 		pred_jeff_gated, truncated_jeff, pred_jeff_r2 = r2_standardiser(predicted_xs=pred_jeff, library_xs=jeff_xs)
+
+		for o, p in zip(jefferg, jeffxs):
+			if p > 0:
+				threshold_values.append(o)
+				break
+
 		for x, y in zip(pred_jeff_gated, truncated_jeff):
 			all_libs.append(y)
 			all_preds.append(x)
@@ -197,11 +227,26 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 		for x, y in zip(pred_tendl_gated, truncated_tendl):
 			all_libs.append(y)
 			all_preds.append(x)
+
+		for o, p in zip(tendlerg, tendlxs):
+			if p > 0:
+				threshold_values.append(o)
+				break
 		print(f"Predictions - TENDL21 R2: {pred_tendl_r2:0.5f} MSE: {pred_tendl_mse:0.6f}")
 
 	print(f"Consensus R2: {r2_score(all_libs, all_preds):0.5f}")
 
+	thr_diffs = []
+	for lib_thr in threshold_values:
+		difference = lib_thr - predicted_threshold
+		thr_diffs.append(difference)
+	mean_difference = np.mean(thr_diffs)
+
+	all_threshold_values.append(threshold_values)
+
 	print(f"Turning points: {dsigma_dE(XS=pred_xs)}")
+
+	print(f'Mean threshold difference: {mean_difference:0.2f} MeV')
 	# print(f"Mean gradient: {sum(abs(np.gradient(pred_xs)))/(len(pred_xs)):0.5f}")
 
 
