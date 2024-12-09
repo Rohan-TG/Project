@@ -666,12 +666,26 @@ print(f'MSE: {np.mean(run_mse):0.6f} +/- {np.std(run_mse):0.6f}')
 
 
 plots = []
+
+acc05 = []
+acc03 = []
 for nucleus in al:
 	iteration_difference = []
+
+	accurateEnoughCount05 = 0
+	accurateEnoughCount03 = 0
 
 	for set in nuclide_thresholds:
 		if [set[0], set[1]] == nucleus:
 			iteration_difference.append(set[-1])
+
+			if abs(set[-1]) <= 0.5:
+				accurateEnoughCount05 +=1
+			if abs(set[-1]) <= 0.3:
+				accurateEnoughCount03 += 1
+
+	acc05.append(accurateEnoughCount05)
+	acc03.append(accurateEnoughCount03)
 
 	mean_n_difference = np.mean(iteration_difference)
 
