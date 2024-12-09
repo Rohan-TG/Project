@@ -44,6 +44,7 @@ main_bar_format = '{l_bar}%s{bar}%s{r_bar}' % (Colours.BLUE, Colours.BLUE)
 exc = exclusion_func() # 10 sigma with handpicked additions
 
 nuclide_queue = [[82,208]]
+gate = 0.02
 
 for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_bar_format):
 
@@ -122,7 +123,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 			initial_predictions = model.predict(tempx)
 
 			for p in initial_predictions:
-				if p > (0.02 * max(initial_predictions)):
+				if p > (gate * max(initial_predictions)):
 					predictions_ReLU.append(p)
 				else:
 					predictions_ReLU.append(0.0)
@@ -392,8 +393,8 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	# 			 capsize=2, label='Junhua, 2017', color='indigo')
 	# plt.errorbar(jun2erg, jun2xs, jun2dxs, fmt='x',
 	# 			 capsize=2, label='Junhua, 2017', color='violet')
-	plt.errorbar(free, frexs, fredxs, fmt='x',
-				 capsize=2, label='Frehaut, 1980', color='violet')
+	# plt.errorbar(free, frexs, fredxs, fmt='x',
+	# 			 capsize=2, label='Frehaut, 1980', color='violet')
 	# plt.errorbar(konnoe, konnoxs, konnodxs, fmt='x',
 	# 			 capsize=2, label='Konno, 1993', color='orangered')
 	# plt.errorbar(qaime, qaimxs, qaimdxs, fmt='x',
@@ -409,7 +410,7 @@ for q_num in tqdm.tqdm(nuclide_queue, total=len(nuclide_queue), bar_format=main_
 	plt.xlabel("Energy / MeV")
 	plt.ylabel("$\sigma_{n,2n}$ / b")
 	plt.legend(loc='upper left')
-	plt.savefig(f'{periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}_n2n.png', dpi=500)
+	# plt.savefig(f'{periodictable.elements[target_nuclide[0]]}-{target_nuclide[1]}_n2n.png', dpi=500)
 	plt.show()
 
 	final_runtime = time.time() - runtime
