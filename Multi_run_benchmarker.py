@@ -18,7 +18,7 @@ df = pd.read_csv("ENDFBVIII_MT16_XS_feateng.csv")
 
 
 df.index = range(len(df))
-al = range_setter(df=df, la=0, ua=208)
+al = range_setter(df=df, la=0, ua=260)
 
 TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
