@@ -261,6 +261,7 @@ for i in tqdm.tqdm(range(num_runs)):
 			for jjl in evaluation_r2s:
 				if nuc[1] <= 60 and jjl >= 0.95:
 					lowMassTally95 += 1
+					break
 
 
 		for pred in predictions:
