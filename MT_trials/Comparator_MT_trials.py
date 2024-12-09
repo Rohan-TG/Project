@@ -11,29 +11,27 @@ from sklearn.metrics import r2_score, mean_squared_error
 import time
 import shap
 
-TENDL = pd.read_csv("TENDL_2021_MT16_with_ENDFB_MT103_107.csv")
+TENDL = pd.read_csv("TENDL_2021_MT16_XS_features.csv")
 TENDL.index = range(len(TENDL))
 TENDL_nuclides = range_setter(df=TENDL, la=0, ua=210)
 
-JEFF = pd.read_csv('JEFF33_all_features_MT16_103_107.csv')
+JEFF = pd.read_csv('JEFF33_all_features.csv')
 JEFF.index = range(len(JEFF))
 JEFF_nuclides = range_setter(df=JEFF, la=0, ua=210)
 
-JENDL = pd.read_csv('JENDL5_with_MT16_and_ENDFB_MT103_107.csv')
+JENDL = pd.read_csv('JENDL5_arange_all_features.csv')
 JENDL.index = range(len(JENDL))
 JENDL_nuclides = range_setter(df=JENDL, la=0, ua=210)
 
-CENDL = pd.read_csv('CENDL32_MT16_with_ENDFB_MT103_107.csv')
+CENDL = pd.read_csv('CENDL32_all_features.csv')
 CENDL.index = range(len(CENDL))
 CENDL_nuclides = range_setter(df=CENDL, la=0, ua=210)
 
 
 
-df = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
-df_test = pd.read_csv('ENDFBVIII_MT16_91_103_107.csv')
+df = pd.read_csv('ENDFBVIII_MT16_MT103_MT107_fund_features.csv')
 
 
-df_test.index = range(len(df_test)) # re-label indices
 df.index = range(len(df))
 # df_test = anomaly_remover(dfa = df_test)
 al = range_setter(la=0, ua=100, df=df)
@@ -51,16 +49,16 @@ print("Test nuclide selection complete")
 
 
 X_train, y_train = mtmake_train(df=df, validation_nuclides=validation_nuclides, la=0, ua=100, exclusions=[]) # create training matrix
-X_test, y_test = mtmake_test(validation_nuclides, df=df_test,) # create test matrix using validation nuclides
+X_test, y_test = mtmake_test(validation_nuclides, df=df,) # create test matrix using validation nuclides
 print("Data prep done")
 
-model = xg.XGBRegressor(n_estimators=900, # define regressor
+model = xg.XGBRegressor(n_estimators=950, # define regressor
 						learning_rate=0.008,
 						max_depth=8,
 						subsample=0.25,
 						max_leaves=0,
 						seed=42,
-						reg_lambda = 6,
+						reg_lambda = 0,
 						)
 
 model.fit(X_train, y_train)
@@ -128,7 +126,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	time.sleep(0.8)
 
 	pred_endfb_mse = mean_squared_error(pred_xs, true_xs)
-	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(raw_predictions=pred_xs, library_xs=true_xs)
+	pred_endfb_gated, truncated_endfb, pred_endfb_r2 = r2_standardiser(predicted_xs=pred_xs, library_xs=true_xs)
 	for x, y in zip(pred_endfb_gated, truncated_endfb):
 		all_libs.append(y)
 		all_preds.append(x)
@@ -136,172 +134,172 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 
 
 # FIA
-model.get_booster().feature_names = ['Z',
-									 'A',
-									 'S2n',
-									 'S2p',
-									 'E',
-									 'Sp',
-									 'Sn',
-									 'BEA',
-									 # 'P',
-									 'Snc',
-									 'g-def',
-									 'N',
-									 'b-def',
-									 'Sn da',
-									 # 'Sp d',
-									 'S2n d',
-									 'Radius',
-									 'n_g_erg',
-									 'n_c_erg',
-									 'n_rms_r',
-									 # 'oct_def',
-									 # 'D_c',
-									 'BEA_d',
-									 'BEA_c',
-									 # 'Pair_d',
-									 # 'Par_d',
-									 # 'S2n_c',
-									 'S2p_c',
-									 'ME',
-									 # 'Z_even',
-									 # 'A_even',
-									 # 'N_even',
-									 'Shell',
-									 # 'Parity',
-									 # 'Spin',
-									 'Decay',
-									 # 'Deform',
-									 'p_g_e',
-									 'p_c_e',
-									 # 'p_rms_r',
-									 # 'rms_r',
-									 # 'Sp_c',
-									 # 'Sn_c',
-									 'Shell_c',
-									 # 'S2p-d',
-									 # 'Shell-d',
-									 'Spin-c',
-									 # 'Rad-c',
-									 'Def-c',
-									 # 'ME-c',
-									 'BEA-A-c',
-									 'Decay-d',
-									 # 'ME-d',
-									 # 'Rad-d',
-									 # 'Pair-c',
-									 # 'Par-c',
-									 'BEA-A-d',
-									 # 'Spin-d',
-									 'Def-d',
-									 # 'mag_p',
-									 # 'mag-n',
-									 # 'mag-d',
-									 'Nlow',
-									 # 'Ulow',
-									 # 'Ntop',
-									 'Utop',
-									 # 'ainf',
-									 'Asym',
-									 # 'Asym_c',
-									 'Asym_d',
-									 # 'AM',
-									 'MT103_XS',
-									 'MT107_XS',
-									 # 'MT91_XS'
-									 ]
-
-# Gain-based feature importance plot
-plt.figure(figsize=(10, 12))
-xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
-plt.show()
-
-# Splits-based feature importance plot
-plt.figure(figsize=(10, 12))
-plt.title("Splits-based FI")
-xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
-plt.show()
-
-explainer = shap.Explainer(model.predict, X_train,
-						   feature_names= ['Z',
-									 'A',
-									 'S2n',
-									 'S2p',
-									 'E',
-									 'Sp',
-									 'Sn',
-									 'BEA',
-									 # 'P',
-									 'Snc',
-									 'g-def',
-									 'N',
-									 'b-def',
-									 'Sn da',
-									 # 'Sp d',
-									 'S2n d',
-									 'Radius',
-									 'n_g_erg',
-									 'n_c_erg',
-									 'n_rms_r',
-									 # 'oct_def',
-									 # 'D_c',
-									 'BEA_d',
-									 'BEA_c',
-									 # 'Pair_d',
-									 # 'Par_d',
-									 # 'S2n_c',
-									 'S2p_c',
-									 'ME',
-									 # 'Z_even',
-									 # 'A_even',
-									 # 'N_even',
-									 'Shell',
-									 # 'Parity',
-									 # 'Spin',
-									 'Decay',
-									 # 'Deform',
-									 'p_g_e',
-									 'p_c_e',
-									 # 'p_rms_r',
-									 # 'rms_r',
-									 # 'Sp_c',
-									 # 'Sn_c',
-									 'Shell_c',
-									 # 'S2p-d',
-									 # 'Shell-d',
-									 'Spin-c',
-									 # 'Rad-c',
-									 'Def-c',
-									 # 'ME-c',
-									 'BEA-A-c',
-									 'Decay-d',
-									 # 'ME-d',
-									 # 'Rad-d',
-									 # 'Pair-c',
-									 # 'Par-c',
-									 'BEA-A-d',
-									 # 'Spin-d',
-									 'Def-d',
-									 # 'mag_p',
-									 # 'mag-n',
-									 # 'mag-d',
-									 'Nlow',
-									 # 'Ulow',
-									 # 'Ntop',
-									 'Utop',
-									 # 'ainf',
-									 'Asym',
-									 # 'Asym_c',
-									 'Asym_d',
-									 # 'AM',
-									 'MT103XS',
-									 'MT107XS',
-									 # 'MT_91XS',
-									 ]) # SHAP feature importance analysis
-shap_values = explainer(X_test)
-
-
-
-shap.plots.bar(shap_values, max_display = 70) # display SHAP results
-shap.plots.waterfall(shap_values[0], max_display=70)
+# model.get_booster().feature_names = ['Z',
+# 									 'A',
+# 									 'S2n',
+# 									 'S2p',
+# 									 'E',
+# 									 'Sp',
+# 									 'Sn',
+# 									 'BEA',
+# 									 # 'P',
+# 									 'Snc',
+# 									 'g-def',
+# 									 'N',
+# 									 'b-def',
+# 									 'Sn da',
+# 									 # 'Sp d',
+# 									 'S2n d',
+# 									 'Radius',
+# 									 'n_g_erg',
+# 									 'n_c_erg',
+# 									 'n_rms_r',
+# 									 # 'oct_def',
+# 									 # 'D_c',
+# 									 'BEA_d',
+# 									 'BEA_c',
+# 									 # 'Pair_d',
+# 									 # 'Par_d',
+# 									 # 'S2n_c',
+# 									 'S2p_c',
+# 									 'ME',
+# 									 # 'Z_even',
+# 									 # 'A_even',
+# 									 # 'N_even',
+# 									 'Shell',
+# 									 # 'Parity',
+# 									 # 'Spin',
+# 									 'Decay',
+# 									 # 'Deform',
+# 									 'p_g_e',
+# 									 'p_c_e',
+# 									 # 'p_rms_r',
+# 									 # 'rms_r',
+# 									 # 'Sp_c',
+# 									 # 'Sn_c',
+# 									 'Shell_c',
+# 									 # 'S2p-d',
+# 									 # 'Shell-d',
+# 									 'Spin-c',
+# 									 # 'Rad-c',
+# 									 'Def-c',
+# 									 # 'ME-c',
+# 									 'BEA-A-c',
+# 									 'Decay-d',
+# 									 # 'ME-d',
+# 									 # 'Rad-d',
+# 									 # 'Pair-c',
+# 									 # 'Par-c',
+# 									 'BEA-A-d',
+# 									 # 'Spin-d',
+# 									 'Def-d',
+# 									 # 'mag_p',
+# 									 # 'mag-n',
+# 									 # 'mag-d',
+# 									 'Nlow',
+# 									 # 'Ulow',
+# 									 # 'Ntop',
+# 									 'Utop',
+# 									 # 'ainf',
+# 									 'Asym',
+# 									 # 'Asym_c',
+# 									 'Asym_d',
+# 									 # 'AM',
+# 									 'MT103_XS',
+# 									 'MT107_XS',
+# 									 # 'MT91_XS'
+# 									 ]
+#
+# # Gain-based feature importance plot
+# plt.figure(figsize=(10, 12))
+# xg.plot_importance(model, ax=plt.gca(), importance_type='total_gain', max_num_features=60)  # metric is total gain
+# plt.show()
+#
+# # Splits-based feature importance plot
+# plt.figure(figsize=(10, 12))
+# plt.title("Splits-based FI")
+# xg.plot_importance(model, ax=plt.gca(), max_num_features=60)
+# plt.show()
+#
+# explainer = shap.Explainer(model.predict, X_train,
+# 						   feature_names= ['Z',
+# 									 'A',
+# 									 'S2n',
+# 									 'S2p',
+# 									 'E',
+# 									 'Sp',
+# 									 'Sn',
+# 									 'BEA',
+# 									 # 'P',
+# 									 'Snc',
+# 									 'g-def',
+# 									 'N',
+# 									 'b-def',
+# 									 'Sn da',
+# 									 # 'Sp d',
+# 									 'S2n d',
+# 									 'Radius',
+# 									 'n_g_erg',
+# 									 'n_c_erg',
+# 									 'n_rms_r',
+# 									 # 'oct_def',
+# 									 # 'D_c',
+# 									 'BEA_d',
+# 									 'BEA_c',
+# 									 # 'Pair_d',
+# 									 # 'Par_d',
+# 									 # 'S2n_c',
+# 									 'S2p_c',
+# 									 'ME',
+# 									 # 'Z_even',
+# 									 # 'A_even',
+# 									 # 'N_even',
+# 									 'Shell',
+# 									 # 'Parity',
+# 									 # 'Spin',
+# 									 'Decay',
+# 									 # 'Deform',
+# 									 'p_g_e',
+# 									 'p_c_e',
+# 									 # 'p_rms_r',
+# 									 # 'rms_r',
+# 									 # 'Sp_c',
+# 									 # 'Sn_c',
+# 									 'Shell_c',
+# 									 # 'S2p-d',
+# 									 # 'Shell-d',
+# 									 'Spin-c',
+# 									 # 'Rad-c',
+# 									 'Def-c',
+# 									 # 'ME-c',
+# 									 'BEA-A-c',
+# 									 'Decay-d',
+# 									 # 'ME-d',
+# 									 # 'Rad-d',
+# 									 # 'Pair-c',
+# 									 # 'Par-c',
+# 									 'BEA-A-d',
+# 									 # 'Spin-d',
+# 									 'Def-d',
+# 									 # 'mag_p',
+# 									 # 'mag-n',
+# 									 # 'mag-d',
+# 									 'Nlow',
+# 									 # 'Ulow',
+# 									 # 'Ntop',
+# 									 'Utop',
+# 									 # 'ainf',
+# 									 'Asym',
+# 									 # 'Asym_c',
+# 									 'Asym_d',
+# 									 # 'AM',
+# 									 'MT103XS',
+# 									 'MT107XS',
+# 									 # 'MT_91XS',
+# 									 ]) # SHAP feature importance analysis
+# shap_values = explainer(X_test)
+#
+#
+#
+# shap.plots.bar(shap_values, max_display = 70) # display SHAP results
+# shap.plots.waterfall(shap_values[0], max_display=70)
