@@ -42,6 +42,7 @@ validation_nuclides = [[30,64],
 					   # [16,32],
 					   ]
 validation_set_size = 1
+gate =0.05
 
 while len(validation_nuclides) < validation_set_size: # up to 25 nuclides
 	choice = random.choice(al) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -67,11 +68,15 @@ print("Training complete")
 predictions = model.predict(X_test)  # XS predictions
 predictions_ReLU = []
 
-for pred in predictions: # prediction gate
-	if pred >= 0.003:
-		predictions_ReLU.append(pred)
-	else:
-		predictions_ReLU.append(0)
+for n in validation_nuclides:
+	tempx, tempy = make_test(nuclides=[n], df=df)
+	initial_predictions = model.predict(tempx)
+
+	for p in initial_predictions:
+		if p > (gate * max(initial_predictions)):
+			predictions_ReLU.append(p)
+		else:
+			predictions_ReLU.append(0.0)
 
 predictions = predictions_ReLU
 
