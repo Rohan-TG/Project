@@ -452,7 +452,7 @@ print(np.std(run_r2))
 # mse_log_plots = [np.log(i[-1]) for i in nuclide_mse]
 # mse_plots = [i[-1] for i in nuclide_mse]
 
-log_plots = [abs(np.log(abs(i[-1]))) for i in alist]
+log_plots = [abs(np.log10(abs(i[-1]))) for i in alist]
 # log_plots_Z = [abs(np.log(abs(i[-1]))) for i in nuclide_r2]
 #
 # r2plot = [i[-1] for i in nuclide_r2]
@@ -464,7 +464,7 @@ plt.figure()
 plt.plot(A_plots, log_plots, 'x')
 # plt.plot(A_plots, r2plot, 'x')
 plt.xlabel("A")
-plt.ylabel("$|\ln(|r^2|)|$")
+plt.ylabel("$|\lg(|r^2|)|$")
 plt.title("Performance - A")
 plt.grid()
 plt.show()
