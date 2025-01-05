@@ -52,7 +52,10 @@ num_runs = 10
 run_r2 = []
 run_rmse = []
 
+atleast95 = []
 atleast90 = []
+atleast85 = []
+atleast80 = []
 nuclide_r2 = []
 
 nucq = []
@@ -91,6 +94,9 @@ for q in tqdm.tqdm(range(num_runs)):
 
 
 	atleast90tally = 0
+	atleast95tally = 0
+	atleast85tally = 0
+	atleast80tally = 0
 
 	anyothertally = 0 # tallies how many nuclides in a single crossvalidation iteration have predictions closer to another library than to ENDF/B
 
@@ -339,6 +345,22 @@ for q in tqdm.tqdm(range(num_runs)):
 					atleast90tally += 1
 					break
 
+			for c95 in evaluation_r2s:
+				if c95 > 0.95:
+					atleast95tally += 1
+					break
+
+			for c85 in evaluation_r2s:
+				if c85 > 0.85:
+					atleast85tally += 1
+					break
+
+			for c80 in evaluation_r2s:
+				if c80 > 0.80:
+					atleast80tally += 1
+					break
+
+
 
 			for stored_r2 in otherlibr2s:
 				if stored_r2 > endfb_r2:
@@ -453,6 +475,9 @@ for q in tqdm.tqdm(range(num_runs)):
 	run_r2.append(benchmark_r2)
 	run_rmse.append(benchmark_rmse)
 	atleast90.append(atleast90tally)
+	atleast95.append(atleast95tally)
+	atleast85.append(atleast85tally)
+	atleast80.append(atleast80tally)
 
 	print(f"Bad nuclides: {bad_nuclides}")
 
@@ -501,7 +526,11 @@ plt.show()
 # plt.xlabel('Z')
 # plt.ylabel("$|\ln(|r^2|)|$")
 # plt.title("Performance - Z")
+
+print(f'At least 1 lib > 95: {np.mean(atleast95)} +- {np.std(atleast95)}')
 print(f'At least 1 lib > 90: {np.mean(atleast90)} +- {np.std(atleast90)}')
+print(f'At least 1 lib > 85: {np.mean(atleast85)} +- {np.std(atleast85)}')
+print(f'At least 1 lib > 80: {np.mean(atleast80)} +- {np.std(atleast80)}')
 # plt.grid()
 # plt.show()
 print(f'RMSE: {np.mean(run_rmse)} +- {np.std(run_rmse)}')
