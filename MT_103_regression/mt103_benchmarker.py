@@ -64,7 +64,10 @@ run_rmse = []
 
 nuclide_r2 = []
 
+tallyatleast95 = []
 tallyatleast90 = []
+tallyatleast85 = []
+tallyatleast80 = []
 
 for q in tqdm.tqdm(range(num_runs)):
 	nuclides_used = []
@@ -92,7 +95,10 @@ for q in tqdm.tqdm(range(num_runs)):
 
 	bad_nuclides = []
 
+	at_least_one_agreeing_95 = 0
 	at_least_one_agreeing_90 = 0
+	at_least_one_agreeing_85 = 0
+	at_least_one_agreeing_80 = 0
 
 	every_prediction_list = []
 	every_true_value_list = []
@@ -325,6 +331,21 @@ for q in tqdm.tqdm(range(num_runs)):
 					at_least_one_agreeing_90 += 1
 					break
 
+			for zz in evaluation_r2s:
+				if zz > 0.85:
+					at_least_one_agreeing_85 += 1
+					break
+
+			for zzz in evaluation_r2s:
+				if zzz > 0.8:
+					at_least_one_agreeing_80 += 1
+					break
+
+			for z95 in evaluation_r2s:
+				if z95 > 0.95:
+					at_least_one_agreeing_95 += 1
+					break
+
 			l_temp = 0
 			for l in evaluation_r2s:
 				if l < 0.9:
@@ -413,7 +434,10 @@ for q in tqdm.tqdm(range(num_runs)):
 	print(f"no. outliers estimate: {outliers}/{len(al)}")
 	print()
 	print(f"At least one library >= 0.95: {outlier_tally}/{len(al)}")
-	print(f"At least one library >= 0.9: {at_least_one_agreeing_90}/{len(al)}")
+	print(f"At least one library >= 0.95: {at_least_one_agreeing_95}/{len(al)}")
+	print(f"At least one library >= 0.90: {at_least_one_agreeing_90}/{len(al)}")
+	print(f"At least one library >= 0.85: {at_least_one_agreeing_85}/{len(al)}")
+	print(f"At least one library >= 0.80: {at_least_one_agreeing_80}/{len(al)}")
 	n_run_tally95.append(outlier_tally)
 	print(f"Estimate of outliers, threshold 0.9: {outliers90}/{len(al)}")
 	print(f"outliers 90/90: {outliers9090}/{len(al)}")
@@ -432,7 +456,10 @@ for q in tqdm.tqdm(range(num_runs)):
 	run_r2.append(benchmark_r2)
 	run_rmse.append(benchmark_rmse)
 
+	tallyatleast95.append(at_least_one_agreeing_95)
 	tallyatleast90.append(at_least_one_agreeing_90)
+	tallyatleast85.append(at_least_one_agreeing_85)
+	tallyatleast80.append(at_least_one_agreeing_80)
 
 	print(f"Bad nuclides: {bad_nuclides}")
 
@@ -487,6 +514,9 @@ plt.show()
 # plt.hist(x=log_plots, bins=50)
 # plt.grid()
 # plt.show()
+print(f"At least 95: {np.mean(tallyatleast95)} +- {np.std(tallyatleast95)}")
 print(f"At least 90: {np.mean(tallyatleast90)} +- {np.std(tallyatleast90)}")
+print(f"At least 85: {np.mean(tallyatleast85)} +- {np.std(tallyatleast85)}")
+print(f"At least 80: {np.mean(tallyatleast80)} +- {np.std(tallyatleast80)}")
 
 print(f'Any other lib better than ENDFB: {np.mean(anyotherbetter)} +- {np.std(anyotherbetter)} out of {len(al)}')
