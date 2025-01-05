@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.metrics import r2_score, mean_squared_error
-import tqdm
 
 def Generalplotter103(dataframe, nuclide, minenergy=1, maxenergy=21):
 	minidf = dataframe[(dataframe['Z'] == nuclide[0]) & (dataframe['A'] == nuclide[1])]
@@ -535,7 +534,7 @@ def make_test(nuclides, df, minerg, maxerg):
 
 	Q_test = []
 
-	for nuc_test_z, nuc_test_a in tqdm.tqdm(zip(ztest, atest), total=len(ztest)):
+	for nuc_test_z, nuc_test_a in zip(ztest, atest):
 		for j, (zval, aval) in enumerate(zip(Z, A)):
 			if Energy[j] < minerg:
 				continue
