@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import xgboost
 import periodictable
 import random
+import numpy as np
 import time
 import shap
 from sklearn.metrics import mean_squared_error, r2_score
@@ -36,6 +37,8 @@ min_energy = 0
 max_energy = 20
 
 mode = input("Mode (thr/1v/both): ")
+ALPHA = 1e-4
+
 
 while len(validation_nuclides) < validation_set_size:
 	nuclide_choice = random.choice(ENDFB_nuclides) # randomly select nuclide from list of all nuclides in ENDF/B-VIII
@@ -61,6 +64,7 @@ model = xgboost.XGBRegressor(n_estimators = 1100,
 model.fit(X_train, y_train,verbose=True, eval_set=[(X_test, y_test)])
 print("Training complete")
 predictions = model.predict(X_test)
+predictions = [np.exp(VAL) - ALPHA for VAL in predictions]
 
 XS_plotmatrix = []
 E_plotmatrix = []
@@ -72,7 +76,7 @@ for nuclide in validation_nuclides:
 	dummy_predictions = []
 	for i, row in enumerate(X_test):
 		if [row[0], row[1]] == nuclide:
-			dummy_test_XS.append(y_test[i])
+			dummy_test_XS.append(np.exp(y_test[i]) - ALPHA)
 			dummy_test_E.append(row[energy_row])  # Energy values are in 5th row
 			dummy_predictions.append(predictions[i])
 
@@ -95,6 +99,7 @@ for i, (pred_xs, true_xs, erg) in enumerate(zip(P_plotmatrix, XS_plotmatrix, E_p
 	tendlerg, tendlxs = Generalplotter103(dataframe=TENDL_2021, nuclide=current_nuclide)
 
 	nuc = validation_nuclides[i]  # validation nuclide
+	plt.figure()
 	plt.plot(erg, pred_xs, label='Predictions', color='red')
 	plt.plot(erg, true_xs, label='ENDF/B-VIII', linewidth=2)
 	plt.plot(tendlerg, tendlxs, label="TENDL-2021", color='dimgrey', linewidth=2)

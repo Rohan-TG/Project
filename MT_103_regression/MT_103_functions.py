@@ -20,7 +20,7 @@ def Generalplotter103(dataframe, nuclide, minenergy=1, maxenergy=21):
 
 
 
-
+ALPHA = 1e-4
 
 def make_train(df, validation_nuclides, la, ua, minerg, maxerg, mode):
 	"""la: lower bound for A
@@ -214,7 +214,7 @@ def make_train(df, validation_nuclides, la, ua, minerg, maxerg, mode):
 			S2n_train.append(Sep_2n[idx])
 			S2p_train.append(Sep_2p[idx])
 			Energy_train.append(Energy[idx])
-			XS_train.append(XS[idx])
+			XS_train.append(np.log(XS[idx] + ALPHA))
 			Sp_train.append(Sep_p[idx])
 			Sn_train.append(Sep_n[idx])
 			BEA_train.append(BEA[idx])
@@ -544,7 +544,7 @@ def make_test(nuclides, df, minerg, maxerg):
 				S2n_test.append(S_2n[j])
 				S2p_test.append(S_2p[j])
 				Energy_test.append(Energy[j])
-				XS_test.append(XS[j])
+				XS_test.append(np.log(XS[j] + ALPHA))
 				Sp_test.append(S_p[j])
 				Sn_test.append(S_n[j])
 				BEA_test.append(BEA[j])
