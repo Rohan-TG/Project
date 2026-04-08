@@ -54,7 +54,7 @@ exc = exclusion_func()
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [24,50]
+target_nuclide = [75,185]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
