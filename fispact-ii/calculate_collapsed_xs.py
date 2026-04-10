@@ -91,17 +91,6 @@ def correct_sigma(ml_dataframe):
 
 fcs = correct_sigma(ml_dataframe=xs_data_interp)
 
-plt.figure()
-plt.plot(energy_list[:-1], fcs, 'x-')
-plt.grid()
-plt.xlabel('Energy / MeV')
-plt.ylabel('(n,2n) XS')
-plt.title('Interpolated correction')
-plt.xlim(0, 25)
-plt.show()
-
-
-
 widths = np.diff(energy_list)
 plt.figure()
 plt.bar(energy_list[:-1], fcs, width=widths)
