@@ -331,4 +331,4 @@ print(f"Runtime: {timedelta(seconds=final_runtime)}")
 
 def save_predictions(predictions=datapoint_means):
 	df = pd.DataFrame({'ERG': E_plot, 'XS': predictions})
-	df.to_csv(f'{periodictable.elements[validation_nuclides[0][0]]}_{validation_nuclides[0][1]}_predictions.csv')
+	df.to_csv(f'{periodictable.elements[validation_nuclides[0][0]]}-{validation_nuclides[0][1]}_predictions.csv')
