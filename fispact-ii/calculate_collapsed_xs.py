@@ -13,7 +13,7 @@ energy_grid = xs_data['ERG'].values
 
 
 
-fine_grid = np.arange(0, 20.01, 0.01)
+fine_grid = np.arange(0, 20.0, 0.01)
 interp_ml_xs = np.interp(fine_grid, energy_grid, xs_values)
 xs_data_interp = pd.DataFrame({'XS': interp_ml_xs, 'ERG': fine_grid})
 
