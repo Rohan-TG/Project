@@ -54,7 +54,7 @@ exc = exclusion_func()
 
 n_evaluations = 100
 datapoint_matrix = []
-target_nuclide = [69,169]
+target_nuclide = [59,141]
 
 jendlerg, jendlxs = General_plotter(df=JENDL5, nuclides=[target_nuclide])
 cendlerg, cendlxs = General_plotter(df=CENDL32, nuclides=[target_nuclide])
@@ -261,7 +261,7 @@ print(f"Turning points: {dsigma_dE(XS=datapoint_means)}")
 
 #2sigma CF
 plt.plot(E_plot, datapoint_means, label = 'Prediction', color='red')
-plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII', linewidth=2)
+plt.plot(E_plot, XS_plot, label = 'ENDF/B-VIII.0', linewidth=2)
 plt.plot(tendlerg, tendl_xs, label = 'TENDL-2021', color='dimgrey')
 if target_nuclide in JEFF_nuclides:
 	plt.plot(jefferg, jeffxs, '--', label='JEFF-3.3', color='mediumvioletred')
@@ -328,3 +328,7 @@ final_runtime = time.time() - runtime
 
 print()
 print(f"Runtime: {timedelta(seconds=final_runtime)}")
+
+def save_predictions(predictions=datapoint_means):
+	df = pd.DataFrame({'ERG': E_plot, 'XS': predictions})
+	df.to_csv(f'{periodictable.elements[validation_nuclides[0][0]]}_{validation_nuclides[0][1]}_predictions.csv')
