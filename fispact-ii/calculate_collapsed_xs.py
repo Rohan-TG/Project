@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 # Load ML XS
-xs_filename = 'Pr-141_predictions.csv'
+xs_filename = 'Cu63_data/Cu-63_predictions.csv'
 xs_data = pd.read_csv(xs_filename)
 xs_values = xs_data['XS'].values
 energy_grid = xs_data['ERG'].values
@@ -47,7 +47,7 @@ def fetch_fluxes(flux_filename):
 
 	return flux_list
 
-flux_list = fetch_fluxes('2000exp_5min_fluxes')
+flux_list = fetch_fluxes('Cu63_data/2000exp_5min_fluxes')
 
 
 widths = np.diff(energy_list)
@@ -98,7 +98,7 @@ plt.xlim(0, 25)
 plt.grid()
 plt.xlabel('Energy / MeV')
 plt.ylabel('(n,2n) XS')
-plt.title('Weighted Pr-141 (n,2n) ML cross sections')
+plt.title('Weighted Cu-63 (n,2n) ML cross sections')
 plt.show()
 
 
@@ -111,14 +111,15 @@ def collapse(flux_values, corrected_xs):
 	return numer/denom
 
 collapsed_sigma = collapse(flux_list, fcs)
+print(collapsed_sigma)
 
 # tendl_value = 2.070711
 #
 # isomer_fraction = 0.18210701541644395
 # normal_fraction = 0.8178929845835561
 
-norm_flux = np.array(flux_list) / max(flux_list)
-norm_xs = np.array(fcs) / max(fcs)
+# norm_flux = np.array(flux_list) / max(flux_list)
+# norm_xs = np.array(fcs) / max(fcs)
 
 
 
